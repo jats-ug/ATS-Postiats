@@ -26,7 +26,7 @@ pdf: main.db
 	jw -b pdf --output PDF/ main.db
 
 html: main.db
-	jw -b html --output HTML/ main.db
+	-jw -b html --output HTML/ main.db 2>&1 | grep -v "non SGML character number"
 
 ######
 
@@ -179,6 +179,11 @@ upload_html:: ; \
 
 upload_code:: ; \
   scp -r CODE ats-hwxi,ats-lang@web.sourceforge.net:htdocs/DOCUMENT/INT2PROGINATS
+
+######
+
+upload_jats_ug:: ; \
+  $(CPRF) HTML $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS
 
 ######
 
