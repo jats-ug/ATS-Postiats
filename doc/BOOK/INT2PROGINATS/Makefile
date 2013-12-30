@@ -10,6 +10,7 @@ ATSHOMEQ="$(ATSHOME)"
 ATSCC=$(ATSHOMEQ)/bin/atscc
 ATSDOC=$(ATSHOMEQ)/bin/atsdoc
 #LIBATSDOC=$(ATSHOMEQ)/libatsdoc
+CHAPTERS=CHAP_START CHAP_PROGELEM CHAP_FUNCTION CHAP_DATATYPE CHAP_POLYMORPH CHAP_EFFECTFUL CHAP_MODULARITY CHAP_CINTERACT CHAP_DEPTYPES CHAP_DEPDTREF CHAP_THMPRVING CHAP_PRGTHMPRV CHAP_VVTINTRO
 
 ######
 
@@ -25,8 +26,17 @@ cleanall::
 pdf: main.db
 	jw -b pdf --output PDF/ main.db
 
-html: main_ja.db
-	jw -b html --output HTML/ main_ja.db
+html_ja: main_ja.db
+	rm -rf build_ja
+	mkdir build_ja
+	iconv -f UTF8 -t EUCJP main_ja.db > build_ja/main_ja.db
+	iconv -f UTF8 -t EUCJP bookinfo_ja.db > build_ja/bookinfo_ja.db
+	iconv -f UTF8 -t EUCJP preface.db > build_ja/preface.db
+	@for i in $(CHAPTERS); do \
+		mkdir -p build_ja/$$i; \
+		iconv -f UTF8 -t EUCJP $$i/main.db > build_ja/$$i/main.db; \
+	done
+	cd build_ja && jw -b html --output ../HTML/ main_ja.db
 
 main_ja.db: main.db
 
@@ -194,6 +204,7 @@ RMF=rm -f
 ######
 
 clean:: ; $(RMF) *~
+clean:: ; $(RMF) -r build_ja/
 clean:: ; $(RMF) *_atxt.txt
 clean:: ; $(RMF) *_atxt.dats
 clean:: ; $(RMF) *_atxt_dats.c

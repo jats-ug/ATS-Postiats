@@ -14,8 +14,14 @@ Time of Generation: #timestamp()\
 <chapter
 id="preparation_for_starting"
 >
+#langeng("
 #title("Preparation for Starting")
+")
+#langja("
+#title("はじめる前に")
+")
 
+#langeng("
 #para("\
 
 It is likely that you want to write programs in the programming language
@@ -24,6 +30,18 @@ in this book and see what really happens. So I will first show you how to
 write in ATS a single-file program, that is, a program contained in a
 single file, and compile it and then execute it.\
 
+")
+")
+#langja("
+#para("\
+
+It is likely that you want to write programs in the programming language
+you are learning.  You may also want to try some of the examples included
+in this book and see what really happens. So I will first show you how to
+write in ATS a single-file program, that is, a program contained in a
+single file, and compile it and then execute it.\
+
+")
 ")
 
 <sect1

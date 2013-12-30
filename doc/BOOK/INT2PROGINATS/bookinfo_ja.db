@@ -1,5 +1,5 @@
 <bookinfo>
-<title>ATS�ץ�����ߥ�����</title>
+<title>ATSプログラミング入門</title>
 <subtitle></subtitle>
 
 <authorgroup>
@@ -15,15 +15,15 @@
 
 <abstract>
 <para>
-�����ܤ�
+この本は
 <ulink url="http://www.ats-lang.org/DOCUMENT/INT2PROGINATS/HTML/book1.html">Introduction to Programming in ATS</ulink>
-�����ܸ����Ǥ���
-���ܸ����ΰݻ�������
+の日本語訳です。
+日本語訳の維持管理は
 <ulink url="http://jats-ug.metasepi.org/">JATS-UG - Japan ATS User Group</ulink>
-���ԤʤäƤ��ޤ���
-�����˻��ä���ˤ�
-<ulink url="https://github.com/jats-ug/translate/blob/master/Manual/index.md">ATS2�θ����ޥ˥奢������ܸ���</ulink>
-�򻲾Ȥ��Ƥ���������
+が行なっています。
+翻訳に参加するには
+<ulink url="https://github.com/jats-ug/translate/blob/master/Manual/index.md">ATS2の公式マニュアルの日本語訳</ulink>
+を参照してください。
 </para>
 </abstract>
 

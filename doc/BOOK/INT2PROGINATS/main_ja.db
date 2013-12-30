@@ -43,7 +43,7 @@ To Jinning, Zoe and Chloe.
 
 <part
 id="basic-functional-programming">
-<title>�ؿ����ץ�����ߥ󥰤δ���</title>
+<title>関数型プログラミングの基本</title>
 &chap_start;
 &chap_progelem;
 &chap_function;
@@ -53,7 +53,7 @@ id="basic-functional-programming">
 
 <part
 id="support-for-practical-programming">
-<title>���¤Υץ�����ߥ󥰤��Ф��륵�ݡ���</title>
+<title>現実のプログラミングに対するサポート</title>
 &chap_effectful;
 &chap_modularity;
 &chap_cinteract;
@@ -61,7 +61,7 @@ id="support-for-practical-programming">
 
 <part
 id="programming-with-dependent-types">
-<title>��¸����Ȥä��ץ�����ߥ�</title>
+<title>依存型を使ったプログラミング</title>
 &chap_deptypes;
 &chap_depdtref;
 &chap_thmprving;
