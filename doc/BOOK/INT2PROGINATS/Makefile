@@ -184,7 +184,7 @@ upload_code:: ; \
 
 ######
 
-upload_jats_ug:: ; \
+publish_jats_ug:: ; \
   $(CPRF) HTML $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS
 
 ######

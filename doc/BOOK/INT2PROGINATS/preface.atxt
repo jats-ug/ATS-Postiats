@@ -16,9 +16,13 @@ Time of Generation: #timestamp()\
 #title("Preface")
 ")
 #langchin("
-#title("搴忚█")
+#title("进咐")
+")
+#langja("
+#title("涟今き")
 ")
 
+#langeng("
 #para('\
 
 <ulink url="http://www.ats-lang.org">ATS</ulink> is a statically
@@ -33,6 +37,23 @@ and being able to effectively enforce precision. This point will be
 demonstrated concretely and repeatedly in this book.\
 
 ')
+")
+#langja("
+#para('\
+
+<ulink url="http://www.ats-lang.org">ATS</ulink>
+は琅弄房のプログラミング咐胳で、妨及弄な慌屯で琵办されています。
+ATSには2つのサブ咐胳があります。
+1つ誊は慌屯淡揭のためのもので、2つ誊は悸刘を淡揭するためのものです。
+さらに、悸刘がその慌屯に办米しているか沮汤するための年妄沮汤サブシステムもあります。
+もしATSについて、たった办つだけ帽胳を积ち叫すとすれば、
+それは <emphasis>篮泰</emphasis> でしょう。
+ATSでのプログラミングとは汤澄であろうとすることであり、
+そして材墙なかぎり篮泰さを动扩することです。
+このテ〖マはこの塑の面で部刨も恶挛弄に棱汤します。\
+
+')
+")
 
 #para('\
 
