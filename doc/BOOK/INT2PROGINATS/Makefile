@@ -25,8 +25,10 @@ cleanall::
 pdf: main.db
 	jw -b pdf --output PDF/ main.db
 
-html: main.db
-	-jw -b html --output HTML/ main.db 2>&1 | grep -v "non SGML character number"
+html: main_ja.db
+	jw -b html --output HTML/ main_ja.db
+
+main_ja.db: main.db
 
 ######
 

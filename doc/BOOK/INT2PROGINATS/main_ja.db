@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!--
+<!ENTITY ae "&#228;">
+<!ENTITY oe "&#246;">
+<!ENTITY ae "&auml;">
+<!ENTITY oe "&ouml;">
+-->
+<!ENTITY ae "ae">
+<!ENTITY oe "oe">
+<!ENTITY bookinfo SYSTEM "bookinfo_ja.db">
+<!ENTITY preface SYSTEM "preface.db">
+<!ENTITY chap_start SYSTEM "CHAP_START/main.db">
+<!ENTITY chap_progelem SYSTEM "CHAP_PROGELEM/main.db">
+<!ENTITY chap_function SYSTEM "CHAP_FUNCTION/main.db">
+<!ENTITY chap_datatype SYSTEM "CHAP_DATATYPE/main.db">
+<!ENTITY chap_polymorph SYSTEM "CHAP_POLYMORPH/main.db">
+<!ENTITY chap_effectful SYSTEM "CHAP_EFFECTFUL/main.db">
+<!ENTITY chap_modularity SYSTEM "CHAP_MODULARITY/main.db">
+<!ENTITY chap_cinteract SYSTEM "CHAP_CINTERACT/main.db">
+<!ENTITY chap_deptypes SYSTEM "CHAP_DEPTYPES/main.db">
+<!ENTITY chap_depdtref SYSTEM "CHAP_DEPDTREF/main.db">
+<!ENTITY chap_thmprving SYSTEM "CHAP_THMPRVING/main.db">
+<!ENTITY chap_prgthmprv SYSTEM "CHAP_PRGTHMPRV/main.db">
+<!ENTITY chap_vvtintro SYSTEM "CHAP_VVTINTRO/main.db">
+]>
+<book id="proginats" lang="ja">
+&bookinfo;
+
+<dedication>
+<para>
+<!--
+To my wife Jinning and daughters Zoe and Chloe.
+-->
+To Jinning, Zoe and Chloe.
+</para>
+</dedication>
+
+&preface;
+<toc></toc>
+<!-- We are done with the preliminaries, now we can start with the body of the document -->
+
+<part
+id="basic-functional-programming">
+<title>関数型プログラミングの基本</title>
+&chap_start;
+&chap_progelem;
+&chap_function;
+&chap_datatype;
+&chap_polymorph;
+</part>
+
+<part
+id="support-for-practical-programming">
+<title>現実のプログラミングに対するサポート</title>
+&chap_effectful;
+&chap_modularity;
+&chap_cinteract;
+</part>
+
+<part
+id="programming-with-dependent-types">
+<title>依存型を使ったプログラミング</title>
+&chap_deptypes;
+&chap_depdtref;
+&chap_thmprving;
+&chap_prgthmprv;
+</part>
+
+<part
+id="programming-with-linear-views-and-types">
+<title>Programming with Linear Views and Types</title>
+&chap_vvtintro;
+</part>
+
+</book>
