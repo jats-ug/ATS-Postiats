@@ -331,6 +331,7 @@ doc/BOOK/INT2PROGINATS/preface.db
 doc/BOOK/INT2PROGINATS/*_atxt.txt
 doc/BOOK/INT2PROGINATS/*_atxt.dats
 doc/BOOK/INT2PROGINATS/*/main.db
+doc/BOOK/INT2PROGINATS/build_ja
 
 #
 # ATS2TUTORIAL
