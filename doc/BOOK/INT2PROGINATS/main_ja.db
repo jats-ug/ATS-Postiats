@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="EUC-JP" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
 "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
 <!--
@@ -25,7 +25,7 @@
 <!ENTITY chap_prgthmprv SYSTEM "CHAP_PRGTHMPRV/main.db">
 <!ENTITY chap_vvtintro SYSTEM "CHAP_VVTINTRO/main.db">
 ]>
-<book id="proginats" lang="ja">
+<book id="proginats" lang="en">
 &bookinfo;
 
 <dedication>

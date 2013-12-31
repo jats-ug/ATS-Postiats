@@ -36,7 +36,7 @@ html_ja: main_ja.db
 		mkdir -p build_ja/$$i; \
 		iconv -f UTF8 -t EUCJP $$i/main.db > build_ja/$$i/main.db; \
 	done
-	cd build_ja && jw -b html --output ../HTML/ main_ja.db
+	cd build_ja && jw -p /usr/bin/openjade -b html --output ../HTML/ main_ja.db
 
 main_ja.db: main.db
 
