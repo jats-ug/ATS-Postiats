@@ -35,11 +35,10 @@ single file, and compile it and then execute it.\
 #langja("
 #para("\
 
-It is likely that you want to write programs in the programming language
-you are learning.  You may also want to try some of the examples included
-in this book and see what really happens. So I will first show you how to
-write in ATS a single-file program, that is, a program contained in a
-single file, and compile it and then execute it.\
+おそらく、あなたはプログラミング言語を学習する際に何かプログラムを書きたくなるでしょう。
+また、この本の見本のいくつかを試して、実際に起きることを目にしたいでしょう。
+そこで、はじめにたった1つのファイルで構成されたプログラムをATSで書く方法を説明します。
+その後、コンパイル方法と実行手順を説明します。\
 
 ")
 ")
