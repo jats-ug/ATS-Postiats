@@ -55,6 +55,7 @@ ATSでのプログラミングとは明確であろうとすることであり�
 ')
 ")
 
+#langeng("
 #para('\
 
 In order to be precise in building software systems, we need to specify
@@ -80,7 +81,34 @@ extend the software system; for the users, it requires increased amount of
 time and effort to learn and use the software system.\
 
 ')
+")
+#langja("
+#para('\
 
+ソフトウェアを明確に作成するためには、
+そのソフトウェアがどのような動作を期待されているのか明記しなければなりません。
+今日において、ソフトウェアの仕様(ここでの用法はあいまいですが)とは、
+しばしば形式主義の一種として扱われています。
+その形式主義は、UMLのようなモデリング言語の図表を使った議論を通じた表現から、
+VDMやZのような形式的仕様を記述する文字列による表現まで、幅があります。
+しばしばソフトウェアの仕様の主な目的とは、
+チーム中の開発者間で相互理解を得ることです。
+ソフトウェアの仕様を得た後、
+プログラミング言語によって仕様を実装する必要があります。
+一般的に、実装が現実的にその仕様を満たしているかどうか合理的に信頼するのは非常に難しいものです。
+当初は実装が仕様と首尾一貫している場合でさえ、
+ソフトウェアが進化するにつれて仕様との乖離はほぼ不可避です。
+このような乖離よるひどい結果はとてもなじみ深いものでしょう。
+実装が徐々にそれ自身の仕様に変貌していく中でソフトウェアの振舞いを理解しなければならないために、
+仕様に対する信頼は損なわれます。
+開発者にとっては、ソフトウェアを保守/拡張することはより危険で困難になります。
+ユーザにとっては、
+ソフトウェアを使ったり学習したりすることに時間と労力が要求されるようになります。\
+
+')
+")
+
+#langeng("
 #para("\
 
 Largely inspired by Martin-L&oe;f's constructive type theory, which was
@@ -99,7 +127,29 @@ thus we refer to it as a programmer-centric approach to program
 verification.\
 
 ")
+")
+#langja("
+#para("\
 
+Largely inspired by Martin-L&oe;f's constructive type theory, which was
+originally developed for the purpose of establishing a foundation for
+mathematics, I designed ATS in an attempt to combine specification and
+implementation into a single programming language. There are a static
+component (statics) and a dynamic component (dynamics) in ATS. Intuitively,
+the statics and dynamics are each for handling types and programs,
+respectively. In particular, specification is done in the statics. Given a
+specification, how can we then effectively ensure that an implementation of
+the specification (type) indeed implements according to the specification?
+We request that the programmer who does the implementation also construct a
+proof in the theorem-proving subsystem of ATS to demonstrate it.  This is a
+style of program verification that puts the programmer at the center, and
+thus we refer to it as a programmer-centric approach to program
+verification.\
+
+")
+")
+
+#langeng("
 #para('\
 
 As a programming language, ATS is both syntax-rich and feature-rich. It can
@@ -115,7 +165,26 @@ programming theory.  If you are primarily interested in the
 type-theoretical foundation of ATS, then you have to find it elsewhere.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+As a programming language, ATS is both syntax-rich and feature-rich. It can
+support a variety of programming paradigms, including functional
+programming, imperative programming, object-oriented programming,
+concurrent programming, modular programming, etc. However, the core of ATS,
+which is based on a call-by-value functional language, is surprisingly
+simple, and this is where the journey of programming in ATS starts. In this
+book, I will demonstrate primarily through examples how various programming
+features in ATS can be employed effectively to facilitate the construction
+of high-quality programs. I will focus on programming practice instead of
+programming theory.  If you are primarily interested in the
+type-theoretical foundation of ATS, then you have to find it elsewhere.\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 If you can implement, then you are a good programmer.  In order to be a
@@ -126,6 +195,19 @@ on a wonderful exploring journey to become the best programmer. Let that
 journey start now!
 
 ')
+")
+#langja("
+#para('\
+
+If you can implement, then you are a good programmer.  In order to be a
+better programmer, you should also be able to explain what you implement.
+If you can guarantee what is implemented matches what is specified, then
+you are surely the best programmer.  Hopefully, learning ATS will put you
+on a wonderful exploring journey to become the best programmer. Let that
+journey start now!
+
+')
+")
 
 </preface>
 
