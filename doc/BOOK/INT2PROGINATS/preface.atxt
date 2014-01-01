@@ -166,17 +166,17 @@ type-theoretical foundation of ATS, then you have to find it elsewhere.\
 #langja("
 #para('\
 
-As a programming language, ATS is both syntax-rich and feature-rich. It can
-support a variety of programming paradigms, including functional
-programming, imperative programming, object-oriented programming,
-concurrent programming, modular programming, etc. However, the core of ATS,
-which is based on a call-by-value functional language, is surprisingly
-simple, and this is where the journey of programming in ATS starts. In this
-book, I will demonstrate primarily through examples how various programming
-features in ATS can be employed effectively to facilitate the construction
-of high-quality programs. I will focus on programming practice instead of
-programming theory.  If you are primarily interested in the
-type-theoretical foundation of ATS, then you have to find it elsewhere.\
+プログラミング言語としてのATSは豊かな構文と高機能を両立しています。
+ATSは多様なプログラミングパラダイムをサポートしています。
+関数型プログラミング、命令型プログラミング、並列プログラミング、モジュラープログラミング、などです。
+けれどもATSのコアは即時評価(call-by-value)の関数型言語に基づいていて、驚くほど単純です。
+そしてこの本がATSプログラミングへの旅のスタートです。
+この本では主に、
+高品質のプログラムを作成することを用意にするATSにおける多様なプログラミングの機能について、
+例を通して使い方を説明します。
+またプログラミングの理論よりもプログラミングのやり方に焦点をあてます。
+もしあなたが主にATSの型理論の基礎に興味があるのであれば、
+他の文献をおすすめします。\
 
 ')#comment("para")
 ")
@@ -196,12 +196,12 @@ journey start now!
 #langja("
 #para('\
 
-If you can implement, then you are a good programmer.  In order to be a
-better programmer, you should also be able to explain what you implement.
-If you can guarantee what is implemented matches what is specified, then
-you are surely the best programmer.  Hopefully, learning ATS will put you
-on a wonderful exploring journey to become the best programmer. Let that
-journey start now!
+実装ができるのであれば、あなたは"良いプログラマ"です。
+"より良いプログラマ"であるためには、あなたの実装について説明できるべきです。
+もしあなたがあなたの実装が仕様に一致するか保証できるなら、
+あなたは間違いなく"もっとも良いプログラマ"でしょう。
+ATSの学習があなたを"もっとも良いプログラマ"になるための素晴しい探検の旅につれていくことを願っています。
+さあ、旅をはじめましょう!
 
 ')
 ")
