@@ -131,20 +131,17 @@ verification.\
 #langja("
 #para("\
 
-Largely inspired by Martin-L&oe;f's constructive type theory, which was
-originally developed for the purpose of establishing a foundation for
-mathematics, I designed ATS in an attempt to combine specification and
-implementation into a single programming language. There are a static
-component (statics) and a dynamic component (dynamics) in ATS. Intuitively,
-the statics and dynamics are each for handling types and programs,
-respectively. In particular, specification is done in the statics. Given a
-specification, how can we then effectively ensure that an implementation of
-the specification (type) indeed implements according to the specification?
-We request that the programmer who does the implementation also construct a
-proof in the theorem-proving subsystem of ATS to demonstrate it.  This is a
-style of program verification that puts the programmer at the center, and
-thus we refer to it as a programmer-centric approach to program
-verification.\
+もともとは数学的な土台として Martin-L&oe;f によって作られた型理論を参考に、
+仕様と実装を一つのプログラミング言語として結びつける試みとして、私はATSをデザインしました。
+ATSには静的な要素と動的な要素があります。
+直観的に、静的な要素と動的な要素は、それぞれ型とプログラムを扱います。
+特に、仕様は静的な要素です。
+ある仕様が与えれたとき、
+どうやってその仕様(型)に一致した実装をになっているかを確認すれば良いのでしょうか？
+その立証のために、私達は実装を行なうプログラマに、
+ATSの定理証明サブシステムを使った証明も行なうことを要請します。
+これはプログラマを中心にすえたプログラムの検証方法です。
+強調すると、私達はプログラムの検証にプログラマ中心のアプローチをしています。\
 
 ")
 ")
