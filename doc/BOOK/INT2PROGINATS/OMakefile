@@ -4,7 +4,7 @@ CHAP_FILES = $(addsuffix /main.atxt, $(CHAPTERS))
 .DEFAULT: HTML/index.html
 
 HTML/index.html: main_ja.db bookinfo_ja.db preface.atxt $(CHAP_FILES)
-	make html_ja -j4
+	make html_ja
 
 clean:
 	make clean
