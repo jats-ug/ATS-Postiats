@@ -194,12 +194,13 @@ upload_code:: ; \
 
 ######
 
-publish_jats_ug:: ; \
-  $(CPRF) HTML/* $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS/
+RMF=rm -f
 
 ######
 
-RMF=rm -f
+publish_jats_ug::
+	$(RMF) -r $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS
+	$(CPRF) HTML $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS
 
 ######
 
