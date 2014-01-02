@@ -46,8 +46,14 @@ single file, and compile it and then execute it.\
 <sect1
 id="a_running_program"
 >
+#langeng("
 #title("A Running Program")
+")
+#langja("
+#title("実行可能なプログラム")
+")
 
+#langeng("
 #para('\
 The following example is a program in ATS that prints out (onto the
 console) the string "Hello, world!" plus a newline before it terminates:
@@ -63,7 +69,25 @@ The keyword #dyncode("val") initiates a binding between the variable
 world!\\\n")').  However, this binding is never used after it is
 introduced; its sole purpose is for the call to the #dyncode("print")
 function to get evaluated.  ')#comment("para")
+")
+#langja("
+#para('\
 
+次の例は"Hello, world!"という文字列と改行をコンソールに印字するプログラムです。
+
+#atscode('\
+val _ = print ("Hello, world!\\\n")
+
+implement main0 () = () // a dummy for [main]
+')
+
+#dyncode("val") キーワードは変数 #dyncode("_") (アンダースコア)に、
+関数呼び出し #dyncode('print ("Hello, world!\\\n")') を束縛する。
+この束縛は作られた後に使われるのではありません。
+評価された時に、 #dyncode("print") 関数を呼び出すことが唯一の目的です。  ')#comment("para")
+")
+
+#langeng("
 #para("\
 
 The function #dyncode("main0") is a slight variant of another function
@@ -85,6 +109,27 @@ void value). The double slash symbol (#dyncode("//")) initiates a comment
 that terminates at the end of the current line.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+#dyncode("main0") 関数はATSにおいて特殊な意味を持っていて #dyncode("main") 関数の変形です。
+CやJava言語を知っているプログラマにとっては、
+#dyncode("main") の役目はCやJavaにおける同じ名前の関数と本質的に同等であると言えるでしょう。
+#dyncode("implement") キーワードは既に別の箇所でインターフェイスが宣言された関数の実装を作成します。
+
+次に示すATSのソースコードは #dyncode("main0") に対するインターフェイスの宣言です。
+
+#atscode("\
+fun main0 (): void
+")
+
+このコードは #dyncode("main0") が引数を取らず返値がない関数であることを示しています。
+返値がない、ということはvoid値を返すと言いかえることもできます。
+#dyncode("//") から行末まではコメントです。 \
+
+")#comment("para")
+")
 
 #para("\
 Suppose that you have already installed the ATS programming language
