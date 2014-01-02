@@ -78,7 +78,7 @@ function to get evaluated.  ')#comment("para")
 #atscode('\
 val _ = print ("Hello, world!\\\n")
 
-implement main0 () = () // a dummy for [main]
+implement main0 () = () // [main] のダミー実装
 ')
 
 #dyncode("val") キーワードは変数 #dyncode("_") (アンダースコア)に、
@@ -185,8 +185,14 @@ ATSのインストール時の設定によっては、
 id="a_template_for_single-file_programs"
 >
 
+#langeng("
 #title("A Template for Single-File Programs")
+")
+#langja("
+#title("1つのファイルで構成されたプログラムのひな形")
+")
 
+#langeng("
 #para("
 The following code template, which is available
 #mycodelink("CHAP_START/mytest.dats", "on-line"), is designed for constructing a
@@ -222,6 +228,44 @@ packages and the definitions of various library functions. I will cover
 elsewhere in the book the topic on making use of library in ATS.\
 
 ")#comment("para")
+")
+#langja("
+#para("
+次に示すコードは1つのファイルで構成されたATSプログラムのひな形です。
+またこのひな形は
+#mycodelink("CHAP_START/mytest.dats", "オンライン")
+からも取得できます。
+
+#atscode('\
+(*
+**
+** 1つのファイルで構成されたATSプログラムのひな形
+**
+*)
+
+(* ****** ****** *)
+//
+\#include "share/atspre_define.hats"
+\#include "share/atspre_staload.hats"
+//
+(* ****** ****** *)
+
+//
+// この部分にプログラムを書いてください
+//
+
+(* ****** ****** *)
+
+implement main0 () = () // [main] のダミー実装
+
+')#comment("atscode")
+
+#dyncode("\#include") キーワードではじまる行はATSコンパイラ #command("atsopt") に対して、
+指定した外部ライブラリパッケージと様々なライブラリ関数へのアクセスを可能にします。
+ATSのライブラリの使用方法はこの本の別の章で説明します。 \
+
+")#comment("para")
+")
 
 </sect1><!--id="a_template_for_single_file_programs"-->
 
