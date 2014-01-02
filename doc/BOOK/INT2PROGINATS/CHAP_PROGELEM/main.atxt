@@ -261,6 +261,7 @@ information on evaluation.\
 #title("名前と束縛")
 ")
 
+#langeng("
 #para("\
 
 A crucial aspect of a programming language is the mechanism it provides for
@@ -270,11 +271,25 @@ a binding between the name #dyncode("x"), which is also referred to as a
 variable, and the expression #dyncode("1+2"):\
 
 ")
+")
+#langja("
+#para("\
+
+プログラミング言語の決定的な側面は名前を式に束縛するためのしくみです。
+さらにその名前自身が式になります。
+
+例えば次の構文で表わされるのは、
+式 #dyncode("1+2") を名前 #dyncode("x") に束縛すする宣言です。
+また #dyncode("x") も値として参照されます。\
+
+")
+")
 
 <informalexample><programlisting>
 val x = 1 + 2
 </programlisting></informalexample>
 
+#langeng("
 #para("\
 
 Note that #dyncode("val") is a keyword in ATS, and the declaration is
@@ -289,6 +304,25 @@ in evaluation subsequently. As another example, the following syntax
 declares three bindings, two of which are formed simultaneously in the
 first line:\
 
+")
+")
+#langja("
+#para("\
+
+ATSでは  #dyncode("val") はキーワードであることに注意してください。
+またその宣言はval宣言として分類されます。
+
+概念上、ATSのような即時評価(call-by-value)の言語において実行時に起きることは、
+まずはじめに式 #dyncode("1+2") が値 #dyncode("3") に評価されます。
+次に #dyncode("x") と #dyncode("1+2") の間に束縛ができ、
+#dyncode("x") と #dyncode("3") の間に束縛が #emphasis("決着") します。
+本質的に即時評価とは、
+名前と式の束縛はそれ以降の評価で使われる前に、
+その名前とその式の値の束縛に決着されなければならないことを意味します。
+別の例としては、次の構文では3つの束縛を宣言しています。
+最初の行ではその内2つが同時に宣言されています。 \
+
+")
 ")
 
 <informalexample><programlisting>
