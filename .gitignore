@@ -22,6 +22,13 @@ patscc_env.sh
 patsopt_env.sh
 
 #
+# OMake
+#
+.omakedb
+.omakedb.lock
+*.omc
+
+#
 # The compiler for POSTIATS 
 #
 src/patsopt
