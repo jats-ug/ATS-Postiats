@@ -131,6 +131,7 @@ fun main0 (): void
 ")#comment("para")
 ")
 
+#langeng("
 #para("\
 Suppose that you have already installed the ATS programming language
 system. You can issue the following command-line to generate an executable
@@ -152,6 +153,29 @@ recognizes. Another special filename extension is #emphasis(".sats"), which
 we will soon encounter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+ATSプログラミング言語は既にインストール済みであると仮定します。
+次のコマンドを実行すれば作業中ディレクトリに <filename>hello</filename>
+という名前で実行ファイルが作られます。
+
+<informalexample><programlisting>
+<command>atscc</command> -o hello hello.dats
+</programlisting></informalexample>
+
+<filename>hello.dats</filename> は先程のプログラムを含んだファイルです。
+#command("atscc") コマンドは #command("atsopt") コマンドの便利なラッパーです。
+#command("atsopt") はATSプログラムの型検査とコンパイルを実行します。
+ATSのインストール時の設定によっては、
+#command("atscc") と #command("atsopt") はそれぞれ実際には
+#command("patscc") と #command("patsopt") という名前が付けられているかもしれないことに注意してください。
+#emphasis(".dats") という拡張子は #command("atscc")
+コマンドが特別な意味に解釈するため変更してはいけません。
+別の特別な意味を持つ拡張子として #emphasis(".sats") があり、この後すぐに出会うことになります。\
+
+")#comment("para")
+")
 
 </sect1><!--id="a_running_example"-->
 
