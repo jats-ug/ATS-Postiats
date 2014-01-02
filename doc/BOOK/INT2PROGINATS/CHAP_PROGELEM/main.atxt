@@ -532,6 +532,7 @@ end // end of [local]
 #title("評価のための環境")
 ")
 
+#langeng("
 #para("\
 Evaluation is the computational process that reduces expressions to
 values.  When performing evaluation, we need not only the expression to be
@@ -554,14 +555,46 @@ environment ENV0; we then extend ENV0 to ENV1 with two bindings mapping
 to #dyncode("3.14 * radius2"), then to #dyncode("3.14 * 100.0"), and
 finally to #dyncode("314.0"), which is the value of the let-expression.\
 ")
+")
+#langja("
+#para("\
+評価とは式を値になるまで単純化する計算過程です。
+評価を実行するには、評価される式だけではなく、
+その式の中にある名前を値に変換するために束縛の集合も必要です。
+この束縛の集合は単なる連想配列で、しばしば(評価のための)環境と呼ばれます。
+例えば次の式を評価することを考えてみましょう。
+
+<informalexample><programlisting>
+let
+  val PI = 3.14 and radius2 = 10.0 * 10.0 in PI * radius2
+end
+</programlisting></informalexample>
+
+空の環境であるENV0から開始します。
+まず環境ENV0において #dyncode("3.14") をそれ自身に、
+#dyncode("10.0 * 10.0") を #dyncode("100.0") に評価します。
+次にENV0拡張して、
+#dyncode("PI") から #dyncode("3.14") に #dyncode("radius2") から #dyncode("100.0")
+に変換する2つの束縛をともなうENV1を作ります。
+それからENV1において #dyncode("PI * radius2") を #dyncode("3.14 * radius2") に評価し、
+さらに #dyncode("3.14 * 100.0") に評価します。
+最後に #dyncode("314.0") が得られて、これがlet式の値になります。 \
+")
+")
 
 </sect1><!--id="environments_for_evaluation"-->
 
 <!-- ****** ****** -->
 
 <sect1 id="static_semantics">
+#langeng("
 #title("Static Semantics")
+")
+#langja("
+#title("静的な意味論")
+")
 
+#langeng("
 #para("\
 ATS is a programming language equipped with a highly expressive type
 system rooted in the #emphasis("Applied Type System") framework,
@@ -569,7 +602,18 @@ which also gives ATS its name. I will gradually introduce the type system
 of ATS, which is probably the most outstanding and interesting part of this
 book.\
 ")
+")
+#langja("
+#para("\
+ATSは #emphasis("Applied Type System") フレームワークを根源とする、
+高度に表現力のある型システム備えたプログラミング言語です。
+それはまたATSという言語の名前にもなっています。
+ATSの型システムを徐々に説明します。
+おそらくこの本で最も突出していて興味深い部分でしょう。 \
+")
+")
 
+#langeng("
 #para("\
 It is common to treat a type as the set of values it classifies.
 However, I find it more approriate to treat a type as a form of
@@ -579,6 +623,19 @@ expression, then I say that the expression possesses the static meaning
 (semantics) represented by the type T. Note that an expression may be
 assigned many distinct static meanings.  An expression is well-typed if
 there exists a type T such that the expression can be assigned the type T.\
+")
+")
+#langja("
+#para("\
+一般には、型を分類された値の集合のように扱います。
+けれども、私は型を意味の形として扱う方がより適切であることを見つけました。
+
+There are formal rules for assigning types to expressions, which are referred to as typing rules.
+If a type T can be assigned to an expression,
+then I say that the expression possesses the static meaning (semantics) represented by the type T.
+Note that an expression may be assigned many distinct static meanings.
+An expression is well-typed if there exists a type T such that the expression can be assigned the type T.\
+")
 ")
 
 #para("\
