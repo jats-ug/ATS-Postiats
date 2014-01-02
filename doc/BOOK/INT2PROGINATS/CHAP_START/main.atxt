@@ -274,8 +274,14 @@ ATSのライブラリの使用方法はこの本の別の章で説明します�
 <sect1
 id="a_makefile_template"
 >
+#langeng("
 #title("A Makefile Template")
+")
+#langja("
+#title("Makefileのひな形")
+")
 
+#langeng("
 #para('\
 
 The following Makefile template, which is available
@@ -355,6 +361,86 @@ cleanall:: clean
 \#\#\#\#\#\# end of [Makefile] \#\#\#\#\#\#
 ')#comment("atscode")
 ')#comment("para")
+")
+#langja("
+#para('\
+
+次に示すMakefileのひな形はATSプログラムをコンパイルする独自のMakefileを作るのに役立つでしょう。
+またこのひな形は #mycodelink("CHAP_START/Makefile_template", "オンライン") から取得できます。
+あなたが #command("make") ユーティリティに習熟していなかったとしても、
+オンラインからその学習のための情報を数多く見つけられるでしょう。
+
+#atscode('\
+\#\#\#\#\#\#
+\#
+\# インストール環境によっては以下のように読みかえる必要があります。
+\#
+\# atscc -> patscc
+\# atsopt -> patsopt
+\# ATSHOME -> PATSHOME
+\#
+\#\#\#\#\#\#
+
+ATSHOMEQ="$(ATSHOME)"
+
+\#\#\#\#\#\#
+
+ATSCC=$(ATSHOMEQ)/bin/atscc
+ATSOPT=$(ATSHOMEQ)/bin/atsopt
+
+\#\#\#\#\#\#
+
+\#
+\# HX: どれかの行のコメントを外してください。もしくは読み飛ばすこともできます。
+\#
+ATSCCFLAGS=
+\#ATSCCFLAGS=-O2
+\#
+\# \'-flto\' はリンク時最適化を有効にします。ライブラリ関数のインライン展開などを行ないます。
+\#
+\#ATSCCFLAGS=-O2 -flto
+\#
+
+\#\#\#\#\#\#
+
+cleanall::
+
+\#\#\#\#\#\#
+
+\#
+\# 次の3行のコメントを外してください。
+\# さらに [foo] という名前をあなたがコンパイルしたい名前に変更してください。
+\#
+
+\# foo: foo.dats
+\#   $(ATSCC) $(ATSCCFLAGS) -o $@ $< || echo $@ ": ERROR!!!"
+\# cleanall:: ; $(RMF) foo
+
+\#\#\#\#\#\#
+
+\#
+\# もしかすると、これらのルールも役に立つかもしれません。
+\#
+
+\# %_sats.o: %.sats ; $(ATSCC) $(ATSCCFLAGS) -c $< || echo $@ ": ERROR!!!"
+\# %_dats.o: %.dats ; $(ATSCC) $(ATSCCFLAGS) -c $< || echo $@ ": ERROR!!!"
+
+\#\#\#\#\#\#
+
+RMF=rm -f
+
+\#\#\#\#\#\#
+
+clean:: ; $(RMF) *~
+clean:: ; $(RMF) *_?ats.o
+clean:: ; $(RMF) *_?ats.c
+
+cleanall:: clean
+
+\#\#\#\#\#\# end of [Makefile] \#\#\#\#\#\#
+')#comment("atscode")
+')#comment("para")
+")
 
 </sect1><!--id="a_makefile_template"-->
 
