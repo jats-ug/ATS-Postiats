@@ -330,6 +330,7 @@ val PI = 3.14 and radius = 10.0
 val area = PI * radius * radius
 </programlisting></informalexample>
 
+#langeng("
 #para("\
 
 Note that it is unspecified in ATS as to which of the first two bindings
@@ -348,14 +349,39 @@ In particular, the two occurrences of #dyncode("x") in the above code are
 unrelated.
 
 ")
+")
+#langja("
+#para("\
+
+#dyncode("and") キーワードで繋がっている最初の2つの束縛のどちらが先に実行時に決着されるかは、
+ATSにおいては未定義であることに注意してください。
+けれども3つ目の束縛は最初の2つが完了した後に決着されることは保証されています。
+この論点を別の角度から見るために、次のコードを型検査してみましょう。
+
+<informalexample><programlisting>
+val x = 0 and y = x + 1
+</programlisting></informalexample>
+
+この場合、エラーメッセージは式 #dyncode("x + 1")
+の中にある名前(もしくは動的な識別子) #dyncode("x") が束縛されていないことを示しています。
+具体的には上記のコードの中にある2つの #dyncode("x") 同士に関係がないのです。
+
+")
+")
 
 </sect1><!--id="names_and_bindings"-->
 
 <!-- ****** ****** -->
 
 <sect1 id="scopes_for_bindings">
+#langeng("
 #title("Scopes for Bindings")
+")
+#langja("
+#title("束縛のスコープ")
+")
 
+#langeng("
 #para("\
 
 Each binding is given a fixed scope in which the binding is considered
@@ -366,6 +392,17 @@ file. The bindings introduced in the following example between the keywords
 #dyncode("end") is reached:\
 
 ")
+")
+#langja("
+#para("\
+
+それぞれの束縛は、それが有効である固定のスコープを持っています。
+ファイルの中にあるトップレベルの束縛のスコープは束縛が作られた場所からファイルの終端までです。
+次の例では #dyncode("let") と #dyncode("in") キーワードの間で束縛が作られていて、
+その束縛は #dyncode("end") キーワードまで有効です。 \
+
+")
+")
 
 <informalexample><programlisting>
 val area = let
@@ -373,12 +410,23 @@ val area = let
 end // end of [let]
 </programlisting></informalexample>
 
+#langeng("
 #para("\
 
 Such bindings are referred to as local bindings, and the names such as
 #dyncode("PI") and #dyncode("radius") are referred to as local names.  This
 example can also be written in the following style:\
 
+")
+")
+#langja("
+#para("\
+
+このような束縛はローカル束縛と呼ばれていて、
+#dyncode("PI") や #dyncode("radius") のような名前はローカル名と呼ばれています。
+この例は以下のようなスタイルでも書くことができます。 \
+
+")
 ")
 
 <informalexample><programlisting>
@@ -388,6 +436,7 @@ val area =
 } // end of [where] // end of [val]
 </programlisting></informalexample>
 
+#langeng("
 #para("\
 
 The keyword #dyncode("where") appearing immediately after an expression
@@ -400,7 +449,23 @@ better? I have not formed my opinion yet. The answer seems to entirely
 depend on the taste of the programmer.\
 
 ")
+")
+#langja("
+#para("\
 
+式の直後に現われるキーワード #dyncode("where") は、
+その式に含まれている名前を評価するためのみ有効な束縛を表わしています。
+しばしば、キーワード #dyncode("let") と #dyncode("where")
+を使って構成された式は、それぞれlet式とwhere式と呼ばれます。
+前者はかならず後者に変換でき、また逆にもかならず変換できます。
+どちらがより良いスタイルなのでしょうか？
+私はまだ自分の意見を持っていません。
+その答はプログラマの好みに完全に依存していると思われます。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 The following example demonstrates an alternative approach to introducing
@@ -427,13 +492,45 @@ The former is used to form an expression while the latter is used to
 introduce a sequence of declarations.\
 
 ")
+")
+#langja("
+#para("\
+
+次の例はローカル束縛を作るまた別のアプローチを示しています。
+
+<informalexample><programlisting>
+local
+
+val PI = 3.14 and radius = 10.0
+
+in (* in of [local] *)
+
+val area = PI * radius * radius
+
+end // end of [local]
+</programlisting></informalexample>
+
+キーワード #dyncode("local") と #dyncode("in") の間で作られた束縛は、
+キーワード #dyncode("end") に逹っするまで有効です。
+#dyncode("in") と #dyncode("end")の間で作られた束縛は、
+トップレベルの束縛になることに注意してください。
+#dyncode("let") と #dyncode("local") の違いは明確です。
+前者は式を構成するのに使い、後者は宣言を列挙するのに使います。 \
+
+")
+")
 
 </sect1><!--id="scopes_for_bindings"-->
 
 <!-- ****** ****** -->
 
 <sect1 id="environments_for_evaluation">
+#langeng("
 #title("Environments for Evaluation")
+")
+#langja("
+#title("評価のための環境")
+")
 
 #para("\
 Evaluation is the computational process that reduces expressions to
