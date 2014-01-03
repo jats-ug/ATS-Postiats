@@ -315,7 +315,7 @@ ATSでは  #dyncode("val") はキーワードであることに注意してく�
 概念上、ATSのような即時評価(call-by-value)の言語において実行時に起きることは、
 まずはじめに式 #dyncode("1+2") が値 #dyncode("3") に評価されます。
 次に #dyncode("x") と #dyncode("1+2") の間に束縛ができ、
-#dyncode("x") と #dyncode("3") の間に束縛が #emphasis("決着") します。
+#dyncode("x") と #dyncode("3") の間に束縛が #emphasis("決着(finalized)") します。
 本質的に即時評価とは、
 名前と式の束縛はそれ以降の評価で使われる前に、
 その名前とその式の値の束縛に決着されなければならないことを意味します。
@@ -629,22 +629,31 @@ there exists a type T such that the expression can be assigned the type T.\
 #para("\
 一般には、型を分類された値の集合のように扱います。
 けれども、私は型を意味の形として扱う方がより適切であることを見つけました。
-
-There are formal rules for assigning types to expressions, which are referred to as typing rules.
-If a type T can be assigned to an expression,
-then I say that the expression possesses the static meaning (semantics) represented by the type T.
-Note that an expression may be assigned many distinct static meanings.
-An expression is well-typed if there exists a type T such that the expression can be assigned the type T.\
+式に型を割り振る形式的な規則があり、それは型付け規則と呼ばれています。
+もし式に型Tを割り振ることができるとします。
+するとその式は型Tで表現された静的な意味(意味論)を持つと言えるのです。
+一つの式には複数の異なる静的な意味論を割り振られる可能性があることに注意してください。
+もし式に割り振り可能な型Tが唯一1つだけ存在するなら、その式は正しい型付けをされていることになります。 \
 ")
 ")
 
+#langeng("
 #para("\
 If there is a binding between a name and an expression and the
 expression is of some type T, then the name is assumed to be of the type T
 in the effective scope of the binding. In other words, the name assumes the
 static meaning of the expression it refers to.\
 ")
+")
+#langja("
+#para("\
+もし型Tを持つ式と名前とを繋ぐ束縛が存在するなら、
+束縛が有効なスコープにおいてその名前は型Tであると見なされます。
+言い方を代えると、その名前は対応する式の持つ静的な意味を取るということになります。 \
+")
+")
 
+#langeng("
 #para("\
 
 Let exp0 be an expression of some type T, that is, the type T can be
@@ -656,7 +665,23 @@ type system of ATS. Based on this property, we can readily infer that any
 value is of the type T if exp0 can be evaluated to it (in many steps).\
 
 ")
+")
+#langja("
+#para("\
 
+exp0が型Tの式であるとしましょう。
+つまり型Tがexp0に型付け規則によって割り振られたとします。
+exp0をexp1に評価できるなら、exp1もまた型Tが割り振れることになります。
+別の言い方をすると、静的な意味は評価の中で不変であると言えるわけです。
+この特性はしばしば #emphasis("型保存(type preservation)") と呼ばれます。
+これはATSの型システムにおける健全性の一部です。
+この特性に基づくと、私達はexp0がいくつかのステップで評価されて値をになるとしても、
+型Tの取りうる値をたやすく推察することができるのです。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 Let exp0 be an expression of some type T. Assume that exp0 is not a value.
@@ -664,6 +689,17 @@ Then exp0 can always be evaluated one step further to another expression
 exp1. This property is often referred to as #emphasis("progress"), which is
 another part of the soundness of the type system of ATS.\
 
+")
+")
+#langja("
+#para("\
+
+exp0が型Tの式であり、またexp0は値ではないとします。
+するとexp0は1ステップで別の式であるexp1に評価することがいつでも可能です。
+この特性はしばしば #emphasis("プログレス(progress)") と呼ばれます。
+そしてこれはATSの型システムにおける健全性のもう一つの部分です。 \
+
+")
 ")
 
 </sect1><!--id="static_semantics"-->
