@@ -1,10 +1,35 @@
 include chapters.mk
-CHAP_FILES = $(addsuffix /main.atxt, $(CHAPTERS))
+ATSHOMEQ="$(ATSHOME)"
+ATSCC=$(ATSHOMEQ)/bin/atscc
+ATSDOC=$(ATSHOMEQ)/bin/atsdoc
+CHAP_DB_FILES = $(addsuffix /main.db, $(CHAPTERS))
 .PHONY: clean
 .DEFAULT: HTML/index.html
 
-HTML/index.html: main_ja.db bookinfo_ja.db preface.atxt $(CHAP_FILES)
-	make html_ja
+HTML/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
+	rm -rf build_ja
+	mkdir build_ja
+	iconv -f UTF8 -t EUCJP main_ja.db > build_ja/main_ja.db
+	iconv -f UTF8 -t EUCJP bookinfo_ja.db > build_ja/bookinfo_ja.db
+	iconv -f UTF8 -t EUCJP preface.db > build_ja/preface.db
+	foreach(i, $(CHAPTERS))
+		mkdir -p build_ja/$i
+		iconv -f UTF8 -t EUCJP $i/main.db > build_ja/$i/main.db
+	cd build_ja && jw -b html --output ../HTML/ main_ja.db
+
+preface.db: preface.atxt
+	$(ATSDOC) --outcode preface_atxt.dats -i preface.atxt > preface_atxt.txt
+	$(ATSCC) -D_ATS_GCATS -o preface.exe preface_atxt.dats -latsdoc
+	./preface.exe > $@
+	rm -f preface.exe preface_atxt.dats preface_atxt.txt
+
+.SUBDIRS: $(glob CHAP_*/) .
+	%.db: %.atxt
+		$(ATSDOC) --outcode $(replacesuffixes .atxt, _atxt.dats, $<) -i $< > $(replacesuffixes .atxt, _atxt.txt, $<)
+		$(ATSCC) -D_ATS_GCATS -o $(removesuffix $<) $(replacesuffixes .atxt, _atxt.dats, $<) -latsdoc
+		./$(removesuffix $<) > $@
+		rm -f $(replacesuffixes .atxt, _atxt.dats, $<) $(replacesuffixes .atxt, _atxt.txt, $<) $(removesuffix $<)
 
 clean:
+	rm -f preface.db $(CHAP_DB_FILES)
 	make clean
