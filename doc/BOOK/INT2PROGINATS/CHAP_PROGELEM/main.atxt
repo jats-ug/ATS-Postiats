@@ -707,8 +707,14 @@ exp0が型Tの式であり、またexp0は値ではないとします。
 <!-- ****** ****** -->
 
 <sect1 id="primitive_types">
+#langeng("
 #title("Primitive Types")
+")
+#langja("
+#title("プリミティブ型")
+")
 
+#langeng("
 #para("\
 
 The simplest types in ATS are primitive types, which are used to classify
@@ -717,7 +723,19 @@ and #dyncode("double"), which classify integers (in a fixed range) and
 floating point numbers (of double precision), respectively.\
 
 ")
+")
+#langja("
+#para("\
 
+ATSにおいて最も単純な型は、プリミティブな値を分類するのに使われるプリミティブ型です。
+例えば #dyncode("int") と #dyncode("double") というプリミティブ型があります。
+
+これらはそれぞれ固定長の整数の整数と倍精度の浮動小数点数を分類しています。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 In the current implementation of ATS (Postiats), a program in ATS is first
@@ -728,7 +746,20 @@ the same name in C. Similarly, the type #dyncode("double") in ATS is
 translated to the type of the same name in C.\
 
 ")
+")
+#langja("
+#para("\
 
+ATS (Postiats)の現時点でも実装では、ATSプログラムはまずC99に従ったC言語にコンパイルされます。
+それからgccのようなC言語コンパイラによってオブジェクトコードにコンパイルすることができます。
+ATSからC言語へのコンパイルにおいて、
+ATSの #dyncode("int") 型はC言語の同名の型に変換されます。
+同様にATSの #dyncode("double") 型はC言語の同名の型に変換されます。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 There are many other primitive types in ATS, and I will introduce
@@ -849,6 +880,126 @@ value, and vice versa.\
 I will gradually present programming examples involving various primitive types and
 values.\
 
+")
+")
+#langja("
+#para("\
+
+ATSでは他にも多くのプリミティブ型がありますが、少しづつ解説します。
+一般的に使われるいくつかのプリミティブ型を次に示します。
+
+<itemizedlist>
+
+<listitem>
+#para("\
+#stacode("bool"):
+この型は真理値の #dyncode("true") か #dyncode("false") を取り、C言語のint型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("char"):
+この型はC言語の文字型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("schar"):
+この型はC言語の符号付き文字型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("uchar"):
+この型はC言語の符号無し文字型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("float"):
+この型はC言語の単精度浮動小数点型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("uint"):
+この型はC言語の符号無し整数型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("lint"):
+この型はC言語の長整数型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("ulint"):
+この型はC言語の符号無し長整数型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("llint"):
+この型はC言語の長長整数型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("ullint"):
+この型はC言語の符号無し長長整数型に変換されます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("size_t"):
+この型はC言語の同名の型に変換されます。
+これは符号無し整数型と同じ精度です。
+通常 #stacode("size_t") 型は #stacode("ulint") 型と等価に扱われます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("ssize_t"):
+この型はC言語の同名の型に変換されます。
+これは符号無し整数型と同じ精度です。
+通常 #stacode("ssize_t") 型は #stacode("lint") 型と等価に扱われます。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("string"):
+この型は文字列のためのもので、C言語のポインタ型に変換されます。
+この変換については別の章で解説します。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+#stacode("void"):
+この型はvoid値のためのもので、C言語の同名の型に変換されます。
+ATSにおいてvoid値が未定義であることに注意すべきでしょう。
+関数がvoid値を返す場合には、しばしば関数が値を返さないと言うことがあります。 \
+")
+</listitem>
+
+</itemizedlist>
+
+様々なプリミティブ型と値を含むプログラム例を徐々に紹介します。 \
+
+")
 ")
 
 </sect1><!--id="primitive_types"-->
