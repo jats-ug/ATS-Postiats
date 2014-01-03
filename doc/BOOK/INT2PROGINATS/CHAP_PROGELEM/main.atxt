@@ -1007,8 +1007,14 @@ ATSにおいてvoid値が未定義であることに注意すべきでしょう�
 <!-- ****** ****** -->
 
 <sect1 id="tuples_and_tuple_types">
+#langeng("
 #title("Tuples and Tuple Types")
+")
+#langja("
+#title("タプルとタプル型")
+")
 
+#langeng("
 #para("\
 
 Given two types T1 and T2, we can form a tuple type (T1, T2), which can
@@ -1020,7 +1026,22 @@ of more components. In order for a tuple type to be assigned to a tuple,
 the tuple and the tuple type must have the equal number of components.\
 
 ")
+")
+#langja("
+#para("\
 
+2つの型T1とT2が与えられた時、タプル型である (T1, T2) を作ることがきます。
+これは @(T1, T2) のように書くこともできます。
+exp1とexp2がそれぞれT1とT2型の式であるとしましょう。
+すると式 (exp1, exp2) または @(exp1, exp2) は (T1, T2) 型のタプルであることになります。
+さらに、より多くの要素を持つタプルとタプル型を作ることもできます。
+タプルにタプル型を割り振るために、
+そのタプルとそのタプル型は持っている要素が同じ数でなければなりません。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 When evaluating a tuple expression, we evaluate all of its components
@@ -1030,7 +1051,19 @@ n values of the n components listed in the order as the components
 themselves.\
 
 ")
+")
+#langja("
+#para("\
 
+タプルの式を評価する時、その要素すべてを #emphasis("連続して(sequentially)") 評価します。
+その式がn個の要素を持っていたと想像してみましょう。
+するとその式の値は、
+要素の順に列挙されたn個の要素の値によって構成されているタプルであることになります。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 A tuple of length n for n >= 2 is just a record of field names ranging from
@@ -1042,6 +1075,23 @@ exp evaluates to a tuple of two values, then exp.0 evaluates to the first
 value and exp.1 the second value. Clearly, if the tuple type of exp
 contains more components, what is stated can be generalized accordingly.\
 
+")
+")
+#langja("
+#para("\
+
+2以上の長さnのタプルは、フィールド名は0からn-1までの範囲を取る単なるレコードです。
+タプル型 (T1, T2) の式 exp が与えられた時、
+(exp).0 や (exp).1 のような式を作ることができます。
+これらはそれぞれT1型とT2型を取ります。
+式expは必ずしもタプルの式である必要はないことに注意してください。
+例えば、expは名前や関数適用であってもかまいません。
+もしexpを評価して2つの値を持つタプルになった場合、
+exp.0は1番目の値に評価され、exp.1は二番目の値に評価されることになります。
+expのタプル型がより多くの要素を持っていた場合、
+当然このような式は一般化できます。 \
+
+")
 ")
 
 #para("\
