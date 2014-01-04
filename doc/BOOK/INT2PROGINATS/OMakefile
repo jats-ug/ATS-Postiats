@@ -1,7 +1,7 @@
-include chapters.mk
 ATSHOMEQ="$(ATSHOME)"
 ATSCC=$(ATSHOMEQ)/bin/atscc
 ATSDOC=$(ATSHOMEQ)/bin/atsdoc
+CHAPTERS = $(glob CHAP_*/)
 CHAP_DB_FILES = $(addsuffix /main.db, $(CHAPTERS))
 .PHONY: clean
 .DEFAULT: HTML/index.html
