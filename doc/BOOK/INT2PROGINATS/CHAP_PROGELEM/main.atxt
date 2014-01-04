@@ -1094,6 +1094,7 @@ expのタプル型がより多くの要素を持っていた場合、
 ")
 ")
 
+#langeng("
 #para("\
 
 In the following example, we first construct a tuple of length 3 and then
@@ -1118,7 +1119,33 @@ val (x, y, z) = xyz // x = 'A'; y = 1; z = 2.0
 Note that #dyncode("(x, y, z)") is a pattern that can match any tuples of
 exact 3 components. I will say more about pattern matching elsewhere.
 ")
+")
+#langja("
+#para("\
 
+次に占めす例では、はじめに長さが3のタプルを作り、
+そのタプルの3つの要素全てに3つの名前を束縛しています。
+
+<informalexample><programlisting>
+val xyz = ('A', 1, 2.0)
+val x = xyz.0 and y = xyz.1 and z = xyz.2
+</programlisting></informalexample>
+
+作られたタプルには #stacode("(char, int, double)") というタプル型が割り振られることに注意してください。
+タプルの要素を選択する他の方法には、次の例に示すパターンマッチがあります。
+
+<informalexample><programlisting>
+val xyz = ('A', 1, 2.0)
+val (x, y, z) = xyz // x = 'A'; y = 1; z = 2.0
+</programlisting></informalexample>
+
+#dyncode("(x, y, z)")
+は、ぴったり3要素のタプルにマッチするパターンであることに注意してください。
+その他のパターンマッチについては別の章で説明します。
+")
+")
+
+#langeng("
 #para("\
 
 The tuples introduced above are often referred to as flat tuples, native
@@ -1127,7 +1154,19 @@ which are called boxed tuples. A boxed tuple is essentially a pointer
 pointing to some heap location where a flat tuple is stored.\
 
 ")
+")
+#langja("
+#para("\
 
+ここまで紹介してきたタプルはしばしば
+フラットタプル、ネイティブタプル、アンボックス化タプルなどと呼ばれます。
+ATSはまた別の種類のタプルをサポートしており、それはボックス化タプルと呼ばれています。
+ボックス化タプルは本質的に、フラットタプルが配置されたヒープを指すポインタです。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 Assume that exp1 and exp2 are two expressions of the types T1 and T2,
@@ -1148,7 +1187,30 @@ Note that a space is needed between #dyncode("'(") and #dyncode("'A'")
 for otherwise the current parser (for ATS/Postiats) would be confused.\
 
 ")
+")
+#langja("
+#para("\
 
+またexp1とexp2がそれぞれ型T1とT2の式であるとします。
+式 '(exp1, exp2) はタプル型 '(T1, T2) のタプルになります。
+結果的に、異なる要素数のボックス化タプルとボックス化タプル型も作ることができます。
+注意するべきなのは、全てのボックス化タプルのサイズはポインタのものと同じであるということです。
+そのためポインタが格納できる場所であれば、ボックス化タプルも格納することができます。
+ボックス化タプルの使い方はアンボックス化タプルの使い方とよく似ています。
+例えば、次のコードの意味はすぐにわかります。
+
+<informalexample><programlisting>
+val xyz = '( 'A', 1, 2.0 )
+val x = xyz.0 and y = xyz.1 and z = xyz.2
+</programlisting></informalexample>
+
+#dyncode("'(") と #dyncode("'A'") の間に空白を入れないと、
+ATS/Postiats の今のパーサが混乱してしまうことに注意してください。 \
+
+")
+")
+
+#langeng("
 #para("\
 
 Given the availability of flat and boxed tuples, one naturally wants to
@@ -1159,14 +1221,33 @@ needed. However, if we want to run code with no support of garbage
 collection (GC), then we should definitely avoid using boxed tuples.\
 
 ")
+")
+#langja("
+#para("\
+
+フラットタプルとボックス化タプルの可用性があると、
+どちらの種類がより良いのか決める手掛かりを当然知りたくなるでしょう。
+残念ながら私の知るかぎり、そのような方法はありません。
+確実に言えることは、プロファイリングすることがしばしば必要になるということです。
+けれども、もしGCを含まないコードを実行したいのであれば、
+明らかにボックス化タプルを使うべきではありません。 \
+
+")
+")
 
 </sect1><!--id="tuples_and_tuple_types"-->
 
 <!-- ****** ****** -->
 
 <sect1 id="records_and_record_types">
+#langeng("
 #title("Records and Record Types")
+")
+#langja("
+#title("レコードとレコード型")
+")
 
+#langeng("
 #para("\
 A record is just like a tuple except that each field name of the
 record is chosen by the programmer (instead of being fixed). Similarly, a
@@ -1188,7 +1269,32 @@ type is for flat/native/unboxed records. A value of the type
 val theOrigin = @{ x= 0.0, y= 0.0 } : point2D
 </programlisting></informalexample>
 ")
+")
+#langja("
+#para("\
+レコードそれぞれのフィールド名をプログラマによって決定できるという点を除けば、
+レコードはタプルと良く似ています。
+同様にレコード型もタプル型と良く似ています。
+例えばレコード型 #stacode("point2D") は以下のように定義できます。
 
+<informalexample><programlisting>
+typedef point2D = @{ x= double, y= double }
+</programlisting></informalexample>
+
+#dyncode("x") と #dyncode("y") はこの型のレコード値における2つのフィールドの名前です。
+またレコードのフィールドのことを要素と呼ぶことがあります。
+
+特殊な記号である #dyncode("@{") はその型が
+フラット/ネイティブ/アンボックス化 レコードであることを表わします。
+型 #stacode("point2D") の値は次のように #dyncode("theOrigin") という名前で生成することができます。
+
+<informalexample><programlisting>
+val theOrigin = @{ x= 0.0, y= 0.0 } : point2D
+</programlisting></informalexample>
+")
+")
+
+#langeng("
 #para("\
 We can use the standard dot notation to extract out a selected component in
 a record, and this is shown in the next line of code:
@@ -1220,12 +1326,51 @@ If you find all this syntax for component extraction to be confusing, then
 I suggest that you stick to the dot notation. I myself rarely use pattern
 matching on record values.
 ")
+")
+#langja("
+#para("\
+レコードから要素を選択するために一般的なドット表記を使うことができます。
+次のようなコードになります。
 
+<informalexample><programlisting>
+val theOrigin_x = theOrigin.x and theOrigin_y = theOrigin.y
+</programlisting></informalexample>
+
+あるいは要素の選択にパターンマッチを使うこともできます。
+これは次のようなコードになります。
+
+<informalexample><programlisting>
+val @{ x= theOrigin_x, y= theOrigin_y } = theOrigin
+</programlisting></informalexample>
+
+この例では #dyncode("theOrigin_x") と #dyncode("theOrigin_y") の名前はそれぞれ、
+#dyncode("theOrgin") の中にある #dyncode("x") と #dyncode("y") という名前の要素に束縛されています。
+もし要素全てではなく一部を選択したい場合には、次のようなパターンマッチを使うことができます。
+
+<informalexample><programlisting>
+val @{ x= theOrigin_x, ... } = theOrigin // the x-component only 
+val @{ y= theOrigin_y, ... } = theOrigin // the y-component only 
+</programlisting></informalexample>
+
+もしもこの文法に混乱するようであれば、ドット表記を使うことをおすすめします。
+レコード値のパターンマッチは私自身あまり使いません。
+")
+")
+
+#langeng("
 #para("\
 Compared with handling native/flat/unboxed records, the only change
 needed for handling boxed records is to replace the special symbol
 #dyncode("@{") with another one: #dyncode("'{"), which is a quote
 followed immediately by a left curly brace.\
+")
+")
+#langja("
+#para("\
+ネイティブ/フラット/アンボックス化 レコードと比較してボックス化レコードを扱うのに必要なことは、
+特殊記号を代えるだけです。
+つまり #dyncode("@{") を #dyncode("'{") に代えるだけです。 \
+")
 ")
 
 </sect1><!--id="records_and_record_types"-->
@@ -1233,8 +1378,14 @@ followed immediately by a left curly brace.\
 <!-- ****** ****** -->
 
 <sect1 id="conditional_expressions">
+#langeng("
 #title("Conditional Expressions")
+")
+#langja("
+#title("条件式")
+")
 
+#langeng("
 #para("\
 A conditional expression consists of a test and two branches. For instance,
 the following expression is conditional:
@@ -1249,7 +1400,23 @@ in ATS. In a conditional expression, the expression following
 and #dyncode("else") are referred to as the then-branch and the
 else-branch (of the conditional expression), respectively.
 ")
+")
+#langja("
+#para("\
+条件式は比較と2つの分岐から構成されています。
+例えば次の式は条件式です。
 
+<informalexample><programlisting>
+if (x >= 0) then x else ~x
+</programlisting></informalexample>
+
+#dyncode("if"), #dyncode("then"), #dyncode("else") はATSのキーワードです。
+条件式では#dyncode("if") 直後の式が比較式、
+#dyncode("then") と #dyncode("else") 直後の式はそれぞれthen分岐とelse分岐と呼ばれます。
+")
+")
+
+#langeng("
 #para("\
 
 In order to assign a type T to a conditional expression, we need to assign
@@ -1257,7 +1424,17 @@ the type #dyncode("bool") to the test and the type T to both of the
 then-branch and the else-branch. For instance, the type #dyncode("int") can
 be assigned to the above conditional expression if the name #dyncode("x")
 is given the type #dyncode("int").  ")
+")
+#langja("
+#para("\
 
+型Tを条件式に割り振るために、 #dyncode("bool") 型をその比較に割り振り、
+型Tをthen分岐とelse分岐の両方に割り振る必要があります。
+例えば名前 #dyncode("x") が #dyncode("int") 型であれば、
+先の例の条件式には #dyncode("int") 型を割り振ることができます。 ")
+")
+
+#langeng("
 #para("\
 
 Suppose that we have a conditional expression that is well-typed. When
@@ -1265,7 +1442,18 @@ evaluating it, we first evaluate the test to a value, which is guaranteed
 to be either #dyncode("true") or #dyncode("false"); if the value is
 #dyncode("true"), then we continue to evaluate the then-branch; otherwise,
 we continue to evaluate the else-branch.  ")
+")
+#langja("
+#para("\
 
+条件式が正しく型付けできていることを想像してみましょう。
+その条件式が評価されるとまずはじめに比較を評価して値を得ることになります。
+この値は #dyncode("true") もしくは #dyncode("false") であることが保証されています。
+値が #dyncode("true") であればthen分岐が評価されます。
+そうでなければelse分岐が評価されることになるわけです。 ")
+")
+
+#langeng("
 #para("\
 
 It is also allowed to form a conditional expression where the else-branch
@@ -1284,6 +1472,27 @@ if (x >= 0) then print(x) else ()
 Note that #dyncode("()") stands for the void value (of the type
 #stacode("void")). If a type can be assigned to a conditional expression
 in the truncated form, then the type must be #stacode("void").\
+")
+")
+#langja("
+#para("\
+
+else分岐を省略した条件式を作ることもできます。
+例えば次のような式を作ることができます。
+
+<informalexample><programlisting>
+if (x >= 0) then print(x)
+</programlisting></informalexample>
+
+これは次の条件式と等価です。
+
+<informalexample><programlisting>
+if (x >= 0) then print(x) else ()
+</programlisting></informalexample>
+
+#dyncode("()") は #stacode("void") 型であるvoid値を表わすことに注意してください。
+省略された形の条件式に割り当てる型は #stacode("void") でなければなりません。 \
+")
 ")
 
 </sect1><!--id="conditional_expressions"-->
