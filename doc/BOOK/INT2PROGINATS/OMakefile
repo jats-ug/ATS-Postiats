@@ -15,7 +15,8 @@ HTML/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
 	foreach(i, $(CHAPTERS))
 		mkdir -p build_ja/$i
 		iconv -f UTF8 -t EUCJP $i/main.db > build_ja/$i/main.db
-	cd build_ja && jw -b html --output ../HTML/ main_ja.db
+	cd build_ja && jw -b html --output ../HTML_EUC/ main_ja.db
+	sh iconv_dir.sh EUCJP UTF8 HTML_EUC HTML
 
 preface.db: preface.atxt
 	$(ATSDOC) --outcode preface_atxt.dats -i preface.atxt > preface_atxt.txt
@@ -32,4 +33,5 @@ preface.db: preface.atxt
 
 clean:
 	rm -f preface.db $(CHAP_DB_FILES)
+	rm -rf HTML HTML_EUC
 	make clean
