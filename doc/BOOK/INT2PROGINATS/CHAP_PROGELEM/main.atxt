@@ -1500,8 +1500,14 @@ if (x >= 0) then print(x) else ()
 <!-- ****** ****** -->
 
 <sect1 id="sequence_expressions">
+#langeng("
 #title("Sequence Expressions")
+")
+#langja("
+#title("シーケンス式(逐次実行)")
+")
 
+#langeng("
 #para("\
 
 Assume that exp1 and exp2 are expressions of types T1 and T2 respectively,
@@ -1557,14 +1563,76 @@ end // end of [begin]
 
 which is rather common in functional programming.\
 ")
+")
+#langja("
+#para("\
+
+exp1とexp2がそれぞれ型T1とT2であり、T1は #dyncode("void") 型であったとしましょう。
+このときシーケンス式 (exp1; exp2) を作ることができ、その型は T2 になります。
+シーケンス式 (exp1; exp2) を評価すると、まずはじめにexp1をvoid値に評価し、
+さらにexp2を評価してなんらかの値を得ます。
+またこの値はシーケンス式全体の値になります。
+
+より多くの式を列にする場合、最後以外の式は全て #dyncode("void") 型であるべきで、
+やはり最後の式はシーケンス式の型になります。
+より多くの式からなるシーケンス式を評価するのは、2つの式からなるシーケンス式を評価するのと似ています。
+次の例はシーケンス式です。
+ 
+<informalexample><programlisting>
+(print 'H'; print 'e'; print 'l'; print 'l'; print 'o')
+</programlisting></informalexample>
+
+このシーケンス式を評価するとコンソールに5つの文字 \"Hello\" が印字されます。
+小括弧のかわりにキーワード #dyncode("begin") と #dyncode("end")
+を使ってシーケンス式を作ることもできます。
+
+<informalexample><programlisting>
+begin
+  print 'H'; print 'e'; print 'l'; print 'l'; print 'o'
+end // end of [begin]
+</programlisting></informalexample>
+
+好みによっては最後の式の直後にセミコロンを付けることもできます。
+その場合、最後の式は #dyncode("void") 型でなければなりません。
+例えば、先の例は次のようにも書けます。
+
+<informalexample><programlisting>
+begin
+  print 'H'; print 'e'; print 'l'; print 'l'; print 'o';
+end // end of [begin]
+</programlisting></informalexample>
+
+また次のようなスタイルのシーケンスにも注目してください。
+
+<informalexample><programlisting>
+let
+  val () = print 'H'
+  val () = print 'e'
+  val () = print 'l'
+  val () = print 'l'
+  val () = print 'o'
+in
+  // nothing
+end // end of [begin]
+</programlisting></informalexample>
+
+これは関数型プログラミングで幾分一般的なものです。 \
+")
+")
 
 </sect1><!--id="sequence_expression"-->
 
 <!-- ****** ****** -->
 
 <sect1 id="comments_in_code">
+#langeng("
 #title("Comments in Code")
+")
+#langja("
+#title("コード中のコメント")
+")
 
+#langeng("
 #para("\
 ATS currently supports four forms of comments: line comment, block
 comment of ML-style, block comment of C-style, and rest-of-file comment.
@@ -1608,6 +1676,50 @@ of this style of are primarily useful for developing or debugging programs.\
 </itemizedlist>
 
 ")#comment("para")
+")
+#langja("
+#para("\
+ATSは現時点で4つのコメント形式をサポートしています。
+ラインコメント、MLスタイルのブロックコメント、C言語スタイルのブロックコメント、ファイル末尾のコメント
+です。
+
+<itemizedlist>
+
+<listitem>
+#para("\
+ラインコメントは2重スラッシュ記号 (#dyncode("//")) から始まり、その行の終端で終わります。 \
+")
+</listitem>
+
+<listitem>
+#para("
+MLスタイルのブロックコメントの始まりと終わりは、それぞれトークン #dyncode("(*") と #dyncode("*)") です。
+ネストされたMLスタイルのブロックコメントが許されていることに注意してください。
+すなわちMLスタイルのブロックコメントはもう一つの同じスタイルのコメントの中に書くことができるのです。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+C言語スタイルのブロックコメントの始まりと終わりは、それぞれトークン
+#dyncode("/*") と #dyncode("*/") です。
+C言語スタイルのブロックコメントはネストできないことに注意してください。
+C言語スタイルのブロックコメントは、ATSとC言語で共有されるコードで主に使われます。
+その他の場合にはMLスタイルのブロックコメントを選ぶべきでしょう。 \
+")
+</listitem>
+
+<listitem>
+#para("\
+ファイル末尾のコメントは4重スラッシュ記号 (#dyncode("////")) で始まり、ファイル終端まで続きます。
+このスタイルのコメントは開発途中やプログラムのデバッグに便利です。 \
+")
+</listitem>
+
+</itemizedlist>
+
+")#comment("para")
+")
 
 </sect1><!--id="comments_in_code"-->
 
