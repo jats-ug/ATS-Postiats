@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="Cinteraction">
+#langeng("
 #title("Interaction with C")
+")
+#langja("
+#title("C言語との相互呼び出し")
+")
 
+#langeng("
 #para('\
 
 ATS and C share precisely the same native/flat/unboxed data representation.
@@ -30,7 +36,25 @@ other langauges and then assembled together to form a solution to the orginal
 task.\
 
 ')
+")
+#langja("
+#para('\
 
+ATSとC言語は全く同じネイティブ/フラット/アンボックスなデータ表現を共有しています。
+結果的に、ATSで実装された関数をC言語から呼び出す際にラップ/アンラップやボックス化/アンボックス化したりする必要はありません。
+逆もまた同様です。
+さらにその際の実行時オーバーヘッドもありません。
+おおざっぱにATSはC言語のフロントエンドと考えることができます。
+このフロントエンドは(プログラムの不変条件を記述するための)表現力豊かな型システムと
+(コードの再利用を楽にしてくれる)柔軟なテンプレートシステムを備えているのです。
+とりわけATSは大きな一つのタスクを一貫したインターフェイスのサブタスク群に分解するのにしばしば有効です。
+それらのサブタスクはATSで実装することもできますし、C言語や他の言語で実装することもできます。
+そうしてそれらを一緒に汲み上げることで元のタスクを構築できるのです。\
+
+')
+")
+
+#langeng("
 #para('\
 
 As can be expected, C code that appears directly in ATS does not go
@@ -41,26 +65,65 @@ that the portion of C code inside my ATS code is highly likely to be the
 culprit for most of encountered bugs.
 
 ')
+")
+#langja("
+#para('\
 
+期待される通りですが、
+ATSコード中に直接記述されたC言語コードはATSコードに対して行なわれるような厳格な型検査を通りません。
+そのため慎重にATSコードの中にC言語コードを埋め込むことがプログラマに要求されます。
+私個人の経験からは実際のところATSコード中におけるC言語コードがバグの犯人である可能性が非常に高いです。
+
+')
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_CINTERACT/", "on-line").\
 
 ")
+")
+#langja("
+#para("\
+
+この章に出てくるコードとテストのための追加コードは
+#mycodelink("CHAP_CINTERACT/", "オンライン")
+から得られます。\
+
+")
+")
 
 <!-- ****** ****** -->
 
 <sect1
 id="external_name">
+#langeng("
 #title("External Global Names")
+")
+#langja("
+#title("外部のグローバル名")
+")
 
+
+#langeng("
 #para("\
 
 A function declared in ATS can be given a global name of C-style so as to
 allow the function to appear in both ATS code and C code.  In particular,
 the function can be implemented in ATS and called in C or vice versa.\
 
+")
+")
+#langja("
+#para("\
+
+ATSで宣言された関数にはC言語スタイルのグローバル名が与えれらます。
+その関数はATSコードからもC言語コードからも呼び出すことができます。
+つまり、関数はATSで実装してC言語から呼び出すことができ、その逆も可能なのです。\
+
+")
 ")
 
 #para("\
