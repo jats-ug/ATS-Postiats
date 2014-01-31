@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="functions">
+#langeng("
 #title("Functions")
+")
+#langja("
+#title("関数")
+")
 
+#langeng("
 #para("\
 
 Functions play a foundational role in programming.  While it may be
@@ -26,6 +32,21 @@ recursive functions or more precisely, as tail-recursive functions. This is
 a programming style that matches well with more advanced programming
 features in ATS, which will be presented in this book later.\
 
+")
+")
+#langja("
+#para("\
+
+関数はプログラミングにおいて基盤となります。
+While it may be theoretically possible to program without functions (but with loops),
+such a programming style is of little practical value.
+ATS does provide some language constructs for implementing for-loops and while-loops directly.
+I, however, strongly recommend that the programmer implement loops as
+recursive functions or more precisely, as tail-recursive functions.
+This is a programming style that matches well with more advanced programming
+features in ATS, which will be presented in this book later.\
+
+")
 ")
 
 #para("\
