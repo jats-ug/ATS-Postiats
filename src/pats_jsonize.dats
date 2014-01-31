@@ -53,6 +53,10 @@ staload "./pats_location.sats"
 
 (* ****** ****** *)
 
+staload "./pats_label.sats"
+
+(* ****** ****** *)
+
 staload "./pats_jsonize.sats"
 
 (* ****** ****** *)
@@ -79,8 +83,9 @@ jsonval_loc (loc) = JSONloc (loc)
 
 (* ****** ****** *)
 
-implement
-jsonval_list (xs) = JSONlist (xs)
+#define :: list_cons
+
+(* ****** ****** *)
 
 implement
 jsonval_sing (x) = JSONlist (list_sing(x))
@@ -99,24 +104,40 @@ implement
 jsonval_labval3
 (
   l1, x1, l2, x2, l3, x3
-) = JSONlablist
-(
-  list_cons((l1, x1), list_cons((l2, x2), list_cons((l3, x3), list_nil)))
-) (* end of [jsonval_labval3] *)
+) = JSONlablist ((l1, x1) :: (l2, x2) :: (l3, x3) :: list_nil(*void*))
 implement
 jsonval_labval4
 (
   l1, x1, l2, x2, l3, x3, l4, x4
-) = JSONlablist
-(
-  list_cons((l1, x1), list_cons((l2, x2), list_cons((l3, x3), list_cons((l4, x4), list_nil))))
-) (* end of [jsonval_labval3] *)
+) = JSONlablist ((l1, x1) :: (l2, x2) :: (l3, x3) :: (l4, x4) :: list_nil)
 //
 (* ****** ****** *)
-
+//
 implement
-jsonval_lablist (lxs) = JSONlablist (lxs)
-
+jsonval_conarg0
+  (con) = jsonval_conarglst (con, list_nil)
+implement
+jsonval_conarg1
+  (con, arg1) =
+  jsonval_conarglst (con, list_sing (arg1))
+implement
+jsonval_conarg2
+  (con, arg1, arg2) =
+  jsonval_conarglst (con, list_pair (arg1, arg2))
+implement
+jsonval_conarg3
+  (con, arg1, arg2, arg3) =
+  jsonval_conarglst (con, arg1 :: arg2 :: arg3 :: list_nil)
+implement
+jsonval_conarg4
+  (con, arg1, arg2, arg3, arg4) =
+  jsonval_conarglst (con, arg1 :: arg2 :: arg3 :: arg4 :: list_nil())
+//
+implement
+jsonval_conarglst
+  (con, arglst) = jsonval_labval1 (con, JSONlist (arglst))
+// end of [jsonval_conarglst]
+  
 (* ****** ****** *)
 //
 implement
@@ -256,7 +277,7 @@ fun aux0
   name: string
 ) : jsonval = let
   val name = jsonval_string (name)
-  val arglst = jsonval_list (list_nil)
+  val arglst = JSONlist (list_nil())
 in
   jsonval_labval2 ("funclo_name", name, "funclo_arglst", arglst)
 end // end of [aux0]
@@ -340,6 +361,36 @@ jsonize_location (loc) = jsonval_loc (loc)
 (* ****** ****** *)
 
 implement
+jsonize_label
+  (lab) = let
+//
+val opt = label_get_int (lab)
+//
+in
+//
+case+ opt of
+| ~Some_vt (x) => let
+    val jsv = jsonval_int (x)
+  in
+    jsonval_labval1 ("LABint", jsv)
+  end (* end of [Some_vt] *)
+| ~None_vt ((*void*)) => let
+    val opt = label_get_sym (lab)
+  in
+    case+ opt of
+    | ~Some_vt (sym) => let
+        val jsv = jsonize_symbol (sym)
+      in
+        jsonval_labval1 ("LABsym", jsv)
+      end // end of [Some_vt]
+    | ~None_vt ((*void*)) => JSONnul ((*void*))
+  end (* end of [None_vt] *)
+//
+end // end of [jsonize_label]
+
+(* ****** ****** *)
+
+implement
 jsonize_ignored (x0) = JSONnul ((*void*)) 
 
 (* ****** ****** *)
@@ -351,7 +402,7 @@ jsonize_list_fun
 val jsvs = list_map_fun<a> (xs, f)
 //
 in
-  jsonval_list (list_of_list_vt(jsvs))
+  JSONlist (list_of_list_vt(jsvs))
 end // end of [jsonize_list_fun]
 
 (* ****** ****** *)

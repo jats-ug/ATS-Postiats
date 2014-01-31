@@ -1,6 +1,6 @@
 (***********************************************************************)
 (*                                                                     *)
-(*                         ATS/contrib/atshwxi                         *)
+(*                       ATS/contrib/libats-hwxi                       *)
 (*                                                                     *)
 (***********************************************************************)
 
@@ -33,10 +33,11 @@
 // based on cairo and HTML5-canvas-2d
 //
 (* ****** ****** *)
-
+//
 #define
-ATS_PACKNAME "ATSCNTRB.libats-hwxi.teaching.mydraw"
-
+ATS_PACKNAME
+"ATSCNTRB.libats-hwxi.teaching.mydraw"
+//
 (* ****** ****** *)
 
 typedef real = double

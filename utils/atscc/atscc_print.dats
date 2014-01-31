@@ -10,15 +10,15 @@
 ** All rights reserved
 **
 ** ATS is free software;  you can  redistribute it and/or modify it under
-** the terms of the GNU LESSER GENERAL PUBLIC LICENSE as published by the
-** Free Software Foundation; either version 2.1, or (at your option)  any
+** the terms of  the GNU GENERAL PUBLIC LICENSE (GPL) as published by the
+** Free Software Foundation; either version 3, or (at  your  option)  any
 ** later version.
-**
+** 
 ** ATS is distributed in the hope that it will be useful, but WITHOUT ANY
 ** WARRANTY; without  even  the  implied  warranty  of MERCHANTABILITY or
 ** FITNESS FOR A PARTICULAR PURPOSE.  See the  GNU General Public License
 ** for more details.
-**
+** 
 ** You  should  have  received  a  copy of the GNU General Public License
 ** along  with  ATS;  see the  file COPYING.  If not, please write to the
 ** Free Software Foundation,  51 Franklin Street, Fifth Floor, Boston, MA
@@ -124,9 +124,11 @@ case+ ca of
     prstr "CAfilats(1, "; propt (opt); prstr ")"
   )
 //
-| CAgitem (item) =>
+| CA_CSignore () => prstr "CA_CSignore()"  
+//
+| CA_CCOMPitm (itm) =>
   (
-    prstr "CAgitem("; prstr (item); prstr ")"
+    prstr "CA_CCOMPitm("; prstr (itm); prstr ")"
   )
 //
 (*
@@ -351,7 +353,9 @@ case+ ca of
     if issome (opt) then aux_fdats (out, unsome(opt))
   )
 //
-| CAgitem (item) => aux_gitem (out, item)
+| CA_CSignore () => ()
+//
+| CA_CCOMPitm (itm) => aux_CCOMPitm (out, itm)
 //
 end // end of [aux]
 
@@ -371,7 +375,7 @@ and aux_fdats
   val () = fprint (out, ' ')
   val () = fprint_string (out, outname)
 }
-and aux_gitem
+and aux_CCOMPitm
   (out: FILEref, item: string): void =
 {
   val () = fprint (out, ' ')

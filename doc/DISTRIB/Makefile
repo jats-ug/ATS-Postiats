@@ -107,6 +107,16 @@ clean:: ; $(RMF) atslib_libats_ML_atxt.exe
 cleanall:: ; $(RMF) HTML/atslib_libats_ML.html
 cleanall:: ; $(RMF) SCRIPT/atslib_libats_ML.bash
 
+all_html:: HTML/atslib_libats_ATS1.html
+HTML/atslib_libats_ATS1.html: atslib_libats_ATS1_atxt.exe ; ./$< > $@
+all_script:: SCRIPT/atslib_libats_ATS1.bash
+SCRIPT/atslib_libats_ATS1.bash: atslib_libats_ATS1_atxt.exe ; ./$< > $@
+atslib_libats_ATS1_atxt.dats: ATEXT/atslib_libats_ATS1.atxt ;   $(CAT) $< | $(ATSDOC) --prefix __datatok --outcode $@ > /dev/null
+atslib_libats_ATS1_atxt.exe: atslib_libats_ATS1_atxt.dats ; $(ATSCC) $(INCLATS) $(ATSGCFLAG) -o $@ $< -latsdoc
+clean:: ; $(RMF) atslib_libats_ATS1_atxt.exe
+cleanall:: ; $(RMF) HTML/atslib_libats_ATS1.html
+cleanall:: ; $(RMF) SCRIPT/atslib_libats_ATS1.bash
+
 
 ######
 
@@ -327,25 +337,15 @@ cleanall:: ; $(RMF) HTML/atscntrb_HTML_canvas-2d.html
 cleanall:: ; $(RMF) SCRIPT/atscntrb_HTML_canvas-2d.bash
 
 #
-all_html:: HTML/atscntrb_libatshwxi_intinf.html
-HTML/atscntrb_libatshwxi_intinf.html: atscntrb_libatshwxi_intinf_atxt.exe ; ./$< > $@
-all_script:: SCRIPT/atscntrb_libatshwxi_intinf.bash
-SCRIPT/atscntrb_libatshwxi_intinf.bash: atscntrb_libatshwxi_intinf_atxt.exe ; ./$< > $@
-atscntrb_libatshwxi_intinf_atxt.dats: ATEXT/atscntrb_libatshwxi_intinf.atxt ;   $(CAT) $< | $(ATSDOC) --prefix __datatok --outcode $@ > /dev/null
-atscntrb_libatshwxi_intinf_atxt.exe: atscntrb_libatshwxi_intinf_atxt.dats ; $(ATSCC) $(INCLATS) $(ATSGCFLAG) -o $@ $< -latsdoc
-clean:: ; $(RMF) atscntrb_libatshwxi_intinf_atxt.exe
-cleanall:: ; $(RMF) HTML/atscntrb_libatshwxi_intinf.html
-cleanall:: ; $(RMF) SCRIPT/atscntrb_libatshwxi_intinf.bash
-
-all_html:: HTML/atscntrb_libatshwxi_testing.html
-HTML/atscntrb_libatshwxi_testing.html: atscntrb_libatshwxi_testing_atxt.exe ; ./$< > $@
-all_script:: SCRIPT/atscntrb_libatshwxi_testing.bash
-SCRIPT/atscntrb_libatshwxi_testing.bash: atscntrb_libatshwxi_testing_atxt.exe ; ./$< > $@
-atscntrb_libatshwxi_testing_atxt.dats: ATEXT/atscntrb_libatshwxi_testing.atxt ;   $(CAT) $< | $(ATSDOC) --prefix __datatok --outcode $@ > /dev/null
-atscntrb_libatshwxi_testing_atxt.exe: atscntrb_libatshwxi_testing_atxt.dats ; $(ATSCC) $(INCLATS) $(ATSGCFLAG) -o $@ $< -latsdoc
-clean:: ; $(RMF) atscntrb_libatshwxi_testing_atxt.exe
-cleanall:: ; $(RMF) HTML/atscntrb_libatshwxi_testing.html
-cleanall:: ; $(RMF) SCRIPT/atscntrb_libatshwxi_testing.bash
+all_html:: HTML/atscntrb_libatshwxi.html
+HTML/atscntrb_libatshwxi.html: atscntrb_libatshwxi_atxt.exe ; ./$< > $@
+all_script:: SCRIPT/atscntrb_libatshwxi.bash
+SCRIPT/atscntrb_libatshwxi.bash: atscntrb_libatshwxi_atxt.exe ; ./$< > $@
+atscntrb_libatshwxi_atxt.dats: ATEXT/atscntrb_libatshwxi.atxt ;   $(CAT) $< | $(ATSDOC) --prefix __datatok --outcode $@ > /dev/null
+atscntrb_libatshwxi_atxt.exe: atscntrb_libatshwxi_atxt.dats ; $(ATSCC) $(INCLATS) $(ATSGCFLAG) -o $@ $< -latsdoc
+clean:: ; $(RMF) atscntrb_libatshwxi_atxt.exe
+cleanall:: ; $(RMF) HTML/atscntrb_libatshwxi.html
+cleanall:: ; $(RMF) SCRIPT/atscntrb_libatshwxi.bash
 
 all_html:: HTML/atscntrb_libatshwxi_teaching.html
 HTML/atscntrb_libatshwxi_teaching.html: atscntrb_libatshwxi_teaching_atxt.exe ; ./$< > $@
@@ -385,11 +385,19 @@ srcget_home:: ; $(CPF) ../../bin/patsopt_env.sh.in $(ATSDIST)/bin/
 ######
 
 srcget_share:: ; \
+  $(CPF) ../../share/Makefile.gen $(ATSDIST)/share/
+srcget_share:: ; \
   $(CPF) ../../share/atspre_define.hats $(ATSDIST)/share/
 srcget_share:: ; \
-  $(CPF) ../../share/atspre_define_pkgreloc.hats $(ATSDIST)/share/
-srcget_share:: ; \
   $(CPF) ../../share/atspre_staload.hats $(ATSDIST)/share/
+srcget_share:: ; \
+  $(CPF) ../../share/HATS/atspre_define_pkgreloc.hats $(ATSDIST)/share/HATS/
+srcget_share:: ; \
+  $(CPF) ../../share/HATS/atslib_staload_libc.hats $(ATSDIST)/share/HATS/
+srcget_share:: ; \
+  $(CPF) ../../share/HATS/atspre_staload_libats_ML.hats $(ATSDIST)/share/HATS/
+srcget_share:: ; $(CPF) ../../share/atsmake-pre.mk $(ATSDIST)/share/
+srcget_share:: ; $(CPF) ../../share/atsmake-post.mk $(ATSDIST)/share/
 
 ######
 
@@ -406,6 +414,8 @@ srcget_atslib:: srcget_atslib_libats
 srcget_atslib_libats:: SCRIPT/atslib_libats.bash ; bash $<
 srcget_atslib:: srcget_atslib_libats_ML
 srcget_atslib_libats_ML:: SCRIPT/atslib_libats_ML.bash ; bash $<
+srcget_atslib:: srcget_atslib_libats_ATS1
+srcget_atslib_libats_ATS1:: SCRIPT/atslib_libats_ATS1.bash ; bash $<
 
 ######
 
@@ -489,16 +499,14 @@ srcget_atscntrb_HTML_canvas-2d:: SCRIPT/atscntrb_HTML_canvas-2d.bash ; bash $<
 
 ######
 
-srcget_atscntrb:: srcget_atscntrb_libatshwxi_intinf
-srcget_atscntrb_libatshwxi_intinf:: SCRIPT/atscntrb_libatshwxi_intinf.bash ; bash $<
-srcget_atscntrb:: srcget_atscntrb_libatshwxi_testing
-srcget_atscntrb_libatshwxi_testing:: SCRIPT/atscntrb_libatshwxi_testing.bash ; bash $<
+srcget_atscntrb:: srcget_atscntrb_libatshwxi
+srcget_atscntrb_libatshwxi:: SCRIPT/atscntrb_libatshwxi.bash ; bash $<
 srcget_atscntrb:: srcget_atscntrb_libatshwxi_teaching
 srcget_atscntrb_libatshwxi_teaching:: SCRIPT/atscntrb_libatshwxi_teaching.bash ; bash $<
 
 ######
 
-PACKNAME=ATS2-Postiats-0.0.4
+PACKNAME=ATS2-Postiats-0.0.5
 atspacktar:: ; rm -rf $(PACKNAME)
 atspacktar:: ; cp -rf ATS-Postiats $(PACKNAME)
 atspacktar:: ; $(RMF) $(PACKNAME)/Makefile_conf
@@ -507,7 +515,7 @@ atspacktar:: ; $(RMF) $(PACKNAME)/install-sh ; $(CPF) ATS-Postiats/install-sh $(
 atspacktar:: ; make -C $(PACKNAME) cleanall
 atspacktar:: ; tar -zvcf  $(PACKNAME).tgz  $(PACKNAME)/
 
-CNTRBNAME=ATS2-Postiats-contrib-0.0.3
+CNTRBNAME=ATS2-Postiats-contrib-0.0.4
 atscntrbtar:: ; rm -rf $(CNTRBNAME)
 atscntrbtar:: ; cp -rf ATS-Postiats-contrib $(CNTRBNAME)
 atscntrbtar:: ; tar -zvcf  $(CNTRBNAME).tgz  $(CNTRBNAME)/

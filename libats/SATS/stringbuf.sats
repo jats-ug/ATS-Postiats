@@ -82,6 +82,24 @@ stringbuf_get_capacity (sbf: !stringbuf):<> size_t
 (* ****** ****** *)
 
 fun{}
+stringbuf_get_bufptr (sbf: !stringbuf):<> Ptr1
+fun{}
+stringbuf_get_strptr (sbf: !stringbuf):<!wrt> vStrptr1
+
+(* ****** ****** *)
+
+fun{}
+stringbuf_takeout_strbuf
+(
+  sbf: !stringbuf, n: &size_t? >> size_t(n)
+) :<!wrt> #[l:addr;n:nat]
+(
+  bytes_v (l, n), bytes_v (l, n) -<lin,prf> void | ptr(l)
+) (* end of [stringbuf_takeout_strbuf] *)
+
+(* ****** ****** *)
+
+fun{}
 stringbuf_reset_capacity
   (sbf: !stringbuf, m2: sizeGte(1)):<!wrt> bool(*done/ignored*)
 // end of [stringbuf_reset_capacity]
@@ -126,6 +144,21 @@ overload stringbuf_insert with stringbuf_insert_lint
 overload stringbuf_insert with stringbuf_insert_ulint
 
 (* ****** ****** *)
+
+fun{}
+stringbuf_insert_fread
+  (sbf: !stringbuf, inp: FILEref, nbyte: int): int
+// end of [stringbuf_insert_fread]
+
+(* ****** ****** *)
+
+fun{}
+stringbuf_insert_fgets
+(
+  sbf: !stringbuf, inp: FILEref, last: &char(0) >> char
+) : int // end of [stringbuf_insert_fgets]
+
+(* ****** ****** *)
 (*
 //
 fun
@@ -143,6 +176,22 @@ stringbuf_insert_val (sbf: !stringbuf, x: a): int
 fun{a:t0p}
 stringbuf_insert_list (sbf: !stringbuf, x: List(a)): int
 
+(* ****** ****** *)
+
+fun{}
+stringbuf_truncate
+  (sbf: !stringbuf, n2: size_t):<!wrt> bool(*done/ignored*)
+// end of [stringbuf_truncate]
+
+(* ****** ****** *)
+//
+fun{}
+stringbuf_truncout
+  (sbf: !stringbuf, n2: size_t):<!wrt> Strptr0
+//
+fun{}
+stringbuf_truncout_all (sbf: !stringbuf):<!wrt> Strptr1
+//
 (* ****** ****** *)
 
 (* end of [stringbuf.sats] *)

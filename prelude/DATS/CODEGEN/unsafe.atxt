@@ -30,6 +30,13 @@ staload "prelude/SATS/unsafe.sats"
 
 #atscode_separator()
 
+implement{
+} int2ptr (i) = cast{ptr}(cast{intptr}(i))
+implement{
+} ptr2int (p) = cast{int}(cast{intptr}(p))
+
+#atscode_separator()
+
 implement
 {a}(*tmp*)
 ptr0_get
@@ -150,6 +157,20 @@ ptr0_modby (p, x) = let
   val x0 = ptr0_get<a> (p) in ptr0_set<a> (p, gmod_val<a> (x0, x))
 end // end of [ptr0_modby]
 implement{a} ptr1_modby = ptr0_modby<a>
+
+#atscode_separator()
+
+implement{a}
+ptr1_list_next
+  (p) = p_next where
+{
+  val xs =
+  castvwtp1{list_vt(a,1)}(p)
+  val+@list_vt_cons(_, xs_next) = xs
+  val p_next = addr@(xs_next)
+  prval ((*void*)) = fold@ (xs)
+  prval ((*void*)) = cast2void (xs)
+} (* end of [ptr1_list_next] *)
 
 #atscode_separator()
 

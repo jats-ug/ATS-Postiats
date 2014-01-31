@@ -1,0 +1,100 @@
+%{
+#define ATSCODEFORMAT "txt"
+#if (ATSCODEFORMAT=="txt")
+#include "utils/atsdoc/HATS/postiatsatxt.hats"
+#endif // end of [ATSCCODEFORMAT]
+val _thisfilename = atext_strcst"checkast.sats"
+val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
+%}\
+\
+#atscode_banner()
+#atscode_copyright_GPL()
+
+#atscode_separator()
+
+(*
+** Source:
+** $PATSHOME/prelude/SATS/CODEGEN/checkast.atxt
+** Time of generation: #timestamp()
+*)
+
+#atscode_separator()
+
+#atscode_author("Hongwei Xi")
+#atscode_authoremail("gmhwxiATgmailDOTcom")
+#atscode_start_time("December, 2013")
+
+#atscode_separator()
+
+\#define
+ATS_PACKNAME "ATSLIB.prelude.checkast"
+\#define
+ATS_STALOADFLAG 0 // no static loading at run-time
+
+#atscode_separator()
+
+sortdef t0p = t@ype and vt0p = viewt@ype
+
+#atscode_separator()
+
+fun{tk:tk}
+checkast_gintLt{i:int}
+  (x: g0int(tk), i: int i, msg: RD(string)): g1intLt(tk, i)
+fun{tk:tk}
+checkast_gintLte{i:int}
+  (x: g0int(tk), i: int i, msg: RD(string)): g1intLte(tk, i)
+fun{tk:tk}
+checkast_gintGt{i:int}
+  (x: g0int(tk), i: int i, msg: RD(string)): g1intGt(tk, i)
+fun{tk:tk}
+checkast_gintGte{i:int}
+  (x: g0int(tk), i: int i, msg: RD(string)): g1intGte(tk, i)
+fun{tk:tk}
+checkast_gintBtw{i,j:int}
+  (x: g0int(tk), i: int i, j: int j, msg: RD(string)): g1intBtw(tk, i, j)
+fun{tk:tk}
+checkast_gintBtwe{i,j:int}
+  (x: g0int(tk), i: int i, j: int j, msg: RD(string)): g1intBtwe(tk, i, j)
+
+#atscode_separator()
+
+macdef
+ckastloc_gintLt (x, i) = checkast_gintLt (,(x), ,(i), $mylocation)
+macdef
+ckastloc_gintLte (x, i) = checkast_gintLte (,(x), ,(i), $mylocation)
+macdef
+ckastloc_gintGt (x, i) = checkast_gintGt (,(x), ,(i), $mylocation)
+macdef
+ckastloc_gintGte (x, i) = checkast_gintGte (,(x), ,(i), $mylocation)
+macdef
+ckastloc_gintBtw (x, i, j) = checkast_gintBtw (,(x), ,(i), ,(j), $mylocation)
+macdef
+ckastloc_gintBtwe (x, i, j) = checkast_gintBtwe (,(x), ,(i), ,(j), $mylocation)
+
+#atscode_separator()
+
+fun{}
+checkast_Ptr1 (x: ptr, msg: RD(string)): Ptr1
+
+#atscode_separator()
+
+macdef
+ckastloc_Ptr1 (x) = checkast_Ptr1 (,(x), $mylocation)
+
+#atscode_separator()
+
+fun{}
+checkast_Strptr1 (x: Strptr0, msg: RD(string)): Strptr1
+
+#atscode_separator()
+
+macdef
+ckastloc_Strptr1 (x) = checkast_Strptr1 (,(x), $mylocation)
+
+#atscode_separator()
+
+#atscode_eof_strsub("\#thisfilename$")\
+
+%{
+implement main () = fprint_filsub (stdout_ref, "checkast_atxt.txt")
+%}\

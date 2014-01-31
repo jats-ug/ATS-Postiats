@@ -25,13 +25,24 @@ staload "./parsing.dats"
 (* ****** ****** *)
 
 extern
-fun parse_p2at_node (jsv: jsonval): p2at_node
+fun
+parse_p2at_node (jsv: jsonval): p2at_node
+
+(* ****** ****** *)
+
+extern
+fun parse_labp2at (jsv: jsonval): labp2at
 
 (* ****** ****** *)
 
 implement
 parse_p2at
   (jsv0) = let
+//
+(*
+val () =
+println! ("parse_p2at: jsv0 = ", jsv0)
+*)
 //
 val-~Some_vt(jsv) =
   jsonval_get_field (jsv0, "p2at_loc") 
@@ -63,6 +74,9 @@ extern
 fun parse_P2Tempty (jsonval): p2at_node
 
 extern
+fun parse_P2Trec (jsonval): p2at_node
+
+extern
 fun parse_P2Tann (jsonval): p2at_node
 
 extern
@@ -74,12 +88,10 @@ implement
 parse_p2at_node
   (jsv0) = let
 //
-val-~Some_vt(jsv1) =
-  jsonval_get_field (jsv0, "p2at_name")
-val-~Some_vt(jsv2) =
-  jsonval_get_field (jsv0, "p2at_arglst")
+val-JSONobject(lxs) = jsv0
+val-list_cons (lx, lxs) = lxs
 //
-val-JSONstring(name) = jsv1
+val name = lx.0 and jsv2 = lx.1
 //
 in
 //
@@ -90,11 +102,48 @@ case+ name of
 //
 | "P2Tempty" => parse_P2Tempty (jsv2)
 //
+| "P2Trec" => parse_P2Trec (jsv2)
+//
 | "P2Tann" => parse_P2Tann (jsv2)
 //
-| _(*yet-to-be-processed*) => parse_P2Tignored (jsv2)
+| _(*rest*) => parse_P2Tignored (jsv2)
 //
 end // end of [parse_p2at_node]
+
+(* ****** ****** *)
+
+implement
+parse_labp2at
+  (jsv0) = let
+//
+val-JSONobject(lxs) = jsv0
+val-list_cons (lx, lxs) = lxs
+//
+val name = lx.0 and jsv2 = lx.1
+//
+in
+//
+case+ name of
+//
+| "LABP2ATnorm" => let
+    val-JSONarray(jsvs) = jsv2
+    val () = assertloc (length(jsvs) >= 2)
+    val l0 = parse_label (jsvs[0])
+    val p2t = parse_p2at (jsvs[1])
+  in
+    LABP2ATnorm (l0, p2t)
+  end // end of [LABP2ATnorm]
+| "LABP2ATomit" => let
+    val-JSONarray(jsvs) = jsv2
+    val () = assertloc (length(jsvs) >= 1)
+  in
+    LABP2ATomit ((*void*))
+  end // end of [LABP2ATomit]
+//
+| _(*deadcode*) =>
+    let val () = assertloc(false) in exit(1) end
+//
+end // end of [parse_labp2at]
 
 (* ****** ****** *)
 
@@ -133,6 +182,21 @@ val-JSONarray(jsvs) = jsv2
 in
   P2Tempty ()
 end // end of [parse_P2Tempty]
+
+(* ****** ****** *)
+
+implement
+parse_P2Trec
+  (jsv2) = let
+//
+val-JSONarray(jsvs) = jsv2
+val () = assertloc (length(jsvs) >= 3)
+val lp2ts =
+  parse_list<labp2at> (jsvs[2], parse_labp2at)
+//
+in
+  P2Trec (lp2ts)
+end // end of [parse_P2Trec]
 
 (* ****** ****** *)
 

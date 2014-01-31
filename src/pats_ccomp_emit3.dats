@@ -163,22 +163,34 @@ val () = emit_text (out, "/*\n")
 val () = emit_location (out, loc0)
 val () = emit_text (out, "\n*/\n")
 //
-val () = emit_text (out, "typedef\n")
-//
 in
 //
-case+ hse_def.hisexp_node of
-| HSEtysum _ =>
-  {
+case+
+hse_def.hisexp_node of
+//
+| HSEtysum _ => {
+//
     val () =
-      emit_hisexp_sel (out, hse_def)
+    emit_text (out, "typedef\n")
+    val () =
+    emit_hisexp_sel (out, hse_def)
     val () = emit_text (out, "\n")
-    val () = emit_text (out, "*")
+    val () = emit_text (out, name)
+    val () = emit_text (out, "_")
+    val () = emit_text (out, " ;\n")
+//
+    val () =
+    emit_text (out, "typedef\n")
+    val () = emit_text (out, name)
+    val () = emit_text (out, "_ *")
     val () = emit_text (out, name)
     val () = emit_text (out, " ;\n")
+//
   } (* end of [HSEtysum] *)
-| _ (*non-tysum*) =>
-  {
+//
+| _ (*non-tysum*) => {
+    val () =
+    emit_text (out, "typedef\n")
     val () = emit_hisexp (out, hse_def)
     val () = emit_text (out, "\n")
     val () = emit_text (out, name)
@@ -771,6 +783,7 @@ val issta = not (isext)
 //
 val () = if istmp then emit_text (out, "#if(0)\n")
 val () = if isqua then emit_text (out, "#if(0)\n")
+//
 val () = if isext then emit_text (out, "ATSglobaldec()\n")
 val () = if issta then emit_text (out, "ATSstaticdec()\n")
 //

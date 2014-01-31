@@ -12,9 +12,13 @@
 //
 staload
 "./../utfpl.sats"
+staload
+"./../utfpleval.sats"
 //
+(* ****** ****** *)
+
 staload "./eval.sats"
-//
+
 (* ****** ****** *)
 //
 staload
@@ -96,11 +100,13 @@ p2t.p2at_node of
 | P2Tpat (p2t) =>
     cloenv_extend_pat (env, p2t, d2u)
 //
-| P2Trec (knd, npf, lp2ts) =>
+| P2Trec (lp2ts) =>
   (
     case+ d2u of
+    | VALtup (d2us) =>
+        cloenv_extend_labpatlst_tup (env, lp2ts, d2us)
     | VALrec (ld2us) =>
-        cloenv_extend_labpatlst (env, lp2ts, ld2us)
+        cloenv_extend_labpatlst_rec (env, lp2ts, ld2us)
     | _(*type-error*) => env
   ) (* end of [P2Trec] *)
 //
@@ -132,6 +138,80 @@ case+ p2ts of
   ) (* end of [list_cons] *)
 //
 end // end of [cloenv_extend_patlst]
+
+(* ****** ****** *)
+
+implement
+cloenv_extend_labpat
+  (env, lp2t, ld2u) = let
+in
+//
+case+ lp2t of
+| LABP2ATnorm
+    (lab, p2t) => let
+    val+LABVAL (lab2, d2u) = ld2u
+  in
+    cloenv_extend_pat (env, p2t, d2u)
+  end
+| LABP2ATomit _ => env
+//
+end // end of [cloenv_extend_labpat]
+
+(* ****** ****** *)
+
+implement
+cloenv_extend_labpatlst_tup
+  (env, lp2ts, d2us) = let
+in
+//
+case+ lp2ts of
+| list_nil () => env
+| list_cons (lp2t, lp2ts) =>
+  (
+    case+ d2us of
+    | list_nil () => env
+    | list_cons
+        (d2u, d2us) => let
+      in
+        case+ lp2t of
+        | LABP2ATnorm (l, p2t) => let
+            val env = cloenv_extend_pat (env, p2t, d2u)
+          in
+            cloenv_extend_labpatlst_tup (env, lp2ts, d2us)
+          end // end of [LABP2ATnorm]
+        | LABP2ATomit _ => env
+      end // end of [list_cons]
+  ) (* end of [list_cons] *)
+//
+end // end of [cloenv_extend_labpatlst_tup]
+
+(* ****** ****** *)
+
+implement
+cloenv_extend_labpatlst_rec
+  (env, lp2ts, ld2us) = let
+in
+//
+case+ lp2ts of
+| list_nil () => env
+| list_cons (lp2t, lp2ts) =>
+  (
+    case+ ld2us of
+    | list_nil () => env
+    | list_cons
+        (ld2u, ld2us) => let
+        val env =
+          cloenv_extend_labpat (env, lp2t, ld2u)
+        // end of [val]
+      in
+        case+ lp2t of
+        | LABP2ATnorm _ =>
+            cloenv_extend_labpatlst_rec (env, lp2ts, ld2us)
+        | LABP2ATomit _ => env
+      end // end of [list_cons]
+  ) (* end of [list_cons] *)
+//
+end // end of [cloenv_extend_labpatlst_rec]
 
 (* ****** ****** *)
 

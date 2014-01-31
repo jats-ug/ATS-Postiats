@@ -42,24 +42,29 @@ staload
 UN = "prelude/SATS/unsafe.sats"
 
 (* ****** ****** *)
-
+//
 staload "./pats_errmsg.sats"
 staload _(*anon*) = "./pats_errmsg.dats"
-implement prerr_FILENAME<> () = prerr "pats_trans3_looping"
-
+//
+implement
+prerr_FILENAME<> () = prerr "pats_trans3_looping"
+//
 (* ****** ****** *)
 
 staload "./pats_staexp2.sats"
-staload "./pats_staexp2_error.sats"
 staload "./pats_staexp2_util.sats"
+staload "./pats_staexp2_error.sats"
 staload "./pats_stacst2.sats"
+
+(* ****** ****** *)
 
 staload "./pats_dynexp2.sats"
 staload "./pats_dynexp3.sats"
 
 (* ****** ****** *)
 
-staload SOL = "./pats_staexp2_solve.sats"
+staload
+SOL = "./pats_staexp2_solve.sats"
 
 (* ****** ****** *)
 
@@ -254,7 +259,7 @@ case+ opt of
 //
         val (pfpush | ()) = trans3_env_push ()
         val err = $SOL.s2exp_tyleq_solve (loc, s2e, s2e2)
-        val ctrknd = C3NSTRKINDlstate_var (d2v)
+        val ctrknd = C3NSTRKlstate_var (d2v)
         val () = trans3_env_pop_and_add (pfpush | loc, ctrknd)
 //
       in
@@ -361,7 +366,7 @@ val s2ps = s2explst_subst_vt (sub, i2nv.loopi2nv_gua)
 val (pfpush | ()) = trans3_env_push ()
 val () = trans3_env_add_proplst_vt (loc, s2ps)
 val () = auxitmlst (loc, sub, i2nv.loopi2nv_arg, lsbis)
-val ctrknd = C3NSTRKINDloop(~1(*enter*))
+val ctrknd = C3NSTRKloop(~1(*enter*))
 val () = trans3_env_pop_and_add (pfpush | loc, ctrknd)
 val () = stasub_free (sub)
 //
@@ -490,7 +495,7 @@ val lsbis2 = the_d2varenv_save_lstbefitmlst ()
 val (pfpush | ()) = trans3_env_push ()
 val () = auxitmlst
   (loc, i2nv, lsbis, sub, r2es.i2nvresstate_arg, lsbis2)
-val ctrknd = C3NSTRKINDloop(0(*break*))
+val ctrknd = C3NSTRKloop(0(*break*))
 val () = trans3_env_pop_and_add (pfpush | loc, ctrknd)
 val () = stasub_free (sub)
 //
@@ -504,7 +509,8 @@ fun
 auxContinue
 (
   loc: loc_t
-, i2nv: loopi2nv, lsbis: lstbefitmlst, post: d2expopt
+, i2nv: loopi2nv, lsbis: lstbefitmlst
+, post: d2expopt
 ) : d3expopt = let
 //
 fun auxitm1
@@ -597,7 +603,7 @@ val (pfpush | ()) = trans3_env_push ()
 val () = auxMetCK (loc, sub, i2nv.loopi2nv_met)
 val () = auxitmlst
   (loc, lsbis, sub, i2nv.loopi2nv_arg, lsbis2)
-val ctrknd = C3NSTRKINDloop(1(*continue*))
+val ctrknd = C3NSTRKloop(1(*continue*))
 val () = trans3_env_pop_and_add (pfpush | loc, ctrknd)
 val () = stasub_free (sub)
 //
@@ -605,7 +611,7 @@ in
   post(*d3expopt*)
 end // end of [auxContinue]
 
-in // in of [local]
+in (* in of [local] *)
 
 implement
 d2exp_trup_loop (

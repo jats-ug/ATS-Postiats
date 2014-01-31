@@ -48,7 +48,8 @@ castfn castvwtp0 {to:vt0p}{from:vt0p} (x: INV(from)):<> to
 // done for treating a linear string as a nonlinear one
 // temporarily.
 //
-castfn castvwtp1 {to:vt0p}{from:vt0p} (x: !INV(from)>>from):<> to
+castfn
+castvwtp1{to:vt0p}{from:vt0p} (x: !INV(from)>>from):<> to
 //
 #atscode_separator()
 //
@@ -82,6 +83,10 @@ praxi cast2void {a:vt0p} (x: INV(a)):<prf> void
 
 praxi castview0 {to:view}{from:view} (pf: from):<prf> to
 praxi castview1 {to:view}{from:view} (pf: !INV(from)):<prf> to
+
+#atscode_separator()
+
+fun{} int2ptr (i: int): ptr and ptr2int (p: ptr): int
 
 #atscode_separator()
 //
@@ -169,11 +174,29 @@ fun{a:t0p} ptr0_modby (p: ptr, x: a):<!wrt> void // !p %= x
 fun{a:t0p} ptr1_modby (p: Ptr1, x: a):<!wrt> void // !p %= x
 //
 #atscode_separator()
+
+fun{a:vt0p} ptr1_list_next (p: Ptr1): Ptr0 // HX: &(p->next)
+
+#atscode_separator()
 //
 // HX: only if you know what you are doing ...
 //
 castfn
-ptr2cptr {a:vt0p}{l:addr} (p: ptr l):<> cptr (a, l)
+ptr2cptr{a:vt0p}{l:addr} (p: ptr l):<> cptr (a, l)
+//
+#atscode_separator()
+//
+symintr cptrof
+//
+castfn
+cptrof_ptr{a:vt0p}{l:addr} (p: ptr l):<> cptr (a, l)
+castfn
+cptrof_var{a:vt0p}{l:addr} (x: &INV(a)):<> cPtr1 (a)
+//
+overload cptrof with cptrof_ptr
+overload cptrof with cptrof_var
+//
+#atscode_separator()
 //
 castfn
 cptr_vtake

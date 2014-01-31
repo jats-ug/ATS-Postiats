@@ -200,8 +200,8 @@ EVP_MD_CTX_unobjfize
   
 (* ****** ****** *)
 
-fun EVP_MD_CTX_init (&EVP_MD_CTX? >> EVP_MD_CTX): void = "mac#%"
-fun EVP_MD_CTX_cleanup (&EVP_MD_CTX >> EVP_MD_CTX?): interr = "mac#%"
+fun EVP_MD_CTX_init (&EVP_MD_CTX? >> _): void = "mac#%"
+fun EVP_MD_CTX_cleanup (&EVP_MD_CTX >> _?): interr = "mac#%"
 
 (* ****** ****** *)
 
@@ -225,16 +225,14 @@ EVP_MD_CTX_copy(EVP_MD_CTX *out,const EVP_MD_CTX *in);
 */
 fun EVP_MD_CTX_copy
   (to: &EVP_MD_CTX? >> _, from: &RD(EVP_MD_CTX)): interr = "mac#%"
-// end of [EVP_MD_CTX_copy]
 
 /*
 int
 EVP_MD_CTX_copy_ex(EVP_MD_CTX *out,const EVP_MD_CTX *in);
 */
 fun EVP_MD_CTX_copy_ex
-  (to: &EVP_MD_CTX >> _, from: &RD(EVP_MD_CTX)): interr = "mac#%"
-// end of [EVP_MD_CTX_copy_ex]
-
+  (to: &EVP_MD_CTX  >> EVP_MD_CTX, from: &RD(EVP_MD_CTX)): interr = "mac#%"
+//
 (* ****** ****** *)
 
 abstype ENGINEptr = ptr
@@ -248,9 +246,18 @@ EVP_DigestInit
 */
 fun
 EVP_DigestInit
-(
-  ctx: &EVP_MD_CTX? >> _, type: EVP_MD_ref1
-) : interr = "mac#%" // end of [EVP_DigestInit]
+  (ctx: &EVP_MD_CTX? >> _, type: EVP_MD_ref1): interr = "mac#%"
+// end of [EVP_DigestInit]
+
+/*
+int
+EVP_DigestInit_ex
+  (EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl);
+*/
+fun
+EVP_DigestInit_ex
+  (ctx: &EVP_MD_CTX >> _, type: EVP_MD_ref1, impl: ENGINEptr): interr = "mac#%"
+// end of [EVP_DigestInit_ex]
 
 (* ****** ****** *)
 
@@ -283,32 +290,27 @@ EVP_DigestFinal
 
 /*
 int
-EVP_DigestInit_ex
-  (EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl);
-*/
-fun
-EVP_DigestInit_ex
-(
-  ctx: &EVP_MD_CTX >> _, type: EVP_MD_ref1, impl: ENGINEptr
-) : interr = "mac#%" // end-of-fun
-
-(* ****** ****** *)
-
-/*
-int
 EVP_DigestFinal_ex
   (EVP_MD_CTX *ctx, unsigned char *md, unsigned int *s);
 */
 fun
 EVP_DigestFinal_ex
 (
-  ctx: &EVP_MD_CTX >> _, md: Ptr1, len: &int(0) >> int(n)
+  ctx: &EVP_MD_CTX >> EVP_MD_CTX, md: Ptr1, len: &int(0) >> int(n)
 ) : #[n:nat] interr = "mac#%" // end-of-fun
 
 (* ****** ****** *)
 //
 // HX: convenience functions
 //
+(* ****** ****** *)
+
+fun{}
+fprint_mdval{n:int}
+(
+  out: FILEref, mdval: arrayref (uchar, n), mdlen: int n
+) : void // end of [fprint_mdval]
+
 (* ****** ****** *)
 
 fun{}

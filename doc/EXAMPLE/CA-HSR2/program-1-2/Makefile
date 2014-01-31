@@ -4,45 +4,38 @@
 
 ######
 
-PATSHOMEQ="$(PATSHOME)"
-PATSOPT=$(PATSHOMEQ)/src/patsopt
+include \
+$(PATSHOME)/share/atsmake-pre.mk
 
 ######
 
-CC=gcc -std=c99 -D_XOPEN_SOURCE
-CC=clang -std=c99 -D_XOPEN_SOURCE
+MYCCRULE=MYCCRULE
 
+######
+
+include $(PATSHOME)/share/atsmake-post.mk
+
+######
+#
+# HX:
+# this example shows a straightforward way
+# one's own malloc/free.
+#
 ######
 
 all:: test
-
-######
-#
-# HX: this example shows a straightforward way of using one's own malloc/free.
-#
-######
-
 test: \
   program-1-2_dats.c \
   program-1-2-test_dats.c ; \
-  $(CC) -I${PATSHOME} -I${PATSHOME}/ccomp/runtime -DATS_MEMALLOC_USER -O2 -o $@ myruntime.c $^
-
-######
-
-%_dats.c: %.dats; $(PATSOPT) -IATS${PATSHOME}/contrib --output $@ --dynamic $<
-
-######
-
-RMF=rm -f
-
-######
-
-clean:: ; $(RMF) *~
-clean:: ; $(RMF) *_?ats.o
-clean:: ; $(RMF) *_?ats.c
-cleanall:: clean
+  $(PATSCC2) -DATS_MEMALLOC_USER -O2 -o $@ myruntime.c $^
 cleanall:: ; $(RMF) test
 
 ######
+
+%_dats.c: %.dats; $(PATSOPT) --output $@ --dynamic $<
+
+######
+
+cleanats:: ; $(RMF) *_dats.c
 
 ###### end of [Makefile] ######

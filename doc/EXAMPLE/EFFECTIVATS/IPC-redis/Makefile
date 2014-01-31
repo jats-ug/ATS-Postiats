@@ -6,85 +6,84 @@
 
 ######
 
-PATSHOMEQ="$(PATSHOME)"
-PATSHOMERELOCQ="$(PATSHOMERELOC)"
+include $(PATSHOME)/share/atsmake-pre.mk
 
 ######
 
-PATSCC=$(PATSHOMEQ)/bin/patscc
-PATSOPT=$(PATSHOMEQ)/bin/patsopt
-PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib
+PATSCC2=$(PATSCC) -DATS_MEMALLOC_GCBDW -IIATS $(PATSHOMERELOCQ)/contrib -O2
 
 ######
 
-ATSCCFLAGS=-O2 -DATS_MEMALLOC_GCBDW -IIATS $(PATSHOMERELOCQ)/contrib
-
-######
-
-all:: test_up
-all:: test_dn
-
-######
-
-cleanall::
-
-######
-
-SOURCESsta := \
+SOURCES_SATS += \
   msgchan.sats \
 
-SOURCESdyn := \
+SOURCES_DATS += \
   mylib.dats \
   msgchan.dats \
   redisContextSetup.dats \
 
 ######
 
-OBJECTS := $(SOURCESdyn)
-OBJECTS := $(patsubst %.dats, %_dats.o, $(OBJECTS))
+MYTARGET=MYTARGET
 
 ######
 
-test_up: \
-  test_up.dats $(OBJECTS) ; \
-  $(PATSCC) $(ATSCCFLAGS) -o $@ $^ -lhiredis -lgc
+MYCCRULE=MYCCRULE
+include $(PATSHOME)/share/atsmake-post.mk
+
+######
+
+OBJECTS := $(MYTARGET_DATS_O)
+
+######
+
+all:: test_up
+test_up: test_up.dats $(OBJECTS) ; $(PATSCC2) -o $@ $^ -lhiredis -lgc
 cleanall:: ; $(RMF) test_up
 
-test_dn: \
-  test_dn.dats $(OBJECTS) ; \
-  $(PATSCC) $(ATSCCFLAGS) -o $@ $^ -lhiredis -lgc
+all:: test_dn
+test_dn: test_dn.dats $(OBJECTS) ; $(PATSCC2) -o $@ $^ -lhiredis -lgc
 cleanall:: ; $(RMF) test_dn
 
 ######
 
-%_sats.o: %.sats ; $(PATSCC) $(ATSCCFLAGS) -c $< || echo $@ ": ERROR!!!"
-%_dats.o: %.dats ; $(PATSCC) -D_BSD_SOURCE $(ATSCCFLAGS) -c $< || echo $@ ": ERROR!!!"
+%_sats.o: %.sats ; $(PATSCC2) -c $< || echo $@ ": ERROR!!!"
+%_dats.o: %.dats ; $(PATSCC2) -D_BSD_SOURCE -c $< || echo $@ ": ERROR!!!"
 
 ######
 
--include .depend
-depend:: ; $(RMF) .depend
-depend:: ; $(PATSOPT) --output-a .depend --depgen -d test_up.dats
-depend:: ; $(PATSOPT) --output-a .depend --depgen -d test_dn.dats
-depend:: ; $(PATSOPT) --output-a .depend --depgen -d $(SOURCESdyn)
+ATSHOMEQ="$(ATSHOME)"
+ATSCC=$(ATSHOMEQ)/bin/atscc
+ATSDOC=$(ATSHOMEQ)/bin/atsdoc
 
 ######
 
-upload_main: ; \
+main.exe: \
+  main_atxt.dats ; \
+  $(ATSCC) \
+  -IATS $(PATSHOME) -IATS $(ATSHOME) \
+  -I$(PATSHOME)/src -D_ATS_GCATS -o $@ $< \
+  -L$(PATSHOME)/libatsynmark -latsynmark -latsdoc
+
+main_atxt.dats: \
+  main.atxt; $(ATSDOC) --outcode $@ -i main.atxt > main_atxt.txt
+main.html: main.exe ; ./main.exe > $@
+
+######
+
+upload_main: \
+  main.html ; \
   scp main.html \
   ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/IPC-redis/
 
 ######
 
-RMF=rm -f
+cleanats:: ; $(RMF) main_atxt.txt
+cleanats:: ; $(RMF) main_atxt.dats
 
 ######
 
-clean:: ; $(RMF) *~
-clean:: ; $(RMF) *_?ats.o
-clean:: ; $(RMF) *_?ats.c
-
-cleanall:: clean
-cleanall:: ; $(RMF) .depend
+cleanall:: ; $(RMF) main.exe
+cleanall:: ; $(RMF) main.html
 
 ###### end of [Makefile] ######

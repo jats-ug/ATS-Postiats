@@ -1239,7 +1239,7 @@ fun s2exp_is_impred (x: s2exp): bool
 
 (* ****** ****** *)
 
-fun s2exp_is_tyfun (x: s2exp): bool
+fun s2exp_is_FUNCLOfun (x: s2exp): bool
 
 (* ****** ****** *)
 
@@ -1428,8 +1428,11 @@ fun jsonize_s2Var (s2V: s2Var): jsonval
 //
 fun jsonize_d2con (d2c: d2con): jsonval
 //
-fun jsonize_s2exp (s2e: s2exp): jsonval
-fun jsonize_s2explst (s2es: s2explst): jsonval
+fun jsonize0_s2exp (s2e: s2exp): jsonval // w/o hnfizing
+fun jsonize1_s2exp (s2e: s2exp): jsonval // with hnfizing
+//
+fun jsonize_s2exp (flag: int, s2e: s2exp): jsonval
+fun jsonize_s2explst (flag: int, s2es: s2explst): jsonval
 //
 fun jsonize_s2eff (s2fe: s2eff): jsonval
 //

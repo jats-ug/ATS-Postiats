@@ -27,11 +27,6 @@
 *)
 
 (* ****** ****** *)
-//
-staload _(*anon*) =
-"prelude/DATS/integer.dats"
-//
-(* ****** ****** *)
 
 extern fun get (): int
 extern fun set (x: int): void

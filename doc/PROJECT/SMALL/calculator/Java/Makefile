@@ -4,9 +4,7 @@
 
 ######
 
-PATSCC=$(PATSHOME)/bin/patscc
-PATSOPT=$(PATSHOME)/bin/patsopt
-PATSLIB=$(PATSHOME)/ccomp/atslib/lib
+include $(PATSHOME)/share/atsmake-pre.mk
 
 ######
 #
@@ -14,6 +12,10 @@ PATSLIB=$(PATSHOME)/ccomp/atslib/lib
 #
 JNIincl=/usr/lib/jvm/java-7-openjdk-amd64/include
 #
+######
+
+all:: Calculator
+
 ######
 
 Calculator:: Calculator.h
@@ -25,8 +27,12 @@ Calculator:: libCalculator_dats.so
 Calculator.h: Calculator.class ; javah Calculator
 Calculator.class: Calculator.java ; javac $<
 Calculator_dats.o: Calculator.dats; \
-  $(PATSCC) -D_GNU_SOURCE -IIATS $(PATSHOME)/contrib -I$(JNIincl) -DATS_MEMALLOC_LIBC -fPIC -c Calculator.dats
-libCalculator_dats.so: Calculator_dats.o ; gcc -shared -o $@ -Wl,-soname,$@ $< -ldl -L$(PATSLIB) -latslib
+$(PATSCC) -D_GNU_SOURCE $(INCLUDE) $(INCLUDE_ATS) \
+  -IIATS $(PATSHOME)/contrib -I$(JNIincl) -DATS_MEMALLOC_LIBC -fPIC -c Calculator.dats
+
+######
+
+libCalculator_dats.so: Calculator_dats.o ; gcc -shared -o $@ -Wl,-soname,$@ $< -ldl
 
 ######
 

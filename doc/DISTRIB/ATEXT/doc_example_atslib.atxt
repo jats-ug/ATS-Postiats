@@ -125,6 +125,10 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 
 (* ****** ****** *)
 
+#packfilename("prelude_checkast.dats")
+
+(* ****** ****** *)
+
 #packfilename("prelude_list.dats")
 #packfilename("prelude_list_vt.dats")
 
@@ -144,11 +148,17 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 
 (* ****** ****** *)
 
+#packfilename("prelude_stream.dats")
+#packfilename("prelude_stream_vt.dats")
+
+(* ****** ****** *)
+
 #packfilename("prelude_gprint.dats")
 
 (* ****** ****** *)
 
 #packfilename("libc_dirent.dats")
+#packfilename("libc_dlfcn.dats")
 #packfilename("libc_fcntl.dats")
 #packfilename("libc_fnmatch.dats")
 #packfilename("libc_malloc.dats")
@@ -173,11 +183,23 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 (* ****** ****** *)
 
 #packfilename("libats_stkarray.dats")
+#packfilename("libats_deqarray.dats")
+
+(* ****** ****** *)
+
 #packfilename("libats_dynarray.dats")
 
 (* ****** ****** *)
 
 #packfilename("libats_refcount.dats")
+
+(* ****** ****** *)
+
+#packfilename("libats_stringbuf.dats")
+
+(* ****** ****** *)
+
+#packfilename("libats_hashtbl_chain.dats")
 
 (* ****** ****** *)
 
@@ -202,10 +224,6 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 
 (* ****** ****** *)
 
-#packfilename("libats_linhashtbl_chain.dats")
-
-(* ****** ****** *)
-
 #packfilename("libats_linheap_binomial.dats")
 #packfilename("libats_linheap_binomial2.dats")
 
@@ -227,11 +245,26 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 (* ****** ****** *)
 
 #packfilename("libats_ML_funset.dats")
+#packfilename("libats_ML_funmap.dats")
 
 (* ****** ****** *)
 
 #packfilename("libats_ML_monad_list.dats")
 #packfilename("libats_ML_monad_maybe.dats")
+
+(* ****** ****** *)
+
+#packfilename("libats_ATS1_funheap_braun.dats")
+#packfilename("libats_ATS1_funheap_binomial.dats")
+
+(* ****** ****** *)
+
+#packfilename("libats_ATS1_funset_listord.dats")
+#packfilename("libats_ATS1_funmset_listord.dats")
+
+(* ****** ****** *)
+
+#packfilename("libats_ATS1_linset_listord.dats")
 
 (* ****** ****** *)
 

@@ -4,26 +4,20 @@
 
 ######
 
+include $(PATSHOME)/share/atsmake-pre.mk
+
+######
+
+MYTARGET=MYTARGET
+MYCCRULE=MYCCRULE
+
+######
+
+include $(PATSHOME)/share/atsmake-post.mk
+
+######
+
 CCOPT=gcc -std=c99 -D_XOPEN_SOURCE -D_GNU_SOURCE 
-
-######
-
-ifeq ("$(PATSHOME)","")
-  PATSHOMEQ="$(ATSHOME)"
-else
-  PATSHOMEQ="$(PATSHOME)"
-endif
-
-ifeq ("$(PATSHOMERELOC)","")
-  PATSHOMERELOCQ="$(ATSHOMERELOC)"
-else
-  PATSHOMERELOCQ="$(PATSHOMERELOC)"
-endif
-
-######
-
-PATSCC=$(PATSHOMEQ)/bin/patscc
-PATSOPT=$(PATSHOMEQ)/bin/patsopt
 
 ######
 
@@ -36,6 +30,7 @@ CFLAGS +=  $(shell pkg-config --cflags json-c)
 ######
 
 LDFLAGS :=
+LDFLAGS += -lm
 LDFLAGS += -lgc
 LDFLAGS += -L$(PATSHOMEQ)/ccomp/atslib/lib
 LDFLAGS += -latslib
@@ -43,7 +38,11 @@ LDFLAGS +=  $(shell pkg-config --libs json-c)
 
 ######
 
-PATSCC2= $(PATSCC) -atsccomp "$(CCOPT)" $(DATSMEMALLOC) $(CFLAGS)
+MALLOCFLAG=-DATS_MEMALLOC_GCBDW
+
+######
+
+PATSCC2= $(PATSCC) -atsccomp "$(CCOPT)" $(MALLOCFLAG) $(CFLAGS)
 
 ######
 
@@ -74,7 +73,7 @@ UTFPLobj := $(patsubst %.dats, %_dats.o, $(UTFPLobj))
 
 ######
 
-all:: UTFPLeval
+all:: UTFPLEVAL
 
 ######
 #
@@ -86,23 +85,23 @@ evaluating/evaluating.o: ; make -C evaluating evaluating.o
 #
 ######
 
-UTFPLeval: \
+UTFPLEVAL:: ; make -C parsing
+UTFPLEVAL:: ; make -C evaluating
+UTFPLEVAL:: \
   utfpl.o \
   parsing/parsing.o \
   evaluating/evaluating.o \
-  utfpl_mylib_dats.o \
   utfpl_dynloadall_dats.o \
-  utfpl_eval_dats.o ; $(PATSCC2) -o $@ $^ $(LDFLAGS)
+  utfpleval_dats.o \
+  utfpleval_symenv_dats.o \
+  utfpleval_mylib_dats.o ; \
+  $(PATSCC2) -o utfpleval $^ $(LDFLAGS)
 
 ######
 
 %_sats.o: %.sats ; $(PATSCC) -c $<
 %_dats.o: %.dats ; $(PATSCC2) -c $<
 
-######
-#
-DATSMEMALLOC=-DATS_MEMALLOC_GCBDW
-#
 ######
 
 -include .depend
@@ -113,22 +112,14 @@ depend:: ; $(RMF) .depend
 depend:: ; $(PATSOPT) --output-a .depend --depgen -
 depend:: ; $(PATSOPT) --output-a .depend --depgen -s $(UTFPLsrc_sta)
 depend:: ; $(PATSOPT) --output-a .depend --depgen -d $(UTFPLsrc_dyn)
-depend:: ; $(PATSOPT) --output-a .depend --depgen -s utfpl_eval.sats
-depend:: ; $(PATSOPT) --output-a .depend --depgen -d utfpl_eval.dats
+depend:: ; $(PATSOPT) --output-a .depend --depgen -s utfpleval.sats
+depend:: ; $(PATSOPT) --output-a .depend --depgen -d utfpleval_symenv.dats
+depend:: ; $(PATSOPT) --output-a .depend --depgen -d utfpleval.dats
 
 ######
 
-RMF=rm -f
-
-######
-
-clean:: ; $(RMF) *~
-clean:: ; $(RMF) *_?ats.o
-clean:: ; $(RMF) *_?ats.c
-
-cleanall:: clean
 cleanall:: ; $(RMF) utfpl.o
-cleanall:: ; $(RMF) UTFPLeval
+cleanall:: ; $(RMF) utfpleval
 cleanall:: ; make -C parsing cleanall
 cleanall:: ; make -C evaluating cleanall
 cleanall:: ; make -C TEST cleanall

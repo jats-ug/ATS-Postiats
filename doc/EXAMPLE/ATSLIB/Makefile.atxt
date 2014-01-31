@@ -112,6 +112,8 @@ RMF=rm -f
 
 #make_entry("prelude_intrange")
 
+#make_entry("prelude_checkast")
+
 #make2_entry("prelude_list", "-DATS_MEMALLOC_LIBC", "")
 #make2_entry("prelude_list_vt", "-DATS_MEMALLOC_LIBC", "")
 
@@ -134,6 +136,7 @@ RMF=rm -f
 ######
 
 #make2_entry("libc_dirent", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
+#make2_entry("libc_dlfcn", "", "-ldl")
 #make_entry("libc_fcntl")
 #make_entry("libc_fnmatch")
 #make2_entry("libc_malloc", "-DATS_MEMALLOC_LIBC", "")
@@ -246,6 +249,19 @@ RMF=rm -f
 
 #make2_entry("libats_ML_monad_list", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
 #make2_entry("libats_ML_monad_maybe", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
+
+######
+
+#make2_entry("libats_ATS1_funset_listord", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
+
+#make2_entry("libats_ATS1_funheap_braun", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
+#make2_entry("libats_ATS1_funheap_binomial", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
+
+#make2_entry("libats_ATS1_funmset_listord", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
+
+######
+
+#make2_entry("libats_ATS1_linset_listord", "-DATS_MEMALLOC_LIBC", "-L$(PATSLIB) -latslib")
 
 ######
 

@@ -1,97 +1,75 @@
-##
-##
-## A simple Makefile
-##
-##
-
-######
-
-PATSHOMEQ="$(PATSHOME)"
-
-######
-
-PATSCC=$(PATSHOMEQ)/bin/patscc
-PATSOPT=$(PATSHOMEQ)/bin/patsopt
-PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib
-
-######
-
 #
-# HX: Please uncomment the one you want, or skip it entirely
-#
-ATSCCFLAGS=
-ATSCCFLAGS=-O2
-#
-# '-flto' enables link-time optimization such as inlining lib functions
-#
-#ATSCCFLAGS=-O2 -flto
+# A simple Makefile
 #
 
 ######
 
-all:: test
+include \
+$(PATSHOME)/share/atsmake-pre.mk
 
 ######
 
-cleanall::
+CFLAGS += -O2
 
 ######
 
-SOURCESsta := \
+LDFLAGS += -lpthread
+
+######
+
+SOURCES_SATS += \
   DiningPhil2.sats \
 
-SOURCESdyn := \
+SOURCES_DATS += \
   DiningPhil2.dats \
   DiningPhil2_fork.dats \
   DiningPhil2_thread.dats \
 
 ######
 
-OBJECTS := $(SOURCESdyn)
-OBJECTS := $(patsubst %.dats, %_dats.o, $(OBJECTS))
+MYTARGET=test
 
 ######
 
-test: $(OBJECTS) ; \
-  $(PATSCC) $(ATSCCFLAGS) -pthread -o $@ $^ -L$(PATSLIB) -latslib
-cleanall:: ; $(RMF) test
+include $(PATSHOME)/share/atsmake-post.mk
 
 ######
 
-#
-# You may find these rules useful
-#
-
-%_sats.o: %.sats ; $(PATSCC) -DATS_MEMALLOC_LIBC -c $< || echo $@ ": ERROR!!!"
-%_dats.o: %.dats ; $(PATSCC) -D_BSD_SOURCE -DATS_MEMALLOC_LIBC $(ATSCCFLAGS) -c $< || echo $@ ": ERROR!!!"
+ATSHOMEQ="$(ATSHOME)"
+ATSCC=$(ATSHOMEQ)/bin/atscc
+ATSDOC=$(ATSHOMEQ)/bin/atsdoc
 
 ######
 
--include .depend
+main.exe: \
+  main_atxt.dats ; \
+  $(ATSCC) \
+  -IATS $(PATSHOME) -IATS $(ATSHOME) \
+  -I$(PATSHOME)/src -D_ATS_GCATS -o $@ $< \
+  -L$(PATSHOME)/libatsynmark -latsynmark -latsdoc
+
+main_atxt.dats: \
+  main.atxt; $(ATSDOC) --outcode $@ -i main.atxt > main_atxt.txt
+main.html: main.exe ; ./main.exe > $@
 
 ######
 
-depend:: ; $(RMF) .depend
-depend:: ; $(PATSOPT) --output-a .depend --depgen -s $(SOURCESsta)
-depend:: ; $(PATSOPT) --output-a .depend --depgen -d $(SOURCESdyn)
-
-######
-
-upload_main: ; \
+upload_main: \
+  main.html ; \
   scp main.html \
   ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/DiningPhil2/
 
 ######
 
-RMF=rm -f
+clean: cleanats
+cleanats:: ; $(RMF) main_atxt.txt
+cleanats:: ; $(RMF) main_atxt.dats
 
 ######
 
-clean:: ; $(RMF) *~
-clean:: ; $(RMF) *_?ats.o
-clean:: ; $(RMF) *_?ats.c
+cleanall:: ; $(RMF) main.exe
+cleanall:: ; $(RMF) main.html
 
-cleanall:: clean
-#cleanall:: ; $(RMF) .depend
+######
 
 ###### end of [Makefile] ######

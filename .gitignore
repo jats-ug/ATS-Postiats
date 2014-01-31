@@ -6,6 +6,7 @@
 .\#*
 *_?ats.o
 *_?ats.c
+*.exe
 
 config.h
 config.h.in
@@ -31,17 +32,17 @@ patsopt_env.sh
 #
 # The compiler for POSTIATS 
 #
-src/patsopt
 src/.depend
-src/Makefile.exe
-src/Makefile_atxt.dats
+src/patsopt
 src/Makefile_atxt.txt
+src/Makefile_atxt.dats
 src/TAGS
 src/tags
 src/TAGATS
 
 bin/patscc
 bin/patsopt
+bin/pats2xhtml
 
 #
 # boostrapping
@@ -63,7 +64,7 @@ utils/atsyntax/pats2xhtml
 ccomp/atslib/lib
 ccomp/atslib/lib64
 ccomp/atslib/output
-ccomp/atslib/Makefile.exe
+
 
 #
 # ATSHOME/utils
@@ -71,24 +72,22 @@ ccomp/atslib/Makefile.exe
 
 utils/atscc/patscc
 
+
 #
 # ATSLIB/prelude
 #
 
-prelude/SATS/CODEGEN/*.exe
+
 prelude/SATS/CODEGEN/*.sats
 prelude/SATS/CODEGEN/*_atxt.txt
 prelude/SATS/CODEGEN/*_atxt.dats
-prelude/DATS/CODEGEN/*.exe
 prelude/DATS/CODEGEN/*.dats
 prelude/DATS/CODEGEN/*_atxt.txt
 prelude/DATS/CODEGEN/*_atxt.dats
-prelude/CATS/CODEGEN/*.exe
 prelude/CATS/CODEGEN/*.cats
 prelude/CATS/CODEGEN/*_atxt.txt
 prelude/CATS/CODEGEN/*_atxt.dats
 
-prelude/SATS/DOCUGEN/*.exe
 prelude/SATS/DOCUGEN/*_atxt.txt
 prelude/SATS/DOCUGEN/*_atxt.dats
 prelude/SATS/DOCUGEN/Makefile
@@ -101,41 +100,33 @@ prelude/SATS/DOCUGEN/TRYIT
 # ATSLIB/libc
 #
 
-libc/SATS/CODEGEN/*.exe
 libc/SATS/CODEGEN/*.sats
 libc/SATS/CODEGEN/*_atxt.txt
 libc/SATS/CODEGEN/*_atxt.dats
-libc/DATS/CODEGEN/*.exe
 libc/DATS/CODEGEN/*.dats
 libc/DATS/CODEGEN/*_atxt.txt
 libc/DATS/CODEGEN/*_atxt.dats
-libc/CATS/CODEGEN/*.exe
 libc/CATS/CODEGEN/*.cats
 libc/CATS/CODEGEN/*_atxt.txt
 libc/CATS/CODEGEN/*_atxt.dats
 
 libc/SATS/DOCUGEN/Makefile
-libc/SATS/DOCUGEN/*.exe
 libc/SATS/DOCUGEN/*_atxt.txt
 libc/SATS/DOCUGEN/*_atxt.dats
 libc/SATS/DOCUGEN/HTML
 libc/SATS/DOCUGEN/TRYIT
 
-libc/sys/SATS/CODEGEN/*.exe
 libc/sys/SATS/CODEGEN/*.sats
 libc/sys/SATS/CODEGEN/*_atxt.txt
 libc/sys/SATS/CODEGEN/*_atxt.dats
-libc/sys/DATS/CODEGEN/*.exe
 libc/sys/DATS/CODEGEN/*.dats
 libc/sys/DATS/CODEGEN/*_atxt.txt
 libc/sys/DATS/CODEGEN/*_atxt.dats
-libc/sys/CATS/CODEGEN/*.exe
 libc/sys/CATS/CODEGEN/*.cats
 libc/sys/CATS/CODEGEN/*_atxt.txt
 libc/sys/CATS/CODEGEN/*_atxt.dats
 
 libc/sys/SATS/DOCUGEN/Makefile
-libc/sys/SATS/DOCUGEN/*.exe
 libc/sys/SATS/DOCUGEN/*_atxt.txt
 libc/sys/SATS/DOCUGEN/*_atxt.dats
 libc/sys/SATS/DOCUGEN/HTML
@@ -145,40 +136,32 @@ libc/sys/SATS/DOCUGEN/TRYIT
 # ATSLIB/libats
 #
 
-libats/SATS/CODEGEN/*.exe
 libats/SATS/CODEGEN/*.sats
 libats/SATS/CODEGEN/*_atxt.txt
 libats/SATS/CODEGEN/*_atxt.dats
-libats/DATS/CODEGEN/*.exe
 libats/DATS/CODEGEN/*.dats
 libats/DATS/CODEGEN/*_atxt.txt
 libats/DATS/CODEGEN/*_atxt.dats
-libats/CATS/CODEGEN/*.exe
 libats/CATS/CODEGEN/*.cats
 libats/CATS/CODEGEN/*_atxt.txt
 libats/CATS/CODEGEN/*_atxt.dats
 
 libats/SATS/DOCUGEN/Makefile
-libats/SATS/DOCUGEN/*.exe
 libats/SATS/DOCUGEN/*_atxt.txt
 libats/SATS/DOCUGEN/*_atxt.dats
 libats/SATS/DOCUGEN/HTML
 libats/SATS/DOCUGEN/TRYIT
 
-libats/ML/SATS/CODEGEN/*.exe
 libats/ML/SATS/CODEGEN/*.sats
 libats/ML/SATS/CODEGEN/*_atxt.txt
 libats/ML/SATS/CODEGEN/*_atxt.dats
-libats/ML/DATS/CODEGEN/*.exe
 libats/ML/DATS/CODEGEN/*.dats
 libats/ML/DATS/CODEGEN/*_atxt.txt
 libats/ML/DATS/CODEGEN/*_atxt.dats
-libats/ML/CATS/CODEGEN/*.exe
 libats/ML/CATS/CODEGEN/*.cats
 libats/ML/CATS/CODEGEN/*_atxt.txt
 libats/ML/CATS/CODEGEN/*_atxt.dats
 
-libats/ML/SATS/DOCUGEN/*.exe
 libats/ML/SATS/DOCUGEN/*_atxt.txt
 libats/ML/SATS/DOCUGEN/*_atxt.dats
 libats/ML/SATS/DOCUGEN/Makefile
@@ -191,7 +174,6 @@ libats/ML/SATS/DOCUGEN/TRYIT
 # ATSLIB/libats
 #
 
-libatslex/SATS/DOCUGEN/*.exe
 libatslex/SATS/DOCUGEN/*_atxt.txt
 libatslex/SATS/DOCUGEN/*_atxt.dats
 libatslex/SATS/DOCUGEN/HTML
@@ -218,7 +200,6 @@ contrib/cairo/TUTORIAL/IMAGE
 contrib/zeromq/DOC/zguide
 
 contrib/*/atsctrb_*.o
-contrib/*/SATS/DOCUGEN/*.exe
 contrib/*/SATS/DOCUGEN/*_atxt.txt
 contrib/*/SATS/DOCUGEN/*_atxt.dats
 contrib/*/SATS/DOCUGEN/Makefile
@@ -226,13 +207,11 @@ contrib/*/SATS/DOCUGEN/*_atxt.txt
 contrib/*/SATS/DOCUGEN/*_atxt.dats
 contrib/*/SATS/DOCUGEN/HTML
 contrib/*/SATS/DOCUGEN/TRYIT
-contrib/*/CATS/CODEGEN/*.exe
 contrib/*/CATS/CODEGEN/*.cats
 contrib/*/CATS/CODEGEN/*_atxt.txt
 contrib/*/CATS/CODEGEN/*_atxt.dats
 contrib/*/TEST/test??
 
-contrib/*/*/SATS/DOCUGEN/*.exe
 contrib/*/*/SATS/DOCUGEN/*_atxt.txt
 contrib/*/*/SATS/DOCUGEN/*_atxt.dats
 contrib/*/*/SATS/DOCUGEN/Makefile
@@ -240,18 +219,17 @@ contrib/*/*/SATS/DOCUGEN/*_atxt.txt
 contrib/*/*/SATS/DOCUGEN/*_atxt.dats
 contrib/*/*/SATS/DOCUGEN/HTML
 contrib/*/*/SATS/DOCUGEN/TRYIT
-contrib/*/*/CATS/CODEGEN/*.exe
 contrib/*/*/CATS/CODEGEN/*.cats
 contrib/*/*/CATS/CODEGEN/*_atxt.txt
 contrib/*/*/CATS/CODEGEN/*_atxt.dats
 contrib/*/*/TEST/test??
 
+contrib/SDL2/SDL2-2.0.1
 contrib/zlog/zlog-latest-stable/
 
 #
 # ATSHOME/doc/DISTRIB
 #
-doc/DISTRIB/*.exe
 doc/DISTRIB/*_atxt.txt
 doc/DISTRIB/*_atxt.dats
 doc/DISTRIB/HTML
@@ -291,6 +269,7 @@ doc/DISTRIB/ATS-Postiats/libats/?ATS/*.?ats
 doc/DISTRIB/ATS-Postiats/libats/?ATS/SHARE/*.?ats
 doc/DISTRIB/ATS-Postiats/libats/ML/?ATS/*.?ats
 doc/DISTRIB/ATS-Postiats/libats/ML/?ATS/SHARE/*.?ats
+doc/DISTRIB/ATS-Postiats/libats/ATS1/?ATS/*.?ats
 doc/DISTRIB/ATS-Postiats/contrib/*
 doc/DISTRIB/ATS-Postiats/doc/EXAMPLE/INTRO/*.?ats
 doc/DISTRIB/ATS-Postiats/doc/EXAMPLE/INTRO/Makefile
@@ -313,13 +292,17 @@ doc/DISTRIB/ATS-Postiats-contrib/project/*
 doc/DISTRIB/ATS2-Postiats-contrib-0.0.1
 doc/DISTRIB/ATS2-Postiats-contrib-0.0.2
 doc/DISTRIB/ATS2-Postiats-contrib-0.0.3
+#
+# ATSHOME/doc/DISTRIB/ATS-Postiats-include
+#
+doc/DISTRIB/ATS-Postiats-include
+doc/DISTRIB/ATS2-Postiats-include-0.0.4
 
 #
 # ATSHOME/doc/EXAMPLE
 #
 doc/EXAMPLE/*/*_atxt.txt
 doc/EXAMPLE/*/*_atxt.dats
-doc/EXAMPLE/*/Makefile.exe
 doc/EXAMPLE/EFFECTIVATS/*/.depend
 doc/EXAMPLE/EFFECTIVATS/*/.depend?
 

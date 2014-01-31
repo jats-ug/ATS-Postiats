@@ -28,7 +28,7 @@ case+ p2t0.p2at_node of
 //
 | P2Tpat (p2t) => fprint! (out, "P2Tpat(", p2t, ")")
 //
-| P2Trec (knd, npf, lp2ts) => fprint! (out, "P2Trec(", lp2ts, ")")
+| P2Trec (lp2ts) => fprint! (out, "P2Trec(", lp2ts, ")")
 //
 | P2Tignored ((*void*)) => fprint! (out, "P2Tignored(", ")")
 //
@@ -59,8 +59,12 @@ in
 case+ lp2t of
 | LABP2ATnorm
     (lab, p2t) =>
-    fprint! (out, "LABP2ATnorm(", lab, "->", p2t, ")")
-| LABP2ATomit (loc) => fprint (out, "LABP2ATomit(...)")
+  (
+    fprint! (
+      out, "LABP2ATnorm(", lab, "->", p2t, ")"
+    ) (* end of [fprint!] *)
+  )
+| LABP2ATomit () => fprint (out, "LABP2ATomit()")
 //
 end // end of [fprint_labp2at]
 
@@ -92,6 +96,12 @@ p2at_make_node
 implement
 p2at_var (loc, d2v) =
   p2at_make_node (loc, P2Tvar (d2v))
+//
+(* ****** ****** *)
+
+implement
+p2at_rec (loc, lp2ts) =
+  p2at_make_node (loc, P2Trec (lp2ts))
 //
 (* ****** ****** *)
 

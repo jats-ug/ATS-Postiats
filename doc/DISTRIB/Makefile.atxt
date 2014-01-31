@@ -92,6 +92,7 @@ all_script::
 #make_entry("atslib_libc")
 #make_entry("atslib_libats")
 #make_entry("atslib_libats_ML")
+#make_entry("atslib_libats_ATS1")
 
 ######
 
@@ -132,8 +133,7 @@ all_script::
 #make_entry("atscntrb_HTML")
 #make_entry("atscntrb_HTML_canvas-2d")
 #
-#make_entry("atscntrb_libatshwxi_intinf")
-#make_entry("atscntrb_libatshwxi_testing")
+#make_entry("atscntrb_libatshwxi")
 #make_entry("atscntrb_libatshwxi_teaching")
 #
 ######
@@ -163,11 +163,19 @@ srcget_home:: ; $(CPF) ../../bin/patsopt_env.sh.in $(ATSDIST)/bin/
 ######
 
 srcget_share:: ; \\
+  $(CPF) ../../share/Makefile.gen $(ATSDIST)/share/
+srcget_share:: ; \\
   $(CPF) ../../share/atspre_define.hats $(ATSDIST)/share/
 srcget_share:: ; \\
-  $(CPF) ../../share/atspre_define_pkgreloc.hats $(ATSDIST)/share/
-srcget_share:: ; \\
   $(CPF) ../../share/atspre_staload.hats $(ATSDIST)/share/
+srcget_share:: ; \\
+  $(CPF) ../../share/HATS/atspre_define_pkgreloc.hats $(ATSDIST)/share/HATS/
+srcget_share:: ; \\
+  $(CPF) ../../share/HATS/atslib_staload_libc.hats $(ATSDIST)/share/HATS/
+srcget_share:: ; \\
+  $(CPF) ../../share/HATS/atspre_staload_libats_ML.hats $(ATSDIST)/share/HATS/
+srcget_share:: ; $(CPF) ../../share/atsmake-pre.mk $(ATSDIST)/share/
+srcget_share:: ; $(CPF) ../../share/atsmake-post.mk $(ATSDIST)/share/
 
 ######
 
@@ -184,6 +192,8 @@ srcget_atslib:: srcget_atslib_libats
 srcget_atslib_libats:: SCRIPT/atslib_libats.bash ; bash $<
 srcget_atslib:: srcget_atslib_libats_ML
 srcget_atslib_libats_ML:: SCRIPT/atslib_libats_ML.bash ; bash $<
+srcget_atslib:: srcget_atslib_libats_ATS1
+srcget_atslib_libats_ATS1:: SCRIPT/atslib_libats_ATS1.bash ; bash $<
 
 ######
 
@@ -267,16 +277,14 @@ srcget_atscntrb_HTML_canvas-2d:: SCRIPT/atscntrb_HTML_canvas-2d.bash ; bash $<
 
 ######
 
-srcget_atscntrb:: srcget_atscntrb_libatshwxi_intinf
-srcget_atscntrb_libatshwxi_intinf:: SCRIPT/atscntrb_libatshwxi_intinf.bash ; bash $<
-srcget_atscntrb:: srcget_atscntrb_libatshwxi_testing
-srcget_atscntrb_libatshwxi_testing:: SCRIPT/atscntrb_libatshwxi_testing.bash ; bash $<
+srcget_atscntrb:: srcget_atscntrb_libatshwxi
+srcget_atscntrb_libatshwxi:: SCRIPT/atscntrb_libatshwxi.bash ; bash $<
 srcget_atscntrb:: srcget_atscntrb_libatshwxi_teaching
 srcget_atscntrb_libatshwxi_teaching:: SCRIPT/atscntrb_libatshwxi_teaching.bash ; bash $<
 
 ######
 
-PACKNAME=ATS2-Postiats-0.0.4
+PACKNAME=ATS2-Postiats-0.0.5
 atspacktar:: ; rm -rf $(PACKNAME)
 atspacktar:: ; cp -rf ATS-Postiats $(PACKNAME)
 atspacktar:: ; $(RMF) $(PACKNAME)/Makefile_conf
@@ -285,7 +293,7 @@ atspacktar:: ; $(RMF) $(PACKNAME)/install-sh ; $(CPF) ATS-Postiats/install-sh $(
 atspacktar:: ; make -C $(PACKNAME) cleanall
 atspacktar:: ; tar -zvcf  $(PACKNAME).tgz  $(PACKNAME)/
 
-CNTRBNAME=ATS2-Postiats-contrib-0.0.3
+CNTRBNAME=ATS2-Postiats-contrib-0.0.4
 atscntrbtar:: ; rm -rf $(CNTRBNAME)
 atscntrbtar:: ; cp -rf ATS-Postiats-contrib $(CNTRBNAME)
 atscntrbtar:: ; tar -zvcf  $(CNTRBNAME).tgz  $(CNTRBNAME)/

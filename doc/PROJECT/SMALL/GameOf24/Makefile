@@ -4,62 +4,53 @@
 
 ######
 
-CCOPT=gcc -std=c99 -D_XOPEN_SOURCE -D_GNU_SOURCE 
+include \
+$(PATSHOME)/share/atsmake-pre.mk
 
 ######
 
-PATSHOMEQ="$(PATSHOME)"
+CFLAGS += -O2
 
 ######
 
-PATSCC=\
-$(PATSHOMEQ)/bin/patscc \
-  -atsccomp "$(CCOPT)" \
-  -IIATS $(PATSHOME) -IIATS $(PATSHOME)/ccomp/runtime
-PATSOPT=$(PATSHOMEQ)/bin/patsopt
+LDFLAGS :=
+LDFLAGS += -lgc
 
 ######
 
-all:: GameOf24
+MALLOCFLAG := -DATS_MEMALLOC_GCBDW
 
 ######
 
-GameOf24: \
-  GameOf24_dats.o \
-  GameOf24_card_dats.o \
-  GameOf24_cardset_dats.o \
-  GameOf24_solve_dats.o ; \
-  $(CCOPT) \
-    -I${PATSHOME} \
-    -I${PATSHOME}/ccomp/runtime \
-    -L${PATSHOME}/ccomp/atslib/lib \
-    -O2 -o $@ $^ $(LGC) -latslib
+SOURCES_SATS += \
+  GameOf24.sats \
+
+SOURCES_DATS += \
+  GameOf24.dats \
+  GameOf24_card.dats \
+  GameOf24_cardset.dats \
+  GameOf24_solve.dats \
+  GameOf24_mylib.dats \
 
 ######
 
-%_dats.c: \
-  %.dats GameOf24.sats ; $(PATSCC) -ccats $<
-%_dats.o: %_dats.c; $(PATSCC) $(DATSMEMALLOC) -c $<
+MYTARGET=GameOf24
 
 ######
 #
-#LGC=
-#DATSMEMALLOC=-DATS_MEMALLOC_LIBC
+MYPORTDIR=MYPORTDIR
 #
-LGC=-lgc
-DATSMEMALLOC=-DATS_MEMALLOC_GCBDW
+#MYPORTCPP=MYPORTCPP
 #
 ######
 
-RMF=rm -f
+include $(PATSHOME)/share/atsmake-post.mk
 
 ######
 
-clean:: ; $(RMF) *~
-clean:: ; $(RMF) *_?ats.o
-clean:: ; $(RMF) *_?ats.c
-cleanall:: clean
-cleanall:: ; $(RMF) GameOf24
+cleanall:: ; $(RMF) $(MYPORTDIR)/*
+cleanats:: ; $(RMF) $(MYPORTDIR)/*_?ats.o
+cleanats:: ; $(RMF) $(MYPORTDIR)/*_?ats.c
 
 ######
 

@@ -10,10 +10,8 @@
 //
 (* ****** ****** *)
 //
-staload
-"./../utfpl.sats"
-//
-staload "./eval.sats"
+staload "./../utfpl.sats"
+staload "./../utfpleval.sats"
 //
 (* ****** ****** *)
 
@@ -41,18 +39,11 @@ case+ x0 of
 | VALint (i) =>
     fprint! (out, "VALint(", i, ")")
 //
-| VALbool (b) =>
-    fprint! (out, "VALbool(", b, ")")
-| VALchar (c) =>
-    fprint! (out, "VALchar(", c, ")")
-//
 | VALfloat (d) =>
     fprint! (out, "VALfloat(", d, ")")
 //
 | VALstring (str) =>
     fprint! (out, "VALstring(", str, ")")
-//
-| VALvoid () => fprint! (out, "VALvoid()")
 //
 | VALcst (d2c) =>
     fprint! (out, "VALcst(", d2c, ")")
@@ -61,13 +52,18 @@ case+ x0 of
 | VALsym (d2s) =>
     fprint! (out, "VALsym(", d2s, ")")
 //
-| VALrec (lxs) =>
-    fprint! (out, "VALrec(", lxs, ")")
+| VALtup (d2us) =>
+    fprint! (out, "VALtup(", d2us, ")")
+//
+| VALrec (ld2us) =>
+    fprint! (out, "VALrec(", ld2us, ")")
 //
 | VALlam _ => fprint! (out, "VALlam(...)")
 | VALfix _ => fprint! (out, "VALfix(...)")
 //
 | VALfun _ => fprint! (out, "VALfun(...)")
+//
+| VALboxed _ => fprint! (out, "VALboxed(...)")
 //
 | VALerror (msg) => fprint! (out, "VALerror(", msg, ")")
 //
@@ -100,13 +96,10 @@ in
 case+ x0 of
 //
 | VALint (i) => fprint! (out, i)
-| VALbool (b) => fprint! (out, b)
-| VALchar (c) => fprint! (out, c)
 | VALfloat (d) => fprint! (out, d)
 | VALstring (str) => fprint! (out, str)
 //
-| VALvoid () => fprint! (out, "()")
-//
+| VALtup (xs) => fprint! (out, "VALtup(", xs, ")")
 | VALrec (lxs) => fprint! (out, "VALrec(", lxs, ")")
 //
 | _(*rest*) => fprint_value (out, x0)

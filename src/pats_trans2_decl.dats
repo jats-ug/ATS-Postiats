@@ -77,6 +77,13 @@ typedef dqi0de = $SYN.dqi0de
 typedef impqi0de = $SYN.impqi0de
 typedef dcstextdef = $SYN.dcstextdef
 
+(* ****** ****** *)
+
+overload print with $SYN.print_i0de
+overload print with $SYN.print_dqi0de
+
+(* ****** ****** *)
+
 macdef
 prerr_dqid (dq, id) =
   ($SYN.prerr_d0ynq ,(dq); $SYM.prerr_symbol ,(id))
@@ -117,11 +124,16 @@ fun aux
   (ids: i0delst): void = let
 in
   case+ ids of
-  | list_cons (id, ids) => aux ids where {
+  | list_cons
+      (id, ids) => let
       val sym = id.i0de_sym
-      val () = the_d2expenv_add (sym, D2ITMsymdef (sym, list_nil))
-    } // end of [list_cons]
-  | list_nil () => () // end of [list_nil]
+      val () =
+        the_d2expenv_add (sym, D2ITMsymdef (sym, list_nil))
+      // end of [val]
+    in
+      aux (ids)
+    end // end of [list_cons]
+  | list_nil ((*void*)) => () // end of [list_nil]
 end // end of [aux]
 //
 in
@@ -174,12 +186,8 @@ val loc0 = d1c0.d1ecl_loc
 (*
 val () =
 {
-  val () = print "overload_tr: id = "
-  val () = $SYN.print_i0de (id)
-  val () = print_newline ()
-  val () = print "overload_tr: dqid = "
-  val () = $SYN.print_dqi0de (dqid)
-  val () = print_newline ();
+  val () = println! ("overload_tr: id = ", id)
+  val () = println! ("overload_tr: dqid = ", dqid)
 } (* end of [val] *)
 *)
 //
@@ -260,16 +268,31 @@ val ans = ans where {
 } // end of [where] // end of [val]
 val d2pis = (
   case+ ans of
-  | ~Some_vt d2i => (
-    case+ d2i of
-    | D2ITMsymdef (sym, d2pis) => d2pis
-    | _ => let
-        val () = auxerr1 (loc0, id, err) in list_nil ()
-      end // end of [_]
+  | ~Some_vt (d2i) =>
+    (
+      case+ d2i of
+      | D2ITMsymdef (sym, d2pis) => d2pis
+      | _ => let
+          val () = auxerr1 (loc0, id, err) in list_nil
+        end // end of [_]
     ) // end of [Some_vt]
+(*
+//
+// HX-2014-01-30:
+// Is this design too cumbersome?
+//
   | ~None_vt () => let
       val () = auxerr2 (loc0, id, err) in list_nil ()
     end // end of [None_vt]
+*)
+  | ~None_vt () => let
+      val d2pis = list_nil ()
+      val () =
+        the_d2expenv_add (sym, D2ITMsymdef (sym, d2pis))
+      // end of [val]
+    in
+      d2pis
+    end // end of [_]
 ) : d2pitmlst // end of [val]
 (*
 val () = begin
@@ -1204,6 +1227,30 @@ val () = the_s2expenv_add_scst (s2c)
 
 local
 
+fun
+dckfun_check
+(
+  d1c: d1cstdec
+, dck: dcstkind, s2e_cst: s2exp
+) : void =
+(
+case+ dck of
+| DCKfun () => let
+    val isfun =
+      s2exp_is_FUNCLOfun (s2e_cst)
+    // end of [val]
+  in
+    if not(isfun) then {
+      val () =
+        prerr_error2_loc (d1c.d1cstdec_loc)
+      val () = filprerr_ifdebug "d1cstdec_tr" // for debugging
+      val () = prerrln! ": the function may need to be declard as a value"
+      val () = the_trans2errlst_add (T2E_d1cstdec_tr (d1c))
+    } (* end of [if] *)
+  end (* end of [DCKfun] *)
+| _(*rest*) => ((*void*))
+) (* end of [dckfun_check] *)
+
 fun s2exp_get_arylst
   (s2e: s2exp): List int =
   case+ s2e.s2exp_node of
@@ -1238,18 +1285,23 @@ fun d1cstdec_tr
     (if isprf then s2rt_prop else s2rt_t0ype): s2rt
 //
   val s1e_cst = d1c.d1cstdec_type
-  var s2e_cst =
-    s1exp_trdn (s1e_cst, s2t_cst)
+  val s2e_cst = s1exp_trdn (s1e_cst, s2t_cst)
+  val s2e_cst = s2exp_hnfize (s2e_cst)
+  val ((*void*)) = dckfun_check (d1c, dck, s2e_cst)
+//
   val arylst = s2exp_get_arylst (s2e_cst)
-  val extdef = (
+  val extdef =
+  (
     if knd = 0 // static dyncst
       then $SYN.dcstextdef_sta (sym) else d1c.d1cstdec_extdef
+    // end of [if]
   ) : dcstextdef // end of [val]
+//
   val d2c =
     d2cst_make (sym, loc, fil, dck, s2qs, arylst, s2e_cst, extdef)
   // end of [val]
 //
-  val () = the_d2expenv_add_dcst (d2c)
+  val ((*void*)) = the_d2expenv_add_dcst (d2c)
 //
 } (* end of [d1cstdec_tr] *)
 

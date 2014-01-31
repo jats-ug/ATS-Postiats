@@ -21,7 +21,7 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 #atscode_separator()
 
 #atscode_author("Hongwei Xi")
-#atscode_authoremail("hwxi AT cs DOT bu DOT edu")
+#atscode_authoremail("gmhwxiATgmailDOTcom")
 #atscode_start_time("Feburary, 2012")
 
 #atscode_separator()
@@ -617,7 +617,8 @@ end // end of [list_concat]
 
 #atscode_separator()
 
-implement{a}
+implement
+{a}(*tmp*)
 list_take (xs, i) = let
 //
 fun loop
@@ -660,37 +661,43 @@ fun loop
 ) :<!wrt> #[
   j:nat | (i <= n && i == j) || (i > n && n == j)
 ] bool (i <= n) = let
+//
 in
-  if i > 0 then (
-    case+ xs of
-    | list_cons
-        (x, xs1) => let
-        val () = res :=
-          list_vt_cons{a}{0}(x, _(*?*))
-        val+list_vt_cons
-          (_, res1) = res // res1 = res.1
-        val ans = loop (xs1, i-1, res1)
-        prval () = fold@ (res)
-      in
-        ans
-      end // end of [list_cons]
-    | list_nil () => let
-        val () = res := list_vt_nil ()
-      in
-        false(*fail*)
-      end // end of [list_nil]
-  ) else let
-    val () = res := list_vt_nil () in true(*succ*)
-  end (* end of [if] *)
+//
+if i > 0
+then let
+in
+//
+case+ xs of
+| list_cons
+    (x, xs1) => let
+    val ((*void*)) =
+    res := list_vt_cons{a}{0}(x, _)
+    val+list_vt_cons (_, res1) = res
+    val ans = loop (xs1, i-1, res1)
+  in
+    fold@ (res); ans
+  end // end of [list_cons]
+| list_nil () => let
+    val ((*void*)) =
+    res := list_vt_nil () in false(*fail*)
+  end // end of [list_nil]
+//
+end // end of [then]
+else let
+  val () = res := list_vt_nil () in true(*succ*)
+end // end of [else]
+// end of [if]
+//
 end // end of [loop] 
 //   
 var res: ptr
-val ans = loop {n}{i} (xs, i, res)
+val ans = loop{n}{i}(xs, i, res)
 //
 in
 //
-if ans then
-  res // i <= n && length (res) == i
+if ans
+then res // i <= n && length (res) == i
 else let
   val () = list_vt_free<a> (res) in $raise ListSubscriptExn()
 end // end of [if]
@@ -699,9 +706,9 @@ end (* end of [list_take_exn] *)
 
 #atscode_separator()
 
-implement{a}
-list_drop
-  (xs, i) = let
+implement
+{a}(*tmp*)
+list_drop (xs, i) = let
 //
 fun loop
   {n:int}
@@ -729,7 +736,7 @@ fun loop
     case+ xs of
     | list_cons (_, xs) => loop (xs, i-1)
     | list_nil () => $raise ListSubscriptExn()
-  ) else xs // end of [if]
+  ) else (xs) // end of [if]
 //
 in
   loop (xs, i)
@@ -1006,8 +1013,9 @@ var res: ptr ; val () = loop (xs, 0, res)
 
 #atscode_separator()
 
-implement{x}{y}
-list_map {n} (xs) = let
+implement
+{x}{y}(*tmp*)
+list_map{n}(xs) = let
 //
 prval () = lemma_list_param (xs)
 //
@@ -1038,6 +1046,34 @@ val () = loop (xs, res)
 in
   res (*list_vt (y, n)*)
 end // end of [list_map]
+
+#atscode_separator()
+
+implement
+{x}{y}(*tmp*)
+list_map_fun
+  (xs, f) = let
+//
+implement
+{x2}{y2}
+list_map$fopr (x2) = $UN.castvwtp0{y2}(f($UN.cast{x}(x2)))
+//
+in
+  list_map<x><y> (xs)
+end // end of [list_map_fun]
+
+implement
+{x}{y}(*tmp*)
+list_map_cloref
+  (xs, f) = let
+//
+implement
+{x2}{y2}
+list_map$fopr (x2) = $UN.castvwtp0{y2}(f($UN.cast{x}(x2)))
+//
+in
+  list_map<x><y> (xs)
+end // end of [list_map_cloref]
 
 #atscode_separator()
 
@@ -1670,13 +1706,33 @@ implement{a2}
 list_mergesort$cmp
   (x1, x2) = let
 //
-val cmp = $UN.cast{cmpval(a2)}(cmp) in cmp (x1, x2)
+typedef cmp2 = cmpval(a2)
+//
+val cmp2 = $UN.cast{cmp2}(cmp) in cmp2 (x1, x2)
 //
 end // end of [list_mergesort$cmp]
 //
 in
   list_mergesort<a> (xs)
 end // end of [list_mergesort_fun]
+
+implement{a}
+list_mergesort_cloref
+  (xs, cmp) = let
+//
+implement{a2}
+list_mergesort$cmp
+  (x1, x2) = let
+//
+typedef cmp2 = (a2, a2) -<cloref> int
+//
+val cmp2 = $UN.cast{cmp2}(cmp) in cmp2 (x1, x2)
+//
+end // end of [list_mergesort$cmp]
+//
+in
+  list_mergesort<a> (xs)
+end // end of [list_mergesort_cloref]
 
 #atscode_separator()
 

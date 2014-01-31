@@ -79,7 +79,8 @@ fun parse_D2Clocal (jsonval): d2ecl_node
 
 (* ****** ****** *)
 
-extern fun parse_D2Cignored (jsonval): d2ecl_node
+extern
+fun parse_D2Cignored (jsonval): d2ecl_node
 
 (* ****** ****** *)
 
@@ -87,12 +88,10 @@ implement
 parse_d2ecl_node
   (jsv0) = let
 //
-val-~Some_vt(jsv1) =
-  jsonval_get_field (jsv0, "d2ecl_name")
-val-~Some_vt(jsv2) =
-  jsonval_get_field (jsv0, "d2ecl_arglst")
+val-JSONobject(lxs) = jsv0
+val-list_cons (lx, lxs) = lxs
 //
-val-JSONstring(name) = jsv1
+val name = lx.0 and jsv2 = lx.1
 //
 in
 //
@@ -105,7 +104,7 @@ case+ name of
 //
 | "D2Clocal" => parse_D2Clocal (jsv2)
 //
-| _(*not-yet-processed*) => parse_D2Cignored (jsv2)
+| _(*rest*) => parse_D2Cignored (jsv2)
 //
 end // end of [parse_d2ecl_node]
 
