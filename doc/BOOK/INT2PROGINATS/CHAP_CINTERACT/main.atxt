@@ -121,11 +121,12 @@ the function can be implemented in ATS and called in C or vice versa.\
 
 ATSで宣言された関数にはC言語スタイルのグローバル名が与えれらます。
 その関数はATSコードからもC言語コードからも呼び出すことができます。
-つまり、関数はATSで実装してC言語から呼び出すことができ、その逆も可能なのです。\
+つまり、関数はATSで実装してC言語から呼び出すことができ、その逆もまた可能なのです。\
 
 ")
 ")
 
+#langeng("
 #para("\
 
 In the following code, we see that two functions are declared:
@@ -149,7 +150,32 @@ of the function in ATS. In other words, writing #keycode("ext\#") in the
 above declaration is equivalent to writing #keycode("ext\#fact2").
 
 ")
+")
+#langja("
+#para("\
 
+次のコードでは2つの関数を宣言しています:
+
+#atscode('\
+extern
+fun fact (n: int): int
+extern
+fun fact2 (n: int, res: int): int = "ext\#fact2_in_c"
+')
+
+最初の関数 #dyncode("fact") はグローバル名を持たないのに対し、
+二番目の関数 #dyncode("fact2") にはグローバル名 #dyncode("fact2_in_c") が割り当てられます。
+#keycode("ext\#") シンボルは #dyncode("fact2_in_c") をC言語のグローバル関数のように扱います。
+そして #dyncode("extern") キーワードによるプロトタイプ宣言が呼び出される前に必要です。
+もし先の宣言 #keycode("ext\#fact2_in_c") の代わりに #keycode("ext\#") が使われた場合、
+ATSの #dyncode("fact2") 関数へのグローバル名はATSの関数名と同じになります。
+言いかえれば、先の例で #keycode("ext\#") という宣言を書くことは、
+#keycode("ext\#fact2") と書くことと同じです。
+
+")
+")
+
+#langeng("
 #para("\
 
 Let us assume that #dyncode("fact") can be implemented as follows:
@@ -186,6 +212,43 @@ fact2 (n, res) = if n > 0 then fact2 (n-1, n*res) else res
 This implementation of #dyncode("fact2") can be called in C
 through the name #dyncode("fact2_in_c").\
 
+")
+")
+#langja("
+#para("\
+
+次のように #dyncode("fact") の実装が与えられたとしましょう:
+
+#atscode('\
+implement fact (n) = fact2 (n, 1)
+')
+
+この実装をコンパイルするには #dyncode("fact") と #dyncode("fact2") を参照する関数名を、
+ATSコンパイラは生成するC言語コード中に作らなければなりません。
+前者のC言語での関数名はあるルール(名前空間の問題を考慮します)によって決定されます。
+後者の関数名は単純に #dyncode("fact2_in_c") グローバル名が割り当てられます。
+#dyncode("fact2_in_c") という名前の通り、この関数は次のように直接C言語で実装されていることでしょう:
+
+<informalexample><programlisting>
+<![CDATA[int
+fact2_in_c (int n, int res)
+{
+  while (n > 0) { res *= n ; n -= 1 ; } ; return res ;
+}
+]]></programlisting></informalexample>
+
+It is also allowed to implement #dyncode("fact2") in ATS
+directly as is shown below:
+
+#atscode('\
+implement
+fact2 (n, res) = if n > 0 then fact2 (n-1, n*res) else res
+')
+
+This implementation of #dyncode("fact2") can be called in C
+through the name #dyncode("fact2_in_c").\
+
+")
 ")
 
 #para('\
