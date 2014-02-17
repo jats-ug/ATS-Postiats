@@ -14,17 +14,31 @@ staload _ = "prelude/DATS/basics.dats"
 
 (* ****** ****** *)
 
+staload _ = "prelude/DATS/pointer.dats"
+
+(* ****** ****** *)
+
+staload _ = "prelude/DATS/integer.dats"
+staload _ = "prelude/DATS/integer_fixed.dats"
+
+(* ****** ****** *)
+
 staload _ = "prelude/DATS/char.dats"
 staload _ = "prelude/DATS/bool.dats"
-staload _ = "prelude/DATS/integer.dats"
 staload _ = "prelude/DATS/float.dats"
-staload _ = "prelude/DATS/string.dats"
-staload _ = "prelude/DATS/strptr.dats"
+
+(* ****** ****** *)
+
+staload _ = "prelude/DATS/tuple.dats"
 
 (* ****** ****** *)
 
 staload _ = "prelude/DATS/memory.dats"
-staload _ = "prelude/DATS/pointer.dats"
+
+(* ****** ****** *)
+
+staload _ = "prelude/DATS/string.dats"
+staload _ = "prelude/DATS/strptr.dats"
 
 (* ****** ****** *)
 

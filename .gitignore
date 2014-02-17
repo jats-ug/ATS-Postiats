@@ -225,6 +225,8 @@ contrib/*/*/CATS/CODEGEN/*_atxt.dats
 contrib/*/*/TEST/test??
 
 contrib/SDL2/SDL2-2.0.1
+contrib/SDL2/SDL2_image-2.0.0
+
 contrib/zlog/zlog-latest-stable/
 
 #
@@ -283,6 +285,7 @@ doc/DISTRIB/ATS2-Postiats-0.0.1
 doc/DISTRIB/ATS2-Postiats-0.0.2
 doc/DISTRIB/ATS2-Postiats-0.0.3
 doc/DISTRIB/ATS2-Postiats-0.0.4
+doc/DISTRIB/ATS2-Postiats-0.0.5
 #
 # ATSHOME/doc/DISTRIB/ATS-Postiats-contrib
 #
@@ -292,6 +295,7 @@ doc/DISTRIB/ATS-Postiats-contrib/project/*
 doc/DISTRIB/ATS2-Postiats-contrib-0.0.1
 doc/DISTRIB/ATS2-Postiats-contrib-0.0.2
 doc/DISTRIB/ATS2-Postiats-contrib-0.0.3
+doc/DISTRIB/ATS2-Postiats-contrib-0.0.4
 #
 # ATSHOME/doc/DISTRIB/ATS-Postiats-include
 #
@@ -320,6 +324,7 @@ doc/BOOK/INT2PROGINATS/preface
 doc/BOOK/INT2PROGINATS/preface.db
 doc/BOOK/INT2PROGINATS/*_atxt.txt
 doc/BOOK/INT2PROGINATS/*_atxt.dats
+doc/BOOK/INT2PROGINATS/CHAP_*/main.db
 doc/BOOK/INT2PROGINATS/*/main.db
 doc/BOOK/INT2PROGINATS/build_ja
 doc/BOOK/INT2PROGINATS/HTML_EUC

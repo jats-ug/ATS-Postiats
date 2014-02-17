@@ -96,6 +96,34 @@ cleanall:: ; $(RMF) qa-list-97
 
 ######
 
+all:: qa-list-190
+qa-list-190: qa-list-190.dats ; \
+  $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) qa-list-190
+
+######
+
+all:: qa-list-191
+qa-list-191: qa-list-191.dats ; \
+  $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) qa-list-191
+
+######
+
+all:: qa-list-195
+qa-list-195: qa-list-195.dats ; \
+  $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) qa-list-195
+
+######
+
+all:: qa-list-197
+qa-list-197: qa-list-197.dats ; \
+  $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) qa-list-197
+
+######
+
 all:: list_last
 list_last: list_last.dats ; \
   $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
@@ -107,6 +135,18 @@ all:: list_copy
 list_copy: list_copy.dats ; \
   $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
 cleanall:: ; $(RMF) list_copy
+
+######
+
+all:: strlen
+strlen: strlen.dats ; $(PATSCC) -D_BSD_SOURCE -o $@ $<
+cleanall:: ; $(RMF) strlen
+
+######
+
+all:: alloca
+alloca: alloca.dats ; $(PATSCC) -D_BSD_SOURCE -o $@ $<
+cleanall:: ; $(RMF) alloca
 
 ######
 

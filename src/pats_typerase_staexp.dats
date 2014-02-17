@@ -59,15 +59,10 @@ staload "./pats_typerase.sats"
 
 (* ****** ****** *)
 
-implement
-s2exp_tyer_deep
-  (loc0, s2e0) = s2exp_tyer (loc0, 1(*flag*), s2e0)
-// end of [s2exp_tyer_deep]
-
-implement
-s2exp_tyer_shallow
-  (loc0, s2e0) = s2exp_tyer (loc0, 0(*flag*), s2e0)
-// end of [s2exp_tyer_shallow]
+extern
+fun s2cst_tyer
+  (loc: location, flag: int, s2c: s2cst): hisexp
+// end of [s2cst_tyer]
 
 (* ****** ****** *)
 
@@ -75,13 +70,6 @@ extern
 fun s2hnf_tyer
   (loc: location, flag: int, s2f: s2hnf): hisexp
 // end of [s2hnf_tyer]
-
-(* ****** ****** *)
-
-extern
-fun s2cst_tyer
-  (loc: location, flag: int, s2c: s2cst): hisexp
-// end of [s2cst_tyer]
 
 (* ****** ****** *)
 
@@ -101,6 +89,11 @@ extern
 fun s2exp_tyer_appcst (
   loc: location, flag: int, s2t: s2rt, _fun: s2cst, _arg: s2explst
 ) : hisexp // end of [s2exp_tyer_appcst]
+
+(* ****** ****** *)
+
+extern
+fun s2explst_tyer_arglst (loc: location, s2es: s2explst): hisexplst
 
 (* ****** ****** *)
 
@@ -155,19 +148,70 @@ fun labs2explst_npf_tyer
 // end of [labs2explst_npf_tyer]
 
 (* ****** ****** *)
+//
+extern
+fun s2zexp_tyer_app
+  (loc: location, _fun: s2zexp, _arg: s2zexplst): hisexp
+extern
+fun s2zexp_tyer_appcst (loc: location, s2c: s2cst, _arg: s2zexplst): hisexp
+extern
+fun s2zexplst_tyer_arglst (loc: location, s2zes: s2zexplst): hisexplst
+//
+(* ****** ****** *)
 
 extern
-fun s2explst_tyer_apparg
-  (loc: location, s2es: s2explst): hisexplst
-// end of [s2explst_tyer_apparg]
+fun s2zexp_tyer_tyrec (loc: location, s2ze: s2zexp): hisexp
+
+(* ****** ****** *)
+
+extern
+fun labs2zexplst_tyer (loc: location, ls2zes: labs2zexplst): labhisexplst
+
+(* ****** ****** *)
+
+implement
+s2cst_tyer
+  (loc0, flag, s2c) = let
+//
+val opt = s2cst_get_isabs (s2c)
+//
+in
+//
+case+ opt of
+| Some (opt2) => (
+  case+ opt2 of
+  | Some (s2e) =>
+      s2exp_tyer (loc0, flag, s2e)
+    // end of [val
+  | None () => hisexp_cst (s2c)
+  ) // end of [Some]
+| None () => hisexp_cst (s2c)
+//
+end // end of [s2cst_tyer]
 
 (* ****** ****** *)
 
 implement
 s2exp_tyer
-  (loc0, flag, s2e0) = let
-  val s2f0 = s2exp2hnf (s2e0) in s2hnf_tyer (loc0, flag, s2f0)
+(
+  loc0, flag, s2e0
+) = let
+  val s2f0 = s2exp2hnf (s2e0)
+in
+  s2hnf_tyer (loc0, flag, s2f0)
 end // end of [s2hnf_tyer]
+
+(* ****** ****** *)
+
+implement
+s2exp_tyer_deep
+  (loc0, s2e0) = s2exp_tyer (loc0, 1(*flag*), s2e0)
+// end of [s2exp_tyer_deep]
+
+implement
+s2exp_tyer_shallow
+  (loc0, s2e0) = s2exp_tyer (loc0, 0(*flag*), s2e0)
+// end of [s2exp_tyer_shallow]
 
 (* ****** ****** *)
 
@@ -183,9 +227,15 @@ in
 //
 case+
   s2e0.s2exp_node of
+//
 | S2Ecst (s2c) =>
     s2cst_tyer (loc0, flag, s2c)
+//
 | S2Evar (s2v) => hisexp_tyvar (s2v)
+//
+| S2EVar (s2V) => // HX: use type-size
+  s2zexp_tyer (loc0, s2Var_get_szexp (s2V))
+  (* end of [S2EVar] *)
 //
 | S2Edatconptr _ =>
     s2exp_tyer_datconptr (loc0, flag, s2e0)
@@ -223,33 +273,12 @@ case+
   end // end of [S2Erefarg]
 //
 | S2Evararg (s2e) => hisexp_vararg (s2e)
-| S2Ewth (s2e, _(*ws2es*)) => s2exp_tyer (loc0, flag, s2e)
+//
+| S2Ewthtype (s2e, _(*ws2es*)) => s2exp_tyer (loc0, flag, s2e)
 //
 | _ => hisexp_s2exp (s2e0)
 //
 end // end of [s2hnf_tyer]
-
-(* ****** ****** *)
-
-implement
-s2cst_tyer
-  (loc0, flag, s2c) = let
-//
-val opt = s2cst_get_isabs (s2c)
-//
-in
-//
-case+ opt of
-| Some (opt2) => (
-  case+ opt2 of
-  | Some (s2e) =>
-      s2exp_tyer (loc0, flag, s2e)
-    // end of [val
-  | None () => hisexp_cst (s2c)
-  ) // end of [Some]
-| None () => hisexp_cst (s2c)
-//
-end // end of [s2cst_tyer]
 
 (* ****** ****** *)
 
@@ -310,7 +339,7 @@ s2exp_tyer_apphnf (
   loc0, flag, s2t0, s2f_fun, s2es_arg
 ) = let
   val hse_fun = s2hnf_tyer (loc0, flag, s2f_fun)
-  val hses_arg = s2explst_tyer_apparg (loc0, s2es_arg)
+  val hses_arg = s2explst_tyer_arglst (loc0, s2es_arg)
 in
   hisexp_app (hse_fun, hses_arg)
 end // end of [s2exp_tyer_apphnf]
@@ -318,7 +347,8 @@ end // end of [s2exp_tyer_apphnf]
 (* ****** ****** *)
 
 implement
-s2exp_tyer_appcst (
+s2exp_tyer_appcst
+(
   loc0, flag, s2t0, s2c, s2es_arg
 ) = let
   val opt = s2cst_get_isabs (s2c)
@@ -333,7 +363,7 @@ case+ opt of
     ) // end of [Some]
   | None () => let
       val hse_fun = s2cst_tyer (loc0, flag, s2c)
-      val hses_arg = s2explst_tyer_apparg (loc0, s2es_arg)
+      val hses_arg = s2explst_tyer_arglst (loc0, s2es_arg)
     in
       hisexp_app (hse_fun, hses_arg)
     end // end of [None]
@@ -424,18 +454,21 @@ val lhses =
 in
 //
 case knd of
-| TYRECKINDbox () => (
+//
+| TYRECKINDbox () =>
+  (
     if flag > 0 then
       hisexp_tyrec (knd, lhses) else hisexp_tybox
   ) // end of [TYRECKINDbox]
+//
 | TYRECKINDflt_ext _ => hisexp_tyrec (knd, lhses)
+//
 | _ (*TYRECKINDflt0/1*) => let
   in
     case+ lhses of
-    | list_cons (
-        lhse, list_nil ()
-      ) => hisexp_tyrecsin (lhse)
-    | _ => hisexp_tyrec (knd, lhses)
+    | list_cons
+        (lhse, list_nil()) => hisexp_tyrecsin (lhse)
+    | _(*non-sing*) => hisexp_tyrec (knd, lhses)
   end // end of [TYRECKINDflt0/1]
 //
 end // end of [s2exp_tyer_tyrec]
@@ -540,7 +573,9 @@ in
 case+ ls2es of
 | list_cons
     (ls2e, ls2es) => let
-    val SLABELED (l, name, s2e) = ls2e
+    val SLABELED
+      (l, name, s2e) = ls2e
+    // end of [val]
     val isprf = s2exp_is_prf (s2e)
   in
     if isprf then
@@ -577,7 +612,7 @@ end // end of [labs2explst_npf_tyer]
 (* ****** ****** *)
 
 implement
-s2explst_tyer_apparg
+s2explst_tyer_arglst
   (loc0, s2es) = let
 in
 //
@@ -592,15 +627,124 @@ case+ s2es of
   in
     if keep then let
       val hse = s2exp_tyer_shallow (loc0, s2e)
+      val hses = s2explst_tyer_arglst (loc0, s2es)
     in
-      list_cons (hse, s2explst_tyer_apparg (loc0, s2es))
+      list_cons (hse, hses)
     end else
-      s2explst_tyer_apparg (loc0, s2es)
+      s2explst_tyer_arglst (loc0, s2es)
     // end of [if]
   end // end of [list_cons]
 | list_nil () => list_nil ()
 //
-end // end of [s2explst_tyer_apparg]
+end // end of [s2explst_tyer_arglst]
+
+(* ****** ****** *)
+
+implement
+s2zexp_tyer
+  (loc0, s2ze0) = let
+in
+//
+case+ s2ze0 of
+| S2ZEptr () => hisexp_tybox
+| S2ZEcst (s2c) =>
+    s2cst_tyer (loc0, 0(*flag*), s2c)
+  // end of [S2ZEcst]
+| S2ZEvar (s2v) => hisexp_tyvar (s2v)
+| S2ZEapp (s2ze1, s2zes2) =>
+    s2zexp_tyer_app (loc0, s2ze1, s2zes2)
+| S2ZEtyrec _ => s2zexp_tyer_tyrec (loc0, s2ze0)
+| _ => hisexp_s2zexp (s2ze0)
+//
+end // end of [s2zexp_tyer]
+
+(* ****** ****** *)
+
+implement
+s2zexp_tyer_app
+(
+  loc0, s2ze1, s2zes2
+) = let
+  val hse_fun = s2zexp_tyer (loc0, s2ze1)
+  val hses_arg = s2zexplst_tyer_arglst (loc0, s2zes2)
+in
+  hisexp_app (hse_fun, hses_arg)
+end // end of [s2exp_tyer_app]
+
+(* ****** ****** *)
+
+implement
+s2zexplst_tyer_arglst
+  (loc0, s2zes) = let
+in
+//
+case+ s2zes of
+| list_cons
+    (s2ze, s2zes) => (
+  case+ s2ze of
+  | S2ZEprf () =>
+      s2zexplst_tyer_arglst (loc0, s2zes)
+  | _ (*non-proof*) => let
+      val hse = s2zexp_tyer (loc0, s2ze)
+      val hses = s2zexplst_tyer_arglst (loc0, s2zes)
+    in
+      list_cons (hse, hses)
+    end // end of [_]
+  ) (* end of [list_cons] *)
+| list_nil () => list_nil ()
+//
+end // end of [s2zexplst_tyer_arglst]
+
+(* ****** ****** *)
+
+implement
+s2zexp_tyer_tyrec
+  (loc0, s2ze0) = let
+//
+val-S2ZEtyrec (knd, ls2zes) = s2ze0
+val lhses = labs2zexplst_tyer (loc0, ls2zes)
+//
+in
+//
+case knd of
+| TYRECKINDbox () => hisexp_tybox
+| TYRECKINDflt_ext _ => hisexp_tyrec (knd, lhses)
+| _ (*TYRECKINDflt0/1*) => let
+  in
+    case+ lhses of
+    | list_cons
+        (lhse, list_nil()) => hisexp_tyrecsin (lhse)
+    | _(*non-sing*) => hisexp_tyrec (knd, lhses)
+  end // end of [TYRECKINDflt0/1]
+//
+end // end of [s2exp_tyer_tyrec]
+
+(* ****** ****** *)
+
+implement
+labs2zexplst_tyer
+  (loc0, ls2zes) = let
+in
+//
+case+ ls2zes of
+| list_cons
+    (ls2ze, ls2zes) => let
+    val SZLABELED (l, s2ze) = ls2ze
+  in
+    case+ s2ze of
+    | S2ZEprf () =>
+        labs2zexplst_tyer (loc0, ls2zes)
+    | _(*non-proof*) => let
+        val hse = s2zexp_tyer (loc0, s2ze)
+        val lhse = HSLABELED (l, None(*name*), hse)
+        val lhses = labs2zexplst_tyer (loc0, ls2zes)
+      in
+        list_cons (lhse, lhses)
+      end // end of [_]
+  end (* end of [list_cons] *)
+| list_nil ((*void*)) => list_nil ()
+//
+end // end of [labs2zexplst_tyer]
 
 (* ****** ****** *)
 
@@ -608,6 +752,7 @@ implement
 t2mpmarg_tyer (t2ma) = let
 //
 val loc0 = t2ma.t2mpmarg_loc
+//
 fun aux (
   loc0: location, s2es: s2explst
 ) : hisexplst = let

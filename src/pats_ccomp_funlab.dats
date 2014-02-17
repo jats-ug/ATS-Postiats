@@ -352,7 +352,7 @@ fun d2cst_get_gname
 in
   case+ extdef of
 //
-  | $SYN.DCSTEXTDEFnone () => let
+  | $SYN.DCSTEXTDEFnone (knd) => let
       val sym = d2cst_get_sym (d2c) in $SYM.symbol_get_name (sym)
     end // end of [DCSTEXTDEFnone]
 //
@@ -498,6 +498,21 @@ val () = $UT.fprintlst (out, fls, ", ", fprint_funlab)
 in
   // nothing
 end // end of [fprint_funlablst]
+
+(* ****** ****** *)
+
+implement
+fprint_funlablstopt
+  (out, opt) = let
+in
+//
+case+ opt of
+| Some (fls) =>
+    fprint! (out, "Some(", fls, ")")
+  // end of [Some]
+| None ((*void*)) => fprint! (out, "None()")
+//
+end // end of [fprint_funlablstopt]
 
 (* ****** ****** *)
 

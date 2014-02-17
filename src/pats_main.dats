@@ -6,7 +6,7 @@
 
 (*
 ** ATS/Postiats - Unleashing the Potential of Types!
-** Copyright (C) 2011-2013 Hongwei Xi, ATS Trustful Software, Inc.
+** Copyright (C) 2011-2014 Hongwei Xi, ATS Trustful Software, Inc.
 ** All rights reserved
 **
 ** ATS is free software;  you can  redistribute it and/or modify it under
@@ -444,7 +444,7 @@ HX: VERSION-0.0.5 released on January 15, 2014
 *)
 #define PATS_MAJOR_VERSION 0
 #define PATS_MINOR_VERSION 0
-#define PATS_MICRO_VERSION 5
+#define PATS_MICRO_VERSION 6
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -463,7 +463,7 @@ implement
 patsopt_version (out) =
 {
   val () = fprintf (out
-, "ATS/Postiats version %i.%i.%i with Copyright (c) 2011-2013 Hongwei Xi\n"
+, "ATS/Postiats version %i.%i.%i with Copyright (c) 2011-2014 Hongwei Xi\n"
 , @(PATS_MAJOR_VERSION, PATS_MINOR_VERSION, PATS_MICRO_VERSION)
   ) // end of [fprintf]
 } (* end of [patsopt_version] *)
@@ -734,14 +734,14 @@ val () = $CNSTR3.constraint3_initialize () // internalizing some maps
 //
 val () = pervasive_load (PATSHOME, "prelude/SATS/arith_prf.sats")
 //
-val () = pervasive_load (PATSHOME, "prelude/SATS/integer.sats")
-//
 val () = pervasive_load (PATSHOME, "prelude/SATS/pointer.sats")
+//
+val () = pervasive_load (PATSHOME, "prelude/SATS/integer.sats")
+val () = pervasive_load (PATSHOME, "prelude/SATS/integer_ptr.sats")
+val () = pervasive_load (PATSHOME, "prelude/SATS/integer_fixed.sats")
 //
 val () = pervasive_load (PATSHOME, "prelude/SATS/bool.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/char.sats")
-val () = pervasive_load (PATSHOME, "prelude/SATS/integer_ptr.sats")
-val () = pervasive_load (PATSHOME, "prelude/SATS/integer_fixed.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/float.sats")
 //
 val () = pervasive_load (PATSHOME, "prelude/SATS/memory.sats")

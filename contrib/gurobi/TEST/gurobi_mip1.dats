@@ -3,8 +3,14 @@
 *)
 
 (* ****** ****** *)
+//
+#include
+"share/atspre_staload.hats"
+//
+(* ****** ****** *)
 
 staload "./../SATS/gurobi.sats"
+staload "./../DATS/gurobi.dats"
 
 (* ****** ****** *)
 
@@ -73,4 +79,4 @@ val () = mytest ()
 
 (* ****** ****** *)
 
-(* end of [test00.dats] *)
+(* end of [gurobi_mip1.dats] *)

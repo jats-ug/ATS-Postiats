@@ -31,11 +31,32 @@
 
 /* ****** ****** */
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 /* ****** ****** */
 
+#include "SDL2/CATS/SDL_error.cats"
+#include "SDL2/CATS/SDL_events.cats"
+#include "SDL2/CATS/SDL_render.cats"
+#include "SDL2/CATS/SDL_rwops.cats"
+#include "SDL2/CATS/SDL_surface.cats"
+#include "SDL2/CATS/SDL_timer.cats"
 #include "SDL2/CATS/SDL_version.cats"
+#include "SDL2/CATS/SDL_video.cats"
+
+/* ****** ****** */
+
+#define atscntrb_SDL2_SDL_Init SDL_Init
+#define atscntrb_SDL2_SDL_InitSubSystem SDL_InitSubSystem
+
+/* ****** ****** */
+
+#define atscntrb_SDL2_SDL_Quit SDL_Quit
+#define atscntrb_SDL2_SDL_QuitSubSystem SDL_QuitSubSystem
+
+/* ****** ****** */
+
+#define atscntrb_SDL2_SDL_WasInit SDL_WasInit
 
 /* ****** ****** */
 
