@@ -37,28 +37,44 @@ features in ATS, which will be presented in this book later.\
 #langja("
 #para("\
 
-関数はプログラミングにおいて基盤となります。
-While it may be theoretically possible to program without functions (but with loops),
-such a programming style is of little practical value.
-ATS does provide some language constructs for implementing for-loops and while-loops directly.
-I, however, strongly recommend that the programmer implement loops as
-recursive functions or more precisely, as tail-recursive functions.
-This is a programming style that matches well with more advanced programming
-features in ATS, which will be presented in this book later.\
+関数はプログラミングの基盤です。
+理論上、関数を使わずループを使ってプログラムを作ることは可能です。
+けれどそのようなプログラミングスタイルは現実的ではないでしょう。
+ATSは他の言語と同様にforループやwhileループを直接実装できます。
+けれども私としては、再帰呼出もしくはよりよい末尾再帰呼出によって、
+プログラマにループを実装してほしいと考えています。
+このプログラミングスタイルはATSのより進んだプログラミングの特徴とうまく調査できるからです。
+そのような特徴はより先のページで紹介します。\
 
 ")
 ")
 
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_FUNCTION/", "on-line").
 ")
+")
+#langja("
+#para("\
+
+この章に出てくるコードとテストのための追加コードは
+#mycodelink("CHAP_FUNCTION/", "オンライン")
+から得られます。
+")
+")
 
 <sect1
 id="functions-as-a-simple-form-of-abstraction">
+#langeng("
 #title("Functions as a Simple Form of Abstraction")
+")
+#langja("
+#title("簡単な形式の関数")
+")
 
+#langeng("
 #para("Given an expression exp of the type #dyncode("double"), we can
 multiply exp by itself to compute its square. If exp is a complex
 expression, we may introduce a binding between a name and exp so that exp
@@ -91,6 +107,40 @@ can just re-implement the body of the function #dyncode("square")
 accordingly to take advantage of it, and there is no other changes needed
 (assuming that squaring is solely done by calling #dyncode("square")).
 ")#comment("para")
+")
+#langja("
+#para("#dyncode("double") 型である式が与えられた時、
+その式を自分自身と掛け合わせれることで二乗を計算することができます。
+もしその式が複雑な式であるなら、その評価を一度きりにするためにその式に名前を付けることができます。
+例えば次のような例です:
+
+#atscode("\
+let val x = 3.14 * (10.0 - 1.0 / 1.4142) in x * x end
+")
+
+二乗を取るもっと良い方法が見つかったと想像してみましょう。
+この方法の恩恵を受けるには、
+プログラム中の二乗しているコードをそれぞれ修正しなければなりません。
+このようなプログラミングスタイルは明らかにモジュラリティを欠いています。
+この問題に対処するために、
+次のような関数を実装することで任意の浮動小数点数の二乗を計算できます:
+
+#atscode("\
+fn square (x: double): double = x * x
+")
+
+#dyncode("fn") キーワードは再帰をしない関数を定義の開始します。
+そしてキーワードに続く名前は関数名です。
+先の例の場合、 #dyncode("square") 関数は #dyncode("x") という名前の引数を一つ取ります。
+この引数の型は #dyncode("double") で、返値の型も #dyncode("double") です。
+シンボル #dyncode("=") の右辺(right-hand side - RHS)の式が関数の中身です。
+この場合は #dyncode("x * x") になります。
+二乗を取るより良い方法が見つかったら、
+#dyncode("square") 関数の中身を再実装するだけで済みます。
+それ以外の修正は不要です。
+(二乗を取るときには単に #dyncode("square") を呼び出しているからです。)
+")#comment("para")
+")
 
 #para("\
 
