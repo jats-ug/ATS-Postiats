@@ -221,6 +221,9 @@ extern fun hidexp_ccomp_ret_seq : hidexp_ccomp_ret_funtype
 extern fun hidexp_ccomp_ret_arrpsz : hidexp_ccomp_ret_funtype
 extern fun hidexp_ccomp_ret_arrinit : hidexp_ccomp_ret_funtype
 
+extern fun hidexp_ccomp_ret_laminit : hidexp_ccomp_ret_funtype
+extern fun hidexp_ccomp_ret_fixinit : hidexp_ccomp_ret_funtype
+
 (* ****** ****** *)
 
 local
@@ -611,8 +614,18 @@ case+ hde0.hidexp_node of
 //
 | HDEraise (hde_exn) => hidexp_ccomp_ret_raise (env, res, tmpret, hde0)
 //
-| HDElam _ => auxval (env, res, tmpret, hde0)
-| HDEfix _ => auxval (env, res, tmpret, hde0)
+| HDElam (knd, _, _) =>
+  (
+    if knd != 0
+      then auxval (env, res, tmpret, hde0)
+      else hidexp_ccomp_ret_laminit (env, res, tmpret, hde0)
+  )
+| HDEfix (knd, _, _) =>
+  (
+    if knd != 0
+      then auxval (env, res, tmpret, hde0)
+      else hidexp_ccomp_ret_fixinit (env, res, tmpret, hde0)
+  ) (* end of [HDEfix] *)
 //
 | HDEdelay _ => hidexp_ccomp_ret_delay (env, res, tmpret, hde0)
 | HDEldelay _ => hidexp_ccomp_ret_ldelay (env, res, tmpret, hde0)
@@ -1776,6 +1789,85 @@ val () = hidexp_ccomp_lam_flab (env, res, hde_def, flab)
 in
   primval_lamfix (1(*fix*), pmv0)
 end // end of [hidexp_ccomp_fix]
+
+(* ****** ****** *)
+
+extern
+fun
+tmpvar_set2_tyclo
+  (tmp: tmpvar, fl: funlab): void
+implement
+tmpvar_set2_tyclo
+  (tmpret, flab) = let
+//
+typedef funlab = hisexp_funlab_type
+//
+in
+  tmpvar_set_tyclo (tmpret, $UN.cast{funlab}(flab))
+end // end of [tmpvar_set2_tyclo]
+
+(* ****** ****** *)
+
+implement
+hidexp_ccomp_ret_laminit
+  (env, res, tmpret, hde0) = let
+//
+val loc0 = hde0.hidexp_loc
+val hse0 = hde0.hidexp_type
+val flab = funlab_make_type (hse0)
+val flvl = funlab_get_level (flab)
+//
+val () = the_funlablst_add (flab)
+val () = ccompenv_add_flabsetenv (env, flab)
+val () = hidexp_ccomp_lam_flab (env, res, hde0, flab)
+//
+val () =
+if flvl > 0 then
+  tmpvar_set2_tyclo (tmpret, flab)
+// end of [if] // end of [val]
+//
+val ins =
+instr_closure_initize (loc0, tmpret, flab)
+val () = instrseq_add (res, ins)
+//
+in
+  // nothing
+end // end of [hidexp_ccomp_ret_laminit]
+
+(* ****** ****** *)
+
+implement
+hidexp_ccomp_ret_fixinit
+  (env, res, tmpret, hde0) = let
+//
+val loc0 = hde0.hidexp_loc
+val-HDEfix (knd, d2v, hde) = hde0.hidexp_node
+//
+val loc = hde.hidexp_loc
+val hse = hde.hidexp_type
+val flab = funlab_make_type (hse)
+val flvl = funlab_get_level (flab)
+//
+val () = the_funlablst_add (flab)
+val () = ccompenv_add_flabsetenv (env, flab)
+//
+val pmv = primval_funlab (loc, hse, flab)
+val () = ccompenv_add_vbindmapenvall (env, d2v, pmv)
+//
+val () = hidexp_ccomp_lam_flab (env, res, hde, flab)
+//
+val () =
+if flvl > 0 then
+  tmpvar_set2_tyclo (tmpret, flab)
+// end of [if] // end of [val]
+//
+val ins =
+instr_closure_initize (loc0, tmpret, flab)
+val () = instrseq_add (res, ins)
+//
+in
+  // nothing
+end // end of [hidexp_ccomp_ret_fixinit]
 
 (* ****** ****** *)
 

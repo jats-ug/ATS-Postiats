@@ -60,6 +60,10 @@ overload fprint with fprint_position
 fun position_get_now (): position
 
 (* ****** ****** *)
+
+fun fprint_the_position (FILEref): void
+
+(* ****** ****** *)
 //
 abstype gene_type = ptr
 typedef gene = gene_type
@@ -87,10 +91,15 @@ fun gene_make_symbol (symbol): gene
 *)
 absvtype genes_vtype = ptr
 vtypedef genes = genes_vtype
+vtypedef geneslst = List0_vt (genes)
 
 (* ****** ****** *)
 
 fun genes_sing (gene): genes
+
+(* ****** ****** *)
+
+fun fprint_genes (FILEref, xs: !genes): void
 
 (* ****** ****** *)
 
@@ -112,8 +121,73 @@ fun genes_listize1 (xs: !genes): genelst_vt
 
 (* ****** ****** *)
 
-fun fprint_genes (FILEref, !genes): void
+fun geneslst_free (geneslst): void
 
+(* ****** ****** *)
+
+absvtype grcnf_vtype = ptr
+vtypedef grcnf = grcnf_vtype
+vtypedef grcnflst = List0_vt (grcnf)
+
+(* ****** ****** *)
+
+fun fprint_grcnf (FILEref, !grcnf): void 
+fun fprint_grcnflst (FILEref, !grcnflst): void
+//
+overload fprint with fprint_grcnf
+overload fprint with fprint_grcnflst
+//
+(* ****** ****** *)
+
+datatype grexp =
+  | GRgene of gene
+  | GRconj of grexplst
+  | GRdisj of grexplst
+  | GRempty of ((*void*))
+  | GRerror of ((*void*))
+// end of [grexp]
+
+where grexplst = List0 (grexp)
+
+vtypedef grexplst_vt = List0_vt (grexp)
+
+(* ****** ****** *)
+//
+fun fprint_grexp (FILEref, grexp): void
+fun fprint_grexplst (FILEref, grexplst): void
+//
+overload fprint with fprint_grexp
+overload fprint with fprint_grexplst of 10
+//
+(* ****** ****** *)
+
+fun grexp_cnfize (gx: grexp): grcnf
+fun grexplst_cnfize (gxs: grexplst): grcnflst
+
+(* ****** ****** *)
+//
+abst@ype
+expvar_type = @(double, double)
+//
+typedef expvar = expvar_type
+typedef expvarlst = List0 (expvar)
+vtypedef expvarlst_vt = List0_vt (expvar)
+//
+fun expvar_make (double, double): expvar
+//
+fun print_expvar : print_type (expvar)
+fun fprint_expvar : fprint_type (expvar)
+//
+overload print with print_expvar
+overload fprint with fprint_expvar
+//
+fun expvar_get_exp (expvar): double
+fun expvar_get_var (expvar): double
+//
+symintr .gexp .gvar
+overload .gexp with expvar_get_exp
+overload .gvar with expvar_get_var
+//
 (* ****** ****** *)
 //
 abstype GDMap_type = ptr
@@ -125,6 +199,27 @@ fun GDMap_find
 ) : #[b:bool] bool(b) // end of [GDMap_find]
 //
 fun GDMap_insert (map: GDMap, gn: gene, gval: double): void
+//
+(* ****** ****** *)
+
+(*
+This function is the primary interface for reading gene
+expression data. It returns a pair of maps that can be used
+to return the expression level and standard deviation of
+expression for the gene under consideration.
+*)
+
+fun gmeanvar_initize (inp: FILEref): (GDMap(*mean*), GDMap(*stdev*))
+
+(* ****** ****** *)
+//
+fun
+grcnf_minmean_stdev
+  (grcnf: !grcnf, emap: GDMap, smap: GDMap): expvar
+//
+fun
+grcnflst_minmean_stdev
+  (grcnfs: !grcnflst, emap: GDMap, smap: GDMap): expvarlst_vt
 //
 (* ****** ****** *)
 

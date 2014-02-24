@@ -204,6 +204,10 @@ fun tmpvar_get_tailcal (tmp: tmpvar): int // if >= 2
 fun tmpvar_inc_tailcal (tmp: tmpvar): void // incby 1
 
 (* ****** ****** *)
+
+fun tmpvar_set_tyclo (tmp: tmpvar, fl: funlab): void
+
+(* ****** ****** *)
 //
 fun print_tmpvar (x: tmpvar): void
 fun prerr_tmpvar (x: tmpvar): void
@@ -243,12 +247,17 @@ fun tmpvarmap_vt_remove
   {a:type} (map: &tmpvarmap_vt(a), tmp: tmpvar): bool(*found*)
 
 (* ****** ****** *)
-
+//
 abstype d2env_type
+//
 typedef d2env = d2env_type
+//
 typedef d2envlst = List (d2env)
 vtypedef d2envlst_vt = List_vt (d2env)
+//
 typedef d2envlstopt = Option (d2envlst)
+//
+(* ****** ****** *)
 
 fun d2var2env (d2v: d2var): d2env
 
@@ -1172,6 +1181,8 @@ instr_node =
   | INSupdate_ptrinc of (tmpvar, hisexp(*elt*))
   | INSupdate_ptrdec of (tmpvar, hisexp(*elt*))
 //
+  | INSclosure_initize of (tmpvar, funlab)
+//
   | INStmpdec of (tmpvar) // HX-2013-01: this is a no-op
 //
   | INSdcstdef of (d2cst, primval) // HX-2013-05: global const def
@@ -1444,6 +1455,11 @@ fun instr_update_ptrdec
   (loc: location, tmpelt: tmpvar, hse_elt: hisexp): instr
 // end of [instr_update_ptrdec]
 
+(* ****** ****** *)
+//
+fun instr_closure_initize
+  (loc: location, tmpret: tmpvar, flab: funlab): instr
+//
 (* ****** ****** *)
 
 fun instr_tmpdec (loc: location, tmp: tmpvar): instr
@@ -1942,7 +1958,7 @@ fun emit2_d2cst (out: FILEref, d2c: d2cst): void // HX: local
 
 fun emit_d2env (out: FILEref, d2e: d2env): void
 fun emit_d2var_env (out: FILEref, d2v: d2var): void
-fun emit_d2envlst (out: FILEref, d2es: d2envlst): int(*nenv*)
+fun emit_d2envlst (out: FILEref, d2es: d2envlst, i: int): int(*nenv*)
 
 (* ****** ****** *)
 
@@ -2012,6 +2028,8 @@ fun prerr_hitype (hit: hitype): void
 overload prerr with prerr_hitype
 fun fprint_hitype : fprint_type (hitype)
 fun fprint_hitypelst : fprint_type (hitypelst)
+overload fprint with fprint_hitype
+overload fprint with fprint_hitypelst
 
 (* ****** ****** *)
 //

@@ -292,7 +292,32 @@ end // end of [local]
 
 (* ****** ****** *)
 
+implement
+tmpvar_set_tyclo
+  (tmp, flab) = () where
+{
+val hse = hisexp_tyclo (flab)
+val () = let
+  extern
+  fun tmpvar_set_type
+    (tmp: tmpvar, hse: hisexp): void = "patsopt_tmpvar_set_type"
+  // end of [tmpvar_set_type]
+in
+  tmpvar_set_type (tmp, hse)
+end // end of [val]
+} (* end of [tmpvar_set_tyclo] *)
+
+(* ****** ****** *)
+
 %{$
+
+ats_void_type
+patsopt_tmpvar_set_type
+(
+  ats_ptr_type tmp, ats_ptr_type hse
+) {
+  ((tmpvar_t)tmp)->atslab_tmpvar_type = hse ; return ;
+} // end of [patsopt_tmpvar_set_type]
 
 ats_void_type
 patsopt_tmpvar_set_ref

@@ -28,29 +28,6 @@ staload "./falcon.sats"
 staload "./falcon_tokener.dats"
 
 (* ****** ****** *)
-
-datatype grexp =
-  | GRgene of gene
-  | GRconj of grexplst
-  | GRdisj of grexplst
-  | GRerror of ((*void*))
-// end of [grexp]
-
-where grexplst = List0 (grexp)
-
-vtypedef grexplst_vt = List0_vt (grexp)
-
-(* ****** ****** *)
-//
-extern
-fun fprint_grexp (FILEref, grexp): void
-extern
-fun fprint_grexplst (FILEref, grexplst): void
-//
-overload fprint with fprint_grexp
-overload fprint with fprint_grexplst of 10
-//
-(* ****** ****** *)
 //
 implement
 fprint_val<grexp> = fprint_grexp
@@ -63,6 +40,7 @@ in
   | GRgene (gn) => fprint! (out, "GRgene(", gn, ")")
   | GRconj (gxs) => fprint! (out, "GRconj(", gxs, ")")
   | GRdisj (gxs) => fprint! (out, "GRdisj(", gxs, ")")
+  | GRempty () => fprint! (out, "")
   | GRerror () => fprint! (out, "GRerror(", ")")
 end // end of [fprint_grexp]
 //
@@ -116,11 +94,9 @@ parerrlst = List0 (parerr)
 (* ****** ****** *)
 
 extern
-fun
-the_parerrlst_add (parerr): void
+fun the_parerrlst_add (parerr): void
 extern
-fun
-the_parerrlst_get ((*void*)): parerrlst
+fun the_parerrlst_get ((*void*)): parerrlst
 
 (* ****** ****** *)
 
@@ -396,8 +372,29 @@ in
 //
 case+ tok of
 | TOKeof () => res
+| TOKrsep () => let
+    val _ = my_tokener2_getout (t2knr)
+    val res = list_vt_cons{grexp}(GRempty (), res)
+  in
+    loop (t2knr, res)
+  end // end of [_]
+//
 | _(*rest*) => let
     val gx = parse_grexp (t2knr)
+    val (pf | tok) = my_tokener2_get (t2knr) 
+    val () = case+ tok of
+      | TOKeof () => my_tokener2_unget (pf | t2knr)
+      | TOKrsep () => let
+        val () = my_tokener2_unget (pf | t2knr)
+        val _ = my_tokener2_getout (t2knr)
+      in
+        ()
+      end
+      | _(*assume one rule per separator (e.g. newline)*) =>
+      (
+        assertloc(false);
+        my_tokener2_unget (pf | t2knr)
+      )  
     val res = list_vt_cons{grexp}(gx, res)
   in
     loop (t2knr, res)

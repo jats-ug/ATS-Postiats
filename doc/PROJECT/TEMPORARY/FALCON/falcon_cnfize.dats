@@ -15,30 +15,32 @@ staload "./falcon.sats"
   
 (* ****** ****** *)
 
-staload "./falcon_genes.dats"
-staload "./falcon_parser.dats"
+staload
+UN = "prelude/SATS/unsafe.sats"
 
 (* ****** ****** *)
 
-vtypedef grcnf = geneslst
-vtypedef grcnflst = List0_vt (grcnf)
+staload M = "libc/SATS/math.sats"
+
+(* ****** ****** *)
+
+assume grcnf_vtype = geneslst
 
 (* ****** ****** *)
 
 extern
 fun grcnf_free (grcnf): void
-implement
-grcnf_free (xs) =
-(
-case+ xs of
-| ~list_vt_nil () => ()
-| ~list_vt_cons (x, xs) => (genes_free (x); grcnf_free (xs))
-) (* end of [grcnf_free] *)
+
+(* ****** ****** *)
+
+extern
+fun grcnf_make_nil(): grcnf
 
 (* ****** ****** *)
 
 extern
 fun grcnflst_free (grcnflst): void
+//
 implement
 grcnflst_free (xs) =
 (
@@ -47,31 +49,6 @@ case+ xs of
 | ~list_vt_cons (x, xs) => (grcnf_free (x); grcnflst_free (xs))
 ) (* end of [grcnflst_free] *)
 
-(* ****** ****** *)
-
-extern
-fun
-fprint_grcnf (FILEref, !grcnf): void  
-extern
-fun
-fprint_grcnflst (FILEref, !grcnflst): void  
-
-(* ****** ****** *)
-
-local
-//
-implement
-fprint_ref<genes>
-  (out, xs) = fprint_genes (out, xs)
-//
-in(*in-of-local*)
-//
-implement
-fprint_grcnf (out, cnf) =
-  fprint_list_vt_sep<genes> (out, cnf, "; ")
-//
-end // end of [local]
-  
 (* ****** ****** *)
 
 implement
@@ -92,17 +69,9 @@ case+ cnfs of
 (* ****** ****** *)
 //
 extern
-fun
-grexp_cnfize (gx: grexp): grcnf
-extern
-fun
-grexplst_cnfize (gxs: grexplst): grcnflst
-//
-(* ****** ****** *)
-//
-extern
 fun geneslst_cons
   (gn: genes, gns: geneslst): geneslst
+//
 extern
 fun geneslst_append
   (gns1: geneslst, gns2: geneslst): geneslst
@@ -110,10 +79,41 @@ fun geneslst_append
 (* ****** ****** *)
 //
 extern
-fun
-grcnf_conj
-  (cnfs: grcnflst): geneslst
+fun grcnf_conj (cnfs: grcnflst): geneslst
+extern
+fun grcnf_disj (cnfs: grcnflst): geneslst
 //
+(* ****** ****** *)
+
+implement
+grcnf_free (xs) =
+(
+case+ xs of
+| ~list_vt_nil () => ()
+| ~list_vt_cons (x, xs) => (genes_free (x); grcnf_free (xs))
+) (* end of [grcnf_free] *)
+
+implement
+grcnf_make_nil() = nil_vt
+
+(* ****** ****** *)
+
+local
+//
+implement
+fprint_ref<genes>
+  (out, xs) = fprint_genes (out, xs)
+//
+in(*in-of-local*)
+//
+implement
+fprint_grcnf (out, cnf) =
+  fprint_list_vt_sep<genes> (out, cnf, "; ")
+//
+end // end of [local]
+
+(* ****** ****** *)
+
 implement
 grcnf_conj (cnfs) = let
 //
@@ -145,11 +145,6 @@ case+ cnfs of
 end // end of [grcnf_conj]
 
 (* ****** ****** *)
-//
-extern
-fun
-grcnf_disj
-  (cnfs: grcnflst): geneslst
 //
 implement
 grcnf_disj (cnfs) = let
@@ -230,7 +225,7 @@ fun auxsup
         then true else auxsup (gn1, gns2)
       // end of [if]
     ) // end of [list_vt_cons]
-) (* auxsup *)
+) (* end of [auxsup] *)
 //
 fun auxsub
 (
@@ -261,7 +256,7 @@ fun auxsub
     end (* end of [list_vt_cons] *)
 ) (* end of [auxsub] *)
 
-in (* in-of-local *)
+in (* in-of-local (geneslst_cons)*)
 
 implement
 geneslst_cons
@@ -353,6 +348,7 @@ case+ gx of
   in
     grcnf_disj (cnfs)
   end // end of [GRdisj]
+| GRempty () => grcnf_make_nil ()
 | GRerror () => let
     val () = assertloc (false) in list_vt_nil ()
   end // end of [GRerror]

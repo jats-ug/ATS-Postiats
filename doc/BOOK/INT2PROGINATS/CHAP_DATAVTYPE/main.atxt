@@ -759,7 +759,7 @@ a:t@ype
 Like #dyncode("mergeSort"), #dyncode("insertionSort") is implemented in a
 manner that makes no use of memory allocation and deallocation.  Given a
 linear list, #dyncode("insertionSort") essentially shuffles the nodes in
-the list for form a sorted list.
+the list to form a sorted list.
 
 ')
 
@@ -1028,7 +1028,7 @@ res1 and res2 is quite an interesting aspect of this implementation.
 #para('\
 
 By making use of #dyncode("takeout_node_at") and #dyncode("partition"),
-#dyncode("quickSort") can be readily implemented:
+we can readily implement #dyncode("quickSort") as follows:
 
 #atscode('\
 implement

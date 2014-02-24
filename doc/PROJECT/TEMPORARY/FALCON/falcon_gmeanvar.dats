@@ -34,7 +34,8 @@ staload "./falcon_tokener.dats"
 (* ****** ****** *)
 
 extern
-fun gene_read
+fun
+gene_read
   (inp: &string >> ptr): Strptr1
 implement
 gene_read (inp) = let
@@ -79,7 +80,9 @@ end // end of [gene_read]
 (* ****** ****** *)
 
 extern
-fun mean_read (inp: &string >> ptr): double
+fun
+mean_read
+  (inp: &string >> ptr): double
 implement
 mean_read
   (inp) = let
@@ -90,18 +93,21 @@ end // end of [mean_read]
 (* ****** ****** *)
 
 extern
-fun variance_read (inp: &string >> ptr): double
+fun
+stdev_read
+  (inp: &string >> ptr): double
 implement
-variance_read
+stdev_read
   (inp) = let
   val str = inp
   prval () = topize (inp) in $STDLIB.strtod1 (str, inp)
-end // end of [variance_read]
+end // end of [stdev_read]
 
 (* ****** ****** *)
 
 extern
-fun gmeanvar_read (line: string): void
+fun gmeanvar_read
+  (line: string, emap: GDMap, smap: GDMap): void
 
 (* ****** ****** *)
 
@@ -166,14 +172,9 @@ GDMap_insert (map, gn, gval) =
 
 (* ****** ****** *)
 
-val the_GDMap_mean = hashtbl_make_nil<key,itm> (i2sz(1024))
-val the_GDMap_variance = hashtbl_make_nil<key,itm> (i2sz(1024))
-
-(* ****** ****** *)
-
 implement
 gmeanvar_read
-  (line) = let
+  (line, emap, smap) = let
 //
 var nerr: int = 0
 //
@@ -191,7 +192,7 @@ if line = line0 then nerr := nerr + 1
 //
 val line0 = line
 val () = line := $UN.cast{string}(line)
-val variance = variance_read (line)
+val stdev = stdev_read (line)
 val () =
 if line = line0 then nerr := nerr + 1
 //
@@ -201,26 +202,17 @@ val gene = gene_make_name(strptr2string(gene))
 val () =
 if nerr = 0 then println! ("gmeanvar_read: ", gene, " -> ", mean)
 val () =
-if nerr = 0 then println! ("gmeanvar_read: ", gene, " -> ", variance)
+if nerr = 0 then println! ("gmeanvar_read: ", gene, " -> ", stdev)
 *)
 //
 val () =
-if nerr = 0 then GDMap_insert (the_GDMap_mean, gene, mean)
+if nerr = 0 then GDMap_insert (emap, gene, mean)
 val () =
-if nerr = 0 then GDMap_insert (the_GDMap_variance, gene, variance)
+if nerr = 0 then GDMap_insert (smap, gene, stdev)
 //
 in
+  // nothing
 end // end of [gmeanvar_read]
-
-(* ****** ****** *)
-
-end // end of [local]
-
-
-(* ****** ****** *)
-
-extern
-fun gmeanvar_initize (inp: FILEref): void
 
 (* ****** ****** *)
 
@@ -228,7 +220,9 @@ implement
 gmeanvar_initize (inp) = let
 //
 fun loop
-  (sbf: !stringbuf): void = let
+(
+  sbf: !stringbuf, emap: GDMap, smap: GDMap
+) : void = let
 //
 var last: char = '\000'
 val nget = stringbuf_insert_fgets (sbf, inp, last)
@@ -237,23 +231,26 @@ in
 //
 if nget > 0 then let
   val (fpf | str) = stringbuf_get_strptr (sbf)
-  val () = gmeanvar_read ($UN.strptr2string(str))
+  val () = gmeanvar_read ($UN.strptr2string(str), emap, smap)
   prval () = fpf (str)
   val-true = stringbuf_truncate (sbf, i2sz(0))
 in
-  loop (sbf)
-end else () // end of [if]
+  loop (sbf, emap, smap)
+end else ((*void*)) // end of [if]
 //
 end // end of [loop]
 //
-val sbf =
-stringbuf_make_nil (i2sz(1024))
-val ((*void*)) = loop (sbf)
-val () = stringbuf_free (sbf)
+val sbf = stringbuf_make_nil (i2sz(1024))
+val emap = hashtbl_make_nil<key,itm> (i2sz(1024))
+val smap = hashtbl_make_nil<key,itm> (i2sz(1024))
+val ((*void*)) = loop (sbf, emap, smap)
+val ((*freed*)) = stringbuf_free (sbf)
 //
 in
-  // nothing  
+  (emap, smap)
 end // end of [gmeanvar_initize]
+
+end // end of [local]
 
 (* ****** ****** *)
 

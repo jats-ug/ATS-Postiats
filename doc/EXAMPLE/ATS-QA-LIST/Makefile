@@ -124,6 +124,17 @@ cleanall:: ; $(RMF) qa-list-197
 
 ######
 
+all:: qa-list-200
+qa-list-200: qa-list-200.dats ; $(PATSCC) -tcats $<
+
+######
+
+all:: qa-list-205
+qa-list-205: qa-list-205.dats ; $(PATSCC) -cleanaft -o $@ $<
+cleanall:: ; $(RMF) qa-list-205
+
+######
+
 all:: list_last
 list_last: list_last.dats ; \
   $(PATSCC) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
@@ -150,11 +161,20 @@ cleanall:: ; $(RMF) alloca
 
 ######
 
-all:: for-0install
-for-0install: for-0install.dats ; \
-  $(PATSCC) -D_BSD_SOURCE -IIATS ${PATSHOME}/contrib -DATS_MEMALLOC_LIBC -o $@ $< -ljson-c
-cleanall:: ; $(RMF) for-0install
+all:: stkclo
+stkclo: stkclo.dats ; $(PATSCC) -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) stkclo
 
+######
+#
+CFLAGSjson += $(shell pkg-config --cflags json-c)
+#
+all:: for-0install
+for-0install: \
+  for-0install.dats ; \
+  $(PATSCC) -D_BSD_SOURCE -DATS_MEMALLOC_LIBC -IIATS ${PATSHOME}/contrib $(CFLAGSjson) -o $@ $< -ljson-c
+cleanall:: ; $(RMF) for-0install
+#
 ######
 
 RMF=rm -f

@@ -126,20 +126,19 @@ overload list0 with list0_make_arrpsz
 
 fun{a:t0p}
 list0_is_nil (xs: list0 a):<> bool
-overload iseqz with list0_is_nil
 fun{a:t0p}
 list0_is_cons (xs: list0 a):<> bool
-overload isneqz with list0_is_cons
 
 (* ****** ****** *)
-
+//
 fun{a:t0p}
 list0_is_empty (xs: list0 a):<> bool
-overload iseqz with list0_is_empty
 fun{a:t0p}
 list0_isnot_empty (xs: list0 a):<> bool
+//
+overload iseqz with list0_is_empty
 overload isneqz with list0_isnot_empty
-
+//
 (* ****** ****** *)
 //
 fun{a:t0p}
@@ -158,18 +157,17 @@ list0_tail_opt
 //
 (* ****** ****** *)
 //
+symintr .head .tail
+overload .head with list0_head_exn
+overload .tail with list0_tail_exn
+//
+(* ****** ****** *)
+
 fun{a:t0p}
 list0_last_exn (xs: list0 (INV(a))):<!exn> (a)
 fun{a:t0p}
 list0_last_opt (xs: list0 (INV(a))):<> Option_vt(a)
-//
-(* ****** ****** *)
-//
-symintr .head .tail .last
-overload .head with list0_head_exn
-overload .tail with list0_tail_exn
-overload .last with list0_last_exn
-//
+
 (* ****** ****** *)
 
 fun{a:t0p}
@@ -321,8 +319,7 @@ a1,a2:t0p}{res:t0p
 } list0_foldleft2 (
   xs1: list0 (INV(a1))
 , xs2: list0 (INV(a2))
-, ini: res
-, f: cfun3 (res, a1, a2, res)
+, ini: res, f: cfun3 (res, a1, a2, res)
 ) : res // end of [list0_foldleft2]
 
 (* ****** ****** *)
@@ -349,7 +346,7 @@ list0_exists2
 (
   xs1: list0 (INV(a1))
 , xs2: list0 (INV(a2))
-, p: cfun2 (a1, a2, bool)
+, pred: cfun2 (a1, a2, bool)
 ) : bool // end of [list0_exists2]
 
 (* ****** ****** *)
@@ -361,7 +358,7 @@ fun{a1,a2:t0p}
 list0_forall2 (
   xs1: list0 (INV(a1))
 , xs2: list0 (INV(a2))
-, p: cfun2 (a1, a2, bool)
+, pred: cfun2 (a1, a2, bool)
 ) : bool // end of [list0_forall2]
 fun{a1,a2:t0p}
 list0_forall2_eq

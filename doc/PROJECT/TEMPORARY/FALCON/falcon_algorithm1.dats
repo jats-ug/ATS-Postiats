@@ -10,6 +10,16 @@
 "share/atspre_staload.hats"
 //
 (* ****** ****** *)
+
+macdef NAN = 0.0/0.0
+macdef INF = $extval (double, "INFINITY")
+
+(* ****** ****** *)
+
+staload
+UN = "prelude/SATS/unsafe.sats"
+
+(* ****** ****** *)
 //
 staload M = "libc/SATS/math.sats"
 staload _(*M*) = "libc/DATS/math.dats"
@@ -80,8 +90,10 @@ end // end of [genelst_min]
 
 extern
 fun genes_meanvar
-  (xs: !genes, emap: GDMap, smap: GDMap): (double, double)
+  (xs: !genes, emap: GDMap, smap: GDMap): expvar
 // end of [genelst_meanvar]
+
+(* ****** ****** *)
 
 implement
 genes_meanvar
@@ -152,9 +164,65 @@ val nxs2 = nxs - miss
 in
 //
 if nxs2 > 0
-  then (nxs*(csum/nxs2), cvar) else (0.0, 0.0)
+  then expvar_make (nxs*(csum/nxs2), cvar) else expvar_make (NAN, NAN)
 // end of [if]
 end // end of [genes_meanvar]
+
+(* ****** ****** *)
+
+implement
+grcnflst_minmean_stdev
+  (grcnfs, emap, smap) = 
+list_vt_map_cloref<grcnf><expvar>
+(
+  grcnfs, lam (grcnf) => grcnf_minmean_stdev (grcnf, emap, smap)
+) (* end of [grcnflst_minmean_stdev] *)
+
+(* ****** ****** *)
+
+implement
+grcnf_minmean_stdev
+  (grcnf, emap, smap) = let
+//
+(*
+val () =
+fprintln!
+(
+  stdout_ref, "grcnf_minmean_stdev: grcnf = ", grcnf
+) (* end of [val] *)
+*)
+//
+fun loop
+(
+  gxs: !geneslst
+, mean: &double >> _, stdev: &double >> _
+) : void =
+(
+  case+ gxs of
+  | list_vt_cons
+      (gx, gxs) => let
+      val ev =
+      genes_meanvar (gx, emap, smap)
+      val () =
+      if ev.gexp < mean then (mean := ev.gexp; stdev := ev.gvar)
+    in
+      loop (gxs, mean, stdev)
+    end (* end of [cons] *)
+  | list_vt_nil () => ()
+)
+//
+var mean: double = INF
+var stdev: double = NAN
+//
+val gxs =
+$UN.castvwtp1{geneslst}(grcnf)
+val () = loop (gxs, mean, stdev)
+prval () = $UN.cast2void(gxs)
+val () = if mean = INF then mean := NAN 
+//
+in 
+  expvar_make (mean, $M.sqrt(stdev))
+end // end of [grcnf_minmean_stdev]
 
 (* ****** ****** *)
 
