@@ -495,8 +495,14 @@ C言語の関数を直接参照するために、より適切な方法がATSに�
 
 <sect1
 id="inclusion_of_external_code">
+#langeng("
 #title("Inclusion of External Code in ATS")
+")
+#langja("
+#title("ATSに外部コードを含める")
+")
 
+#langeng("
 #para('\
 
 Just like including assembly code inside C code, it is straightforward to
@@ -530,7 +536,43 @@ enclosed code is intended to be put at the bottom of the generated C code,
 then the symbol #keycode("%{$") should be used in place of #keycode("%{").
 
 ')
+")
+#langja("
+#para('\
 
+C言語コード中にアセンブラコードを埋め込むのと同様に、
+ATSコード中にC言語コードを埋め込むことも簡単です。
+例えば、この章の最初で示した例は、次のような一つのファイルに書くことができます:
+
+#atscode('\
+extern
+fun fact (n: int): int
+extern
+fun fact2 (n: int, res: int): int = "ext\#fact2_in_c"
+
+implement fact (n) = fact2 (n, 1)
+
+%{
+int
+fact2_in_c (int n, int res)
+{
+  while (n > 0) { res *= n ; n -= 1 ; } ; return res ;
+}
+%}
+')#comment("atscode")
+
+ATSコード中にC言語コードを書くためには、
+#keycode("%{") と #keycode("%}") のシンボルで囲まなければなりません。
+本質的には、これら2つのシンボルの間にあるコードは、生成されるC言語コードの不定の位置に配置されます。
+もし囲まれたコードを生成されるC言語コードの先頭に配置したいのであれば、
+#keycode("%{") シンボルの代わりに #keycode("%{^") シンボルを使うべきです。
+もし囲まれたコードを生成されるC言語コードの末尾に配置したいのであれば、
+#keycode("%{") シンボルの代わりに #keycode("%{$") シンボルを使うべきです。
+
+')
+")
+
+#langeng("
 #para('\
 
 It is also allowed to put C code between the symbols
@@ -542,6 +584,18 @@ If #filename("foo.sats") is staloaded in another file of the name
 generated from compiling #filename("foo.dats").
 
 ')
+")
+#langja("
+#para('\
+
+#keycode("%{#") と #keycode("%}") シンボルの間にC言語コードを配置することもできます。
+#filename("foo.sats") という名前のファイルがこの方法でC言語コードを含んでいる場合を考えてみましょう。
+もし #filename("foo.sats") が #filename("foo.dats") という名前の別のファイルに staload されると、
+#filename("foo.sats") の #keycode("%{#") と #keycode("%}") の間のコードは
+#filename("foo.dats") をコンパイルして生成されたC言語コード中に配置されます。
+
+')
+")
 
 </sect1><!--id="inclusion_of_external_code"-->
 
