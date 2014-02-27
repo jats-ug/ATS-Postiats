@@ -15,7 +15,7 @@ include chapters.mk
 ######
 
 all::
-all:: html_ja
+	omake
 
 ######
 
@@ -25,20 +25,6 @@ cleanall::
 
 pdf: main.db
 	jw -b pdf --output PDF/ main.db
-
-html_ja: main_ja.db
-	rm -rf build_ja
-	mkdir build_ja
-	iconv -f UTF8 -t EUCJP main_ja.db > build_ja/main_ja.db
-	iconv -f UTF8 -t EUCJP bookinfo_ja.db > build_ja/bookinfo_ja.db
-	iconv -f UTF8 -t EUCJP preface.db > build_ja/preface.db
-	@for i in $(CHAPTERS); do \
-		mkdir -p build_ja/$$i; \
-		iconv -f UTF8 -t EUCJP $$i/main.db > build_ja/$$i/main.db; \
-	done
-	cd build_ja && jw -b html --output ../HTML/ main_ja.db
-
-main_ja.db: main.db
 
 ######
 
@@ -226,9 +212,10 @@ RMF=rm -f
 
 ######
 
-publish_jats_ug::
-	$(RMF) -r $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS
-	$(CPRF) HTML $(HOME)/doc/jats-ug.github.io/doc/INT2PROGINATS
+publish_jats_ug:: all
+	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
+	$(RMF) -r $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
+	$(CPRF) HTML $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
 
 ######
 

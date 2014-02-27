@@ -237,20 +237,19 @@ fact2_in_c (int n, int res)
 }
 ]]></programlisting></informalexample>
 
-It is also allowed to implement #dyncode("fact2") in ATS
-directly as is shown below:
+そして次のような #dyncode("fact2") をATSで直接実装することもできます:
 
 #atscode('\
 implement
 fact2 (n, res) = if n > 0 then fact2 (n-1, n*res) else res
 ')
 
-This implementation of #dyncode("fact2") can be called in C
-through the name #dyncode("fact2_in_c").\
+この #dyncode("fact2") の実装は #dyncode("fact2_in_c") という名前を通してC言語から呼び出すことができます。\
 
 ")
 ")
 
+#langeng("
 #para('\
 
 If both #dyncode("fact2") and #dyncode("fact2_in_c") are implemented (the
@@ -258,7 +257,18 @@ former in ATS and the latter in C), then a link-time error is to be
 issued to indicate that #dyncode("fact2_in_c") is implemented repeatedly.\
 
 ')
+")
+#langja("
+#para('\
 
+もし #dyncode("fact2") と #dyncode("fact2_in_c") が両方とも実装されていたら
+(前者はATSで後者はC言語で実装しました)、
+#dyncode("fact2_in_c") が二重に実装されていることを示すリンク時エラーが発生するでしょう。\
+
+')
+")
+
+#langeng("
 #para('\
 
 One can also declare #dyncode("fact2") as follows:
@@ -275,7 +285,26 @@ may not even have a prototype. This style of declaration naturally expects
 #dyncode("fact2_in_c") to be implemented in C directly.\
 
 ')
+")
+#langja("
+#para('\
 
+また #dyncode("fact2") を次のように宣言することもできます:
+
+#atscode('\
+extern
+fun fact2 (n: int, res: int): int = "mac\#fact2_in_c"
+')
+
+#keycode("mac\#") シンボルは #dyncode("fact2_in_c") をC言語のマクロのように扱うことを示しています。
+特に #dyncode("fact2_in_c") はそのプロトタイプ宣言を最初に宣言しなくても呼び出すことができます。
+実際のところ、プロトタイプ宣言がなくても問題ありません。
+このスタイルの宣言は当然 #dyncode("fact2_in_c") がC言語で直接実装されることを期待しています。\
+
+')
+")
+
+#langeng("
 #para('\
 
 It is also allowed to use #keycode("sta\#") in place of #keycode("mac\#"):
@@ -289,7 +318,24 @@ If declared in this style, which only occurs rarely in practice,
 then #dyncode("fact2_in_c") is treated like a static function in C.\
 
 ')
+")
+#langja("
+#para('\
 
+また #keycode("mac\#") のかわりに #keycode("sta\#") を使うこともできます:
+
+#atscode('\
+extern
+fun fact2 (n: int, res: int): int = "sta\#fact2_in_c"
+')
+
+このスタイルの宣言すると #dyncode("fact2_in_c") がC言語のstatic関数のように扱われます。
+しかし実際にはあまり使うことはないでしょう。\
+
+')
+")
+
+#langeng("
 #para('\
 
 For the sake of completeness, I mention as follows another way of declaring
@@ -309,6 +355,27 @@ where the use of #keycode("sta\#") means that the name referring to #dyncode("fa
 in C is simply #dyncode("fact2").\
 
 ')
+")
+#langja("
+#para('\
+
+完全を期すために、static関数を宣言する他の方法を紹介します:
+
+#atscode('\
+static fun fact2 (n: int, res: int): int
+')
+
+このスタイルの宣言は自動的に次のように変換されます:
+
+#atscode('\
+extern fun fact2 (n: int, res: int): int = "sta\#"
+')
+
+#keycode("sta\#") のように使うと、C言語における #dyncode("fact2") という名前が単純に
+#dyncode("fact2") を意味するようになります。\
+
+')
+")
 
 </sect1><!--id="external_global_names"-->
 
