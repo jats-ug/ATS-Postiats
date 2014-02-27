@@ -603,8 +603,14 @@ generated from compiling #filename("foo.dats").
 
 <sect1
 id="calling_external_functions">
+#langeng("
 #title("Calling External Functions in ATS")
+")
+#langja("
+#title("ATSにおける外部関数呼び出し")
+")
 
+#langeng("
 #para('\
 
 It is straightforward to make calls to external functions in ATS.
@@ -628,7 +634,34 @@ is given a (local) name #dyncode("__fprintf") and an interface appropriate
 for the call to be made.
 
 ')
+")
+#langja("
+#para('\
 
+ATSから外部関数を呼び出すことは簡単です。
+例えば、次のコードはその典型的な例です:
+
+#atscode('\
+local
+extern
+fun __fprintf
+  : (FILEref, string(*fmt*), int, int) -> int = "mac\#fprintf"
+in (* in of [local] *)
+//
+val N = 12
+val _ = __fprintf (stdout_ref, "fact(%i) = %i\\\\n", N, fact(N))
+//
+end // end of [local]
+')
+
+この #dyncode("fprintf") 関数は #filename("stdio.h") で宣言されており
+#dyncode("__fprintf") というローカルな名前が与えられています。
+また外部関数呼び出しにふさわしいインターフェイスになっています。
+
+')
+")
+
+#langeng("
 #para('\
 
 There is also built-in support for calling external functions in ATS directly.
@@ -646,6 +679,25 @@ is the name of the called function (represented as a string), and its rest
 of arguments are the arguments of the called function.
 
 ')
+")
+#langja("
+#para('\
+
+またATSから外部関数を直接呼び出すビルトインのしくみもあります。
+例えば、次のコードは上記で示したコードと本質的に同じです:
+
+#atscode('\
+val N = 12
+val _ = $extfcall(int, "fprintf", stdout_ref, "fact(%i) = %i\\\\n", N, fact(N))
+')
+
+#dyncode("$extfcall") は外部関数呼び出しを作るために使われます。
+その最初の引数は関数呼び出しの返値の型です。
+2番目の引数には呼び出す関数の名前を文字列で指定します。
+残りの引数群は呼び出す関数への引数群になります。
+
+')
+")
 
 </sect1><!--id="calling_external_functions"-->
 
