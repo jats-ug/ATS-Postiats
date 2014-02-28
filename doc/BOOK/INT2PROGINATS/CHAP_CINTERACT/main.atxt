@@ -985,6 +985,7 @@ C言語では、複雑なマクロを使った関数テンプレート実装を�
 ")
 ")
 
+#langeng("
 #para("\
 
 Suppose we want a function for copying into a given array the elements
@@ -1001,14 +1002,32 @@ pointer p and a size n such that p points to a C-style array storing n
 elements of the type T.
 
 ")
+")
+#langja("
+#para("\
+
+リストに保存されている要素群を与えられた配列の中にコピーするような関数を作りたいとしましょう。
+その関数に #dyncode("array_copy_from_list") という名前を付けて、
+次のようなインターフェイスを与えます:
+
+#atscode('\
+fun{a:t@ype}
+array_copy_from_list (A: array0(a), xs: list0(a)): void
+')
+
+型Tが与えられた時、 #stacode("array0(T)") はポインタpとサイズnを内包するarray0の値を作り、
+そのpは型Tの要素をn個保持するC言語スタイルの配列を指し示します。
+
+")
+")
 
 #para("\
 
-For the moment, let us require that the size of the array A equals the
-length of the list xs when #dyncode("array_copy_from_list(A, xs)") is
-called.  Following is an implementation of #dyncode("array_copy_from_list")
-in ATS that makes use of an unsafe function (#dyncode("ptr0_set")) declared
-in #myatscodelink("prelude/SATS/unsafe.sats", "unsafe.sats"):
+差し当り、 #dyncode("array_copy_from_list(A, xs)") が呼び出されたら、
+リストxsの長さに等しい配列Aのサイズを要求しましょう。
+ATSにおける #dyncode("array_copy_from_list") の実装を次に示します。
+この関数は、 #myatscodelink("prelude/SATS/unsafe.sats", "unsafe.sats")
+で宣言されている安全でない関数 #dyncode("ptr0_set") を使っています:
 
 #atscode('\
 staload
@@ -1036,22 +1055,32 @@ in
 end // end of [array_copy_from_list]
 ')
 
-Given a type T, a pointer p, and a value x of the type T,
-#dyncode("ptr0_set&lt;T&gt; (p, x)") stores the value x at the location to
-which p points.  Like #dyncode("ptr0_get"), #dyncode("ptr0_set") is
-inherently unsafe as there is simply no guarantee that p actually points to
-a valid memory location where a value of the type T can be stored.  The
-function #dyncode("array0_get_ref"), which is declared in
-#myatscodelink("libats/ML/SATS/array0.sats", "array0.sats"), returns the
-pointer to the C-style array associated with a given array0-value.
+型Tとポインタp、そして型Tの値xが与えられた時、
+#dyncode("ptr0_set&lt;T&gt; (p, x)") は値xをpによって指し示された位置に保存します。
+#dyncode("ptr0_get") と同様に #dyncode("ptr0_set") は本質的に安全ではありません。
+実際にpが型Tの値が配置されたメモリ領域を指し示しているかどうか、
+なんの保証もありません。
+#myatscodelink("libats/ML/SATS/array0.sats", "array0.sats")
+で宣言されている #dyncode("array0_get_ref")
+関数は与えられたarray0値と関連付けられたC言語スタイルの配列のポインタを返します。
 
 ")
 
+#langeng("
 #para("\
 
 Please find the entire code for this example
 #mycodelink("CHAP_CINTERACT/ArrayCopyFromList.dats", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+この例の完全なコードは #mycodelink("CHAP_CINTERACT/ArrayCopyFromList.dats", "オンライン")
+にあります。
+
+")
 ")
 
 </sect1><!--id="unsafe_c-style_programming_in_ats"-->
