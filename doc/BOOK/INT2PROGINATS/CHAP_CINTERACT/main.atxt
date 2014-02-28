@@ -1089,8 +1089,14 @@ Please find the entire code for this example
 
 <sect1
 id="exporting_types_and_values">
+#langeng("
 #title("Exporting Types in ATS for Use in C")
+")
+#langja("
+#title("ATSの型をエクスポートしてC言語から使う")
+")
 
+#langeng("
 #para("\
 
 There is also support in ATS for exporting types to make them available for
@@ -1114,7 +1120,34 @@ struct {
 ')
 
 ")
+")
+#langja("
+#para("\
 
+ATSでは、ATSの型をエクスポートしてC言語から直接使うこともできます。
+次の例では、ATSの #stacode("(int, string)") 型が割り当てられた値のために、
+生成されたC言語コード中で #stacode("int_and_string")
+の名前のtypedefが宣言されることを期待しています:
+
+#atscode('\
+extern
+typedef
+"int_and_string" = (int, string)
+')
+
+本質的に #stacode("int_and_string") はC言語の中で次のように定義されます:
+
+#atscode('\
+typedef
+struct {
+  int atslab__0; void *atslab__1; 
+} int_and_string ;
+')
+
+")
+")
+
+#langeng("
 #para('\
 
 Sometimes, we want to construct in C values of a datatype declared in ATS.
@@ -1137,7 +1170,32 @@ these type constructors can be used to form types for boxed values
 constructed with the data constructors #dyncode("cons1") and #dyncode("cons2").
 
 ')
+")
+#langja("
+#para('\
 
+ときどき、ATSにおけるdatatype宣言の値をC言語でコンストラクトしたいことがあります。
+例えば、iが整数でdが倍精度実浮動小数点数であるような
+#dyncode("cons2(i, d)") の値をC言語でコンストラクトしてみましょう。
+#dyncode("cons2") は次で宣言されたdatatype #stacode("abc") に関連したデータコンストラクタです:
+
+#atscode('\
+datatype abc =
+  | cons1 of int | cons2 of (int, double)
+')
+
+データコンストラクタを宣言すると必ず対応する(線形の)型コンストラクタが作られます。
+そのコンストラクタには元のデータコンストラクタの名前と文字列
+"_pstruct" を連結した名前が付けられます。
+そのため上記で宣言したdatatype #stacode("abc") の場合は、
+型コンストラクタ #stacode("cons1_pstruct") と #stacode("cons2_pstruct") が作られます。
+これらの型コンストラクタはデータコンストラクタ #dyncode("cons1") と #dyncode("cons2")
+でコンストラクトされるボックス化された値の型を形成するために使われます。
+
+')
+")
+
+#langeng("
 #para('\
 
 In the following declaration,
@@ -1185,6 +1243,56 @@ respectively, as #dyncode("cons1") and #dyncode("cons2") are the first and
 second constructors associated with the datatype #stacode("abc").
 
 ')
+")
+#langja("
+#para('\
+
+次の宣言でATSの #stacode("cons2_pstruct(int, double)") 型が
+#stacode("cons2_node") の名前でC言語にエクスポートされます:
+
+#atscode('\
+extern
+vtypedef "cons2_node" = cons2_pstruct(int, double)
+')
+
+Implicitly,
+a typedef in C of the name #stacode("cons2_node_") is also
+introduced for the unboxed portion of a value constructed with the data
+constructor #dyncode("cons2").
+Essentially, we have the following generated code in C:
+
+#atscode('\
+typedef
+struct {
+int contag ; // constructor tag
+int atslab__0; double atslab__1; 
+} cons2_node_ ;
+typedef cons2_node_ *cons2_node ;
+')
+
+It is now straightforward to create a value of the form #dyncode("cons2(i,d)") in C directly:
+
+#atscode('\
+cons2_node
+cons2_make
+(
+  int i, double d
+) {
+  cons2_node p ;
+  p = ATS_MALLOC(sizeof(cons2_node_)) ;
+  p->contag = 1 ;
+  p->atslab__0 = i ;
+  p->atslab__1 = d ;
+  return p ;
+} /* end of [cons2_make] */
+')
+
+Note that the tags for #dyncode("cons1") and #dyncode("cons2") are 0 and 1,
+respectively, as #dyncode("cons1") and #dyncode("cons2") are the first and
+second constructors associated with the datatype #stacode("abc").
+
+')
+")
 
 #para('\
 
