@@ -705,8 +705,14 @@ val _ = $extfcall(int, "fprintf", stdout_ref, "fact(%i) = %i\\\\n", N, fact(N))
 
 <sect1
 id="unsafe_c-style_programming_in_ats">
+#langeng("
 #title("Unsafe C-style Programming in ATS")
+")
+#langja("
+#title("安全ではないC言語スタイルのATSプログラミング")
+")
 
+#langeng("
 #para("\
 
 ATS is probably not a programming language easy for one to write code in.
@@ -719,7 +725,22 @@ ATS. This is a programming style that should be familiar to any programmer
 who can write C code competently.
 
 ")
+")
+#langja("
+#para("\
 
+おそらく、ATSはコードを書き下すことが簡単なプログラミング言語ではないでしょう。
+ATSは安全な低レイヤープログラミングをサポートするために多くの機能を提供しています。
+プログラマがそれらの機能を学習して使いこなせるようになるまでに、
+長い時間とある程度の努力を費やす必要があるかもしれません。
+この章では、C言語スタイルで書かれたATSコードをいくつか紹介します。
+これは、ATSプログラミングにおける安全ではない機能の典型的な使い方で、
+C言語コードを書き慣れたプログラマにとってなじみ深いプログラミングスタイルです。
+
+")
+")
+
+#langeng("
 #para("\
 
 There are always occasions where one may find it sensible to program in
@@ -733,7 +754,23 @@ write code in ATS but also wants to do it highly productively. Let us now
 see a concrete example of unsafe C-style programming in ATS.
 
 ")
+")
+#langja("
+#para("\
 
+安全でないC言語スタイルプログラミングが懸命である場合があります。
+ときには単に実行できる実装を手に入れて、バグを見つけて修正するためにテストを信頼しようとするかもしれません。
+ときには安全に関数を実装するATSプログラミングの作法を、熟知していない場合もあるでしょう。
+またそれは単に個人の要望であるかもしれません。
+私自身しばしば安全ではないC言語スタイルのATSプログラミングをすることがありますし、
+ただATSでコードを書きたいのではなく高い生産性が欲しい人にとって、
+それが必要なスキルであることも理解できます。
+安全ではないC言語スタイルのATSプログラミングの具体例を見てみましょう。
+
+")
+")
+
+#langeng("
 #para("\
 
 Suppose that we want to implement a function for comparing two given
@@ -797,14 +834,90 @@ type-safe. Given a type T, #dyncode("ptr0_succ&lt;T&gt; (p)") returns the
 pointer that is n bytes after p, where n equals the size of T.
 
 ")
+")
+#langja("
+#para("\
 
+2つの文字列を標準辞書式順序によって比較する関数を実装したくなったとします。
+その関数に #dyncode("strcmp") という名前を付けて、次のようなインターフェイスを与えましょう:
+
+#atscode('\
+fun strcmp (str1: string, str2: string): int
+')
+
+2つの文字列 #dyncode("str1") と #dyncode("str2") が与えられると、
+#dyncode("strcmp(str1, str2)") は 1, -1, 0 のいずれかを返します。
+それぞれ #dyncode("str1") が #dyncode("str2") と比較して、
+より大きいか、より小さいか、等しいことを表わしています。
+#dyncode("strcmp") の実装は次のようになるでしょう:
+
+#atscode('\
+
+staload
+UN = "prelude/SATS/unsafe.sats"
+
+(* ****** ****** *)
+
+implement
+strcmp (str1, str2) = let
+//
+fun loop
+  (p1: ptr, p2: ptr): int = let
+//
+val c1 = $UN.ptr0_get<uchar> (p1)
+val c2 = $UN.ptr0_get<uchar> (p2)
+//
+in
+  case+ 0 of
+  | _ when c1 > c2 =>  1
+  | _ when c1 < c2 => ~1
+  | _ (* c1 = c2 *) =>
+    (
+      if $UN.cast{int}(c1) = 0
+        then 0 else loop (ptr0_succ<uchar> (p1), ptr0_succ<uchar> (p2))
+      // end of [if]
+    )
+end (* end of [loop] *)
+//
+in
+  loop (string2ptr(str1), string2ptr(str2))
+end (* end of [strcmp] *)
+')
+
+C言語になじみのあるプログラマにとって、
+上記の #dyncode("strcmp") の実装は理解しやすいでしょう。
+#myatscodelink("prelude/SATS/unsafe.sats", "unsafe.sats")
+には安全でない関数群が各種宣言されています。
+型Tとポインタpが与えられた時、 #dyncode("ptr0_get&lt;T&gt; (p)")
+はpが指し示す位置に配置されたT型の値を取得します。
+#dyncode("ptr0_get") は本質的に安全ではないことに注意してください。
+実際にpが型Tの値が配置されたメモリ領域を指し示しているかどうか、なんの保証もないのです。
+#dyncode("cast") 関数は与えられた値の型を指定した型でキャストします。
+この関数もまた本質的に安全ではありません。
+#myatscodelink("prelude/SATS/pointer.sats", "pointer.sats")
+で宣言されている #dyncode("ptr0_succ") テンプレート関数は型安全です。
+型Tが与えられた時、pよりも型Tのサイズだけ後ろのポインタを返します。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find the entire code for this example
 #mycodelink("CHAP_CINTERACT/strcmp.dats", "on-line").
 
 ")
+")
+#langja("
+#para("\
 
+この例の完全なコードは #mycodelink("CHAP_CINTERACT/strcmp.dats", "オンライン") にあります。
+
+")
+")
+
+#langeng("
 #para("\
 
 For a function like #dyncode("strcmp"), one can readily implement it in C
@@ -836,6 +949,40 @@ which makes the code not only difficult to follow but also notoriously
 error-prone. Let us now see as follows a function template implementation
 in ATS that is partly type-unsafe.
 
+")
+")
+#langja("
+#para("\
+
+#dyncode("strcmp") のような関数を、
+人によってはC言語で直接実装するかもしれません。
+例えば、上記のATSによる #dyncode("strcmp") 実装を翻訳すると、
+#dyncode("strcmp") のC言語による実装は次のようになるでしょう:
+
+#atscode('\
+int strcmp (char *p1, char *p2)
+{
+  int res ;
+  unsigned char c1, c2;
+  while (1)
+  {
+    c1 = *p1; c2 = *p2;
+    if (c1 > c2) { res =  1; break; } ;
+    if (c1 < c2) { res = -1; break; } ;
+    if ((int)c1==0) { res = 0 ; break ; } else { p1++; p2++; } ;
+  }
+  return res ;
+}
+')
+
+けれども、C言語スタイルのATSコードは、直接C言語を書くよりもしばしば利点があります。
+例えば、C言語にはサポートがありませんが、ATSは関数テンプレートを直接サポートしています。
+C言語では、複雑なマクロを使った関数テンプレート実装を信頼するしかありません。
+そのようなコードは理解することが困難であるだけでなく周知の通りエラーを誘発します。
+次にATSにおける関数テンプレートの実装を見てみましょう。
+これは部分的には型安全ではありません。
+
+")
 ")
 
 #para("\
