@@ -1255,11 +1255,9 @@ extern
 vtypedef "cons2_node" = cons2_pstruct(int, double)
 ')
 
-Implicitly,
-a typedef in C of the name #stacode("cons2_node_") is also
-introduced for the unboxed portion of a value constructed with the data
-constructor #dyncode("cons2").
-Essentially, we have the following generated code in C:
+また #dyncode("cons2") データコンストラクタによってコンストラクトされる値のアンボックス部分のために、
+#stacode("cons2_node_") という名前でC言語のtypedefが暗黙のうちに導入されます。
+結果として次のようなC言語コードが生成されるでしょう:
 
 #atscode('\
 typedef
@@ -1270,7 +1268,7 @@ int atslab__0; double atslab__1;
 typedef cons2_node_ *cons2_node ;
 ')
 
-It is now straightforward to create a value of the form #dyncode("cons2(i,d)") in C directly:
+これでC言語中で直接 #dyncode("cons2(i,d)") の値を作るのは簡単でしょう:
 
 #atscode('\
 cons2_node
@@ -1287,13 +1285,14 @@ cons2_make
 } /* end of [cons2_make] */
 ')
 
-Note that the tags for #dyncode("cons1") and #dyncode("cons2") are 0 and 1,
-respectively, as #dyncode("cons1") and #dyncode("cons2") are the first and
-second constructors associated with the datatype #stacode("abc").
+#dyncode("cons1") と #dyncode("cons2") のconstructor tagはそれぞれ0と1であることに注意してください。
+#dyncode("cons1") と #dyncode("cons2") は datatype #stacode("abc")
+に関連した1番目と2番目のコンストラクタであることがその理由です。
 
 ')
 ")
 
+#langeng("
 #para('\
 
 By assigning an interface to #dyncode("cons2_make") in ATS, we can readily
@@ -1306,7 +1305,23 @@ val-cons2 (1, 2.34) = cons2_make (1, 2.34)
 ')
 
 ')
+")
+#langja("
+#para('\
 
+ATS側で #dyncode("cons2_make") にインターフェイスを割り当てることで、
+#dyncode("cons2_make") の挙動が意図したものかどうかチェックできます:
+
+#atscode('\
+extern
+fun cons2_make (int, double): abc = "mac#"
+val-cons2 (1, 2.34) = cons2_make (1, 2.34)
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 In general, it is essential for a pragrammer to acquire a solid
@@ -1317,6 +1332,17 @@ making it straightforward, if needed, to construct and manipulate
 ATS-values in C directly.
 
 ')
+")
+#langja("
+#para('\
+
+一般に、低レイヤーのシステムプログラミングにおいてプログラミング言語を使うために、
+その言語の低レベルのデータ表現をしっかり理解することはプログラマにとって不可欠です。
+ATSの低レベルデータ表現はC言語の型の項を使って簡単に解釈できます。
+そのため必要であればC言語の中でATSの値を直接コンストラクトし操作することは容易なのです。
+
+')
+")
 
 </sect1><!--id="exporting_ats_types_and_values"-->
 
