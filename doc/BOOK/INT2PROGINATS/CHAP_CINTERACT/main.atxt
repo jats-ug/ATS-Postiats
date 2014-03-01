@@ -1350,8 +1350,14 @@ ATSの低レベルデータ表現はC言語の型の項を使って簡単に解�
 
 <sect1
 id="example-constructing_a_statically_allocated_list">
+#langeng("
 #title("Example: Constructing a Statically Allocated List")
+")
+#langja("
+#title("例: 静的に確保されたリストをコンストラクトする")
+")
 
+#langeng("
 #para('\
 
 In embedded programming, static memory allocation is often preferred
@@ -1361,7 +1367,19 @@ memory. This example also strongly attests to ATS and C being intimately
 related.
 
 ')
+")
+#langja("
+#para('\
 
+組み込みプログラミングにおいて、
+静的なメモリ確保は挙動を予測しにくい動的なメモリ確保よりもしばしば好まれます。
+静的に確保されたメモリにコンストラクトされたリストの例を次に示します。
+この例はまた、ATSとC言語の親和性を実証しています。
+
+')
+")
+
+#langeng("
 #para('\
 
 In order to statically allocate memory for list-nodes, we need to first
@@ -1389,7 +1407,38 @@ typedef list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
 ')#comment("atscode")
 
 ')
+")
+#langja("
+#para('\
 
+リストの要素のメモリを静的に確保するためには、
+それぞれのリストの要素にどれぐらいのメモリサイズが必要になるのかC言語コンパイラに報せるために、
+リストの要素の型をまず始めに作る必要があります。
+次のコードでは、ATSにおける #stacode("list_node") 型がボックス化リスト要素であり、
+この型はC言語へ同じ名前でエクスポートされています:
+
+#atscode('\
+//
+vtypedef
+list_node = list_cons_pstruct(int,ptr) // [list_node] for boxed nodes
+//
+extern vtypedef "list_node" = list_node // exporting [list_node] to C
+//
+')
+
+#stacode("list_node") をC言語へエクスポートすると、アンボックス化リスト要素のための
+typedef #stacode("list_node_") が暗黙的にC言語へ導入されます。
+そのため、ATSにおける次の型 #stacode("list_node_") は、
+アンボックス化リスト要素のために私達が望んだものでしょう:
+
+#atscode('\
+typedef list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
+')#comment("atscode")
+
+')
+")
+
+#langeng("
 #para('\
 
 The following code statically allocates an array of list-nodes and then
@@ -1444,12 +1493,76 @@ should be straightforward to visualize the C code that corresponds to
 this implementation directly.\
 
 ')
+")
+#langja("
+#para('\
 
+次のコードはリスト要素の配列を静的に確保した後、
+それらの要素を初期化して、その配列をリストに変換します:
+
+#atscode('\
+local
+
+\#define N 10
+
+(*
+** static allocation
+*)
+var nodes = @[list_node_][N]()
+
+fun loop
+(
+  p: ptr, i: int
+) : void = let
+in
+//
+if i < N then let
+  val res =
+  $UN.castvwtp0{list_node}(p)
+  val+list_cons (x, xs) = res
+  val (
+  ) = x := i*i
+  val p = ptr_succ<list_node_> (p)
+  val i = i + 1
+  val () = (
+    if i < N then xs := p else xs := the_null_ptr
+  ) : void // end of [val]
+  val _(*ptr*) = $UN.castvwtp0{ptr}((view@x, view@xs | res))
+in
+  loop (p, i)
+end else ((*void*)) // end of [if]
+//
+end // end of [loop]
+
+in (* in of [local] *)
+
+val () = loop (addr@nodes, 0)
+val xs_static = $UN.castvwtp0{list(int,N)}((view@nodes|addr@nodes))
+val () = println! ("xs_static = ", xs_static) // 0, 1, 4, 9, 16, ...
+
+end // end of [local]
+')#comment("atscode")
+
+#dyncode("loop") の実装は、ATSにおける安全でないC言語スタイルプログラミングを多用しています。
+C言語に馴染んだプログラマであれば、この実装に対応するC言語コードが想像できると思います。\
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find the entire code for this example
 #mycodelink("CHAP_CINTERACT/StaticAllocList.dats", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+この例の完全なコードは #mycodelink("CHAP_CINTERACT/StaticAllocList.dats", "オンライン") にあります。
+
+")
 ")
 
 </sect1><!--id="example-constructing_a_statically_allocated_list"-->
