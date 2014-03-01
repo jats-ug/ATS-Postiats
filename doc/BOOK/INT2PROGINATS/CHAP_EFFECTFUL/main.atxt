@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="effecftul_programming_features">
+#langeng("
 #title("Effectful Programming Features")
+")
+#langja("
+#title("効果(effect)を持つプログラミングの機能")
+")
 
+#langeng("
 #para("\
 
 Effectful programming features are those that can generate effects at
@@ -54,7 +60,43 @@ then the evaluation leads to the string \"Terminated\" being printed out.
 The expression #dyncode("loop") is said to contain non-termination effect.\
 
 ")#comment("para")
+")#comment("langeng")
+#langja("
+#para("\
 
+効果を持つプログラミングの機能を使うことで実行時に効果(effect)を生成することができます。
+ところで効果とは一体何でしょうか？
+その答はいくぶん込み入っていて、評価モデルに依存しています。
+この本では様々な種類の効果を徐々に説明します。
+並行ではなく順番に評価がなされるようなプログラムを作る場合、
+評価に関してある式とその値が見分けがつかない時、その式は効果を持ちません。
+例えば、値 #dyncode("3") と見分けがつかないので、式 #dyncode("1+2") は効果を持ちません。
+効果を持たない式は純粋であるとも言えます。
+他方、効果を持つ式はいかなる値とも区別ができます。
+例えば、式 #dyncode('print("Hello")') は効果を持ちます。
+というのもその評価の結果、観測可能な振舞をひきおこすので、式はいかなる値とも見分けがつくからです。
+この例では #dyncode('print("Hello")') はI/Oに対するある効果を持つと言えます。
+もし式の評価が終了しない場合、その式もまた効果を持ちます。
+例えば、次のような #dyncode("loop") 関数を定義してみましょう:
+
+#atscode("\
+fun loop (): void = loop ()
+")
+
+すると次のような文脈で、式 #dyncode("loop()") はいかなる値とも区別ができます:
+
+#atscode('\
+let val _ = [] in print ("Terminated") end
+')
+
+この文脈の空欄 #dyncode("[]") を #dyncode("loop()") で置き換えると、式の評価は完了しません。
+空欄 #dyncode("[]") をなんらかの値に置き換えると、その評価は文字列 \"Terminated\" を印字するでしょう。
+式 #dyncode("loop") はある非低姿勢の効果を持つを言えます。\
+
+")#comment("para")
+")#comment("langja")
+
+#langeng("
 #para("\
 
 I will cover programming features related to exceptional control-flow,
@@ -62,12 +104,32 @@ persistent memory storage and simple I/O in this chapter, which are all of
 common use in practical programming.\
 
 ")
+")
+#langja("
+#para("\
 
+この章では、例外コントロールフローと永続化メモリ記憶、シンプルなI/Oに関連するプログラミングの機能を説明します。
+これらは実際のプログラミングで一般的に使われるものです。\
+
+")
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_EFFECTFUL/", "on-line").\
 
+")
+")
+#langja("
+#para("\
+
+この章に出てくるコードとテストのための追加コードは
+#mycodelink("CHAP_EFFECTFUL/", "オンライン")
+から得られます。\
+
+")
 ")
 
 <sect1
