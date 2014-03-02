@@ -134,8 +134,14 @@ code for testing is available #mycodelink("CHAP_EFFECTFUL/", "on-line").\
 
 <sect1
 id="exceptions">
+#langeng("
 #title("Exceptions")
+")
+#langja("
+#title("例外")
+")
 
+#langeng("
 #para("\
 
 The exception mechanism provides an efficient means for reporting a special
@@ -144,7 +150,18 @@ condition indicates an error, but it is not uncommon to employ exceptions
 to address issues that are not related to errors.\
 
 ")
+")
+#langja("
+#para("\
 
+例外機構は、プログラムの評価中に発生した特殊な状態を通知するための効果的な方法です。
+しばしばそのような特殊な状態はエラーを指しますが、
+エラーに関連しない事柄を指す例外を使うこともあります。\
+
+")
+")
+
+#langeng("
 #para("\
 
 The type #stacode("exn") is predefined in ATS. One may think of
@@ -177,6 +194,40 @@ When the function call #dyncode("divexn(1, 0)") is evaluated, the exception
 is solely for raising exceptions.\
 
 ")#comment("para")
+")#comment("langeng")
+#langja("
+#para("\
+
+ATSでは #stacode("exn") 型があらかじめ定義されています。
+#stacode("exn") は、新しいコンストラクタによって宣言する拡張datatypeであると思うかもしれません。
+例えば次のように2つの例外コンストラクタを宣言します:
+
+#atscode("\
+exception FatalError0 of ()
+exception FatalError1 of (string)
+")
+
+The constructor #dyncode("FatalError0") is nullary while the constructor
+#dyncode("FatalError1") is unary.  Exception values, that is, values of
+the type #stacode("exn") can be formed by applying exception constructors
+to proper arguments. For instance, #dyncode("FatalError0()") and
+#dyncode('FatalError1("division-by-zero")') are two exception values (or
+simply exceptions). In the following program, a function for integer
+division is implemented:
+
+#atscode("\
+exception DivisionByZero of ()
+fun divexn (x: int, y: int): int =
+  if y != 0 then then x / y else $raise DivisionByZero()
+// end of [divexn]
+")
+
+When the function call #dyncode("divexn(1, 0)") is evaluated, the exception
+#dyncode("DivisionByZero()") is raised. The keyword #dyncode("$raise") in ATS
+is solely for raising exceptions.\
+
+")#comment("para")
+")#comment("langja")
 
 #para("\
 
