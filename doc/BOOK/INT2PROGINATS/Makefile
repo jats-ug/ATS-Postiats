@@ -220,9 +220,7 @@ RMF=rm -f
 ######
 
 publish_jats_ug:: all
-	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
-	$(RMF) -r $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
-	$(CPRF) HTML $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
+	omake publish
 
 ######
 
