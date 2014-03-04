@@ -493,8 +493,14 @@ learning the feature and be cautious when using it.\
 
 <sect1
 id="example_testing_for_braun_trees">
+#langeng("
 #title("Example: Testing for Braun Trees")
+")
+#langja("
+#title("例: ブラウンツリー(Braun Trees)の判定")
+")
 
+#langeng("
 #para("\
 
 Braun trees are special binary trees that can be defined
@@ -522,7 +528,37 @@ Given a natural number n, there is exactly one Braun tree of size n.  It is
 straightforward to prove that Braun trees are balanced.\
 
 ")
+")
+#langja("
+#para("\
 
+ブラウンツリー(Braun Trees)は、次のような再帰的な定義によって導かれる特殊なバイナリツリーです:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+空のバイナリツリーがあるとき、そのツリーはブラウンツリーです。
+")
+</listitem>
+
+<listitem>
+#para("\
+バイナリツリーの2つの子がブラウンツリーで、
+なおかつ左の子のサイズから右の個のサイズを引いたとき0もしくは1が得られるなら、
+そのバイナリツリーはブラウンツリーです。
+")
+</listitem>
+
+</itemizedlist>
+
+自然数nが与えられた時、サイズnのブラウンツリーは唯一一つ存在します。
+ブラウンツリーが平衡であることは自明でしょう。\
+
+")
+")
+
+#langeng("
 #para("\
 
 A polymorphic datatype is declared as follows for representing binary trees:
@@ -568,7 +604,55 @@ time-complexity of the function #dyncode("size") is O(n) and the
 time-complexity of the function #dyncode("brauntest0") is O(n(log(n))).\
 
 ")#comment("para")
+")#comment("langeng")
+#langja("
+#para("\
 
+次のようなバイナリツリーを表わす多相datatypeを宣言します:
+
+#atscode("\
+datatype tree (a:t@ype) =
+  | tree_nil of ((*void*))
+  | tree_cons of (a, tree(a)(*left*), tree(a)(*right*))
+// end of [tree] // end of [datatype]
+")
+
+次に宣言する関数 #dyncode("brauntest0") は、与えられたバイナリツリーがブラウンツリーかどうか判定します:
+
+#atscode("\
+fun{
+a:t@ype
+} size (t: tree a): int = case+ t of
+  | tree_nil () => 0
+  | tree_cons (_, tl, tr) => 1 + size(tl) + size(tr)
+// end of [size]
+
+fun{
+a:t@ype
+} brauntest0
+  (t: tree a): bool =
+(
+case+ t of
+| tree_nil () => true
+| tree_cons (_, tl, tr) => let
+    val cond1 = brauntest0(tl) andalso brauntest0(tr)
+  in
+    if cond1 then let
+      val df = size(tl) - size(tr) in (df = 0) orelse (df = 1)
+    end else false
+  end // end of [tree_cons]
+) (* end of [brauntest0] *)
+")
+
+#dyncode("brauntest0") の実装はブラウンツリーの定義に厳密に従っています。
+サイズnのバイナリツリーを判定すると、
+関数 #dyncode("size") の時間的計算量は O(n) であり、
+関数 #dyncode("brauntest0") の時間的計算量は O(n(log(n))) です。\
+
+")#comment("para")
+")#comment("langja")
+
+#langeng("
 #para("\
 
 In the following program, the defined function #dyncode("brauntest1") also
@@ -616,7 +700,56 @@ try-expression.  The time complexity of #dyncode("brauntest1") is the same
 as that of #dyncode("aux"), which is O(n).\
 
 ")
+")
+#langja("
+#para("\
 
+次のプログラムで定義している #dyncode("brauntest1")
+関数もまた与えられたバイナリツリーがブラウンツリーか判定しています:
+
+#atscode("\
+fun{
+a:t@ype
+} brauntest1
+  (t: tree a): bool = let
+  exception Negative of ()
+  fun aux (t: tree a): int =
+  (
+    case+ t of
+    | tree_nil () => 0
+    | tree_cons (_, tl, tr) => let
+        val szl = aux (tl) and szr = aux (tr)
+        val df = szl - szr
+      in
+        if df = 0 orelse df = 1 then 1+szl+szr else $raise Negative()
+      end // end of [tree_cons]
+  ) (* end of [aux] *)
+in
+  try let
+    val _ = aux (t)
+  in
+    true // [t] is a Braun tree
+  end with
+    ~Negative() => false // [t] is not a Braun tree
+  // end of [try]
+end // end of [brauntest1]
+")
+
+子ツリーの内1つでもブラウンツリーでなければ、そのバイナリツリーはブラウンツリーでないことは明確です。
+補助関数 #dyncode("aux") は、ツリーがブラウンツリーである場合にはバイナリツリーのサイズを返し、
+そうでない場合には例外を発生させるために定義されています。
+#dyncode("brauntest1") の中身にあるtry式の評価が開始すると、
+まずはじめにバイナリツリーに対して #dyncode("aux") を呼び出します。
+もしこの呼び出しの評価が返ればtはブラウンツリーであるので、
+try式の値としてブール値 #dyncode("true") が返ります。
+そうでなければ、
+#dyncode("Negative()") 例外が発生して捕捉され、try式の値としてブール値 #dyncode("false") が返ります。
+#dyncode("brauntest1") と #dyncode("aux") の時間的計算量はどちらも O(n) です。\
+
+")
+")
+
+#langeng("
 #para("\
 
 The use of the exception mechanism in the implementation of
@@ -643,12 +776,48 @@ a:t@ype
 Therefore, making use of exceptions in this style should be avoided.
 
 ")
+")
+#langja("
+#para("\
 
+#dyncode("brauntest1") の実装における例外機構の使い方は妥当なものです。
+なぜなら例外が発生するポイントから例外が捕捉されるポイントまでの範囲に多くの関数呼び出しがあるからです。
+もしこの範囲が短かい場合(例えばたった1つの関数しか呼び出さないなど)、
+おそらくプログラマは例外機構を使うべきか吟味すべきでしょう。
+例えば、次の例における例外の使い方は興味深いものですが、実際には役に立ちません：
+
+#atscode('\
+
+fun{
+a:t@ype
+} list0_length
+  (xs: list0 (a)): int =
+  try 1 + list0_length (xs.tail) with ~ListSubscriptExn() => 0
+// end of [list0_length]
+
+')
+
+そのため、このような例外の使い方は避けるべきでしょう。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find the entirety of the code in this section plus some additional
 code for testing #mycodelink("CHAP_EFFECTFUL/brauntest.dats", "on-line").\
 
+")
+")
+#langja("
+#para("\
+
+この章に出てくるコードの全体とテストのための追加コードは
+#mycodelink("CHAP_EFFECTFUL/brauntest.dats", "オンライン")
+から得られます。\
+
+")
 ")
 
 </sect1><!--id="example_testing_for_braun_trees"-->
