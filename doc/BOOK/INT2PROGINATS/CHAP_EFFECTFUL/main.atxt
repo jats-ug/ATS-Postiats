@@ -207,13 +207,13 @@ exception FatalError0 of ()
 exception FatalError1 of (string)
 ")
 
-The constructor #dyncode("FatalError0") is nullary while the constructor
-#dyncode("FatalError1") is unary.  Exception values, that is, values of
-the type #stacode("exn") can be formed by applying exception constructors
-to proper arguments. For instance, #dyncode("FatalError0()") and
-#dyncode('FatalError1("division-by-zero")') are two exception values (or
-simply exceptions). In the following program, a function for integer
-division is implemented:
+#dyncode("FatalError0") コンストラクタは引数を取らず、
+#dyncode("FatalError1") コンストラクタは引数を一つ取ります。
+例外の値は #stacode("exn") 型の値で、
+例外コンストラクタを適切な引数に適用することで作られます。
+例えば、 #dyncode("FatalError0()") と #dyncode('FatalError1("division-by-zero")')
+は2つとも例外の値です(もしくは単に例外と呼ぶこともあります)。
+次のプログラムでは、整数の割り算を関数として実装しています:
 
 #atscode("\
 exception DivisionByZero of ()
@@ -222,13 +222,13 @@ fun divexn (x: int, y: int): int =
 // end of [divexn]
 ")
 
-When the function call #dyncode("divexn(1, 0)") is evaluated, the exception
-#dyncode("DivisionByZero()") is raised. The keyword #dyncode("$raise") in ATS
-is solely for raising exceptions.\
+関数呼び出し #dyncode("divexn(1, 0)") が評価されると、例外 #dyncode("DivisionByZero()") が発生します。
+ATSにおける #dyncode("$raise") キーワードは例外を発生させます。\
 
 ")#comment("para")
 ")#comment("langja")
 
+#langeng("
 #para("\
 
 A raise-expression is of the form (#dyncode("$raise") exp) for some
@@ -238,7 +238,19 @@ exception. Therefore, the evaluation of a raise-expression can never return
 a value, and this justifies that a raise-expression can be given any type.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+なんらかの式expが与えられとき (#dyncode("$raise") exp) はraise式です。
+式expは値を返しますが、
+(#dyncode("$raise") exp) を評価すると当然、例外が発生してしまいます。
+したがって、raise式は評価されると値を返しません。つまりraise式はいかなる型も取りうるのです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A raised exception can be captured. If it is not captured, the raised
@@ -257,7 +269,27 @@ exception is uncaught. In a try-expression, the with-part is often referred
 to as an exception-handler.\
 
 ")
+")
+#langja("
+#para("\
 
+発生した例外は捕捉することができます。
+もし例外が捕捉されない場合、発生した例外はプログラムの評価を実行開始した地点で停止させます。
+ATSでは、try式(もしくはtry-with式)は
+(#dyncode("try") exp #dyncode("with") clseq) のように作られます。
+この式では #dyncode("try") キーワード、expは任意の式、 #dyncode("with")
+もキーワード、そしてclseqはマッチング節の列です。
+try式を評価すると、最初にexpが評価されます。
+もしexpの評価が値を返したら、その値がtry式の値となります。
+もしexpの評価が例外を発生させたら、clseqに列挙されたマッチング節のガードに対してその例外をマッチさせます。
+もしマッチすれば、発生した例外は捕捉され、マッチしたガード最初の節の中身から評価が続行します。
+もしマッチしなかったら、発生した例外は捕捉されません。
+try式ではしばしばwith部は例外ハンドラと呼ばれます。\
+
+")
+")
+
+#langeng("
 #para("\
 Let us now see an example that involves raising and capturing an
 exception. In the following program, three functions are defined to compute
@@ -350,13 +382,111 @@ following #dyncode("~") is consumed (and the memory for holding the value
 is freed).\
 
 ")
+")#comment("langeng")
+#langja("
+#para("\
+例外の発生と捕捉をともなう例を見てみましょう。
+次のプログラムでは、与えられたリスト中の整数の積を計算する3つの関数が定義されています:
 
+#atscode("\
+fun listprod1
+(
+  xs: list0 (int)
+): int =
+(
+  case+ xs of
+  | list0_nil () => 1
+  | list0_cons (x, xs) => x * listprod1 (xs)
+) (* end of [listprod1] *)
+
+fun listprod2
+(
+  xs: list0 (int)
+) : int =
+(
+  case+ xs of
+  | list0_nil () => 1
+  | list0_cons (x, xs) =>
+      if x = 0 then 0 else x * listprod2 (xs)
+    // end of [list0_cons]
+) (* end of [listprod2] *)
+
+fun listprod3
+(
+  xs: list0 (int)
+) : int = let
+  exception ZERO of ()
+  fun aux (xs: list0 (int)): int =
+    case+ xs of
+    | list0_cons (x, xs) =>
+        if x = 0 then $raise ZERO() else x * aux (xs)
+    | list0_nil () => 1
+  // end of [aux]
+in
+  try aux (xs) with ~ZERO () => 0
+end // end of [listprod3]
+")
+
+これらの関数は末尾再帰で定義されていますが、ここで主張したいポイントは明確ではありません。
+次の事実に疑う余地はないでしょう:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+与えられたリスト中に整数0があった場合、
+その他の整数値によらずリスト中の整数の積は0である。
+")
+</listitem>
+
+</itemizedlist>
+
+#dyncode("listprod1") 関数は通常の作法で定義されていて、先の定理を使っていません。
+#dyncode("listprod2") 関数は先の定理を部分的に使っています。
+試しに #dyncode("listprod2") を7つの整数からなるリストである #dyncode("[1, 2, 3, 0, 4, 5, 6]")
+に対して呼び出してみましょう。
+この呼び出しの評価は結局のところ #dyncode("1*(2*(3*(listprod([0,4,5,6]))))") の評価を導きます。
+それから #dyncode("1*(2*(3*0))") が得られ、 #dyncode("1*(2*0)") が、さらに #dyncode("1*0")
+が、そして最終的に #dyncode("0") が得られます。
+けれども、リスト中に整数0を見つけたら、即座に0を返すように評価したいと思うでしょう。
+このような評価は #dyncode("listprod3") 関数であれば実現できます。
+#dyncode("listprod3") を #dyncode("[1, 2, 3, 0, 4, 5, 6]") に呼び出した場合、
+最終的に次の式を評価することになります:
+
+#atscode("\
+try 1*(2*(3*(aux([0,4,5,6])))) with ~ZERO() => 0
+")
+
+#dyncode("aux([0,4,5,6])") の評価は #dyncode("ZERO()") 例外の発生を引き起します。
+そしてこの例外は捕捉されて #dyncode("0") が #dyncode("listprod3") 呼び出しの値として返ります。
+#dyncode("with") キーワードに続くマッチング節のパターンガードは #dyncode("~ZERO()")
+であることに注意してください。
+別の章でチルダシンボル #dyncode("~") が必要になる理由を説明します。
+ここでは、 #dyncode("exn") は線形型で、例外の値は線形値であり、
+その値は消費されるか再度raiseしなければならないということだけ覚えておいてください。
+チルダシンボル #dyncode("~") は、 #dyncode("~") に続くパターンにマッチした値が消費されることを示しています。
+つまり値を保持しているメモリは解放されるということです。\
+
+")
+")#comment("langja")
+
+#langeng("
 #para("\
 
 Exceptions are not a programming feature that is easy to master, and
 misusing exceptions is abundant in practice. So please be patient when
 learning the feature and be cautious when using it.\
 
+")
+")
+#langja("
+#para("\
+
+例外は簡単に使いこなせるようなプログラミングの機能ではありません。
+また実際、例外の誤用はたくさんあります。
+そのため例外を根気強く学び、注意深く使用してください。\
+
+")
 ")
 
 </sect1><!--id="exceptions"-->
