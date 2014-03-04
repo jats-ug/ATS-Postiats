@@ -362,7 +362,7 @@ case+ opt of
       the_trans3errlst_add (T3E_d3lval_linpatcon (d3e0, s2e))
     end (* end of [if] *)
   end // end of [Some]
-| None () => ()
+| None ((*void*)) => ()
 //
 end // end of [d3lval_set_pat_type_left]
 
@@ -402,7 +402,7 @@ end // end of [local]
 (* ****** ****** *)
 
 local
-
+//
 fun
 auxerr
 (
@@ -415,7 +415,12 @@ auxerr
 in
   the_trans3errlst_add (T3E_d3lval_funarg (d3e0))
 end // end of [_]
-
+(*
+//
+// HX-2014-03-02:
+// no support for auto-freeing
+// auto-freeing interferes with tail-recursion
+//
 fun
 s2exp_fun_is_freeptr
   (s2e_fun: s2exp) : bool = let
@@ -428,12 +433,15 @@ case+ s2e_fun.s2exp_node of
   ) => 
   (
   case+ fc of
-  | FUNCLOclo knd when knd > 0 => if lin = 0 then true else false | _ => false
+  | FUNCLOclo (knd) =>
+      if knd > 0 then (if lin = 0 then true else false) else false
+  | _ (*non-clofun*) => false
   ) // end of [S2Efun]
-| _ => false
+| _ (*non-fun-type*) => false
 //
 end // end of [s2exp_fun_is_freeptr]
-
+*)
+//
 in (* in of [local] *)
 
 implement
@@ -442,8 +450,9 @@ d3lval_arg_set_type
 (*
 val () = (
   println! ("d3lval_arg_set_type: d3e0 = ", d3e0);
+  println! ("d3lval_arg_set_type: refval = ", refval);
   println! ("d3lval_arg_set_type: s2e_new = ", s2e_new);
-) // end of [val]
+) (* end of [val] *)
 *)
 var err: int = 0
 var freeknd: int = 0 // free [d3e0] if it is set to 1
@@ -455,13 +464,19 @@ if err > 0 then
   case+ 0 of
   | _ when refval > 0 => auxerr (d3e0)
   | _ when s2exp_is_nonlin (s2e_new) => () // HX-2013-03: safely discarded
-  | _ when s2exp_fun_is_freeptr (s2e_new) => (freeknd := 1) // HX: leak if not freed
+(*
+  | _ when s2exp_fun_is_freeptr (s2e_new) => (freeknd := 1) // auto-freeing
+*)
   | _ (* refval = 0 *) => auxerr (d3e0)
 ) // end of [if]
 ) : void // end of [val]
 //
+(*
+val () = println! ("d3lval_arg_set_type: freeknd = ", freeknd)
+*)
+//
 in
-  freeknd // a linear value must be freed (freeknd = 1) if it cannot be returned
+  freeknd // freeknd=1: a linear value must be freed if it cannot be returned
 end (* end of [d3lval_arg_set_type] *)
 
 end // end of [local]
@@ -506,7 +521,8 @@ val refval =
   | FUNCLOfun () => 0
 ) : int // end of [val]
 //
-val freeknd = d3lval_arg_set_type (refval, d3e0, s2fun_new)
+val freeknd = // HX: freeknd = 0
+  d3lval_arg_set_type (refval, d3e0, s2fun_new)
 //
 in
   d3exp_refarg (loc0, s2fun_new, refval, freeknd, d3e0)
@@ -578,10 +594,9 @@ case+ wths2es of
     val-list_cons (d3e, d3es) = d3es
     val-list_cons (s2e_arg, s2es_arg) = s2es_arg
     val loc = d3e.d3exp_loc
-    val-S2Erefarg (refval, s2e_res) = s2e_arg.s2exp_node
-    val freeknd =
+    val-S2Erefarg(refval, s2e_res) = s2e_arg.s2exp_node
+    val freeknd = // HX: freeknd = 0
       d3lval_arg_set_type (refval, d3e, s2e_res)
-    val ((*void*)) = if freeknd > 0 then auxerr (d3e)
     val d3e = d3exp_refarg (loc, s2e_res, refval, freeknd, d3e)
     val d3es = auxlst1 (d3es, s2es_arg, wths2es)
   in
@@ -602,9 +617,8 @@ case+ wths2es of
       println! ("d3explst_arg_restore: auxlst2: s2e_res = ", s2e_res);
     ) // end of [val]
 *)
-    val freeknd =
+    val freeknd = // HX: freeknd = 0
       d3lval_arg_set_type (refval, d3e, s2e_res)
-    val ((*void*)) = if freeknd > 0 then auxerr (d3e)
     val d3e = d3exp_refarg (loc, s2e_res, refval, freeknd, d3e)
     val d3es = auxlst1 (d3es, s2es_arg, wths2es)
   in
@@ -625,10 +639,11 @@ case+ wths2es of
 end // end of [d3explst_arg_restore]
 
 in (* in of [local] *)
-
+//
 implement
-d3explst_arg_restore (d3es, s2es, wths2es) = auxlst1 (d3es, s2es, wths2es)
-
+d3explst_arg_restore
+  (d3es, s2es, wths2es) = auxlst1 (d3es, s2es, wths2es)
+//
 end // end of [local]
 
 (* ****** ****** *)

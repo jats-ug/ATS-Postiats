@@ -52,6 +52,14 @@ in
 end // end of [matrixref_get_at_size]
 
 #atscode_separator()
+//
+implement
+{a}(*tmp*)
+matrixref_get_at_int
+  (M, i, n, j) =
+  matrixref_get_at_size (M, i2sz(i), i2sz(n), i2sz(j))
+//
+#atscode_separator()
 
 implement{a}
 matrixref_set_at_size
@@ -65,6 +73,40 @@ vbox pf | p
 in
   matrix_set_at_size (!p, i, n, j, x)
 end // end of [matrixref_set_at_size]
+
+#atscode_separator()
+//
+implement
+{a}(*tmp*)
+matrixref_set_at_int
+  (M, i, n, j, x) =
+  matrixref_set_at_size (M, i2sz(i), i2sz(n), i2sz(j), x)
+//
+#atscode_separator()
+
+implement{a}
+fprint_matrixref
+  {m,n}
+(
+  out, M, nrow, ncol
+) = {
+  val M =
+  $UN.castvwtp1{matrixptr(a, m, n)}(M)
+  val () = fprint_matrixptr<a> (out, M, nrow, ncol)
+  prval () = $UN.cast2void (M)
+} (* end of [fprint_matrixref] *)
+
+implement{a}
+fprint_matrixref_sep
+  {m,n}
+(
+  out, M, nrow, ncol, sep1, sep2
+) = {
+  val M =
+  $UN.castvwtp1{matrixptr(a, m, n)}(M)
+  val () = fprint_matrixptr_sep<a> (out, M, nrow, ncol, sep1, sep2)
+  prval () = $UN.cast2void (M)
+} (* end of [fprint_matrixref_sep] *)
 
 #atscode_separator()
 
@@ -149,94 +191,108 @@ end // end of [mtrxszref_make_elt]
 #atscode_separator()
 
 implement{a}
+mtrxszref_get_at_int
+  (MSZ, i, j) = let
+  val i = g1ofg0_int(i)
+  and j = g1ofg0_int(j)
+in
+//
+if i >= 0 then
+if j >= 0 then
+  mtrxszref_get_at_size (MSZ, i2sz(i), i2sz(j))
+else $raise MatrixSubscriptExn((* j < 0 *))
+else $raise MatrixSubscriptExn((* i < 0 *))
+//
+end // end of [mtrxszref_get_at_gint]
+
+implement{a}
 mtrxszref_get_at_size
-  (MSZ, i, j) = $effmask_wrt let
+  (MSZ, i, j) = let
 //
 var nrow: size_t
 and ncol: size_t
-val M = mtrxszref_get_refsize (MSZ, nrow, ncol)
-val i = g1ofg0_uint (i)
-val j = g1ofg0_uint (j)
+val M = $effmask_wrt
+(
+  mtrxszref_get_refsize (MSZ, nrow, ncol)
+)
+val i = g1ofg0_uint(i)
+and j = g1ofg0_uint(j)
 //
 in
 //
 if nrow > i then (
   if ncol > j then
     matrixref_get_at_size (M, i, ncol, j)
-  else $raise ArraySubscriptExn((*void*))
-) else $raise ArraySubscriptExn((*void*))
+  else $raise MatrixSubscriptExn((*void*))
+) else $raise MatrixSubscriptExn((*void*))
 //
 end // end of [mtrxszref_get_at_size]
-
-implement
-{a}{tk}
-mtrxszref_get_at_gint
-  (ASZ, i, j) = let
-in
-//
-if i >= 0 then
-if j >= 0 then
-  mtrxszref_get_at_size (ASZ, g0i2u(i), g0i2u(j))
-else $raise ArraySubscriptExn((* j < 0 *))
-else $raise ArraySubscriptExn((* i < 0 *))
-//
-end // end of [mtrxszref_get_at_gint]
-
-implement
-{a}{tk}
-mtrxszref_get_at_guint
-  (ASZ, i, j) = let
-in
-//
-mtrxszref_get_at_size (ASZ, g0u2u(i), g0u2u(j))
-//
-end // end of [mtrxszref_get_at_gint]
 
 #atscode_separator()
 
 implement{a}
+mtrxszref_set_at_int
+  (MSZ, i, j, x) = let
+  val i = g1ofg0_int(i)
+  and j = g1ofg0_int(j)
+in
+//
+if i >= 0 then
+if j >= 0 then
+  mtrxszref_set_at_size (MSZ, i2sz(i), i2sz(j), x)
+else $raise MatrixSubscriptExn((* j < 0 *))
+else $raise MatrixSubscriptExn((* i < 0 *))
+//
+end // end of [mtrxszref_set_at_int]
+
+implement{a}
 mtrxszref_set_at_size
-  (MSZ, i, j, x) = $effmask_wrt let
+  (MSZ, i, j, x) = let
 //
 var nrow: size_t
 and ncol: size_t
-val M = mtrxszref_get_refsize (MSZ, nrow, ncol)
+val M =
+(
+  mtrxszref_get_refsize (MSZ, nrow, ncol)
+)
 val i = g1ofg0_uint (i)
-val j = g1ofg0_uint (j)
+and j = g1ofg0_uint (j)
 //
 in
 //
 if nrow > i then (
   if ncol > j then
     matrixref_set_at_size (M, i, ncol, j, x)
-  else $raise ArraySubscriptExn((*void*))
-) else $raise ArraySubscriptExn((*void*))
+  else $raise MatrixSubscriptExn((*void*))
+) else $raise MatrixSubscriptExn((*void*))
 //
 end // end of [mtrxszref_set_at_size]
 
-implement
-{a}{tk}
-mtrxszref_set_at_gint
-  (ASZ, i, j, x) = let
-in
-//
-if i >= 0 then
-if j >= 0 then
-  mtrxszref_set_at_size (ASZ, g0i2u(i), g0i2u(j), x)
-else $raise ArraySubscriptExn((* j < 0 *))
-else $raise ArraySubscriptExn((* i < 0 *))
-//
-end // end of [mtrxszref_set_at_gint]
+#atscode_separator()
 
-implement
-{a}{tk}
-mtrxszref_set_at_guint
-  (ASZ, i, j, x) = let
+implement{a}
+fprint_mtrxszref
+  (out, MSZ) = let
+//
+var nrow: size_t
+and ncol: size_t
+val A = mtrxszref_get_refsize (MSZ, nrow, ncol)
+//
 in
+  fprint_matrixref (out, A, nrow, ncol)
+end // end of [fprint_mtrxszref]
+
+implement{a}
+fprint_mtrxszref_sep
+  (out, MSZ, sep1, sep2) = let
 //
-mtrxszref_set_at_size (ASZ, g0u2u(i), g0u2u(j), x)
+var nrow: size_t
+and ncol: size_t
+val A = mtrxszref_get_refsize (MSZ, nrow, ncol)
 //
-end // end of [mtrxszref_set_at_gint]
+in
+  fprint_matrixref_sep (out, A, nrow, ncol, sep1, sep2)
+end // end of [fprint_mtrxszref_sep]
 
 #atscode_separator()
 

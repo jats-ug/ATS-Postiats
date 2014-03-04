@@ -4,6 +4,30 @@
 //
 (* ****** ****** *)
 
+(*
+** ATS/Postiats - Unleashing the Potential of Types!
+** Copyright (C) 2011-2013 Hongwei Xi, ATS Trustful Software, Inc.
+** All rights reserved
+**
+** Permission to use, copy, modify, and distribute this software for any
+** purpose with or without fee is hereby granted, provided that the above
+** copyright notice and this permission notice appear in all copies.
+** 
+** THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+** WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+** MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+** ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+** WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+** ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+** OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*)
+
+(* ****** ****** *)
+//
+// Linear Algebra matrix operations
+//
+(* ****** ****** *)
+
 (* Author: Hongwei Xi *)
 (* Authoremail: hwxi AT cs DOT bu DOT edu *)
 (* Start time: July, 2013 *)
@@ -205,9 +229,6 @@ LAgmat_set_at
   M: !LAgmat(a, mo, m, n), i: natLt(m), j: natLt(n), x: a
 ) : void // endfun
 //
-overload [] with LAgmat_get_at
-overload [] with LAgmat_set_at
-//
 (* ****** ****** *)
 
 fun{a:t0p}
@@ -242,7 +263,6 @@ fprint_LAgmat$sep2 (FILEref): void
 fun{a:t0p}
 fprint_LAgmat
   {mo:mord}{m,n:int} (FILEref, !LAgmat(a, mo, m, n)): void
-overload fprint with fprint_LAgmat
 //
 fun{a:t0p}
 fprint_LAgmat_sep
@@ -425,7 +445,6 @@ add11_LAgmat_LAgmat
 (
   X: !LAgmat(a, mo, m, n), Y: !LAgmat(a, mo, m, n)
 ) : LAgmat(a, mo, m, n)
-overload + with add11_LAgmat_LAgmat
 
 fun{a:t0p}
 sub11_LAgmat_LAgmat
@@ -433,7 +452,6 @@ sub11_LAgmat_LAgmat
 (
   X: !LAgmat(a, mo, m, n), Y: !LAgmat(a, mo, m, n)
 ) : LAgmat(a, mo, m, n)
-overload - with sub11_LAgmat_LAgmat
 
 (* ****** ****** *)
 //
@@ -529,7 +547,34 @@ mul11_LAgmat_LAgmat
 (
   X: !LAgmat(a, mo, p, q), Y: !LAgmat(a, mo, q, r)
 ) : LAgmat(a, mo, p, r)
+
+(* ****** ****** *)
+//
+// Overloading for certain symbols
+//
+(* ****** ****** *)
+
+overload + with add11_LAgmat_LAgmat
+overload - with sub11_LAgmat_LAgmat
 overload * with mul11_LAgmat_LAgmat
+
+(* ****** ****** *)
+
+overload [] with LAgmat_get_at
+overload [] with LAgmat_set_at
+
+(* ****** ****** *)
+//
+// HX-2014-02-28:
+// .nrow and .ncol
+// are introduced in basics_pre.sats
+//
+overload .nrow with LAgmat_nrow
+overload .ncol with LAgmat_ncol
+//
+(* ****** ****** *)
+
+overload fprint with fprint_LAgmat
 
 (* ****** ****** *)
 

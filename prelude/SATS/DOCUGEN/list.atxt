@@ -1262,12 +1262,8 @@ list_quicksort$cmp (x, y) = gcompare_val<a> (x, y)
 
 (* ****** ****** *)
 
+#declnamesynop("+")
 #declnamesynop("[]")
-
-(* ****** ****** *)
-
-#declnamesynop("iseqz")
-#declnamesynop("isneqz")
 
 (* ****** ****** *)
 
@@ -1276,7 +1272,16 @@ list_quicksort$cmp (x, y) = gcompare_val<a> (x, y)
 
 (* ****** ****** *)
 
+#declnamesynop("iseqz")
+#declnamesynop("isneqz")
+
+(* ****** ****** *)
+
 #declnamesynop("length")
+
+(* ****** ****** *)
+
+#declnamesynop("copy")
 
 (* ****** ****** *)
 

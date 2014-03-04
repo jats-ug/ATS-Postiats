@@ -3,7 +3,8 @@ ATSCC=$(ATSHOMEQ)/bin/atscc
 ATSDOC=$(ATSHOMEQ)/bin/atsdoc
 CHAPTERS = $(glob CHAP_*/)
 CHAP_DB_FILES = $(addsuffix /main.db, $(CHAPTERS))
-.PHONY: clean
+
+.PHONY: clean publish
 .DEFAULT: HTML/index.html
 
 HTML/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
@@ -31,6 +32,11 @@ preface.db: preface.atxt
 		$(ATSCC) -D_ATS_GCATS -o $(removesuffix $<) $(replacesuffixes .atxt, _atxt.dats, $<) -latsdoc
 		./$(removesuffix $<) > $@
 		rm -f $(replacesuffixes .atxt, _atxt.dats, $<) $(replacesuffixes .atxt, _atxt.txt, $<) $(removesuffix $<)
+
+publish: HTML/index.html
+	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
+	rm -rf $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
+	cp -rf HTML $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
 
 clean:
 	rm -f preface.db $(CHAP_DB_FILES)

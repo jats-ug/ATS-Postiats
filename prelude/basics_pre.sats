@@ -352,11 +352,10 @@ symintr encode decode
 symintr g0ofg1 g1ofg0 // casting: dpt <-> ndpt
 symintr ptrcast (* for functions taking the address of a boxed val *)
 //
-symintr copylin
-symintr freelin (* strptr_free, strnptr_free, list_vt_freelin, ... *)
+symintr copy free length
 //
-symintr fprint print prerr
-symintr length (* array_length, list_length, string_length, etc. *)
+symintr print prerr fprint
+//
 (*
 symintr foreach iforeach rforeach
 *)
@@ -370,6 +369,7 @@ symintr tostring tostrptr
 // for dot-notation overloading
 //
 symintr .size
+symintr .nrow .ncol
 symintr .head .tail
 symintr .next .prev
 //

@@ -23,8 +23,15 @@ cleanall::
 
 ######
 
-pdf: main.db
-	jw -b pdf --output PDF/ main.db
+JADE=/usr/bin/openjade
+
+######
+
+pdf: main.db ; jw -b pdf --dsl default --parser $(JADE) --output PDF/ main.db
+
+######
+
+html: main.db ; jw -b html --dsl default --parser $(JADE) --output HTML/ main.db
 
 ######
 

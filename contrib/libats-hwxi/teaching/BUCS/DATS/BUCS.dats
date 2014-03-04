@@ -1,11 +1,11 @@
 (***********************************************************************)
 (*                                                                     *)
-(*                         ATS/contrib/atshwxi                         *)
+(*                       ATS/contrib/libats-hwxi                       *)
 (*                                                                     *)
 (***********************************************************************)
 
 (*
-** Copyright (C) 2012 Hongwei Xi, ATS Trustful Software, Inc.
+** Copyright (C) 2014 Hongwei Xi, ATS Trustful Software, Inc.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and associated documentation files (the "Software"),
@@ -21,41 +21,59 @@
 ** OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
 ** THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM
-** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-** THE SOFTWARE.
-** 
+** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+** FROM OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+** IN THE SOFTWARE.
 *)
 
 (* ****** ****** *)
-
-(*
-** Functions
-** for stringizing data
-*)
-
+//
+// HX-2014-02-06
+//
+(* ****** ****** *)
+//
+staload
+UN = "prelude/SATS/unsafe.sats"
+//
 (* ****** ****** *)
 
-staload "./../SATS/tostring.sats"
-
+staload
+STDLIB = "libc/SATS/stdlib.sats"
+//
+staload TIME = "libc/SATS/time.sats"
+//
 (* ****** ****** *)
 
-implement{a}
-tostring_fprint_val (x) = let
-  val str = tostrptr_fprint_val<a> (x)
+extern
+fun{}
+randint{n:pos}(int(n)): natLt(n)
+implement{}
+randint{n}(n) = let
+  val x = $STDLIB.random()
 in
-//
-if strptr2ptr (str) > 0 then
-  stropt_some (strptr2string (str))
-else let
-  val () = strptr_free_null (str) in stropt_none ()
-end // end of [if]
-//
-end // end of [tostring_fprint_val]
-
-implement{a}
-tostring_fprint_ref (x) = tostring_fprint_val<a> (x)
+  $UN.cast{natLt(n)}(x mod $UN.cast2lint(n))
+end // end of [randint]
 
 (* ****** ****** *)
 
-(* end of [tostring.dats] *)
+extern
+fun{}
+srandom_with_time((*void*)): void
+implement{}
+srandom_with_time () =
+  $STDLIB.srandom($UN.cast{uint}($TIME.time_get()))
+// end of [srandom_with_time]
+
+(* ****** ****** *)
+
+extern
+fun{}
+srand48_with_time((*void*)): void
+implement{}
+srand48_with_time () =
+  $STDLIB.srand48($UN.cast{lint}($TIME.time_get()))
+// end of [srand48_with_time]
+
+(* ****** ****** *)
+
+(* end of [BUCS.dats] *)

@@ -16,8 +16,7 @@
 //
 (* ****** ****** *)
 
-staload
-"{$LIBATSHWXI}/teaching/mydraw/SATS/mydraw.sats"
+staload "./../SATS/mydraw.sats"
 
 (* ****** ****** *)
 //
@@ -45,7 +44,7 @@ implement{
 val a = 1.0 / n
 val v12 = a * (p2 - p1)
 val v43 = a * (p3 - p4)
-val [n:int] EQINT () = eqint_make_gint (n)
+prval [n:int] EQINT () = eqint_make_gint (n)
 //
 fun loop
   {i:nat | i < n}
@@ -62,12 +61,16 @@ val ht =
     then 0.0 else (if ht >= 1.0 then 1.0 else ht)
   // end of [if]
 ) : double // end of [val]
-val ((*void*)) =
-mydraw_quadrilateral
-  (p1, p1_new, p1_new+ht*(p4_new-p1_new), p1+ht*(p4-p1))
-val clr = mydraw_bargraph$color (i)
-val ((*void*)) = mydraw_fill_set_rgb (clr.r, clr.g, clr.b)
-val ((*void*)) = mydraw_fill ((*void*))
+val () =
+if ht > 0.0 then
+{
+  val ((*void*)) =
+  mydraw_quadrilateral
+    (p1, p1_new, p1_new+ht*(p4_new-p1_new), p1+ht*(p4-p1))
+  val clr = mydraw_bargraph$color (i)
+  val ((*void*)) = mydraw_fill_set_rgb (clr.r, clr.g, clr.b)
+  val ((*void*)) = mydraw_fill ((*void*))
+} (* end of [if] *)
 //
 val i1 = i + 1
 //
