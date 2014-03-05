@@ -1018,8 +1018,14 @@ functional style yet.
 
 <sect1
 id="example_counter_implementation">
+#langeng("
 #title("Example: A Counter Implementation")
+")
+#langja("
+#title("例: カウンタの実装")
+")
 
+#langeng("
 #para("\
 
 Let us see as follows the implementation of a counter-like object in the
@@ -1061,7 +1067,48 @@ represents the object. This is often referred to as state encapsulation
 in OOP.\
 
 ")
+")
+#langja("
+#para("\
 
+次のようなオブジェクト指向プログラミング(OOP)スタイルのカウンタオブジェクトの実装を見てみましょう。
+カウンタのために型 #stacode("counter") を次のように定義します:
+
+#atscode("\
+typedef
+counter = '{
+  get= () -<cloref1> int
+, inc= () -<cloref1> void
+, reset= () -<cloref1> void
+} // end of [counter]
+")
+
+#stacode("counter") の3つのフィールドはクロージャ関数で、オブジェクトと関連したメソッドに対応しています。
+すなわち、カウンタの数値の取得、カウンタの数値を1加算、カウンタの数値を0にリセットします。
+次にカウンタオブジェクトを生成するために、関数 #dyncode("newCounter") を定義します。
+このオブジェクトはクロージャ関数群を格納したボックス化レコードとして表わされます:
+
+#atscode("\
+fun newCounter
+(
+// argumentless
+) : counter = let
+  val count = ref<int> (0)
+in '{
+  get= lam () => !count
+, inc= lam () => !count := !count + 1
+, reset= lam () => !count := 0
+} end // end of [newCounter]
+")
+
+それぞれ生成されたカウンタオブジェクトの状態は参照に保存されます。
+その参照は対応するオブジェクトを表現するレコードの中の3つのクロージャ関数によってのみアクセスできます。
+これはOOPにおけるカプセル化に対応しています。\
+
+")
+")
+
+#langeng("
 #para("\
 
 I myself think that the above counter implementation is of a rather poor
@@ -1070,6 +1117,17 @@ making it abstract.  I will present elsewhere another counter
 implementation based on a linear abstract type (that is, abstract viewtype
 in ATS), where counters can be created and then safely freed.
 
+")
+")
+#langja("
+#para("\
+
+上記のカウンタ実装はどちらかというと良いスタイルではないと、私自身は考えています。
+単純な抽象化することで状態の整合性を保護することも可能です。
+これより後の章にて、線形抽象型(ATSでは抽象viewtypeと呼ばれます)を使った別のカウンタ実装を説明します。
+この実装で生成されたカウンタは安全に解放されます。
+
+")
 ")
 
 </sect1><!--id="example_counter_implementation"-->
