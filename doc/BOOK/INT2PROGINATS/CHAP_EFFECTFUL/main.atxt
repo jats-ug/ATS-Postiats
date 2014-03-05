@@ -824,8 +824,14 @@ code for testing #mycodelink("CHAP_EFFECTFUL/brauntest.dats", "on-line").\
 
 <sect1
 id="references">
+#langeng("
 #title("References")
+")
+#langja("
+#title("参照")
+")
 
+#langeng("
 #para("\
 
 A reference is just an array containing one element.  Given a type T, a
@@ -851,7 +857,33 @@ then store the value into r. Therefore, the value stored in
 evaluated.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+参照はたった1つの要素を持つ配列です。
+ある型Tが与えられた時、型Tの値を保管する参照は型 ref(T) になります。
+次のプログラムは参照の本質的な機能をすべて利用しています:
+
+#atscode("\
+val intr = ref<int> (0) // create a ref and init. it with 0
+val () = !intr := !intr + 1 // increase the integer at [intr] by 1
+")
+
+最初の行では、1つの整数値を保存する参照を作成し、その参照を値0で初期化した後、
+その参照に #dyncode("intr") という名前をつけています。
+このスタイルでは、参照の生成と初期化を分離できないことに注意してください。
+2番目の行では、現状の値に1を足した値で参照 #dyncode("intr") を更新しています。
+一般に、型 T と r と名付けられた参照 ref(T) が与えられた時、
+式 !r は r に保存されている型 T の値を取得する意味しています。
+しかしながら !r は左辺値にも使うことができます。
+例えば (!r := exp) という代入は exp を評価して値にしてから r に保存することを意味しています。
+そのため、上記のプログラムの2行目を評価した後では、 #dyncode("intr") に保存されている値は 1 になります。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Various functions and function templates on references are declared in the
@@ -867,7 +899,25 @@ fun{a:t@ype} ref_set_elt (r: ref a, x: a): void // !r := x
 ")
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#myatscodelink("prelude/SATS/reference.sats", "reference.sats")
+ファイルでは、参照にまつわる様々な関数と関数テンプレートが宣言されています。
+このファイルは <command>atsopt</command> によって自動的に読み込まれます。
+特に、次のインターフェイスの関数テンプレート #dyncode("ref_get_elt") と #dyncode("ref_set_elt") を使うことで、
+参照の読み書きをすることもできます:
+
+#atscode("\
+fun{a:t@ype} ref_get_elt (r: ref a): a // !r
+fun{a:t@ype} ref_set_elt (r: ref a, x: a): void // !r := x
+")
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 References are often misused in practice, especially, by beginners of
@@ -903,7 +953,43 @@ reclaimed through garbage collection (GC). So, this implementation of
 making heavy use of references is often difficult to reason about.\
 
 ")#comment("para")
+")#comment("langeng")
+#langja("
+#para("\
 
+実際には参照は誤用されがちです。
+とりわけC言語やJavaのような命令型プログラミング言語に成熟した関数型プログラミングの初心者に見られます。
+そのようなプログラマはしばしばC言語やJavaで書かれたプログラムを、
+関数型プログラムに単に \"翻訳\" しようと考えます。
+次で定義している #dyncode("sumup") はそのような例です。
+この関数1から与えられた整数までの整数値をすべて加算します:
+
+#atscode("\
+fun sumup
+  (n: int): int = let
+  val i = ref<int> (1)
+  val res = ref<int> (0)
+  fun loop ():<cloref1> void =
+    if !i <= n then (!res := !res + !i; !i := !i + 1; loop ())
+  // end of [loop]
+in
+  loop (); !res
+end // end of [sumup]
+")
+
+このプログラムは正常ですが良い実装とスタイルではありません。
+最悪とまでは言えませんが、ひどいものです。
+参照はヒープに確保されるので、参照の読み書きはレジスタの読み書きよりもより多く時間を消費します。
+そのため、この #dyncode("sumup") の実装は時間効率が悪いことになります。
+#dyncode("sumup") が呼び出されるたびに、2つの参照がヒープに生成されて関数が返るまで放置されています。
+参照のために割り当てられたメモリはガベージコレクション(GC)によってのみ回収されます。
+つまり、この #dyncode("sumup") の実装は空間効率も悪いことにります。
+もっと重要なことに、参照を多用するプログラムは論証することがしばしば困難です。\
+
+")#comment("para")
+")#comment("langja")
+
+#langeng("
 #para("\
 
 I consider references a dangerous feature in functional
@@ -915,6 +1001,18 @@ likely that you are lost and you have not learned well to program in a
 functional style yet.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数型プログラミングにおける参照は危険な機能であると、私は考えています。
+もしGCを使わないプログラムを実行したいのであれば、
+関数の中で参照を生成してはいけません(その他にも多くの制約があります)。
+もし手続型のプログラムを関数型のプログラムに \"翻訳\" する際に参照が必要になってしまったら、
+多くの場合あなたは迷子になっており、関数型スタイルのプログラミングをまだよく学習していないことになります。
+
+")#comment("para")
+")
 
 </sect1><!--id="references"-->
 
