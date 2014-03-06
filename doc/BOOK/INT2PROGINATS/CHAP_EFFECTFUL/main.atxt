@@ -2072,15 +2072,30 @@ end // end of [mtrxszref_transpose]
 <sect1
 id="example_estimating_the_constant_pi">
 
+#langeng("
 #title("Example: Estimating the Constant Pi")
+")
+#langja("
+#title("例: 定数Piの推量")
+")
 
+#langeng("
 #para("\
 
 I present as follows a Monte Carlo approach to estimating the constant Pi,
 the ratio of the circumference of a circle over its diameter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+モンテカルロ法を使って、円周の直径に対する比率である定数Piを推量します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Assume that we have a square of the dimension N by N, where N is a
@@ -2090,7 +2105,20 @@ If we randomly choose a point inside the square, then the probability for
 the point to hit the disk is Pi/N2.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次元 N x N の正方形があるとしましょう。
+このNは比較的大きな自然数(例えば1000)で、半径1の円盤がこの正方形に入っているとします。
+N*N、つまりNの平方にN2という名前をつけます。
+この正方形の内側の点をランダムに選択すると、
+その点が円盤に当たる確率は Pi/N2 です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The experiment we use to estimate the constant Pi can be described as
@@ -2106,7 +2134,23 @@ of hits divided by N2 converges to Pi/2 (with probability 1) as N
 approaches infinity.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+定数Piを推量する方法は次のようなものです。
+自然数Kが与えられたとき、その正方形の内側にあるK個の点をランダムに、K回選択します。
+それぞれの回において、きっちり1度だけ点を選びます。
+前回選んだ点を中心とする円盤にk回目に選択した点が当っていたら、1度当ったことを記録します。
+k回目における記録された当った回数は、直前の回までにk-1点選んだとき、 (k-1)*Pi/N2 であることが期待できます。
+そのため、K回試行して当った合計回数は、理想的には (K*(K-1)/2)*Pi/N2 であることになります。
+もしKがN2に到達すれば、期待される当った合計回数は (N2-1)*Pi/2 になります。
+Nが無限大に近付くと、当った合計回数をN2で割った数が Pi/2 に収束することが証明できます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 If we implement the above experiment directly based on the given
@@ -2129,12 +2173,46 @@ bounded by a constant. Hence, the time taken by the entire experiment is
 O(N2).\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+もし上記の試行を与えられた説明の通りに実装してしまうと、
+その実装の時間効率は、kが1からN2までの範囲を取るときk回目にかかる時間がkに比例するので、
+明らかに N2*N2 に比例してしまいます。
+1000のオーダーのNを取り扱うことを考えると(つまりN2は1,000,000のオーダーになります)、
+そのような実装は実用的ではありません。
+この問題に対処するために、この正方形にN2ユニットの正方形に分割するグリッド(次元は 1 x 1 です)を導入します。
+それからそれぞれのユニット正方形とその内側にある選んだ点のリストを関連させます。
+それぞれの回において、まず元の正方形の内側からランダムに点を選択します;
+次にこの点を含むユニット正方形を見つけます;
+その後、当該ユニット正方形もしくは隣接するユニット正方形に関連するリストを探索して、
+この回で選択した点によって生成された当った回数を数えます。
+これらのリスト中に存在しない点を中心とする円盤をこの点が当たることはありません。
+それぞれのユニット正方形は最大8つの隣接するユニット正方形を取ることができ、
+試行最中におけるそれぞれの正方形に関連するリストの平均の長さは1未満なので、
+それぞれの回にかかる時間は O(1) つまり定数に抑えられます。
+それゆえ全体の試行にかかる時間は O(N2) になります。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 An implementation that precisely matches the above description plus some
 testing code is available #mycodelink("CHAP_EFFECTFUL/montecarlo.dats", "on-line").\
 
+")
+")
+#langja("
+#para("\
+
+上記に示した実装とテストのための追加コードは
+#mycodelink("CHAP_EFFECTFUL/montecarlo.dats", "オンライン")
+から得られます。\
+
+")
 ")
 
 </sect1><!--id="example_estimating_the_constant_pi"-->
