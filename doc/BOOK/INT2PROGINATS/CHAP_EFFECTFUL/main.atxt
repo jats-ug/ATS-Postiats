@@ -2221,8 +2221,14 @@ testing code is available #mycodelink("CHAP_EFFECTFUL/montecarlo.dats", "on-line
 
 <sect1
 id="basic_input_and_output">
+#langeng("
 #title("Simple Input and Output")
+")
+#langja("
+#title("単純な入力と出力")
+")
 
+#langeng("
 #para("\
 
 Handling I/O in ATS properly requires the availability of both dependent
@@ -2231,7 +2237,17 @@ only present a means for allowing the programmer to access certain very
 basic I/O functionalities.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS言語でI/Oを扱うには依存型と線形型を使う必要があり、これは別の章で解説します。
+この章では、プログラマが使うことのできる基本的なI/Oへのアクセス手段を解説します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A file handle essentially associates a stream (of bytes) with a file
@@ -2240,29 +2256,61 @@ is #stacode("FILEref"). There are three standard file handles, which are
 listed as follows:
 
 ")
+")
+#langja("
+#para("\
+
+ファイルハンドルは本質的には(バイト列としての)ストリームと(整数値として表現される)ファイル識別子を結び付けます。
+ATSでは、ファイルハンドルの型は #stacode("FILEref") です。
+次に挙げるような3つの標準ファイルハンドルがあります:
+
+")
+")
 
 <itemizedlist>
 
 <listitem>
+#langeng("
 #para("\
 #dyncode("stdin_ref"): standard input
 ")
-</listitem>
-
-<listitem>
+")
+#langja("
 #para("\
-#dyncode("stdout_ref"): standard output
+#dyncode("stdin_ref"): 標準入力
+")
 ")
 </listitem>
 
 <listitem>
+#langeng("
+#para("\
+#dyncode("stdout_ref"): standard output
+")
+")
+#langja("
+#para("\
+#dyncode("stdout_ref"): 標準出力
+")
+")
+</listitem>
+
+<listitem>
+#langeng("
 #para("\
 #dyncode("stderr_ref"): standard error output
+")
+")
+#langja("
+#para("\
+#dyncode("stderr_ref"): 標準エラー出力
+")
 ")
 </listitem>
 
 </itemizedlist>
 
+#langeng("
 #para("\
 
 Various functions on file handles are declared in the file
@@ -2292,34 +2340,87 @@ fun fileref_open_opt
 ")
 
 ")
+")
+#langja("
+#para("\
 
+ファイルハンドルに関連する様々な関数が #myatscodelink("prelude/SATS/filebas.sats", "filebas.sats")
+ファイルで宣言されています。
+このファイルは <command>atsopt</command> で自動的に読み込まれます。
+例えば、
+ファイルハンドルのオープンとクローズを行なう関数は次のようなインターフェイスを持っています:\
+
+#atscode("\
+fun fileref_open_exn
+(
+  path: string, fm: file_mode
+) : FILEref // endfun
+
+fun fileref_close (fil: FILEref): void
+")
+
+これらの2つの関数はエラーが発生した時点で即座に中断することに注意してください。
+次の関数は #dyncode("fileref_open_exn") の別バージョンで、
+ファイルハンドルが実際に得られたかどうか、
+#dyncode("fileref_open_opt") の呼び出し元が返値を検査する必要があります。\
+
+#atscode("\
+fun fileref_open_opt
+  (path: string, fm: file_mode) : Option_vt (FILEref)
+")
+
+")
+")
+
+#langeng("
 #para("\
 The type #stacode("file_mode") is for values representing file modes,
 which are listed as follows:
+")
+")
+#langja("
+#para("\
+型 #stacode("file_mode") は次に挙げるようなファイルモードを表わす値です:
+")
 ")
 
 <itemizedlist>
 
 <listitem>
 
+#langeng("
 #para("\
 #dyncode("file_mode_r"): opening a file for reading and
 positioning the associated stream at the beginning of the file.
 ")
-
-</listitem>
-
-<listitem>
-
+")
+#langja("
 #para("\
-#dyncode("file_mode_rr"): opening a file for both reading and and
-writing and positioning the associated stream at the beginning of the file.
+#dyncode("file_mode_r"): ファイルを読み出しモードで開き、ファイル先頭にストリームを配置します。
+")
 ")
 
 </listitem>
 
 <listitem>
 
+#langeng("
+#para("\
+#dyncode("file_mode_rr"): opening a file for both reading and and
+writing and positioning the associated stream at the beginning of the file.
+")
+")
+#langja("
+#para("\
+#dyncode("file_mode_rr"): ファイルを読み書きモードで開き、ファイル先頭にストリームを配置します。
+")
+")
+
+</listitem>
+
+<listitem>
+
+#langeng("
 #para("\
 
 #dyncode("file_mode_w"): truncating a given file to zero length or creating
@@ -2327,11 +2428,21 @@ a new one for writing and positioning the associated stream at the
 beginning of the file.\
 
 ")
+")
+#langja("
+#para("\
+
+#dyncode("file_mode_w"): 与えられたファイルを長さゼロに切り詰めるか、書き込みのために新しいファイルを生成し、
+ファイル先頭にストリームを配置します。\
+
+")
+")
 
 </listitem>
 
 <listitem>
 
+#langeng("
 #para("\
 
 #dyncode("file_mode_ww"): truncating a given file to zero length or
@@ -2339,22 +2450,41 @@ creating a new one for both reading and writing and positioning the
 associated stream at the beginning of the file.\
 
 ")
-
-</listitem>
-
-<listitem>
-
+")
+#langja("
 #para("\
 
-#dyncode("file_mode_a"): opening a file for writing and positioning the
-associated stream at the end of the file.\
+#dyncode("file_mode_ww"): 与えられたファイルを長さゼロに切り詰めるか、読み書きのために新しいファイルを生成し、
+ファイル先頭にストリームを配置します。\
 
+")
 ")
 
 </listitem>
 
 <listitem>
 
+#langeng("
+#para("\
+
+#dyncode("file_mode_a"): opening a file for writing and positioning the
+associated stream at the end of the file.\
+
+")
+")
+#langja("
+#para("\
+
+#dyncode("file_mode_a"): ファイルを書き込みモードで開き、ファイル末尾にストリームを配置します。\
+
+")
+")
+
+</listitem>
+
+<listitem>
+
+#langeng("
 #para("\
 
 #dyncode("file_mode_aa"): opening a file for both reading and writing and
@@ -2362,11 +2492,21 @@ positioning the associated stream at the beginning of the file for reading
 and at the end for writing.\
 
 ")
+")
+#langja("
+#para("\
+
+#dyncode("file_mode_aa"): ファイルを読み書きモードで開き、読み出しストリームをファイル先頭に、
+書き込みストリームをファイル末尾に配置します。\
+
+")
+")
 
 </listitem>
 
 </itemizedlist>
 
+#langeng("
 #para("\
 
 As an example, the following short program opens a file handle, outputs the
@@ -2393,7 +2533,36 @@ the name #dyncode("fprint") to refer to these functions due to the support
 for overloading in ATS.\
 
 ")
+")
+#langja("
+#para("\
 
+例として、次の短かいプログラムはファイルハンドルを開き、
+文字列 \"Hello, world!\" と改行をファイルハンドルに関連するストリームに出力し、
+最後にファイルハンドルを閉じます:
+
+#atscode('\
+implement
+main0 () =
+{
+val out =
+  fileref_open_exn ("hello.txt", file_mode_w)
+val () = fprint_string (out, "Hello, world!\\\n")
+val () = fileref_close (out)
+//
+} (* end of [main0] *)
+')
+
+このプログラムを実行した後、
+現在のワーキングディレクトリに期待される内容を含む \"hello.txt\" と名前のついたファイルが得られます。
+与えられたファイルハンドル関連するストリームへデータを印字するような、様々なfprint関数がATSにはあります。
+ATSではオーバーロードがサポートされているため、
+しばしばプログラマはこれらの関数を参照するために単純に #dyncode("fprint") という名前を使うことができます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Another common I/O function is given the following interface:
@@ -2440,6 +2609,55 @@ string (of the type #stacode("Strptr1")). Often, typing the CTRL-D
 character can terminate the above program for echoing each line of input.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+もう一つ一般的なI/O関数として次のようなインターフェイスがあります:
+
+#atscode("\
+fun fileref_get_line_string (fil: FILEref): Strptr1
+")
+
+The function #dyncode("fileref_get_line_string") reads a line from the
+stream associated with a given file handle, and it returns a value of the
+type #stacode("Strptr1"). For the moment, I will simply say that such a
+value is just like a string except that it needs to be freed explicitly. As
+an example, the following short program echos onto the standard output each
+line read from the standard input:
+
+
+#atscode('\
+implement
+main0 (
+// argumentless
+) = loop () where
+{
+//
+fun loop (): void = let
+  val isnot = fileref_isnot_eof (stdin_ref)
+in
+//
+if isnot then let
+  val line =
+    fileref_get_line_string (stdin_ref)
+  val ((*void*)) = fprintln! (stdout_ref, line)
+  val ((*void*)) = strptr_free (line)
+in
+  loop ()
+end else ((*loop exits as the end-of-file is reached*))
+//
+end (* end of [loop] *)
+//
+} (* end of [main0] *)
+')
+
+Note that the function #dyncode("strptr_free") is called to free a linear
+string (of the type #stacode("Strptr1")). Often, typing the CTRL-D
+character can terminate the above program for echoing each line of input.\
+
+")#comment("para")
+")
 
 </sect1><!--id="basic_input_and_output"-->
 
