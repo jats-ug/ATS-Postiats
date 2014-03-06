@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="modularity">
+#langeng("
 #title("Modularity")
+")
+#langja("
+#title("モジュール性")
+")
 
+#langeng("
 #para("\
 
 Generally speaking, modularity in programming means to organize programs in
@@ -24,22 +30,52 @@ introduce in this section some features in ATS that are largely designed to
 facilitate program organization.\
 
 ")
+")
+#langja("
+#para("\
 
+一般的に言って、プログラミングにおけるモジュール性とは、モジュールスタイルでプログラムを組織化することです。
+そのスタイルとは、モジュールそれぞれがある作法で分離されて構築されていて、
+一貫した方法で機能を形作ることです。
+この章ではATSにおける、大きなプログラムの組織化を容易にするいくつかの機能を紹介します。\
+
+")
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_MODULARITY/", "on-line").\
 
 ")
+")
+#langja("
+#para("\
+
+この章で紹介するコードとテストのためのいくつかの追加コードは
+#mycodelink("CHAP_MODULARITY/", "オンライン")
+から取得できます。\
+
+")
+")
 
 <!-- ****** ****** -->
 
 <sect1
 id="types_as_a_form_of_specification">
+#langeng("
 <title>
 Types as a Form of Specification
 </title>
+")
+#langja("
+<title>
+仕様としての型
+</title>
+")
 
+#langeng("
 #para("\
 
 The interface for a function or value specifies a type that any
@@ -72,7 +108,39 @@ applied when occurring in code. If it is declared to be a value, there is
 no such a restriction.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数や値に対するインターフェイスは、その関数や値の実装が有するべき型を特定します。
+例えば、次のコードは与えられた整数の階乗を計算する関数 #dyncode("fact") を定義しています:
+
+#atscode('\
+fun fact (x: int): int = if x > 0 then x * fact (x-1) else 1
+')
+
+最初に考えられる #dyncode("fact") のインターフェイス定義は次のようなものでしょう:
+
+#atscode('\
+extern fun fact (x: int): int
+')
+
+#keycode("extern") は、インターフェイスの宣言を開始するATSのキーワードです。
+#dyncode("fact") のインターフェイスを宣言する別の方法は次のようなものです:
+
+#atscode('\
+extern fun fact : (int) -> int
+extern val fact : (int) -> int
+')
+
+もし #dyncode("fact") が関数として宣言されたなら、
+コード中で使うには適用させる必要があります。
+もし値として宣言されたのであれば、そのような制約はありません。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A function interface can be considered as a form of specification. For
@@ -107,6 +175,41 @@ fact(n) = n * fact (n-1) for each natural number n > 0
 </itemizedlist>
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数インターフェイスは仕様だと考えることができます。
+例えば、 #dyncode("fact") に対する上記のインターフェイスは、
+#dyncode("fact") が整数の引数を1つ取り、整数であることが保証された値を返す関数であることを指定しています。
+What is so special about this form of specification is that it is formally enforced in ATS through typechecking:
+Any well-typed implementation of #dyncode("fact") in ATS must possess the interface declared for it.
+Of course,
+this interface for #dyncode("fact") is not a precise specification as there are
+(infinitely) many functions that can be given the same interface.
+This kind of imprecision can, however, be reduced or even eliminated, sometimes.
+After dependent types are introduced,
+I will present an interface for #dyncode("fact") such that any implementation of the
+interface is guaranteed to implement precisely the factorial function as is defined by the following two equations:
+
+<itemizedlist>
+
+<listitem>
+#para("
+fact(0) = 1
+")
+</listitem>
+
+<listitem>
+#para("
+fact(n) = n * fact (n-1) for each natural number n > 0
+")
+</listitem>
+
+</itemizedlist>
+
+")#comment("para")
+")
 
 #para("\
 
