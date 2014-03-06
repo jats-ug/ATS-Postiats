@@ -1828,8 +1828,14 @@ code for testing #mycodelink("CHAP_EFFECTFUL/permord.dats", "on-line").\
 <sect1
 id="matrices">
 
+#langeng("
 #title("Matrices")
+")
+#langja("
+#title("行列")
+")
 
+#langeng("
 #para("\
 
 A matrix in ATS is just a two-dimensional array but it is represented by a
@@ -1842,7 +1848,22 @@ as matrices from now on.  If there is a clear need to avoid potential
 confusion, I may also refer to them as matrix0-values.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATSにおける行列とは単に2次元の配列です。
+それは1次元の配列と列優先(row-major)スタイルで表現されます
+(行優先(column-major)スタイルではありません)。
+型Tが与えられたとき、型 #stacode("mtrxszref(T)") は、
+固有の列と行の数によって構成された行列で、行列中の要素は型Tです。
+これ以降、型 #stacode("mtrxszref(T)") の値をおおざっぱに行列を呼びます。
+混乱する可能性を明示的に避ける必要がある場合には、matrix0値と呼ぶこともあります。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Given a matrix M of dimension m by n, the expression M[i,j] means to
@@ -1853,7 +1874,21 @@ assignment (M[i,j] := exp) means to evaluate exp to a value and then store
 the value into the cell in M that is indexed by (i, j).\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次元m,nの行列Mが与えられたとき、
+式 M[i,j] は (i, j) をインデックスとするMのセルの中身を取り出します。
+このときiとjは自然数で、それぞれmとnよりも小さい値でなければなりません。
+式 M[i,j] は左辺値としても使うことができます。
+例えば (M[i,j] := exp) という代入は、式expを評価して値にした後、
+その値をインデックス(i, j)で指し示したMのセルに書き込みます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Various functions and function templates on matrix0-values are declared in
@@ -1879,7 +1914,35 @@ mtrxszref_set_elt_at // template
 ")
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+matrix0値に関する様々な関数と関数テンプレートが
+#myatscodelink("prelude/SATS/matrixref.sats", "matrixref.sats") ファイルで宣言されています。
+このファイルは <command>atsopt</command> によて自動的に読み込まれます。
+例えば、行列に関する3つの関数テンプレートと2つの多相関数が次のようなインターフェイスで表現されています:
+
+#atscode("\
+fun{a:t@ype}
+mtrxszref_make_elt // template
+  (row: size_t, col: size_t, x: a): mtrxszref (a)
+
+fun mtrxszref_get_nrow{a:t@ype} (M: mtrxszref a): size_t // polyfun
+fun mtrxszref_get_ncol{a:t@ype} (M: mtrxszref a): size_t // polyfun
+
+fun{a:t@ype}
+mtrxszref_get_elt_at // template
+  (M: mtrxszref a, i: size_t, j: size_t): a // M[i,j]
+fun{a:t@ype}
+mtrxszref_set_elt_at // template
+  (M: mtrxszref a, i: size_t, j: size_t, x: a): void // M[i,j] := x
+")
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Given a type T and three values #dyncode("nrow"), #dyncode("ncol") and
@@ -1900,7 +1963,27 @@ be called, respectively. For convenience, bracket notation can used for
 these functions.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+型Tと3つの値 #dyncode("nrow"), #dyncode("ncol"), #dyncode("init") がそれぞれ
+型 #stacode("size_t"), #stacode("size_t"), T で与えられた時、
+#dyncode("mtrxszref_make_elt&lt;T&gt; (row, col, init)") は型 #stacode("mtrxszref(T)") の行列を返します。
+この行列の次元は #dyncode("nrow") x #dyncode("ncol") で、それぞれのセルは値 #dyncode("init") で初期化されます。
+型Tと型 #stacode("mtrxszref(T)") の行列Mが与えられたとき、
+#dyncode("mtrxszref_get_nrow(M)") と #dyncode("mtrxszref_get_ncol(M)")
+はMの列の数と行数を型 #stacode("size_t") でそれぞれ返します。
+利便性のために #dyncode("mtrxszref_get_nrow(M)") と #dyncode("mtrxszref_get_ncol(M)")
+はそれぞれ #dyncode("M.nrow") と #dyncode("M.ncol") と書くこともできます。
+行列へのアクセスと更新のために、 #dyncode("mtrxszref_get_elt_at") と #dyncode("mtrxszref_set_elt_at") 
+をそれぞれ呼び出すことができます。
+利便性のために、これらの関数のかわりに角括弧表記を使うことができます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Let us now take a look at an example. The following defined function
@@ -1940,6 +2023,47 @@ its number of columns. Note that the two functions #dyncode("loop1") and
 in these function bodies can be compiled into direct local jumps.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+例を見てみましょう。
+次に定義する関数 #dyncode("mtrxszref_transpose") は与えられた行列を転置行列にします:
+
+#atscode("\
+fun{a:t@ype}
+mtrxszref_transpose
+  (M: mtrxszref a): void = let
+//
+val nrow = mtrxszref_get_nrow (M)
+//
+fnx loop1
+  (i: size_t):<cloref1> void =
+  if i < nrow then loop2 (i, 0) else ()
+//
+and loop2
+  (i: size_t, j: size_t):<cloref1> void =
+  if j < i then let
+    val tmp = M[i,j]
+  in
+    M[i,j] := M[j,i]; M[j,i] := tmp; loop2 (i, j+1)
+  end else
+    loop1 (i+1)
+  // end of [if]
+//
+in
+  loop1 (0)
+end // end of [mtrxszref_transpose]
+")
+
+行列Mは正方形、つまり列と行の数が等しいことを仮定しています。
+2つの関数 #dyncode("loop1") と #dyncode("loop2") は相互末尾再帰で定義されていて、
+キーワード #dyncode("fnx") は
+#dyncode("loop1") と #dyncode("loop2") の中身を連結する必要があることを示していることに注意してください。
+これらの関数の中にある相互末尾再帰呼び出しを、ローカルへの直接ジャンプへコンパイルすることができます。\
+
+")#comment("para")
+")
 
 </sect1><!--id="matrices"-->
 
