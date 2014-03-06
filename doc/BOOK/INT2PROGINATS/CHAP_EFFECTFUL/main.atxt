@@ -1137,8 +1137,14 @@ in ATS), where counters can be created and then safely freed.
 <sect1
 id="arrays">
 
+#langeng("
 #title("Arrays")
+")
+#langja("
+#title("配列")
+")
 
+#langeng("
 #para("\
 
 I mentioned earlier that a reference is just an array of size 1.  I would
@@ -1147,7 +1153,18 @@ consecutively.  These references can also be called cells, and they are
 numbered from 0 until n-1, inclusive.\
 
 ")
+")
+#langja("
+#para("\
 
+前の章で、参照はサイズが1の配列であると説明しました。
+サイズnの配列とは連続して確保されたn個の参照であると言うこともできます。
+これらの参照はセルとも呼ばれ、それらは 0 から n-1 までの番号が付けられています。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Given an array of size n, an integer is a valid index for this array if it
@@ -1160,7 +1177,23 @@ then store the value into the cell in A that is numbered i if i is a valid
 index.\
 
 ")
+")
+#langja("
+#para("\
 
+サイズnの配列が与えられた時、
+nよりも小さい自然数であれば、その整数値はこの配列に対する有効なインデックスです。
+そうでない場合、その整数値は配列の範囲の外を指すことになります。
+Aという名前のついた配列について、iがAに対する有効なインデックスである場合、
+A[i] 式はAのi番目のセルの中身を取り出します。
+A[i] 式は左辺値として使うこともできます。
+例えば (A[i] := exp) という代入は
+exp を評価して値にした後、iが有効なインデックスであればその値をAのi番目のセルに書き込みます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 What happens if the index i in A[i] is invalid, that is, it is out of the
@@ -1176,7 +1209,23 @@ clear need to avoid potential confusion, I may also refer to them as
 array0-values.\
 
 ")
+")
+#langja("
+#para("\
 
+もしA[i]のインデックスiが有効でなかったら、つまり配列Aの範囲外であったら何が起きるのでしょうか？
+この場合、A[i]は out-of-bounds array subscription と呼ばれ、
+A[i]の評価は #dyncode("ArraySubscriptExn()") 例外を引き起こします。
+与えられた配列に対して整数値が有効なインデックスであるかどうか判定する簡単で確実な方法の一つは、
+実行時に配列 のサイズと比較することです。
+型Tが与えられた時、型 #stacode("arrszref(T)") は配列と型Tの要素が収められているサイズのペアです。
+これ以降、 #stacode("arrszref(T)") 型の値のことを漠然と配列を呼びます。
+また、混乱する可能性を避けるために、array0値と呼ぶこともあります。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Various functions and function templates on array0-values are declared in
@@ -1205,7 +1254,38 @@ As for programming with arrays that carry no size information,
 it is a topic to be covered after dependent types are introduced.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+array0値に関する様々な関数と関数テンプレートが
+#myatscodelink("prelude/SATS/arrayref.sats", "arrayref.sats") ファイルで宣言されています。
+このファイルは <command>atsopt</command> によって自動的に読み込まれます。
+例えば、配列に関する3つの関数テンプレートと1つの多相関数が次のインターフェイスで表現されます:
+
+#atscode("\
+fun{a:t@ype} // a template
+arrszref_make_elt
+  (asz: size_t, x: a): arrszref a // array creation
+
+// a polymorphic function
+fun arrszref_get_size
+  {a:t@ype} (A: arrszref a): size_t // size of an array
+
+fun{a:t@ype} // a template
+arrszref_get_elt_at (A: arrszref a, i: size_t): a // A[i]
+
+fun{a:t@ype} // a template
+arrszref_set_elt_at (A: arrszref a, i: size_t, x: a): void // A[i] := x
+")
+
+サイズ情報をともなわない配列を使ったプログラミングは、
+依存型が導入された後に話題にすることにします。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Like in C, there are many types of integer values in ATS. The type
@@ -1226,7 +1306,28 @@ and #dyncode("arrszref_set_elt_at") can be called. For convenience, the
 bracket notation can be used to call these functions.  \
 
 ")
+")
+#langja("
+#para("\
 
+C言語と同じように、ATS言語には多くの整数型があります。
+#stacode("size_t") 型は本質的に unsigned long の整数です。
+#stacode("int") と #stacode("size_t") を相互に変換する関数は
+#dyncode("g0int2uint_int_size") と #dyncode("g0uint2int_size_int") です。
+型 T と型 #dyncode("size_t") と T の値としてそれぞれ #dyncode("asz") と #dyncode("init") が与えられたとき、
+#dyncode("arrszref_make_elt&lt;T&gt; (asz, init)") は #stacode("arrszref(T)") 型の配列を返します。
+この配列のサイズは #dyncode("asz") で、それぞれのセルは値 #dyncode("init") で初期化されます。
+型Tと型 #stacode("arrszref(T)") の配列Aが与えられた時、
+#dyncode("arrszref_get_size(A)") はAのサイズを型 #stacode("size_t") で返します。
+利便性のために #dyncode("arrszref_get_size(A)") は #dyncode("A.size") と書くこともできます。
+配列へのアクセスと更新のために、
+関数 #dyncode("arrszref_get_elt_at") と #dyncode("arrszref_set_elt_at") を呼び出すことができます。
+利便性のために、これらの関数を角括弧表記で呼び出すこともできます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 In the following program, the function template
@@ -1263,12 +1364,60 @@ first argument is greater than, less than and equal to its second one,
 respectively.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次のプログラムでは、
+一般的な配列の挿入ソートを関数テンプレート #dyncode("insertion_sort") として実装しています:
+
+#atscode("\
+fun{
+a:t@ype
+} insertion_sort
+(
+  A: arrszref (a)
+, cmp: (a, a) -> int
+) : void = let
+  val n = g0uint2int_size_int (A.size)
+  fun ins (x: a, i: int):<cloref1> void =
+    if i >= 0 then
+    (
+      if cmp (x, A[i]) < 0
+        then (A[i+1] := A[i]; ins (x, i-1)) else A[i+1] := x
+      // end of [if]
+    ) else A[0] := x // end of [if]
+  // end of [ins]
+  fun loop (i: int):<cloref1> void =
+    if i < n then (ins (A[i], i-1); loop (i+1)) else ()
+  // end of [loop]
+in
+  loop (1)
+end // end of [insertion_sort]
+")
+
+比較関数 #dyncode("cmp") は1、-1、0のいずれかを返します。
+それぞれ1番目の引数が2番目の引数よりも大きいか、小さいか、等しいことを表わします。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Note that the entire code in this section plus some additional code
 for testing is available #mycodelink("CHAP_EFFECTFUL/insort.dats", "on-line").\
 
+")
+")
+#langja("
+#para("\
+
+この章に出てくるコードの全体とテストのための追加コードは
+#mycodelink("CHAP_EFFECTFUL/insort.dats", "オンライン").
+から得られます。\
+
+")
 ")
 
 </sect1><!--id="arrays"-->
