@@ -2613,19 +2613,17 @@ character can terminate the above program for echoing each line of input.\
 #langja("
 #para("\
 
-もう一つ一般的なI/O関数として次のようなインターフェイスがあります:
+別の一般的なI/O関数として次のようなインターフェイスがあります:
 
 #atscode("\
 fun fileref_get_line_string (fil: FILEref): Strptr1
 ")
 
-The function #dyncode("fileref_get_line_string") reads a line from the
-stream associated with a given file handle, and it returns a value of the
-type #stacode("Strptr1"). For the moment, I will simply say that such a
-value is just like a string except that it needs to be freed explicitly. As
-an example, the following short program echos onto the standard output each
-line read from the standard input:
-
+関数 #dyncode("fileref_get_line_string") は与えられたファイルハンドルに対応するストリームから1行読み込みます。
+そしてその返値は #stacode("Strptr1") 型になります。
+さしあたり、このような値は明示的に解放しなければならない文字列のようなものであると、
+単純に説明することにとどめます。
+例として、次の短かいプログラムは、標準入力から一行読み込み標準出力にエコー書き出します:
 
 #atscode('\
 implement
@@ -2652,9 +2650,9 @@ end (* end of [loop] *)
 } (* end of [main0] *)
 ')
 
-Note that the function #dyncode("strptr_free") is called to free a linear
-string (of the type #stacode("Strptr1")). Often, typing the CTRL-D
-character can terminate the above program for echoing each line of input.\
+(#stacode("Strptr1") 型の)線形文字列を解放するために、
+関数 #dyncode("strptr_free") が呼び出されていることに注意してください。
+CTRL-Dを入力することで入力の行をエコーしている上記のプログラムを終了することができます。\
 
 ")#comment("para")
 ")
