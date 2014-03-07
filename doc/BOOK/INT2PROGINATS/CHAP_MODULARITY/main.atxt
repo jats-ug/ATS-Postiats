@@ -182,15 +182,15 @@ fact(n) = n * fact (n-1) for each natural number n > 0
 関数インターフェイスは仕様だと考えることができます。
 例えば、 #dyncode("fact") に対する上記のインターフェイスは、
 #dyncode("fact") が整数の引数を1つ取り、整数であることが保証された値を返す関数であることを指定しています。
-What is so special about this form of specification is that it is formally enforced in ATS through typechecking:
-Any well-typed implementation of #dyncode("fact") in ATS must possess the interface declared for it.
-Of course,
-this interface for #dyncode("fact") is not a precise specification as there are
-(infinitely) many functions that can be given the same interface.
-This kind of imprecision can, however, be reduced or even eliminated, sometimes.
-After dependent types are introduced,
-I will present an interface for #dyncode("fact") such that any implementation of the
-interface is guaranteed to implement precisely the factorial function as is defined by the following two equations:
+What is so special about this form of specification is
+that it is formally enforced in ATS through typechecking:
+ATSにおける正しく型付けされた #dyncode("fact") の実装はそのような宣言のインターフェイスを持たなければなりません。
+もちろん、この #dyncode("fact") のインターフェイスは厳格な仕様でありません。
+同じインターフェイスを持つ多くの(場合によっては無限に)関数実体が存在するからです。
+けれどもこの一種の不正確性は、時に軽減したり除去することさえできます。
+依存型を説明した後で、
+次の2つの等式で定義される階乗の関数を正確にインターフェイスの実装とすることを保証するような
+#dyncode("fact") のインターフェイスを紹介しようと思います:
 
 <itemizedlist>
 
@@ -211,6 +211,7 @@ fact(n) = n * fact (n-1) for each natural number n > 0
 ")#comment("para")
 ")
 
+#langeng("
 #para("\
 
 An implementation for #dyncode("fact") as the following one can be given at
@@ -234,7 +235,31 @@ result of #dyncode("fact") are redundant as they can be automatically
 synthesized by the typechecker.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次に示す #dyncode("fact") の実装は #dyncode("fact") で宣言したインターフェイスを守っています:
+
+#atscode('\
+implement fact (x) = if x > 0 then x * fact (x-1) else 1
+')
+
+#keycode("implement") キーワードは、既にインターフェイスを宣言された関数や値の実装の開始を表わします。
+ATS初心者にとっては、次のコーディングスタイルがより一般的かもしれません:
+
+#atscode('\
+implement fact (x: int): int = if x > 0 then x * fact (x-1) else 1
+')
+
+この実装は型検査を通りますが、にもかかわらず悪いスタイルと言えます。
+#dyncode("fact") の引数と返値にプログラマが与えた型は、
+型検査器によって自動的に合成されるため、冗長です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As an example of an interface for a value, #dyncode("fact10") is declared
@@ -252,7 +277,27 @@ implement fact10 = fact (10)
 ')
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+値に対するインターフェイスの例として、
+型 #stacode("int") の値である #dyncode("fact10") を次に宣言してみます:
+
+#atscode('\
+extern val fact10 : int
+')
+
+次に示す #dyncode("fact10") の実装は #dyncode("fact10") で宣言したインターフェイスを守っています:
+
+#atscode('\
+implement fact10 = fact (10)
+')
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As another example, the following code declares an interface for a
@@ -277,7 +322,33 @@ and #stacode("b") to #dyncode("swap_boxed") simultaneously. As neither
 case.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+別の例として、次のコードでは #dyncode("swap_boxed") という名前で多相関数のインターフェイスを宣言しています:
+
+#atscode('\
+extern
+fun swap_boxed{a,b:type} (xy: (a, b)): (b, a)
+')
+
+型変数 #stacode("a") と #stacode("b") はボックス化されていることに注意してください。
+#dyncode("swap_boxed") の実装は次のようになるでしょう:
+
+#atscode('\
+implement swap_boxed{a,b} (xy) = (xy.1, xy.0)
+')
+
+#stacode("{a,b}") という構文は、静的な変数 #stacode("a") と #stacode("b") を #dyncode("swap_boxed")
+に同時に渡しています。
+#stacode("a") も #stacode("b") も実際には #dyncode("swap_boxed") の中身では使われないので、
+この場合 #stacode("{a,b}") は省くことができます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As yet another example, the following code declares an interface for a
@@ -298,7 +369,31 @@ implement{a,b} swap_tmplt (xy) = (xy.1, xy.0)
 ')
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+また別の例として、
+次のコードは #dyncode("swap_tmplt") という名前で関数テンプレートのインターフェイスを宣言しています:
+
+#atscode('\
+extern
+fun{a,b:t@ype} swap_tmplt (xy: (a, b)): (b, a)
+')
+
+型変数 #stacode("a") と #stacode("b") は種 #stacode("t@ype") であることに注意してください。
+これらの型変数がどのようなサイズも取れることを示しています。
+
+#dyncode("swap_tmplt") の実装は次のようなものでしょう:
+
+#atscode('\
+implement{a,b} swap_tmplt (xy) = (xy.1, xy.0)
+')
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 It is a standard practice for a programmer to first design interfaces for
@@ -311,6 +406,21 @@ better. Therefore, testing a design before actually implementing it is
 often of vital importance. This is especially true if the involved design
 is complex.\
 
+")
+")
+#langja("
+#para("\
+
+実際に関数を実装する前に、
+パッケージでサポートすべき関数のインターフェイスをデザインすることは、プログラマにとって一般的な訓練です。
+そのようなインターフェイスがあれば、
+そのインターフェイスデザインが妥当で実際に使いやすいかどうか検査するために、
+アプリケーションプログラムを作ることができます。
+貧弱なデザインを持つ素晴しい実装は良いデザインを作りえないということを、覚えておいてください。
+したがって、実際に実装する前にデザインを検査することはしばしば非常に重要になります。
+複雑なデザインが入り組んでいる時には、特に重要です。\
+
+")
 ")
 
 </sect1><!--id="types_as_a_form_of_specification"-->
