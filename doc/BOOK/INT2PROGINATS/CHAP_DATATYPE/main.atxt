@@ -13,12 +13,25 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="datatypes">
+#langeng("
 #title("Datatypes")
+")
+#langja("
+#title("データ型")
+")
 
+#langeng("
 #para("\
 The feature of datatypes in ATS in largely taken from ML.
 ")
+")
+#langja("
+#para("\
+ATSにおけるデータ型の機能はMLの影響を強く受けています。
+")
+")
 
+#langeng("
 #para("\
 A datatype is
 like a tagged union type. For each datatype, there are some constructors
@@ -42,17 +55,59 @@ through examples that datatypes plus pattern matching can offer not only
 great convenience in programming but also clarity in code.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+データ型はタグ付きの共用体に似ています。
+それぞれのデータ型のために関連するコンストラクタがあり、
+それらのコンストラクタはデータ型の値をコンストラクトしなければなりません。
+例として次の構文は #stacode("intopt") という名前のデータ型を宣言しています:
 
+#atscode("\
+datatype intopt =
+  | intopt_none of () | intopt_some of (int)
+// end of [intopt]
+")
+
+#stacode("intopt") に関連して2つのコンストラクタが存在します:
+引数のない #dyncode("intopt_none") と1引数の #dyncode("intopt_some") です。
+例えば #dyncode("intopt_none()") と #dyncode("intopt_some(1)") は両方とも
+#stacode("intopt") 型の値です。
+そのような値の中の要素にアクセスするために、パターンマッチと呼ばれる仕組みをATSでは提供しています。
+データ型とパターンマッチの組み合わせが、
+プログラミングにおいて大変便利であるだけでなくコードを明快にもしてくれることを、
+例を通して説明しようと思います。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_DATATYPE/", "on-line").\
 
 ")
+")
+#langja("
+#para("\
+
+この章で示すコードとテストのための追加コードは
+#mycodelink("CHAP_DATATYPE/", "オンライン")
+から入手できます。\
+
+")
+")
 
 <sect1 id="patterns">
+#langeng("
 <title>Patterns</title>
+")
+#langja("
+<title>パターン</title>
+")
 
+#langeng("
 #para("\
 Patterns in ATS can be defined inductively as follows:
 
@@ -128,6 +183,81 @@ it. However, this restriction does not apply to the variable #dyncode("_"),
 which represents the wildcard pattern.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+ATSにおけるパターンは次のように帰納的に定義されています:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+
+整数, ブール値, 文字, 浮動小数点数, 文字列のような定数の値はパターンです。\
+
+")
+</listitem>
+
+<listitem>
+#para("void値はパターンです。")
+</listitem>
+
+<listitem>
+#para("\
+アンダースコア記号 #dyncode("_") は特別なワイルドカードパターンを意味しています。
+")
+</listitem>
+
+<listitem>
+#para("\
+変数はパターンです。
+")
+</listitem>
+
+<listitem>
+#para("
+ボックス化もしくはアンボックス化されたパターンのタプルはパターンです。
+")
+</listitem>
+
+<listitem>
+#para("
+ボックス化もしくはアンボックス化されたパターンのレコードはパターンです。
+")
+</listitem>
+
+<listitem>
+#para("\
+
+コンストラクタCが与えられた時、与えられたパターンのリストにCを適用してパターンを作ることができます。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+
+変数xとパターンpatが与えられたとき、 (x #dyncode("as") pat) は参照パターンです。
+ここで #dyncode("as") はキーワードです。\
+
+")
+</listitem>
+
+<listitem>
+#para("
+その他のパターンの種類は別の章で解説します。
+")
+</listitem>
+
+</itemizedlist>
+
+与えられたパターンの中でそれぞれの変数は最大で一度まで登場できます。
+これはパターン中の値の線形性制限(linearity restriction)と呼ばれています。
+例えば (x, x) は変数xが二度現われるため、正しいパターンではありません。
+けれどもこの制限はワイルドカードパターンである変数 #dyncode("_") にはあてはまりません。\
+
+")#comment("para")
+")
 
 </sect1><!--id="patterns"-->
 
