@@ -1545,10 +1545,18 @@ case+ (xs1, xs2) of
 <!-- ****** ****** -->
 
 <sect1 id="example_a_package_for_rationals">
+#langeng("
 <title>
 Example: A Package for Rationals
 </title>
+")
+#langja("
+<title>
+例: 有理数パッケージ
+</title>
+")
 
+#langeng("
 #para("\
 
 Let us represent a rational number as a pair of integers.  If we declare a
@@ -1582,7 +1590,42 @@ the type #stacode("(int, int)"). However, this information is not made
 available to the typechecker of ATS. In particular, if a value of the type
 #stacode("rat") is treated as a pair of integers in a program, then a
 type-error will surely occur.  ")#comment("para")
+")
+#langja("
+#para("\
 
+有理数を整数の組で表現してみましょう。
+もし有理数の値を表現するためにボックス化された抽象型 #stacode("rat") を宣言したら、
+#stacode("rat") 型のそれぞれの値はヒープメモリに保存されます。
+そのメモリはガベージコレクション(GC)によってのみ回収できます。
+代わりに、 #stacode("rat") をアンボックス化された抽象型として宣言する別のアプローチを取ります。
+そこで、次のような宣言になります:
+
+#atscode("\
+abst@ype rat
+")
+
+この宣言の問題はあまりにも抽象的すぎることです。
+#stacode("rat") 型のサイズについて何の情報もないので、
+ATSコンパイラは #stacode("rat") 型の値を保存するのに必要なメモリサイズを知ることさえできません。
+けれども、プログラマにとってこのような宣言が役に立たないというわけではありません。
+実際にはこのような宣言が非常に重要になってくる場面があります。
+このトピックは別の章で解説しようと思います。
+ここでは、アンボックス化された抽象型を次のように宣言してみましょう:
+
+#atscode("\
+abst@ype rat = (int, int)
+")
+
+この宣言は、
+#stacode("rat") 型の値の表現は #stacode("(int, int)") 型の値の表現と同じであることを、
+単純にATSコンパイラに伝えています。
+けれども、この情報はATSの型検査器にとって有効ではありません。
+とりわけ、プログラム中で #stacode("rat") 型の値が整数のペアとして扱われると、
+型エラーを引き起こします。 ")#comment("para")
+")
+
+#langeng("
 #para("\
 The following code is contained in a file named
 #filename("ratmod.sats"), which is available
@@ -1664,6 +1707,87 @@ There is also some testing code available
 use of some functions declared in #filename("ratmod.sats").
 
 ")#comment("para")
+")
+#langja("
+#para("\
+#mycodelink("CHAP_MODULARITY/ratmod.sats", "オンライン")
+から取得できる次のコードは
+#filename("ratmod.sats") という名前のファイルに保存されています。
+
+#atscode("\
+exception Denominator
+exception DivisionByZero
+
+fun rat_make_int_int (p: int, q: int): rat
+
+fun ratneg: (rat) -> rat // negation
+fun ratadd: (rat, rat) -> rat // addition
+fun ratsub: (rat, rat) -> rat // subtraction
+fun ratmul: (rat, rat) -> rat // multiplication
+fun ratdiv: (rat, rat) -> rat // division
+")
+
+#dyncode("Denominator") 例外は分母がゼロの有理数を誤って生成してしまったことを示します。
+有理数の分子と分母を表わす2つの整数が与えられた時、
+関数 #dyncode("rat_make_int_int") は有理数を表わす値を返します。
+#dyncode("rat_make_int_int") の次の実装は #filename("ratmod.dats") という名前のファイルにあり、
+#mycodelink("CHAP_MODULARITY/ratmod.dats", "オンライン") からも取得できます。
+
+#atscode("\
+implement
+rat_make_int_int (p, q) = let
+  fun make (
+    p: int, q: int
+  ) : rat = let
+    val r = gcd (p, q) in (p / r, q / r)
+  end // end of [make]
+//
+  val () = if q = 0 then $raise Denominator
+//
+in
+  if q > 0 then make (p, q) else make (~p, ~q)
+end // end of [rat_make_int_int]
+")
+
+整数pとゼロでない整数qの組が与えられた時、
+関数 #dyncode("rat_make_int_int") は別の整数の組
+p<subscript>1</subscript> と q<subscript>1</subscript> を返します。
+ここで、q <subscript>1</subscript> は正の数で、 p<subscript>1</subscript> と q<subscript>1</subscript>
+は互いに素です。
+つまり、それらの最大公約数は1で、
+p<subscript>1</subscript>/q<subscript>1</subscript> は p/q に等しくなります。
+#dyncode("rat_make_int_int") を使うと、有理数の算術演算は次のように素直に実装できます:
+
+#atscode("\
+implement ratneg (x) = (~x.0, x.1)
+
+implement
+ratadd (x, y) =
+  rat_make_int_int (x.0 * y.1 + x.1 * y.0, x.1 * y.1)
+// end of [ratadd]
+
+implement
+ratsub (x, y) =
+  rat_make_int_int (x.0 * y.1 - x.1 * y.0, x.1 * y.1)
+// end of [ratsub]
+
+implement
+ratmul (x, y) = rat_make_int_int (x.0 * y.0, x.1 * y.1)
+
+implement
+ratdiv (x, y) = (
+if y.0 > 0
+  then rat_make_int_int (x.0 * y.1, x.1 * y.0) else $raise DivisionByZero()
+// end of [if]
+) (* end of [ratdiv] *)
+")
+
+#filename("ratmod.sats") で宣言されている関数に対するいくらかのテストコードが
+#mycodelink("CHAP_MODULARITY/test_ratmod.dats", "オンライン")
+から入手できます。
+
+")#comment("para")
+")
 
 </sect1><!--id="example_a_package_for_rationals"-->
 
