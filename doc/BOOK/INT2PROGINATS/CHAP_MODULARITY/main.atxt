@@ -842,10 +842,18 @@ ATSの動的ファイルを静的ロードすることが正常であること�
 <!-- ****** ****** -->
 
 <sect1 id="generic_template_implementation">
+#langeng("
 <title>
 Generic Template Implementation
 </title>
+")
+#langja("
+<title>
+総称テンプレート実装
+</title>
+")
 
+#langeng("
 #para("\
 
 Interfaces for function templates are mostly similar to those for
@@ -862,7 +870,27 @@ a:t0p}{b:t0p
 
 where #stacode("t0p") is a shorthand for #stacode("t@ype").\
 ")
+")
+#langja("
+#para("\
 
+関数テンプレートのインターフェイスは関数のインターフェイスによく似ています。
+例えば、次の構文は動的ファイルにおいて
+#dyncode("list0_fold_left") という名前の関数テンプレートのインターフェイスを宣言しています:
+
+#atscode('\
+extern
+fun{
+a:t0p}{b:t0p
+} list0_fold_left
+  (xs: list0 b, f: (a, b) -<cloref1> a, init: a): a
+')
+
+ここで #stacode("t0p") は #stacode("t@ype") の略記です。\
+")
+")
+
+#langeng("
 #para("\
 
 If the same interface is declared in a static file, the keyword
@@ -906,7 +934,53 @@ implement{a,b}{c} app2 (f, x, y) = f (x, y)
 ")
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+もし同じインターフェイスが静的ファイルの中で宣言されていたら、
+#keycode("extern") キーワードは削除するべきです。
+関数テンプレートのインターフェイスを実装することは関数のインターフェイスを実装することと、
+やはりよく似ています。
+上記の #dyncode("list0_fold_left") のインターフェイスは次のようなコードで実装することができます:
+
+#atscode('\
+implement{a}{b}
+list0_fold_left
+  (xs, f, init) = let
+//
+fun loop
+(
+  xs: list0 b, res: a
+) : a =
+(
+  case+ xs of
+  | list0_nil () => res
+  | list0_cons (x, xs) => loop (xs, f (res, x))
+) (* end of [loop] *)
+//
+in
+  loop (xs, init)
+end // end of [list0_fold_left]
+')
+
+#dyncode("implement") キーワードの直後に、テンプレート引数を書かなければならないことに注意してください。
+この引数は省略できません。
+次の短かい例に示すように、テンプレート引数は連続して渡すこともできます:
+
+#atscode("\
+extern
+fun
+{a,b:t0p}{c:t0p}
+app2 (f: (a, b) -<cloref1> c, x: a, y: b): c
+
+implement{a,b}{c} app2 (f, x, y) = f (x, y)
+")
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The style of template implementation presented in this section is
@@ -914,6 +988,15 @@ referred to as generic template implementation. I will later present a
 different style of template implementation, which is often referred to as
 specific template implementation.\
 
+")
+")
+#langja("
+#para("\
+
+この章で示したスタイルのテンプレート実装は総称テンプレート実装と呼ばれます。
+後の章で特殊テンプレート実装と呼ばれる異なるスタイルのテンプレート実装を紹介します。\
+
+")
 ")
 
 </sect1><!--id="generic_template_implementation"-->
