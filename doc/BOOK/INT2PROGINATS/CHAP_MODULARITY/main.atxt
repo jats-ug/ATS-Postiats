@@ -1255,10 +1255,18 @@ testing code available #mycodelink("CHAP_MODULARITY/listeq.dats", "on-line").
 <!-- ****** ****** -->
 
 <sect1 id="abstract_types">
+#langeng("
 <title>
 Abstract Types
 </title>
+")
+#langja("
+<title>
+抽象型
+</title>
+")
 
+#langeng("
 #para("\
 
 The name <emphasis>abstract type</emphasis> refers to a type such
@@ -1272,7 +1280,22 @@ concrete example to illustrate a typical use of abstract types in
 practice.\
 
 ")
+")
+#langja("
+#para("\
 
+<emphasis>抽象型</emphasis> という名前は、
+型の利用者から完全に隠した型の値の表現方法に由来します。
+このような情報の隠蔽は、
+抽象の実装に対する変更が抽象型を使っている型安全なコードで型エラーを引き起こさないよう保証する努力です。
+多くの他のプログラミング言語と同様に、
+ATSでも抽象型はモジュールプログラミングをサポートする重要な役割をはたします。
+抽象型の実際的で典型的な使用の例を次に示します。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Suppose that we are to implement a package to provide various
@@ -1331,7 +1354,64 @@ above interfaces are all stored in a file named #filename("intset.sats")
 (or any other legal name for a static file).\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+整数の有限集合に対する様々な機能を提供するパッケージを実装しているとしましょう。
+まずはじめに、整数の有限集合を表現する値のために次のような抽象型 #stacode("intset") を宣言します:
+
+#atscode("\
+abstype intset // a boxed abstract type
+")
+
+キーワード #stacode("abstype") は宣言された抽象型 #stacode("intset") がボックス化されていることを指示します。
+つまり #stacode("intset") のサイズはポインタのサイズと同じです。
+関連したキーワード #stacode("abst@ype") はアンボックス化された抽象型の開始で、別の章で説明します。
+パッケージで実装したいそれぞれの関数と値のインターフェイスを次に示します:
+
+#atscode("\
+// empty set
+val intset_empty : intset
+
+// singleton set of [x]
+fun intset_make_sing (x: int): intset
+
+// turning a list into a set
+fun intset_make_list (xs: list0 int): intset
+
+// turning a set into a list
+fun intset_listize (xs: intset): list0 (int)
+
+// membership test
+fun intset_ismem (xs: intset, x: int): bool
+
+// computing the size of [xs]
+fun intset_size (xs: intset): size_t
+
+// adding [x] into [xs]
+fun intset_add (xs: intset, x: int): intset
+
+// deleting [x] from [xs]
+fun intset_del (xs: intset, x: int): intset
+
+// union of [xs1] and [xs2]
+fun intset_union (xs1: intset, xs2: intset): intset
+
+// intersection of [xs1] and [xs2]
+fun intset_inter (xs1: intset, xs2: intset): intset
+
+// difference between [xs1] and [xs2]
+fun intset_differ (xs1: intset, xs2: intset): intset
+")
+
+ここでは #stacode("intset") の宣言と上記のインターフェイスは全て #filename("intset.sats")
+と名前のつけられたファイルに格納されているものとしましょう。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Usually, a realistic implementation for finite sets is based on some kind
@@ -1395,6 +1475,70 @@ values in a package are declared. This allows these interfaces to be tried
 before they are actually implemented so that potential flaws can be exposed
 in a timely fashion.
 ")#comment("para")
+")
+#langja("
+#para("\
+
+通常、
+有限集合の現実的な実装はなんらかの平衡木(例えばAVL木や赤黒木)を使います。
+説明のために、ここでは整数の順序付きリストを使って表現される整数の有限集合を実装します。
+この実装は #filename("intset.dats") という名前のファイルに保存されており、
+このファイルは #mycodelink("CHAP_MODULARITY/intset.dats", "オンライン") から取得できます。
+抽象型の値をコンストラクトするために、
+次のような宣言を使って一時的にそれを具体化させる必要があります:
+
+#atscode("\
+assume intset = list0 (int)
+")
+
+#stacode("assume") キーワードを使いました。
+このassume宣言は
+#stacode("intset") と型 #stacode("list0 (int)") を同一に扱うように指示します。
+この結び付きは、それが導入されたスコープの終了まで有効です。
+#filename("intset.dats") のトップレベルにassume宣言があるので、
+#stacode("intset") と #stacode("list0 (int)") が等価だという前提はファイル末尾まで有効です。
+ATSには、それぞれの抽象型は最大でも1度までしかassume宣言によって具体化することができないという、
+グローバルな制限があります。
+より具体的には、
+もし抽象型が2つのファイル #filename("foo1.dats") と #filename("foo2.dats") で具体化されていたら、
+これらの2つのファイルを一緒にして1つの実行ファイルで使うことはできません。
+
+#stacode("intset") の残りの実装は全て一般的なものです。
+例えば、2つの整数の有限集合の合併は次のような実装になります:
+
+#atscode("\
+implement
+intset_union
+  (xs1, xs2) = (
+case+ (xs1, xs2) of
+| (list0_cons (x1, xs11),
+   list0_cons (x2, xs21)) =>
+  let
+    val sgn = compare (x1, x2)
+  in
+    case+ 0 of
+    | _ when sgn < 0 =>
+        list0_cons{int}(x1, intset_union (xs11, xs2))
+    | _ when sgn > 0 =>
+        list0_cons{int}(x2, intset_union (xs1, xs21))
+    | _ (* sgn = 0 *) =>
+        list0_cons{int}(x1, intset_union (xs11, xs21))
+    // end of [case]
+  end // end of [(cons, cons)]
+| (list0_nil (), _) => xs2
+| (_, list0_nil ()) => xs1
+) (* end of [intset_union] *)
+")
+
+#filename("intset.sats") で宣言されている関数の使用に対するいらかのテストコードが
+#mycodelink("CHAP_MODULARITY/test_intset.dats", "オンライン")
+から入手できます。
+しばしばこのようなテストコードを、
+パッケージで宣言されている様々な関数と値のインターフェイスの直後でコンストラクトすることがあります。
+これらのインターフェイスが実際に実装される前に試すことで、
+欠陥をすぐに発見することができます。
+")#comment("para")
+")
 
 </sect1><!--id="abstract_types"-->
 
