@@ -427,10 +427,18 @@ is complex.\
 
 <sect1
 id="static_and_dynamic_ats_files">
+#langeng("
 <title>
 Static and Dynamic ATS Files
 </title>
+")
+#langja("
+<title>
+ATSの静的/動的ファイル
+</title>
+")
 
+#langeng("
 #para("\
 
 The first letters in the ATS filename extensions #emphasis("sats") and
@@ -444,7 +452,22 @@ for allowing its content to be shared among various other ATS files, either
 static or dynamic.\
 
 ")
+")
+#langja("
+#para("\
 
+ATSのファイル名の拡張子である #emphasis("sats") と #emphasis("dats") の最初の文字はそれぞれ、
+単語 #emphasis("static") と #emphasis("dynamic") に由来しています。
+例えば、 #filename("foo.sats") は静的ファイルの名前で、 #filename("bar.dats") は動的ファイルの名前です。
+静的ファイルはしばしばSATSファイルと呼ばれ、
+通常は関数, 値, datatype宣言, 型定義などのインターフェイス宣言を含んでいます。
+SATSファイルの主要な目的は、
+静的/動的にかかわらず別々のATSファイルでその中身を共用することにあります。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Let us now go through a simple example to see a typical use of static
@@ -483,7 +506,45 @@ file inclusion. The latter is also supported in ATS, and it is a feature I
 will cover elsewhere.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+静的ファイルの典型的な使い方を知るために、シンプルな例を見てみましょう。
+まずアッカーマン関数を実装することになったとします。
+この関数は原始再帰ではない再帰として有名です。
+#filename("acker.sats") という名前の静的ファイルに、次の関数インターフェイスを宣言します:
+
+#atscode('\
+fun acker (m: int, n: int): int
+')
+
+静的ファイル内で関数や値のインターフェイス宣言をする際には、
+#keycode("extern") キーワード を使わないことに注意してください。
+#filename("acker.dats") という名前の動的ファイルに、次ような実装を書きます:
+
+#atscode('\
+staload "acker.sats"
+
+implement
+acker (m, n) =
+  if m > 0 then
+    if n > 0 then acker (m-1, acker (m, n-1))
+    else acker (m-1, 1)
+  else n+1
+// end of [acker]
+')
+
+キーワード #stacode("staload") は指定したファイルを型検査中に静的にロードするよう、ATSの型検査器に指示します。
+本質的にファイルの静的なロードは、
+後続のコードがアクセスできるようにファイルの中身を名前空間に配置することです。
+注目すべきなのは、静的なロードは単純なファイルの埋め込みとは異なるということです。
+ATSでは後者もまたサポートしています。その機能は別の章で解説します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 It is also possible to give the following implementation for the declared
@@ -513,7 +574,37 @@ the namespaces holding these files so that the original source of each
 declared entity can be readily tracked down.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#dyncode("acker") 関数宣言に対して次のような実装をすることもできます:
+
+#atscode('\
+staload ACKER = "acker.sats"
+
+implement $ACKER.acker
+  (m, n) = acker (m, n) where {
+  fun acker (m: int, n:int): int = 
+    if m > 0 then
+      if n > 0 then acker (m-1, acker (m, n-1))
+      else acker (m-1, 1)
+    else n+1
+} // end of [$ACKER.acker]
+')
+
+この場合、ACKERという名前の名前空間が #filename("acker.sats") ファイルの中身を保持しています。
+また接頭辞 #dyncode("$ACKER.") (ドル記号の後にACKERを、その後にドット記号です)
+を #filename("acker.sats") で宣言されている関数, 値, datatype, コンストラクタ, 型宣言
+などの名前に付記する必要があります。
+多数の静的ファイルがロードされた時、それらのファイルの持つ名前空間に名前を割り当てるのは、
+しばしば良い習慣です。
+それぞれの要素が宣言されている元のソースコードをすぐに見つけ出せるからです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 In another file named #filename("test_acker.dats"), let us
@@ -562,7 +653,52 @@ bit confusing, please try to execute a program that contains a call to
 happens.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+別のファイル #filename("test_acker.dats") に次のコードを書いてみましょう:
+
+#atscode('\
+//
+\#include
+"share/atspre_staload.hats"
+//
+staload "acker.sats"
+dynload "acker.dats"
+
+implement
+main0 () = () where {
+//
+// acker (3, 3) should return 61
+//
+  val () = assertloc (acker (3, 3) = 61)
+} // end of [main0]
+')
+
+キーワード #dyncode("dynload") は
+#filename("acker.dats") ファイルに関連する初期化関数呼び出しを生成するよう、ATSコンパイラに指示します。
+これは必須で、さもないとリンク時にエラーが発生してしまいます。
+通常、動的ファイルに関連するこの初期化関数は、そのファイルの中で値が実装されている時のみ必要になります。
+この例では #filename("acker.dats") の中には関数の実装しかありません。
+もし次の行を #filename("acker.dats") の中のどこかに書けば:
+
+#atscode('\
+\#define ATS_DYNLOADFLAG 0 // no need for dynloading at run-time
+')
+
+#filename("test_acker.dats") 中の #dyncode("dynload") キーワード行はもはや不要です。
+#dyncode("assertloc") 関数は、その引数を評価してブール値 #dyncode("true") になるか実行時に検証します。
+この例では引数は #dyncode("false") に評価されるので、
+関数呼び出しは中断されてファイル名(この例では #filename("test_acker.dats"))と
+そのファイルで呼び出したソースコードの位置を含むメッセージが表示されます。
+もし少し混乱してしまったら #dyncode("false") に対して #dyncode("assertloc") を呼び出してみてください。
+何が起きるのか明確になるでしょう。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The simplest way to compile the two files #filename("acker.dats") and
@@ -586,7 +722,33 @@ This style of separate compilation works particularly well when it is
 employed by the <command>make</command> utility.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次のコマンドラインを実行すれば、
+2つのファイル #filename("acker.dats") と #filename("test_acker.dats") を簡単にコンパイルできます:
+
+<informalexample><programlisting>
+<command>atscc</command> -o test_acker acker.dats test_acker.dats
+</programlisting></informalexample>
+
+現在のワーキングディレクトリに実行可能ファイル #filename("test_acker") が生成されるはずです。
+次のように分割コンパイルをすることもできます:
+
+<informalexample><programlisting>
+<command>atscc</command> -c acker.dats
+<command>atscc</command> -c test_acker.dats
+<command>atscc</command> -o test_acker acker_dats.o test_acker_dats.o
+</programlisting></informalexample>
+
+この分割コンパイルのスタイルは
+<command>make</command> ユーティリティから呼び出す際に特に有用です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 If we want to, we can also merge #filename("acker.sats") and
 #filename("acker.dats") into a single filename of the following content:
@@ -629,6 +791,50 @@ loaded. Actually, a static ATS file is really just a special case of
 dynamic ATS file in which there is no implementation (of either functions
 or values).\
 
+")
+")
+#langja("
+#para("\
+望むなら #filename("acker.sats") と #filename("acker.dats") を次のような1つのファイルにまとめることも可能です:
+
+#atscode('\
+extern
+fun acker (m: int, m: int): int
+
+implement
+acker (m, n) =
+  if m > 0 then
+    if n > 0 then acker (m-1, acker (m, n-1))
+    else acker (m-1, 1)
+  else n+1
+// end of [acker]
+')
+
+#filename("acker3.dats") の名前で上記のファイルを作ったとしましょう。
+するとテストコードは次のように書けます:
+
+#atscode('\
+//
+\#include
+"share/atspre_staload.hats"
+//
+staload "acker3.dats"
+dynload "acker3.dats"
+
+implement
+main0 () = () where {
+//
+// acker (3, 3) should return 61
+//
+  val () = assertloc (acker (3, 3) = 61)
+} // end of [main0]
+')
+
+ATSの動的ファイルを静的ロードすることが正常であることに注意してください。
+実際ATSの静的ファイルは、
+関数や値の実装を含まないATSの動的ファイルの単なる特殊形です。\
+
+")
 ")
 
 </sect1><!--id="static_and_dynamic_ats_files"-->
