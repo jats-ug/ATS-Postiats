@@ -1794,10 +1794,18 @@ if y.0 > 0
 <!-- ****** ****** -->
 
 <sect1 id="example_a_functorial_package_for_rationals">
+#langeng("
 <title>
 Example: A Functorial Package for Rationals
 </title>
+")
+#langja("
+<title>
+例: ファンクタを用いた有理数パッケージ
+</title>
+")
 
+#langeng("
 #para("\
 
 The previous package for rational numbers contains a serious limitation:
@@ -1808,7 +1816,19 @@ rational numbers based on integers of a different type (for instance,
 integers), then we need to implement another package for rationals based on
 such integers. It is clearly advantageous to avoid this style of
 programming as it involves code duplication to a great extent.  ")
+")
+#langja("
+#para("\
 
+前の有理数パッケージには重大な制約があります:
+有理数を表現するのに使う整数の型が #stacode("int") に固定されてしまっていることです。
+もし異なる型の整数
+(例えばlong intである #stacode("lint") やlong long intである #stacode("llint"))
+を使って有理数を表現したいのであれば、そのような整数を使った別の有理数パッケージを実装する必要があります。
+コード重複をともなうこのようなプログラミングスタイルを回避することは明らかに好都合でしょう。 ")
+")
+
+#langeng("
 #para("\
 
 The approach I employ in this section to implement a package for rational
@@ -1919,6 +1939,114 @@ is some related testing code available
 #mycodelink("CHAP_MODULARITY/test_ratfun.dats", "on-line") as well.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+前述の制限を対処できるような有理数パッケージを実装するためにこの章で使うアプローチは、
+プログラミング言語 Standard ML (SML) のファンクタのアイデアにもとづいています。
+はじめに次のような型を定義しましょう:
+
+#atscode("\
+typedef
+intmod (a:t@ype) = '{
+  ofint= int -> a
+, fprint= (FILEref, a) -> void
+, neg= (a) -> a // negation
+, add= (a, a) -> a // addition
+, sub= (a, a) -> a // subtraction
+, mul= (a, a) -> a // multiplication
+, div= (a, a) -> a // division
+, mod= (a, a) -> a // modulo operation
+, cmp= (a, a) -> int // comparison
+} // end of [intmod]
+")
+
+型Tが与えられた時、
+#stacode("intmod(T)") はそれぞれのフィールドが関数型であるボックス化レコード型です。
+#stacode("intmod(T)") 型の値は、
+型Tの値で表現される整数に対する整数演算のモジュールを表現していると見なすことができます。
+同様に、次のような別の型を定義してみましょう:
+
+#atscode("\
+abst@ype rat (a:t@ype) = (a, a)
+
+typedef
+ratmod (a:t@ype) = '{
+  make= (a, a) -<cloref1> rat a
+, fprint= (FILEref, rat a) -<cloref1> void
+, numer= rat a -> a // numerator
+, denom= rat a -> a // denominator
+, neg= (rat a) -<cloref1> rat a // negation
+, add= (rat a, rat a) -<cloref1> rat a // addition
+, sub= (rat a, rat a) -<cloref1> rat a // subtraction
+, mul= (rat a, rat a) -<cloref1> rat a // multiplication
+, div= (rat a, rat a) -<cloref1> rat a // division
+, cmp= (rat a, rat a) -<cloref1> int // comparison
+} // end of [ratmod]
+")
+
+型Tが与えられた時、 #stacode("ratmod(T)") 型の値は
+#stacode("rat(T)") 型の値で表現される有理数に対する有理数演算のモジュールを表現していると見なすことができます。
+ここで実装したいこの関数は次のインターフェイスを持ちます:
+
+#atscode("\
+fun{a:t@ype} ratmod_make_intmod (int: intmod a): ratmod a
+")
+
+与えられた整数演算のモジュールに適用すると、
+#dyncode("ratmod_make_intmod") は有理数演算のモジュールを返します。
+前者と後者のモジュールで使っている整数は同じ表現を持ちます。
+そのため #dyncode("ratmod_make_intmod") はSMLのファンクタのような振る舞いをします。
+次のコードで、2つの有理数演算のモジュール #dyncode("ratmod_int") と #dyncode("ratmod_dbl") を実装しましょう。
+中身の整数として #stacode("int") 型の値と #stacode("double") 型の値をそれぞれ使用しています:
+
+#atscode('\
+staload M = "libc/SATS/math.sats"
+
+val ratmod_int = let
+//
+val intmod_int = \'{
+  ofint= lam (i) => i
+, fprint= lam (out, x) => $extfcall (void, "fprintf", out, "%i", x)
+, neg= lam (x) => ~x
+, add= lam (x, y) => x + y
+, sub= lam (x, y) => x - y
+, mul= lam (x, y) => x * y
+, div= lam (x, y) => x / y
+, mod= lam (x, y) => op mod (x, y)
+, cmp= lam (x, y) => compare (x, y)
+} : intmod (int) // end of [val]
+//
+in
+  ratmod_make_intmod<int> (intmod_int)
+end // end of [val]
+
+val ratmod_dbl = let
+//
+val intmod_dbl = \'{
+  ofint= lam (i) => g0i2f(i)
+, fprint= lam (out, x) => $extfcall (void, "fprintf", out, "%0.f", x)
+, neg= lam (x) => ~x
+, add= lam (x, y) => x + y
+, sub= lam (x, y) => x - y
+, mul= lam (x, y) => x * y
+, div= lam (x, y) => $M.trunc (x / y) // truncation
+, mod= lam (x, y) => $M.fmod (x, y)
+, cmp= lam (x, y) => compare (x, y)
+} : intmod (double) // end of [val]
+//
+in
+  ratmod_make_intmod<double> (intmod_dbl)
+end // end of [ratmod_dbl]
+')
+
+#dyncode("ratmod_make_intmod") 関数の実装は #mycodelink("CHAP_MODULARITY/ratfun.dats", "オンライン")
+から入手できます。
+また関連したテストコードも #mycodelink("CHAP_MODULARITY/test_ratfun.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </sect1><!--id="example_a_functorial_package_for_rationals"-->
 
