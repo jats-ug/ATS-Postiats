@@ -470,14 +470,28 @@ void値()はパターン()にのみマッチします。このマッチは束縛
 
 <sect1
 id="matching_clauses_and_case-expressions">
+#langeng("
 <title>Matching Clauses and Case-Expressions</title>
+")
+#langja("
+<title>マッチ節とcase式</title>
+")
 
+#langeng("
 #para("\
 Given a pattern pat and an expression exp, (pat #dyncode("=>") exp) is a
 matching clause. The pattern pat and the expression exp are referred to as
 the guard and the body of the matching clause.
 ")
+")
+#langja("
+#para("\
+パターンpatと式expが与えられた時、 (pat #dyncode("=>") exp) はマッチ節です。
+このパターンpatと式expは、ガードとマッチ節の中身と呼ばれます。
+")
+")
 
+#langeng("
 #para("\
 
 Given an expression exp0 and a sequence of matching clauses clseq, a
@@ -491,6 +505,20 @@ environment that extends ENV0 with the bindings generated from this
 matching, and we evaluate the body of the chosen clause under ENV1. The
 value obtained from this evaluation is the value of the case-expression
 being evaluated.  ")
+")
+#langja("
+#para("\
+
+式exp0とマッチ節の列clseqが与えられた時、
+次のようにcase式を作ることができます: (#dyncode("case") exp0 #dyncode("of") clseq) 。
+与えられた環境ENV0でcase式を評価すると、
+まずはじめにENV0においてexp0を評価して値を得ます。
+もしこの値がclseq中のどの節のガードにもマッチしない場合、case式の評価は中断されます。
+そうでない場合、この値が節のガードにマッチするようなclseqの最初の節を選びます。
+このマッチによって生成された束縛をENV0に追加した新しい環境ENV1を作り、
+そしてENV1において選んだ節の中身を評価します。
+評価されたcase式の値がこの評価によって得られる値になります。  ")
+")
 
 </sect1><!--id="matching_clauses_and_case-expressions"-->
 
