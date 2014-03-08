@@ -526,7 +526,14 @@ being evaluated.  ")
 
 <sect1
 id="enumerative_datatypes">
+#langeng("
 <title>Enumerative Datatypes</title>
+")
+#langja("
+<title>列挙データ型</title>
+")
+
+#langeng("
 #para("\
 
 The simplest form of datatypes is for enumerating a finite number of
@@ -555,7 +562,38 @@ a value. For instance, we can write #dyncode("Monday") for
 that #dyncode("Tuesday") is something like #dyncode("Monday+1").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+最も簡単なデータ型は有限個の定数を列挙したものです。
+例えば、次の具体的な構文は #stacode("wday") という名前のデータ型を導入します:
+
+#atscode("\
+datatype wday =
+  | Monday of ()
+  | Tuesday of ()
+  | Wednesday of ()
+  | Thursday of ()
+  | Friday of ()
+  | Saturday of ()
+  | Sunday of ()
+// end of [wday]
+")
+
+ここで最初の記号 (|) は省略できます。
+7つの引数のないコンストラクタがデータ宣言によって作られています:
+つまり #stacode("wday") 型の値をコンストラクトする #dyncode("Monday") から #dyncode("Sunday") です。
+例えば #dyncode("Monday()") は #dyncode("wday") 型の値です。
+引数のないコンストラクタCが与えられた時、 値としてのCを C() と書くと値になります。
+例えば #dyncode("Monday") は #dyncode("Monday()") と書くことができます。
+けれども #dyncode("Tuesday") が #dyncode("Monday+1") のような何かであると考えるべきでは
+<emphasis>ありません</emphasis> 。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The following code implements a function that tests whether a given value
@@ -597,6 +635,48 @@ run-time: If a value of the type #stacode("wday") does not match either of
 #dyncode("Thursday()"), and #dyncode("Friday()").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+次のコードでは、与えられた #stacode("wday") 型の値が平日かどうか検査する関数を実装しています:
+
+#atscode("\
+fun isWeekday
+  (x: wday): bool = case x of
+  | Monday() => true // the first bar (|) is optional
+  | Tuesday() => true
+  | Wednesday() => true
+  | Thursday() => true
+  | Friday() => true
+  | Saturday() => false
+  | Sunday() => false
+// end of [isWeekday]
+")
+
+引数のないコンストラクタCが与えられた時、 C() パターンは値 C() にのみマッチします。
+パターンとして使う時、 C() を C のように書くことが <emphasis>できない</emphasis> ことに注意してください。
+もし #dyncode("isWeekday") 関数の中で #dyncode("Monday()") を #dyncode("Monday") のように書くと、
+最初の節以降の全ての節が余分であることを示すエラーメッセージが型検査時に出ます。
+これは単に #dyncode("Monday") が変数パターンとして解釈されたためで、
+このパターンはどのような値にもマッチするからです。
+#dyncode("isWeekday") のよりよい実装は次のようなものでしょう:
+
+#atscode("\
+fun isWeekday
+  (x: wday): bool = case x of
+  | Saturday() => false | Sunday() => false | _ => true
+// end of [isWeekday]
+")
+
+パターンマッチは実行時に順番に処理されるので、この実装はうまく動きます:
+#stacode("wday") 型の値が #dyncode("Saturday()") にも #dyncode("Sunday()") にもマッチしなければ、
+その値は
+#dyncode("Monday()") , #dyncode("Tuesday()") , #dyncode("Wednesday()") , #dyncode("Thursday()") , #dyncode("Friday()")
+のどれが1つにマッチするはずです。\
+
+")#comment("para")
+")
 
 </sect1><!--id="enumerative_datatypes"-->
 
