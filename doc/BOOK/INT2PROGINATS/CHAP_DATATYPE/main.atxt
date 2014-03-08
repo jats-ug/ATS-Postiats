@@ -265,8 +265,14 @@ ATSにおけるパターンは次のように帰納的に定義されていま�
 
 <sect1
 id="pattern-matching">
+#langeng("
 <title>Pattern-Matching</title>
+")
+#langja("
+<title>パターンマッチ</title>
+")
 
+#langeng("
 #para("\
 
 Pattern matching means matching values against patterns. In the case where
@@ -366,6 +372,97 @@ y). Then the value matches the pattern and this matching yields bindings
 from x and y to 2 and 3, respectively.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+パターンマッチはパターンに対して値をマッチさせることです。
+値がパターンにマッチする場合、
+パターンマッチ中の変数と値の中の要素を結びつける束縛群が生成されます。
+パターンマッチは次の一連のルールに従って実行されます:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+
+定数のパターンにマッチする値は同じく定数でなければなりません。このマッチは束縛を作りません。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+
+void値()はパターン()にのみマッチします。このマッチは束縛を作りません。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+全ての値はワイルドカードパターンにマッチします。このマッチは束縛を作りません。
+")
+</listitem>
+
+<listitem>
+#para("\
+
+全ての値は変数パターンにマッチします。このマッチは変数と値の束縛を作ります。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+
+タプル値はタプルパターンは、それらが同じ長さで、
+前者のそれぞれの値要素が後者の対応するパターン要素にマッチする場合にマッチします。
+そしてこのマッチは、
+マッチしたタプル中の値要素からタプルパターン中のパターン要素に対しての束縛の集合を作ります。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+
+レコード値はレコードパターンは、それらが同じフィールド名を持ち、
+前者のそれぞれの値要素が後者の対応するパターン要素にマッチする場合にマッチします。
+そしてこのマッチは、
+マッチしたレコード中の値要素からレコードパターン中のパターン要素に対しての束縛の集合を作ります。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+
+コンストラクタCをいくつかのパターン引数に適用したパターンが与えられた時、
+パターン引数にマッチする値引数にCを適用した値があれば、その値がこのパターンにマッチします。
+そしてこのマッチは、
+値引数からパターン引数に対しての束縛の集合を作ります。\
+
+")
+</listitem>
+
+<listitem>
+#para("\
+
+参照パターン (x #dyncode("as") pat) が与えられた時、
+値がpatにマッチしたらその値はこのパターンにマッチします。
+そしれこのマッチは、値をpatにマッチさせてxから値への束縛を作ります。\
+
+")
+</listitem>
+
+</itemizedlist>
+
+タプル値 (0, 1, 2, 3) とタプルパターン (0, _, x, y) があるとします。
+するとこの値はこのパターンにマッチして、このマッチによってxとyが2と3をそれぞれ束縛します。\
+
+")#comment("para")
+")
 
 </sect1><!--id="pattern-matching"-->
 
