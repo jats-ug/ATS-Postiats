@@ -684,8 +684,14 @@ fun isWeekday
 
 <sect1
 id="recursive_datatypes">
+#langeng("
 <title>Recursively Defined Datatypes</title>
+")
+#langja("
+<title>再帰的に定義されたデータ型</title>
+")
 
+#langeng("
 #para("\
 
 A recursively defined datatype (or recursive datatype for short) is one
@@ -745,6 +751,63 @@ a loop because it cannot be translated directly to a loop in an imperative
 programming language like C.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+再帰的に定義されたデータ型(もしくは再帰的データ型と略します)とは、
+そのコンストラクタがそのデータ型自身の値に適用するような値を作ることです。
+例えば次に宣言するデータ型 #stacode("charlst") は再帰的です:
+
+#atscode("\
+datatype charlst =
+  | charlst_nil of () | charlst_cons of (char, charlst)
+// end of [charlst]
+")
+
+文字と #stacode("charlst") の型の値に適用されると、
+#dyncode("charlst_cons") コンストラクタは #stacode("charlst") 型の値を作ります。
+例として、次の値は 'a', 'b', 'c' から成る文字のリストを表現しています:
+
+#atscode("\
+charlst_cons('a', charlst_cons('b', charlst_cons('c', charlst_nil())))
+")
+
+与えられたリストの長さを算出する関数 #dyncode("charlst_length") を次のように定義できます:
+
+#atscode("\
+fun charlst_length
+  (cs: charlst): int = case cs of
+  | charlst_cons (_, cs) => 1 + charlst_length (cs)
+  | charlst_nil () => 0
+// end of [charlst_length]
+")
+
+この実装は再帰ですが、末尾再帰ではないことに注意してください。
+整数の加法の交換法則と結合法則を使って、
+#dyncode("charlst_length") を次のように末尾再帰で実装することができます:
+
+#atscode("\
+fun charlst_length
+  (cs: charlst): int = let
+//
+fun loop
+  (cs: charlst, n: int): int = case cs of
+  | charlst_cons (_, cs) => loop (cs, n+1) | charlst_nil () => n
+// end of [loop]
+//
+in
+  loop (cs, 0)
+end // end of [charlst_length]
+")
+
+この本では命名規約として、
+末尾再帰関数にのみループ(loop)という名前を割り当てることに注意してください。
+C言語のような命令型プログラミング言語のループに変換することができないので、
+末尾再帰でない関数はループ呼び出しすることはできません。
+
+")#comment("para")
+")
 
 </sect1><!--id="recursive_datatypes"-->
 
