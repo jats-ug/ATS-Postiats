@@ -1053,8 +1053,14 @@ non-empty list.\
 
 <sect1
 id="example_binary_search_tree">
+#langeng("
 <title>Example: Binary Search Tree</title>
+")
+#langja("
+<title>例: 2分探索木</title>
+")
 
+#langeng("
 #para("\
 
 A binary search tree is a binary tree satisfying the following property:
@@ -1067,12 +1073,34 @@ practice, binary search trees are commonly employed to represent sets and
 maps.
 
 ")
+")
+#langja("
+#para("\
 
+2分探索木は次の性質を満たすような二分木です:
+ツリーのそれぞれのノードについて、ノードの中に保存されているキーは、
+ノードの左の子に保存されている全てのキー以上で、
+ノードの右の子に保存されている全てのキー以下です。
+別の言い方では、深さ優先探索の走査をすると昇順のキーの列が得られるような二分木は2分探索木です。
+実際には、2分探索木は集合や写像を表現する際によく使われます。
+
+")
+")
+
+#langeng("
 #para("\
 
 The following declaration introduces a datatype #stacode("bstree") for
 binary search trees in which the stored keys are strings:
 
+")
+")
+#langja("
+#para("\
+
+次のコードは、文字列を保存するキーとする2分探索木のために、データ型 #stacode("bstree") を宣言しています:
+
+")
 ")
 
 #atscode("\
@@ -1081,6 +1109,7 @@ datatype bstree =
 // end of [bstree]
 ")
 
+#langeng("
 #para("\
 
 It should be noted that not every value of the type #stacode("bstree")
@@ -1088,12 +1117,30 @@ represents a valid binary search tree as it is certainly possible to
 construct a value representing a binary tree but not a binary search tree.
 
 ")
+")
+#langja("
+#para("\
 
+#stacode("bstree") 型の全ての値が有効な2分探索木を表現していないことに注意すべきです。
+2分探索木ではない二分木を表現する値をコンストラクトする可能性があります。
+
+")
+")
+
+#langeng("
 #para("\
 
 The following function [bstree_inord] does a in-order traversal of a
 given binary tree:
 
+")
+")
+#langja("
+#para("\
+
+次の関数 [bstree_inord] は与えられた二分木を間順走査します:
+
+")
 ")
 
 #atscode("\
@@ -1113,18 +1160,37 @@ case+ t0 of
 ) (* end of [bstree_inord] *)
 ")
 
+#langeng("
 #para("\
 
 If [t0] is a binary search tree, then the sequence of
 keys processed by [fwork] are ordered ascendingly.
 
 ")
+")
+#langja("
+#para("\
 
+[t0] が2分探索木であるなら、 [fwork] によって作られるキーの列は昇順になります。
+
+")
+")
+
+#langeng("
 #para("\
 
 Given a binary search tree and a key, the following function
 [bstree_search] checks whether the key is stored inside the tree:
 
+")
+")
+#langja("
+#para("\
+
+2分探索木とキーが与えられると、次の関数 [bstree_search]
+はそのキーがその探査木の中に保存されているかどうか調べます:
+
+")
 ")
 
 #atscode("\
@@ -1144,18 +1210,37 @@ case+ t0 of
 ) (* end of [bstree_search] *)
 ")
 
+#langeng("
 #para("\
 
 Note that [bstree_search] returns true if the given key is
 found. Otherwise, it returns false.
 
 ")
+")
+#langja("
+#para("\
 
+与えられたキーが見つかれば [bstree_search] はtrueを返し、
+見つからなければfalseを返します。
+
+")
+")
+
+#langeng("
 #para("\
 
 Given a binary search tree and a key, the following function
 [bstree_insert] inserts the key into the tree:
 
+")
+")
+#langja("
+#para("\
+
+2分探索木とキーが与えられると、次の関数 [bstree_insert] はその探索木にそのキーを挿入します:
+
+")
 ")
 
 #atscode("\
@@ -1175,6 +1260,7 @@ case+ t0 of
 ) (* end of [bstree_insert] *)
 ")
 
+#langeng("
 #para("\
 
 Note that [bstree_insert] inserts the key only if it is not already stored
@@ -1182,7 +1268,17 @@ inside the given tree. Also, if inserted, the key is always stored in a newly
 created leaf node.
 
 ")
+")
+#langja("
+#para("\
 
+キーが与えられた探索木の中に含まれていない時のみ、 [bstree_insert] はキーを挿入することに注意してください。
+もし挿入済みであった場合、そのキーは新しく作られた葉ノードにいつも格納されます。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find
@@ -1190,6 +1286,16 @@ Please find
 the entirety of the code in this section plus some additional code for
 testing.\
 
+")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体と追加のテストコードは
+#mycodelink("CHAP_DATATYPE/bstree.dats", "オンライン")
+から入手できます。\
+
+")
 ")
 
 </sect1><!--id="example_binary_search_tree"-->
