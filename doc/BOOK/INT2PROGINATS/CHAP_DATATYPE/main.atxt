@@ -815,8 +815,14 @@ C言語のような命令型プログラミング言語のループに変換す�
 
 <sect1
 id="exhaustiveness_of_pattern-matching">
+#langeng("
 <title>Exhaustiveness of Pattern-Matching</title>
+")
+#langja("
+<title>網羅的なパターンマッチ</title>
+")
 
+#langeng("
 #para("\
 
 Given a type T and a set of patterns, if for any given value of the type T
@@ -829,7 +835,21 @@ the matching clauses in clseq is exhaustive, then the case-expression is
 said to be pattern-matching-exhaustive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+T型と複数のパターンが与えられた時、
+どのようなT型の値に対しても必ず一つ以上のパターンがマッチするなら、
+このパターン群を使ったT型の値のパターンマッチは網羅的です。
+exp0 が型 T で、case式 (#dyncode("case") exp0 #dyncode("of") clseq) が与えらた時、
+clseq中のマッチ節のガードに対して型Tの値のパターンマッチが網羅的であるなら、
+このcase式は網羅的なパターンマッチであると呼ばれます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 The following code implements a function that finds the last character
 in a non-empty character list:
@@ -858,7 +878,37 @@ warning message, the keyword #dyncode("case") should be replaced with
 ATS.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+次のコードは空でない文字リストの最後の文字を見つけるような関数の実装です:
 
+#atscode("\
+fun charlst_last
+  (cs: charlst): char =
+(
+  case cs of
+  | charlst_cons (c, charlst_nil ()) => c
+  | charlst_cons (_, cs1) => charlst_last (cs1)
+)
+// end of [charlst_last]
+")
+
+#dyncode("charlst_last") の中身は網羅的なパターンマッチではないcase式です:
+#dyncode("cs") が値 #dyncode("charlst_nil()") つまり空の文字リストに束縛されている場合、
+case式のどのマッチ節も選択されません。
+このコードがatsoptに型検査されると、
+case式が網羅的なパターンマッチではないことを示す警告メッセージが出力されます。
+もしプログラマが代わりにエラーメッセージとして扱いたい場合、
+#dyncode("case") キーワードを #dyncode("case+") で置き換えるべきです。
+もしプログラマがこの警告メッセージを抑制したい場合、
+#dyncode("case") キーワードを #dyncode("case-") で置き換えるべきです。
+私自身がATSでコーディングする場合 #dyncode("case+") をほとんど使います。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The function #dyncode("charlst_last") can also be implemented as follows:
@@ -886,7 +936,36 @@ values. For instance, the pattern #dyncode("charlst_nil()") can also be
 written as #dyncode("charlst_nil _").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数 #dyncode("charlst_last") はまた次のように実装することもできます:
+
+#atscode("\
+fun charlst_last
+  (cs: charlst): char =
+(
+  case cs of
+  | charlst_cons (c, cs1) =>
+    (
+      case+ cs1 of
+      | charlst_nil () => c | charlst_cons _ => charlst_last (cs1)
+    ) // end of [charlst_cons]
+) // end of [charlst_last]
+")
+
+この実装では、内側のcase式は網羅的なパターンマッチですが、外側のcase式はそうではありません。
+パターン #dyncode("charlst_cons _") は #dyncode("charlst_cons(_, _)") の略記であることに注意してください。
+一般的に、Cがなんらかのデータ型に対応するコンストラクタである時、
+#dyncode("C _") パターンはCをなんらかの値に適用してコンストラクトされたどのような値にもマッチします。
+例えば、
+パターン #dyncode("charlst_nil()") は #dyncode("charlst_nil _") と書くこともできます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Suppose we have a case-expression containing only one matching clause, that
@@ -913,7 +992,35 @@ instead, the keyword #dyncode("val") should be replaced with
 the keyword #dyncode("val") should be replaced with #dyncode("val-").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+たった1つだけマッチ節を持つcase式、
+つまり [#dyncode("case") exp0 #dyncode("of") pat #dyncode("=>") exp] という形のcase式を考えましょう。
+するとこのcase式はlet式で書くこともできます:
+(#dyncode("let") #dyncode("val") pat #dyncode("=") exp0 #dyncode("in") exp #dyncode("end")) 。
+例えば、関数 #dyncode("charlst_last") は次のような別の実装をすることができます:
+
+#atscode("\
+fun charlst_last
+  (cs: charlst): char = let
+  val charlst_cons (c, cs1) = cs in case+ cs1 of
+  | charlst_nil () => c | charlst_cons _ => charlst_last (cs1)
+end // end of [charlst_last]
+")
+
+この実装がatsoptで型検査されると、
+val宣言が網羅的なパターンマッチでないことを示す警告メッセージが出力されます。
+もしプログラマが代わりにエラーメッセージとして扱いたい場合、
+#dyncode("val") キーワードを #dyncode("val+") で置き換えるべきです。
+もしプログラマがこの警告メッセージを抑制したい場合、
+#dyncode("val") キーワードを #dyncode("val-") で置き換えるべきです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As values formed by the constructors #dyncode("charlst_nil") and
@@ -925,6 +1032,19 @@ described much more precisely, we can ensure at the level of types that a
 function finding the last element of a list can only be applied to a
 non-empty list.\
 
+")
+")
+#langja("
+#para("\
+
+コンストラクタ #dyncode("charlst_nil") と #dyncode("charlst_cons") で作られる値が同じ型 #stacode("charlst")
+を持つ時、関数
+#dyncode("charlst_last") が空の文字リストに適用されてしまうことを型検査で防止することは不可能です。
+これは深刻な制限です。
+データをより正確に表現できる依存型を使えば、
+リストの最後の要素を見つける関数を空でないリストにのみ適用することを、型のレベルで保証できるようになります。\
+
+")
 ")
 
 </sect1><!--id="exhaustiveness_of_pattern-matching"-->
