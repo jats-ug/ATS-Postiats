@@ -581,8 +581,14 @@ fn abs (x: double): double = if x >= 0 then x else ~x
 
 <sect1
 id="recursive-functions">
+#langeng("
 #title("Recursive Functions")
+")
+#langja("
+#title("再帰関数")
+")
 
+#langeng("
 #para("\
 A recursive function is one that may make calls to itself in its
 body. Therefore, a non-recursive function is just a special kind of of
@@ -595,7 +601,23 @@ similar but simpler, and we repeat this reduction process if needed until
 solutions become apparent. Let us now see some concrete examples of
 problem-solving that make use of this reduction strategy.
 ")#comment("para")
+")
+#langja("
+#para("\
+再帰関数はその本体で自分自身を呼び出すような関数です。
+したがって、再帰しない関数は再帰関数の単なる特殊形であるとも言えます:
+この種の関数はその本体で自分自身を決して呼び出しません。
+再帰はプログラミング言語が提供しているもっとも効果的な機能だと、私は考えています。
+再帰を使うことで、再帰的な戦略で問題解決をすることができます:
+すぐに解法を見つけることが困難な問題を解決するために、
+問題を同様で単純な問題に減少させ、
+さらに解法が明白になるまでその減少プロセスを繰り返します。
+ここでは
+このような減少戦略を使った問題解決の具体的な例を見てみましょう。
+")#comment("para")
+")
 
+#langeng("
 #para("\
 Suppose that we want to sum up all the integers ranging from 1 to n,
 where n is a given integer. This can be readily done by implementing the
@@ -613,7 +635,26 @@ reduction strategy for #dyncode("sum1 (n)") is straightforward: If
 value of #dyncode("sum1 (n)") by solving a simpler problem, that is,
 finding the value of #dyncode("sum1 (n-1)").
 ")#comment("para")
+")
+#langja("
+#para("\
+与えられた整数をnとするとき、1からnまでの範囲の整数を全て足すことを考えましょう。
+これは次のような再帰関数 #dyncode("sum1") にたやすく実装することができます:
 
+#atscode("\
+fun sum1 (n: int): int = if n >= 1 then sum1 (n-1) + n else 0
+")
+
+キーワード #dyncode("fun") は再帰関数の定義の開始です。
+#dyncode("1") から #dyncode("n") までの範囲の全ての整数の和を得るために、
+#dyncode("sum1 (n)") を呼び出しましょう。
+#dyncode("sum1 (n)") の減少戦略は単純です:
+もし #dyncode("n") が #dyncode("1") よりも大きければ、
+#dyncode("sum1 (n)") の値はより単純な問題である #dyncode("sum1 (n-1)") にできます。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 We can also solve the problem by implementing the following
 recursive function #dyncode("sum2") that sums up all the integers in a
@@ -632,7 +673,26 @@ finding the value of #dyncode("sum2 (m+1, n)"). The reason for #dyncode("sum2
 (m+1, n)") being simpler than #dyncode("sum2 (m, n)") is that
 #dyncode("m+1") is closer to #dyncode("n") than #dyncode("m") is.
 ")#comment("para")
+")
+#langja("
+#para("\
+与えられた範囲の整数の和を得るような次の再帰関数 #dyncode("sum2") を実装して問題解決することもできます:
 
+#atscode("\
+fun sum2 (m: int, n: int): int = if m <= n then m + sum2 (m+1, n) else 0
+")
+
+#dyncode("1") から #dyncode("n") の範囲の全ての整数の和を取るために、ここで
+#dyncode("sum2 (1, n)") を呼び出してみましょう。
+#dyncode("sum2 (m, n)") の減少戦略もまた単純です:
+もし#dyncode("m") が #dyncode("n") より小さいならば、
+#dyncode("sum2 (m, n)") の値をより単純な問題である #dyncode("sum2 (m+1, n)") にできます。
+#dyncode("sum2 (m+1, n)") が #dyncode("sum2 (m, n)") よりも単純な理由は、
+#dyncode("m+1") が #dyncode("m") よりも #dyncode("n") に近いことです。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Given integers m and n, there is another strategy for summing up all
 the integers from m to n: If m does not exceed n, we can find the sum of
@@ -655,6 +715,27 @@ It should be noted that the division involved in the expression
 truncation.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+整数 m と n が与えられた時、m から n までの全ての整数の和を取るために、また別の戦略があります:
+それはもしmがnを超えないとすると、 m から (m+n)/2-1 までの全ての整数の和を取り、
+さらに (m+n)/2+1 から n までの全ての整数の和を取り、最後に左記2つの和と (m+n)/2 の和を取ることです。
+次の再帰関数 #dyncode("sum3") はこの戦略に忠実に実装されています:
+
+#atscode("\
+fun sum3
+  (m: int, n: int): int =
+  if m <= n then let
+    val mn2 = (m+n)/2 in sum3 (m, mn2-1) + mn2 + sum3 (mn2+1, n)
+  end else 0 // end of [if]
+// end of [sum3]
+")
+
+式 #dyncode("(m+n)/2 ") に含まれる除算は整数の除算であるため、切り捨てが発生することに注意すべきです。\
+
+")#comment("para")
+")
 
 </sect1>
 
