@@ -1662,8 +1662,14 @@ testing is available #mycodelink("CHAP_FUNCTION/queens.dats", "on-line").\
 
 <sect1
 id="mutually-recursive-functions">
+#langeng("
 #title("Mutually Recursive Functions")
+")
+#langja("
+#title("相互再帰関数")
+")
 
+#langeng("
 #para("\
 
 A collection of functions are defined mutually recursively if each function
@@ -1671,7 +1677,18 @@ can make calls in its body to any functions in this collection.  Mutually
 recursive functions are commonly encountered in practice.
 
 ")
+")
+#langja("
+#para("\
 
+ある関数群のそれぞれの関数がその本体からその関数群の関数を呼び出している時、
+その関数群は相互再帰的に定義されています。
+相互再帰関数は実際の場面で一般に使われます。
+
+")
+")
+
+#langeng("
 #para("\
 
 As an example, let P be a function on natural numbers defined as follows:
@@ -1719,6 +1736,53 @@ Note that the keyword #dyncode("and") is used to combine function
 definitions.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+例として、Pを次のような自然数の関数とします:
+
+<itemizedlist>
+<listitem>
+#para("P(0) = 1")
+</listitem>
+<listitem>
+#para("\
+P(n+1) = 1 + (iの範囲が1からnまでの時、iとP(i)の積の合計)
+")
+</listitem>
+</itemizedlist>
+
+1からnまでの範囲をiが取る時、iとP(i)の積の合計をQ(n)とするような関数Qを導入しましょう。
+すると関数PとQは次のように相互再帰的に定義できます:
+
+<itemizedlist>
+<listitem>
+#para("P(0) = 1")
+</listitem>
+<listitem>
+#para("P(n+1) = 1 + Q(n)")
+</listitem>
+
+<listitem>
+#para("Q(0) = 0")
+</listitem>
+<listitem>
+#para("Q(n+1) = Q(n) + (n+1) * P(n+1)")
+</listitem>
+</itemizedlist>
+
+次のPとQの実装はこれらの定義を直接ATSに翻訳したものです:
+
+#atscode("\
+fun P (n:int): int = if n > 0 then 1 + Q(n-1) else 1
+and Q (n:int): int = if n > 0 then Q(n-1) + n * P(n) else 0
+")
+
+キーワード #dyncode("and") を使って関数定義を結合していることに注意してください。\
+
+")#comment("para")
+")
 
 </sect1>
 
