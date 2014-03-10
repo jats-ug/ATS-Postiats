@@ -1004,8 +1004,14 @@ code for testing is available #mycodelink("CHAP_FUNCTION/coinchange.dats", "on-l
 
 <sect1
 id="tail-call-and-tail-recursion">
+#langeng("
 #title("Tail-Call and Tail-Recursion")
+")
+#langja("
+#title("末尾呼出と末尾再帰")
+")
 
+#langeng("
 #para("\
 
 Suppose that a function foo makes a call in its body to a function
@@ -1024,7 +1030,27 @@ where the outer recursive call is a self tail-call while the inner one is
 not.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数本体で関数 bar を呼び出す関数 foo を考えましょう。
+ここでfooとbarは同じ関数でも問題ありません。
+もしbarを呼び出した返値がfooの返値にもなるとしたら、このbar呼び出しは末尾呼出です。
+もしfooとbarが同じ関数の場合、この呼び出しは(再帰)自己末尾呼出です。
+例えば、次のように定義された関数 #dyncode("f91") の本体で2つの再帰呼出があるとします:
+
+#atscode("\
+fun f91 (n: int): int =
+  if n >= 101 then n - 10 else f91 (f91 (n+11))
+")
+
+ここで外型の末尾呼出は自己末尾呼出ですが、内側はそうではありません。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 If each recursive call in the body of a function is a tail-call,
@@ -1041,7 +1067,26 @@ fun sum_iter
 A tail-recursive function is often referred to as an iterative function.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数の本体中のそれぞれの再帰呼出が末尾呼出なら、この関数は末尾再帰関数です。
+例えば、次の関数 #dyncode("sum_iter") は末尾再帰です:
+
+#atscode("\
+fun sum_iter
+  (n: int, res: int): int =
+  if n > 0 then sum_iter (n-1, n+res) else res
+// end of [sum_iter]
+")
+
+末尾再帰関数はしばしば反復関数と呼ばれます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 In ATS, the single most important optimization is probably the one
@@ -1054,6 +1099,20 @@ case primarily due to the fact that the syntax for writing tail-recursive
 functions is compatible with the syntax for other programming features in
 ATS while the syntax for loops is much less so.\
 
+")
+")
+#langja("
+#para("\
+
+ATSにおいてもっとも重要な最適化の一つは、
+おそらく自己末尾呼出をローカルへのジャンプに変換することでしょう。
+この最適化はあらゆる末尾再帰関数を同等のループに効果的に変換します。
+ATSはforループとwhileループを生成する構文を直接サポートしていますが、
+ATSにおけるループを生成する好ましいアプローチは、一般に末尾再帰関数を使用することです。
+これは、末尾再帰関数を書くための構文はATSにおける他のプログラミング機能の構文と適合できることが主たる理由です。
+ループ構文はあまり適合しません。\
+
+")
 ")
 
 </sect1>
