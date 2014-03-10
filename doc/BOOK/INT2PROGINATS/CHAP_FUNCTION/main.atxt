@@ -300,8 +300,14 @@ fn area_of_ring
 
 <sect1
 id="function-arity">
+#langeng("
 #title("Function Arity")
+")
+#langja("
+#title("関数のアリティ(arity)")
+")
 
+#langeng("
 #para("\
 
 The arity of a function is the number of arguments the function
@@ -337,7 +343,42 @@ error of function arity mismatch as it assumes that #dyncode("sqrsum2") is
 applied to two arguments (instead of one representing a pair).\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数のアリティは関数が取る引数の数です。
+しばしばアリティが 0, 1, 2, 3 の関数はそれぞれ、nullary, unary, binary, ternary 関数と呼ばれます。
+例えば、次の関数 #dyncode("sqrsum1") はbinary関数で、2つの引数の型は #dyncode("int") です:
+
+#atscode("\
+fn sqrsum1 (x: int, y: int): int = x * x + y * y
+")
+
+unary関数 #dyncode("sqrsum2") を次のように定義することができます:
+#atscode("\
+//
+typedef int2 = (int, int)
+//
+fn sqrsum2
+  (xy: int2): int =
+  let val x = xy.0 and y = xy.1 in x * x + y * y end
+// end of [sqrsum2]
+")
+
+キーワード #stacode("typedef") は名前 #stacode("int2") とタプル型 #stacode("(int, int)") を束縛します。
+別の言い方をすると #stacode("int2") は #stacode("(int, int)") の略語しくは別名として取り扱われます。
+関数 #dyncode("sqrsum2") は #stacode("int2") 型のタプルを引数として1つだけ取るunaryです。
+#dyncode("sqrsum2") を #dyncode("1") と #dyncode("~1") から成るタプルに適用するには、
+#dyncode("sqrsum2 @(1, ~1)") と書く必要があります。
+もし単純に #dyncode("sqrsum2 (1, ~1)") と書いた場合、
+型検査器は関数のアリティが合わないというエラーを出力します。
+型検査器は #dyncode("sqrsum2") に(1つのペアではなく)2つの引数が適用されたと見なしてしまいます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Many functional languages (e.g., Haskell and ML) only allow unary
@@ -350,6 +391,21 @@ indefinite number of arguments (e.g., the famous #dyncode("printf")
 function in C). This is a topic I will cover elsewhere.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+(HaskellやMLのような)多くの関数型言語はunary関数のみを許しています。
+これらの言語において、複数の引数を取る関数はエンコードして表現します。
+つまり、タプルを唯一の引数として取るunary関数か、
+カリー化された関数に連続してそれらの引数を渡すようにして実現されています。
+けれども、ATSは複数引数を持つ関数を直接サポートしています。
+ATSでも可変長引数の関数を限定的にサポートしています。
+これはつまり引数の数が不定の関数です(例えばC言語の #dyncode("printf") 関数が有名です)。
+この話題は別の章で取り上げます。\
+
+")#comment("para")
+")
 
 </sect1>
 
