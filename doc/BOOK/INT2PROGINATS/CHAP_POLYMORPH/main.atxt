@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="parametric_polymorphism">
+#langeng("
 #title("Parametric Polymorphism")
+")
+#langja("
+#title("パラメータ多相")
+")
 
+#langeng("
 #para("\
 
 Code sharing is of paramount importance in programming.  In a typed
@@ -33,18 +39,53 @@ other forms of polymorphism such as inheritance polymorphism in
 object-oriented programming.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+コードの共有はプログラミングにおいて最重要です。
+型付きのプログラミング言語では、
+異なる型の値が同じ機能を必要してしまうような状況にしばしば出会います。
+例えば、文字, 整数, 文字列などをリストの要素とするリストの長さを算出する必要があるかもしれません。
+明らかに、リストの長さを取る関数をそれぞれの要素の型毎に実装したくはありません。
+おそらくコード重複の最悪の形でしょう。
+どんなリストに対してもリストの長さを算出できるような唯一1つの関数を実装したいのです。
+このリストの長さを取る関数は与えられたリストの要素の型をパラメータ化し、
+要素の型によらず一様な振る舞いをします。
+このようなコードの共有はしばしば #emphasis("パラメータ多相") と呼ばれます。
+これはオブジェクト指向プログラミングにおける継承ポリモーフィズムのようなその他のポリモーフィズムとは区別すべきです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_POLYMORPH", "on-line").\
 
 ")
+")
+#langja("
+#para("\
+
+この章で示すコードと追加のテストコードは
+#mycodelink("CHAP_POLYMORPH", "オンライン")
+から入手できます。\
+
+")
+")
 
 <sect1
 id="function_templates">
+#langeng("
 #title("Function Templates")
+")
+#langja("
+#title("関数テンプレート")
+")
 
+#langeng("
 #para("\
 
 A function template is a code template that implements a function.
@@ -89,7 +130,51 @@ the parameters #stacode("a") and #stacode("b") are replaced with
 #dyncode("swap&lt;int,char&gt;") is interpreted similarly.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数テンプレートは関数を実装するコードテンプレートです。
+次のコードは、値をスワップする2つの関数を定義しています:
+
+#atscode("\
+typedef charint = (char, int)
+typedef intchar = (int, char)
+fun swap_char_int (xy: charint): intchar = (xy.1, xy.0)
+fun swap_int_char (xy: intchar): charint = (xy.1, xy.0)
+")
+
+型を無視すると #dyncode("swap_char_int") と #dyncode("swap_int_char") の中身は同一です。
+この種類のコードの重複を防ぐために、
+まずはじめに関数テンプレート #dyncode("swap") を次のように実装し、
+それから #dyncode("swap_char_int") と #dyncode("swap_int_char") を #dyncode("swap") を元に実装します:
+
+#atscode("\
+fun{
+a,b:t@ype
+} swap (xy: (a, b)): (b, a) = (xy.1, xy.0)
+fun swap_char_int (xy: charint): intchar = swap<char,int> (xy)
+fun swap_int_char (xy: intchar): charint = swap<int,char> (xy)
+")
+
+関数テンプレートはATSにおいて第一級の値ではないことに注意すべきです：
+関数テンプレートを現わすような式は存在しません。
+キーワード #dyncode("fun") に続く構文 #stacode("{a,b:t@ype}") はテンプレートパラメータや引数を表わしています。
+一風変わった記号 #stacode("t@ype") はサイズが特定されていない型を表現する静的な項の種で、
+その型のサイズは型の値を表現するのに必要なバイト数です(型の値のサイズが全て同じであると仮定した場合ですが)。
+ATSにはもう一つの種 #stacode("type") があり、
+サイズが正確に1ワードである型を表現する静的な項です。
+1ワードというのは、32ビットマシンは4バイト、64ビットマシンでは8バイトです。
+#dyncode("swap&lt;char,int&gt;") という構文は
+(#dyncode("swap") と #dyncode("&lt;") の間にスペースを入れないでください)、
+パラメータ #stacode("a") と #stacode("b") をそれぞれ #stacode("char") と #stacode("int")
+で置き換えた関数テンプレート #dyncode("swap") のインスタンスを表わします。
+構文 #dyncode("swap&lt;int,char&gt;") も同様に解釈できるでしょう。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A different style of implementation of #dyncode("swap") is given
@@ -112,7 +197,31 @@ Note that #dyncode("&gt;&lt;") is a special symbol (of the name GTLT) and
 no space is allowed between #dyncode("&gt;") and #dyncode("&lt;").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次のような #dyncode("swap") の異なるスタイルの実装を見てみましょう:
+
+#atscode("\
+fun{a:t@ype}{b:t@ype} swap2 (xy: (a, b)): (b, a) = (xy.1, xy.0)
+")
+
+上記の実装ではテンプレートパラメータは同時にではなく連続して与えられています。
+次のコードは #dyncode("swap2") をインスタンス化する方法を示しています:
+
+#atscode("\
+fun swap_char_int (xy: charint): intchar = swap2<char><int> (xy)
+fun swap_int_char (xy: intchar): charint = swap2<int><char> (xy)
+")
+
+#dyncode("&gt;&lt;") は(GTLTという名前の)特別な記号で、
+#dyncode("&gt;") と #dyncode("&lt;") の間にスペースを入れてはいけません。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As another example, a higher-order function template for composing
@@ -141,7 +250,36 @@ Similarly, the value #dyncode("f_2x_2") represents the function that adds 1
 to its integer argument and then multiplies it by 2.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+別の例として、(クロージャ)関数を作る高階関数テンプレートを次に示します:
+
+#atscode("\
+typedef
+cfun (t1:t@ype, t2:t@ype) = t1 -<cloref1> t2
+
+fun{
+a,b,c:t@ype
+} compose (
+  f: cfun (a, b), g: cfun (b, c)
+) :<cloref1> cfun (a, c) = lam x => g(f(x))
+
+val plus1 = lam (x:int): int =<cloref> x+1
+val times2 = lam (x:int): int =<cloref> x*2
+
+val f_2x_1 = compose<int,int,int> (times2, plus1)
+val f_2x_2 = compose<int,int,int> (plus1, times2)
+")
+
+値 #dyncode("f_2x_1") は、整数の引数に2を掛けた後に1を足す関数を表わしています。
+同様に、値 #dyncode("f_2x_2") は、1を整数の引数に足した後に2を掛ける関数を表わしています。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 In ATS, function templates are typechecked but not compiled to code in C.
@@ -154,12 +292,36 @@ compiled. However, if T1 and T2 have the same name, then the two instances
 may share one function in C.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATSでは、関数テンプレートは型検査されますが、C言語コードにはコンパイルされません。
+その代わり、関数テンプレートは中間形式にコンパイルされます。
+関数テンプレートのインスタンスのみがC言語コードにコンパイルされます。
+1つの型パラメータを取る関数テンプレートfooと、
+2つのインスタンス foo&lt;T1&gt; と foo&lt;T2&gt; がT1とT2型でプログラムで使用されていると考えてみましょう。
+一般的に、プログラムがコンパイルされると、C言語の1つ1つの関数はfooのそれぞれのインスタンスから生成されます。
+けれども、T1とT2が同じ名前を持っているなら、2つのインスタンスはC言語の1つの関数を共有するかもしれません。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please note that I may simply use the name function to refer to a function
 template from now on if no confusion is expected.\
 
+")
+")
+#langja("
+#para("\
+
+混乱しないと思われる場合、これからこの本では、
+関数という名前を関数テンプレートの意味で使うことがあることに注意してください。\
+
+")
 ")
 
 </sect1><!--id="function_templates"-->
