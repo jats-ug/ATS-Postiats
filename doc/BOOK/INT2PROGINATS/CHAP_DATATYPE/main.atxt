@@ -1304,8 +1304,14 @@ testing.\
 
 <sect1
 id="example_evaluating_integer_expressions">
+#langeng("
 <title>Example: Evaluating Integer Expressions</title>
+")
+#langja("
+<title>例: 整数式の評価</title>
+")
 
+#langeng("
 #para("\
 
 For representing integer expressions, we declare a datatype
@@ -1348,6 +1354,48 @@ fun eval_iexp (e0: IEXP): int = case+ e0 of
 // end of [eval_iexp]
 ")
 ")#comment("para")
+")
+#langja("
+#para("\
+
+整数式を表現するために、次のようなデータ型 #stacode("IEXP") を宣言しましょう:
+
+#atscode("\
+datatype IEXP =
+  | IEXPcst of int // constants
+  | IEXPneg of (IEXP) // negative
+  | IEXPadd of (IEXP, IEXP) // addition
+  | IEXPsub of (IEXP, IEXP) // subtraction
+  | IEXPmul of (IEXP, IEXP) // multiplication
+  | IEXPdiv of (IEXP, IEXP) // division
+// end of [IEXP]
+")
+
+#stacode("IEXP") に関連するコンストラクタの意味は明確です。
+#stacode("IEXP") 型の値はしばしば抽象構文木と呼ばれます。
+例えば、式 (~1+(2-3)*4) の抽象構文木は次のようになります:
+
+#atscode("\
+IEXPadd(IEXPneg(IEXPcst(1)), IEXPmul(IEXPsub(IEXPcst(2), IEXPcst(3)), IEXPcst(4)))
+")
+
+Translating an integer expression written in some string form into an abstract syntax tree is called parsing,
+which we will not do here.
+The following defined function #dyncode("eval_iexp") takes the abstract syntax
+tree of an integer expression and returns an integer that is the value of the expression:
+
+#atscode("\
+fun eval_iexp (e0: IEXP): int = case+ e0 of
+  | IEXPcst (n) => n
+  | IEXPneg (e) => ~eval_iexp (e)
+  | IEXPadd (e1, e2) => eval_iexp (e1) + eval_iexp (e2)
+  | IEXPsub (e1, e2) => eval_iexp (e1) - eval_iexp (e2)
+  | IEXPmul (e1, e2) => eval_iexp (e1) * eval_iexp (e2)
+  | IEXPdiv (e1, e2) => eval_iexp (e1) / eval_iexp (e1)
+// end of [eval_iexp]
+")
+")#comment("para")
+")
 
 #para("\
 
