@@ -413,8 +413,14 @@ ATSでも可変長引数の関数を限定的にサポートしています。
 
 <sect1
 id="function-interface">
+#langeng("
 #title("Function Interface")
+")
+#langja("
+#title("関数インターフェイス")
+")
 
+#langeng("
 #para("\
 
 The interface for a function specifies the type assigned to the
@@ -464,6 +470,54 @@ the function interface. Note that separation as such is pivotal for
 constructing (large) programs in a modular style.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数のインターフェイスは、その関数に割り当てられる型を明確にします。
+binary関数 foo が型 (T1, T2) -> T3 で与えられた時、そのインターフェイスは次のように書くことができます:
+
+#atscode("\
+fun foo (arg1: T1, arg2: T2): T3
+")
+
+ここで #dyncode("arg1") と #dyncode("arg2") は関数の引数に対する他の識別子で置換することもできます。
+より多いもしくは少ない引数の関数でも、インターフェイスは同じように書くことができます。
+例えば、次のような様々な整数に対する関数のインターフェイスがあります:
+
+#atscode("\
+fun succ_int (x: int): int // successor
+fun pred_int (x: int): int // predecessor
+
+fun add_int_int (x: int, y: int): int // +
+fun sub_int_int (x: int, y: int): int // -
+fun mul_int_int (x: int, y: int): int // *
+fun div_int_int (x: int, y: int): int // /
+
+fun mod_int_int (x: int, y: int): int // modulo
+fun gcd_int_int (x: int, y: int): int // greatest common divisor
+
+fun lt_int_int (x: int, y: int): bool // <
+fun lte_int_int (x: int, y: int): bool // <=
+fun gt_int_int (x: int, y: int): bool // >
+fun gte_int_int (x: int, y: int): bool // >=
+fun eq_int_int (x: int, y: int): bool // =
+fun neq_int_int (x: int, y: int): bool // <>
+
+fun max_int_int (x: int, y: int): int // maximum
+fun min_int_int (x: int, y: int): int // minimum
+
+fun print_int (x: int): void
+fun tostring_int (x: int): string
+")
+
+これ以降、関数を提示するときに関数インターフェイスを使います。
+後の章で、関数定義は2つの部品に分離できることを示します:
+関数インターフェイス部分と関数インターフェイスを実装する実装部分です。
+この分離は大きなプログラムをモジュールスタイルで作るのにきわめて重要であることに注意してください。\
+
+")#comment("para")
+")
 
 </sect1>
 
