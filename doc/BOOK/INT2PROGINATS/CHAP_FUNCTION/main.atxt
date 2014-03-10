@@ -743,8 +743,14 @@ fun sum3
 
 <sect1
 id="evaluation-of-recursive-function-calls">
+#langeng("
 #title("Evaluation of Recursive Function Calls")
+")
+#langja("
+#title("再帰関数呼び出しの評価")
+")
 
+#langeng("
 #para("\
 Evaluating a call to a recursive function is not much different from
 evaluating one to a non-recursive function.  Let #dyncode("fib") be the
@@ -766,7 +772,30 @@ evaluation of #dyncode("fib(n-1) + fib(n-2)") eventually returns
 #dyncode("1") (as the result of #dyncode("1+0")); thus the evaluation of
 #dyncode("fib(2)") under ENV0 yields the integer value #dyncode("1").
 ")#comment("para")
+")
+#langja("
+#para("\
+再帰関数呼び出しの評価は、再帰でない関数呼び出しの評価と比べてもそう難しくはありません。
+#dyncode("fib") をフィボナッチ数を計算する関数として次のように定義しましょう:
 
+#atscode("\
+fun fib (n: int): int =
+  if n >= 2 then fib(n-1) + fib(n-2) else n
+")
+
+ENV0 環境の下で #dyncode("fib(2)") を評価することを考えてみましょう。
+#dyncode("2") が値として与えられた時、
+#dyncode("n") と #dyncode("2") を束縛してENV0をENV1に拡張し、
+そしてENV1の下で #dyncode("fib") の本体の評価を開始します;
+明らかにこの評価は #dyncode("fib(n-1) + fib(n-2)") の評価を導きます;
+ENV1の下で #dyncode("fib(n-1)") と #dyncode("fib(n-2)") を評価してそれぞれ #dyncode("1") と #dyncode("0")
+が得られ、 #dyncode("fib(n-1) + fib(n-2)") の評価は結局 (#dyncode("1+0") を計算して) #dyncode("1")
+を返すことは理解しやすいでしょう;
+したがってENV0の下で #dyncode("fib(2)") を評価すると整数値 #dyncode("1") が得られます。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Let us now evaluate #dyncode("fib(3)") under ENV0; we extend ENV0
 to ENV2 with a binding between #dyncode("n") and #dyncode("3"), and start
@@ -779,6 +808,20 @@ evaluating #dyncode("fib(n-2)") under ENV2 leads to the evaluation of
 therefore, evaluating #dyncode("fib(3)") under ENV0 returns #dyncode("2")
 (as the result of #dyncode("1+1")).
 ")#comment("para")
+")
+#langja("
+#para("\
+さらにENV0の下で #dyncode("fib(3)") を評価してみましょう;
+#dyncode("n") と #dyncode("3") の間に束縛を作りENV0をENV2に拡張した後、
+ENV2の下で #dyncode("fib") の本体の評価を開始します;
+それからENV2の下で #dyncode("fib(n-1) + fib(n-2)") の評価に辿り着きます;
+ENV2の下で #dyncode("fib(n-1)") を評価してENV2の下で #dyncode("fib(2)") の評価を導き、結局
+#dyncode("1") を返します;
+ENV2の下で #dyncode("fib(n-2)") を評価してENV2の下で #dyncode("fib(1)") の評価を導き、結局
+#dyncode("1") を返します;
+したがってENV0の下で #dyncode("fib(3)") を評価すると(#dyncode("1+1") の結果) #dyncode("2") が返ることになります。
+")#comment("para")
+")
 
 </sect1>
 
