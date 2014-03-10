@@ -829,8 +829,14 @@ ENV2の下で #dyncode("fib(n-2)") を評価してENV2の下で #dyncode("fib(1)
 
 <sect1
 id="example-coin-changes-for-fun">
+#langeng("
 #title("Example: Coin Changes for Fun")
+")
+#langja("
+#title("例: コインチェンジ遊び")
+")
 
+#langeng("
 #para("\
 Let S be a finite set of positive numbers.  The problem we want to
 solve is to find out the number of distinct ways for a given integer x to
@@ -905,10 +911,91 @@ mentioned above.
 When applied to #dyncode("1000"), the function #dyncode("coin_change")
 returns #dyncode("142511").
 ")#comment("para")
+")
+#langja("
+#para("\
+Sを正の数の有限集合としましょう。
+解決したい問題とは、与えられた整数xを、
+Sから選択した正の数の倍数の和として表現する、異なる方法の数を見つけることです。
+S中のそれぞれの数をコインの額面に見立てると、
+この問題は、与えられた値xをコインの集合の和で表わす異なる方法がいくつあるか調べることになります。
+この数を cc(S, x) で表わすと、関数ccは次の特性を持ちます:
 
+<itemizedlist>
+
+<listitem>
+#para("\
+どのようなSに対しても cc(S, 0) = 1
+")
+</listitem>
+
+<listitem>
+#para("\
+どのようなSに対しても、もし x < 0 ならば cc(S, x) = 0
+")
+</listitem>
+
+<listitem>
+#para("\
+Sが空で x > 0 ならば cc(S, x) = 0
+")
+</listitem>
+
+<listitem>
+#para("\
+Sが数cを含むならば、S<subscript>1</subscript>がSからcを削除した集合の時
+cc(S, x) = cc(S<subscript>1</subscript>, x) + cc(S, x-c)
+")
+</listitem>
+
+</itemizedlist>
+
+次の実装では、Sを 1, 5, 10, 25 からなる集合に設定しています。
+
+#atscode("\
+typedef int4 = (int, int, int, int)
+
+val theCoins = (1, 5, 10, 25): int4
+
+fun coin_get
+  (n: int): int =
+  if n = 0 then theCoins.0
+  else if n = 1 then theCoins.1
+  else if n = 2 then theCoins.2
+  else if n = 3 then theCoins.3
+  else ~1 (* erroneous value *)
+// end of [coin_get]
+
+fun coin_change (sum: int) = let
+  fun aux (sum: int, n: int): int =
+    if sum > 0 then
+     (if n >= 0 then aux (sum, n-1) + aux (sum-coin_get(n), n) else 0)
+    else (if sum < 0 then 0 else 1)
+  // end of [aux]
+in
+  aux (sum, 3)
+end // end of [coin_change]
+")
+
+関数 #dyncode("coin_change") の本体の中で定義されている補助関数 #dyncode("aux")
+は上記で述べたcc関数に該当します。
+
+#dyncode("1000") に適用すると、関数 #dyncode("coin_change") は #dyncode("142511") を返します。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Note that the entire code in this section plus some additional
 code for testing is available #mycodelink("CHAP_FUNCTION/coinchange.dats", "on-line").
+")
+")
+#langja("
+#para("\
+この章で紹介したコード全体と追加のテストコードは
+#mycodelink("CHAP_FUNCTION/coinchange.dats", "オンライン")
+から入手できます。
+")
 ")
 
 </sect1>
