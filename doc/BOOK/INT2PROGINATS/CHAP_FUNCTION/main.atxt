@@ -1790,8 +1790,14 @@ and Q (n:int): int = if n > 0 then Q(n-1) + n * P(n) else 0
 
 <sect1
 id="mutual-tail-recursion">
+#langeng("
 #title("Mutual Tail-Recursion")
+")
+#langja("
+#title("相互末尾再帰")
+")
 
+#langeng("
 #para("\
 
 Suppose that foo and bar are two mutually defined recursive functions.  In
@@ -1822,7 +1828,37 @@ can be turned into a self tail-call in the body of the combined function,
 which is then ready to be compiled into a local jump.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+fooとbarが2つの相互再帰関数をして定義しているとします。
+fooもしくはbarの本体にある、fooもしくはbarへの末尾呼出は相互末尾再帰呼出です。
+例えば、次の2つの関数 #dyncode("isevn") と #dyncode("isodd") は相互再帰です:
+
+#atscode("\
+fun isevn (n: int): bool = if n > 0 then isodd (n-1) else true
+and isodd (n: int): bool = if n > 0 then isevn (n-1) else false
+")
+
+#dyncode("isevn") の本体内の #dyncode("isodd") への相互再帰呼出は末尾呼出です。
+#dyncode("isodd") の本体内の #dyncode("isevn") への相互再帰呼出もまた末尾呼出です。
+もしこれら2つの末尾呼出をローカルジャンプにコンパイルしたい場合には、
+次のようにキーワード #dyncode("fun") をキーワード #dyncode("fnx") で置き換えるべきです:
+
+#atscode("\
+fnx isevn (n: int): bool = if n > 0 then isodd (n-1) else true
+and isodd (n: int): bool = if n > 0 then isevn (n-1) else false
+")
+
+この例でATSコンパイラが行なうことは、これら2つの関数を1つの関数に結合することです。
+そのためそれぞれの本体にある相互末尾再帰呼出を、結合された関数本体の自己末尾呼出に変換できます。
+そしてこれらの呼出はローカルジャンプへとコンパイルされます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 When writing code corresponding to embedded loops in an imperative
 programming language such as C or Java, we often need to make sure that
@@ -1862,7 +1898,48 @@ case where #dyncode("N") is a large number (e.g., 1,000,000), calling
 #dyncode("loop1") may run the risk of stack overflow if these tail-calls
 are not compiled into local jumps.
 ")#comment("para")
+")
+#langja("
+#para("\
+C言語やJavaのような命令型プログラミング言語の組み込みループに相当するコードを書く場合には、
+相互末尾再帰呼出がローカルジャンプにコンパイルされるかしばしば確認する必要があります。
+次の関数 #dyncode("print_multable") ではゼロではない桁の九九の表の印字を実装しています:
 
+#atscode('\
+fun print_multable () = let
+//
+\#define N 9
+//
+fnx loop1 (i: int): void =
+  if i <= N then loop2 (i, 1) else ()
+//
+and loop2 (i: int, j: int): void =
+  if j <= i then let
+    val () = if j >= 2 then print " "
+    val () = printf ("%dx%d=%2.2d", @(j, i, j*i))
+  in
+    loop2 (i, j+1) 
+  end else let
+    val () = print_newline () in loop1 (i+1)
+  end // end of [if]
+//
+in
+  loop1 (1)
+end // end of [print_multable]
+')
+
+関数 #dyncode("loop1") と #dyncode("loop2") は相互再帰的に定義されています。
+そしてこれらの本体におけるこの相互再帰呼出は全て末尾呼出です。
+キーワード #dyncode("fnx") は、
+これらの末尾呼出がローカルジャンプにコンパイルできるように関数 #dyncode("loop1") と #dyncode("loop2")
+は結合すべきであることを、ATSコンパイラに指示します。
+この例では #dyncode("N") が大きい数(例えば1,000,000)なので、
+もしこれらの末尾呼出がローカルジャンプにコンパイルされない場合、
+#dyncode("loop1") の呼び出しによってスタックオーバーフローが起きる危険性があります。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 When called, the function #dyncode("print_multable") prints out the
@@ -1881,7 +1958,28 @@ following multiplication table:
 ")
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+呼び出されると、関数 #dyncode("print_multable") は次のような九九の表を印字します:
+
+#atscode("\
+1x1=01
+1x2=02 2x2=04
+1x3=03 2x3=06 3x3=09
+1x4=04 2x4=08 3x4=12 4x4=16
+1x5=05 2x5=10 3x5=15 4x5=20 5x5=25
+1x6=06 2x6=12 3x6=18 4x6=24 5x6=30 6x6=36
+1x7=07 2x7=14 3x7=21 4x7=28 5x7=35 6x7=42 7x7=49
+1x8=08 2x8=16 3x8=24 4x8=32 5x8=40 6x8=48 7x8=56 8x8=64
+1x9=09 2x9=18 3x9=27 4x9=36 5x9=45 6x9=54 7x9=63 8x9=72 9x9=81
+")
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 In summary, the very ability to turn mutually recursive tail-calls into
@@ -1889,6 +1987,17 @@ local jumps makes it possible to implement embedded loops as mutually
 tail-recursive functions. This ability is indispensable for advocating the
 practice of replacing loops with recursive functions in ATS.\
 
+")
+")
+#langja("
+#para("\
+
+要約すると、
+相互末尾再帰呼出をローカルジャンプへ変換する能力は、
+組み込みループを相互末尾再帰関数で実装することを可能にします。
+この能力はATSにおいてループを再帰関数で置換するのに実用上不可欠です。\
+
+")
 ")
 
 </sect1>
