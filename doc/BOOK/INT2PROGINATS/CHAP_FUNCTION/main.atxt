@@ -71,7 +71,7 @@ id="functions-as-a-simple-form-of-abstraction">
 #title("Functions as a Simple Form of Abstraction")
 ")
 #langja("
-#title("簡単な形式の関数")
+#title("単純な抽象としての関数")
 ")
 
 #langeng("
@@ -142,6 +142,7 @@ fn square (x: double): double = x * x
 ")#comment("para")
 ")
 
+#langeng("
 #para("\
 
 If #dyncode("square") is a name, what is the expression it refers to? It
@@ -167,7 +168,33 @@ This is called alpha-renaming (of function arguments), and the new
 lambda-expression is said to be alpha-equivalent to the original one.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#dyncode("square") が名前だとすれば、それが参照する式とは何なのでしょうか？
+上の関数定義は次のように書くこともできることがわかります:
+
+#atscode("\
+val square = lam (x: double): double => x * x
+")
+
+ここで #dyncode("=") 記号のRHSはラムダ式で、
+#dyncode("double") 型の引数を1つ取り、 #dyncode("double") 型の値を返す無名関数を表わしています。
+そして #dyncode("=>") 記号に続く式が関数の本体です。
+もし望むなら、関数の引数名を次のように変更することができます:
+
+#atscode("\
+val square = lam (y: double): double => y * y
+")
+
+これは(関数の引数の)α-変換と呼ばれ、
+新しくできたラムダ式は元の式に対するα-同値と呼ばれます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A lambda-expression is a (function) value. Suppose we have a
@@ -183,7 +210,25 @@ double): double => x * x") can be assigned the function type
 #dyncode("double -> double").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ラムダ式は(関数)値です。
+2引数の関数を表わすラムダ式があるとします。
+(T1, T2) -> T の型をラムダ式に割り当てるためには、
+関数の2つの引数が型T1とT2を持つと仮定した時、
+関数の本体が型Tであるかどうか証明しなければなりません。
+適用する箇所を<emphasis>変更すると</emphasis>、
+より少ないもしくはより多い引数を取る関数を表わすラムダ式になります。
+例えば、ラムダ式 #dyncode("lam (x: double): double => x * x") は関数の型 #dyncode("(double) -> double")
+を割り当てることができます。
+この型は #dyncode("double -> double") と書くこともできます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Assume that exp is an expression of some function type (T1, T2) -> T. Note
@@ -195,7 +240,21 @@ also be referred to as a function call, can be assigned the type T.  Typing
 a function application of fewer or more arguments is handled similarly.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+expは関数の型 (T1, T2) -> T の式であると仮定します。
+exp は名前を持つ関数やラムダ式である必要はないことに注意してください。
+式exp<subscript>1</subscript> と exp<subscript>2</subscript> に型 T1 と T2 が割り当て可能だとすると、
+関数適用 exp(exp<subscript>1</subscript>, exp<subscript>2</subscript>) には型 T を割り当てることができます
+(この関数適用も関数呼び出しであるかもしれません)。
+より少ないもしくはより多い引数の関数適用の型付けも同様です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("Let us now see an example that builds on the previously defined
 function #dyncode("square"). The boundary of a ring consists of two
 circles centered at the same point. If the radii of the outer and inner
@@ -215,6 +274,25 @@ simple routine to verify that the body of #dyncode("area_of_ring") can be
 assigned the type #dyncode("double").\
 
 ")#comment("para")
+")
+#langja("
+#para("前に定義した関数 #dyncode("square") を使った例を見てみましょう。
+2つの円から成り立つリングの境界線は同じ点を中心としています。
+外側と内側の円の半径をそれぞれ R と r とすると、
+リングの面積は次の関数 #dyncode("area_of_ring") で計算できます:
+
+#atscode("\
+fn area_of_ring
+  (R: double, r: double): double = 3.1416 * (square(R) - square(r))
+// end of [area_of_ring]
+")
+
+浮動小数点数の減算と乗算の関数が型 #dyncode("(double, double) -> double") で、
+#dyncode("square") が型 #dyncode("(double) -> double") で与えられた時、
+#dyncode("area_of_ring") の本体に型 #dyncode("double") を割り当てられることは、単純な方法で検査できます。\
+
+")#comment("para")
+")
 
 </sect1>
 
