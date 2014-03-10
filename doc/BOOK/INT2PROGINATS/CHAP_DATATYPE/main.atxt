@@ -1379,10 +1379,8 @@ datatype IEXP =
 IEXPadd(IEXPneg(IEXPcst(1)), IEXPmul(IEXPsub(IEXPcst(2), IEXPcst(3)), IEXPcst(4)))
 ")
 
-Translating an integer expression written in some string form into an abstract syntax tree is called parsing,
-which we will not do here.
-The following defined function #dyncode("eval_iexp") takes the abstract syntax
-tree of an integer expression and returns an integer that is the value of the expression:
+文字列で書かれた整数式を抽象構文木へ変換することを構文解析と呼びますが、ここでは取り扱いません。
+次に定義する関数 #dyncode("eval_iexp") は整数式の抽象構文木を取り、式の値である整数を返します:
 
 #atscode("\
 fun eval_iexp (e0: IEXP): int = case+ e0 of
@@ -1397,6 +1395,7 @@ fun eval_iexp (e0: IEXP): int = case+ e0 of
 ")#comment("para")
 ")
 
+#langeng("
 #para("\
 
 Suppose we also allow the construct if-then-else to be use in forming
@@ -1476,7 +1475,87 @@ case+ e0 of
 ) (* end of [eval_bexp] *)
 ")
 ")#comment("para")
+")
+#langja("
+#para("\
 
+整数式を成すのにif-then-elseもコンストラクトできると考えてみましょう。
+例えば (if 1+2 <= 3*4 then 5+6 else 7-8) のような整数式を書けるとします。
+(1+2 <= 3*4) の判定は整数式ではなくブール式であることに注意してください。
+これは、データ型 #stacode("BEXP") をブール木も表現できるように宣言する必要があることを示しています。
+その上 #stacode("IEXP") と #stacode("BEXP") は次のように相互再帰的に宣言されるべきです:
+
+#atscode("\
+datatype IEXP =
+  | IEXPcst of int // integer constants
+  | IEXPneg of (IEXP) // negative
+  | IEXPadd of (IEXP, IEXP) // addition
+  | IEXPsub of (IEXP, IEXP) // subtraction
+  | IEXPmul of (IEXP, IEXP) // multiplication
+  | IEXPdiv of (IEXP, IEXP) // division
+  | IEXPif of (BEXP(*test*), IEXP(*then*), IEXP(*else*))
+// end of [IEXP]
+
+and BEXP = // [and] for combining datatype declarations
+  | BEXPcst of bool // boolean constants
+  | BEXPneg of BEXP // negation
+  | BEXPconj of (BEXP, BEXP) // conjunction
+  | BEXPdisj of (BEXP, BEXP) // disjunction
+  | BEXPeq of (IEXP, IEXP) // equal-to
+  | BEXPneq of (IEXP, IEXP) // not-equal-to
+  | BEXPlt of (IEXP, IEXP) // less-than
+  | BEXPlte of (IEXP, IEXP) // less-than-equal-to
+  | BEXPgt of (IEXP, IEXP) // greater-than
+  | BEXPgte of (IEXP, IEXP) // greater-than-equal-to
+// end of [BEXP]
+")
+
+明らかに、整数式を評価する時にはブール式も評価する必要があります。
+次の2つの関数 #dyncode("eval_iexp") と #dyncode("eval_bexp") はそれぞれ整数式とブール式の評価のための関数で、
+予想される通りですが、相互再帰で定義されています:
+
+#atscode("\
+fun eval_iexp
+  (e0: IEXP): int =
+(
+case+ e0 of
+| IEXPcst n => n
+| IEXPneg (e) => ~eval_iexp (e)
+| IEXPadd (e1, e2) => eval_iexp (e1) + eval_iexp (e2)
+| IEXPsub (e1, e2) => eval_iexp (e1) - eval_iexp (e2)
+| IEXPmul (e1, e2) => eval_iexp (e1) * eval_iexp (e2)
+| IEXPdiv (e1, e2) => eval_iexp (e1) / eval_iexp (e1)
+| IEXPif
+  (
+    e_test, e_then, e_else
+  ) =>
+  (
+    eval_iexp (if eval_bexp (e_test) then e_then else e_else)
+  ) // end of [IEXPif]
+) (* end of [eval_iexp] *)
+
+and eval_bexp
+  (e0: BEXP): bool =
+(
+case+ e0 of
+| BEXPcst b => b
+| BEXPneg (e) => ~eval_bexp (e)
+| BEXPconj (e1, e2) =>
+    if eval_bexp (e1) then eval_bexp (e2) else false
+| BEXPdisj (e1, e2) =>
+    if eval_bexp (e1) then true else eval_bexp (e2)
+| BEXPeq (e1, e2) => eval_iexp (e1) = eval_iexp (e2)
+| BEXPneq (e1, e2) => eval_iexp (e1) != eval_iexp (e2)
+| BEXPlt (e1, e2) => eval_iexp (e1) < eval_iexp (e2)
+| BEXPlte (e1, e2) => eval_iexp (e1) <= eval_iexp (e2)
+| BEXPgt (e1, e2) => eval_iexp (e1) > eval_iexp (e2)
+| BEXPgte (e1, e2) => eval_iexp (e1) >= eval_iexp (e2)
+) (* end of [eval_bexp] *)
+")
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The integer and boolean expressions used in this example are all constant
@@ -1486,7 +1565,19 @@ elsewhere to demonstrate how an evaluator for a simple call-by-value
 functional programming language like the core of ATS can be implemented.\
 
 ")
+")
+#langja("
+#para("\
 
+この例における整数式とブール式は全て変数を含まない定数式です。
+そのため、これらの式の評価に環境は必要ありませんでした。
+ATSのコアのような簡単な値呼び出し(call-by-value)の関数型プログラミング言語の評価器を、
+どのように実装するのか示すために、より進んだ例を別の章で紹介します。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find
@@ -1494,6 +1585,16 @@ Please find
 the entirety of the code in this section plus some additional code for
 testing.\
 
+")
+")
+#langja("
+#para("\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_DATATYPE/intexp.dats", "オンライン")
+から入手できます。\
+
+")
 ")
 
 </sect1><!--id="example_evaluating_integer_expressions"-->
