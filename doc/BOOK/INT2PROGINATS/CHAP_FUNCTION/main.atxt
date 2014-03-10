@@ -525,8 +525,14 @@ fun tostring_int (x: int): string
 
 <sect1
 id="evaluation-of-function-calls">
+#langeng("
 #title("Evaluation of Function Calls")
+")
+#langja("
+#title("関数呼び出しの評価")
+")
 
+#langeng("
 #para("\
 
 Evaluating a function call is straightforward. Assume that we are to
@@ -547,6 +553,27 @@ then to #dyncode("false"), which indicates that we take the else-branch
 function call #dyncode("abs(0.0 - 1.0)") returns #dyncode("1.0").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数呼び出しの評価は単純です。
+関数 #dyncode("abs") が次のように定義されていて、
+関数呼び出し #dyncode("abs(0.0 - 1.0)") を環境 ENV0 の下で評価することを考えてみましょう:
+
+#atscode("\
+fn abs (x: double): double = if x >= 0 then x else ~x
+")
+
+まずはじめに ENV0 の下で呼び出しの引数を評価して #dyncode("~1.0") を得ます;
+#dyncode("x") と #dyncode("~1.0") を束縛して ENV0 を ENV1 に拡張します、
+そして ENV1 の下で #dyncode("abs") 本体の評価を開始します;
+判定 #dyncode("x >= 0") を #dyncode("~1.0 >= 0") に評価してさらに #dyncode("false") にします、これはelseブランチ #dyncode("~x") に実行を続けることを示しています;
+#dyncode("~x") を #dyncode("~(~1.0)") 評価してさらに #dyncode("1.0") にします;
+そして関数呼び出し #dyncode("abs(0.0 - 1.0)") の評価は #dyncode("1.0") を返します。\
+
+")#comment("para")
+")
 
 </sect1>
 
