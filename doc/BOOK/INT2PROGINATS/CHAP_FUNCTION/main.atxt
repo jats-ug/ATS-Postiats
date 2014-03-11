@@ -2518,8 +2518,14 @@ even more effective in facilitating code reuse.\
 
 <sect1
 id="example-binary-search-for-fun">
+#langeng("
 #title("Example: Binary Search for Fun")
+")
+#langja("
+#title("例: 二分探索遊び")
+")
 
+#langeng("
 #para("\
 
 While binary search is often performed on an ordered array to check whether
@@ -2571,10 +2577,71 @@ into an unsigned one and the function #dyncode("square") returns the square
 of its argument.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+与えられた要素が配列に保存されているか検査するために、
+しばしば順序付けられた配列に対して二分探索を行ないます。
+また整数に対して増加や減少する関数の逆関数を作るのに使うこともでききます。
+次のコードで定義している関数 #dyncode("bsearch_fun") は、
+i が lb から i0 までの範囲では f(i) <= x0 を維持し、
+i が i0+1 から ub までの範囲では x0 < f(i) を維持するような整数 i0 を返します:
+
+#atscode("\
+//
+// The type [uint] is for unsigned integers
+//
+fun bsearch_fun
+(
+  f: int -<cloref1> uint
+, x0: uint, lb: int, ub: int
+) : int =
+  if lb <= ub then let
+    val mid = lb + (ub - lb) / 2
+  in
+    if x0 < f (mid) then
+      bsearch_fun (f, x0, lb, mid-1)
+    else
+      bsearch_fun (f, x0, mid+1, ub)
+    // end of [if]
+  end else ub // end of [if]
+// end of [bsearch_fun]
+")
+
+例として、次の関数 #dyncode("isqrt") は #dyncode("bsearch_fun") にもとづいて定義されていて、
+与えられた自然数の平方根を整数、
+つまりその二乗が与えられた自然数以下であるような最も大きい整数を返します:
+
+#atscode("\
+//
+// Assuming that [uint] is of 32 bits
+//
+val ISQRT_MAX = (1 << 16) - 1 // = 65535
+fun isqrt
+  (x: uint): int =
+  bsearch_fun (lam i => square ((g0i2u)i), x, 0, ISQRT_MAX)
+// end of [isqrt]
+")
+
+関数 #dyncode("g0i2u") は符号付き整数を符号なし整数にキャストし、
+関数 #dyncode("square") は引数の二乗を返すことに注意してください。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Please find #mycodelink("CHAP_FUNCTION/bsearch.dats", "on-line")
 the entire code in this section plus some additional code for testing.
+")
+")
+#langja("
+#para("\
+この章で紹介したコード全体と追加のテストコードは
+#mycodelink("CHAP_FUNCTION/bsearch.dats", "オンライン")
+から入手できます。
+")
 ")
 
 </sect1>
