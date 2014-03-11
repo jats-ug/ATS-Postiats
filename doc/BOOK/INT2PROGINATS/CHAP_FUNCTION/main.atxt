@@ -2006,8 +2006,14 @@ practice of replacing loops with recursive functions in ATS.\
 
 <sect1
 id="envless-functions-and-function-closures">
+#langeng("
 #title("Envless Functions and Closure-Functions")
+")
+#langja("
+#title("環境の無い(envless)関数とクロージャ関数")
+")
 
+#langeng("
 #para("\
 
 I use <emphasis>envless</emphasis> as a shorthand for environmentless,
@@ -2015,7 +2021,18 @@ which is not a legal word but I suppose that you have no problem figuring
 out what it means.\
 
 ")
+")
+#langja("
+#para("\
 
+<emphasis>envless</emphasis> という単語は一般的な単語ではなく、
+私は environmentless(環境の無い) の略記として使いますが、
+その意味をあなたは問題なく想像できるだろうと思います。\
+
+")
+")
+
+#langeng("
 #para("\
 
 An envless function is represented by a pointer pointing to some place in a
@@ -2032,7 +2049,28 @@ not equate a closure-function with an envless function. Every function in
 functional languages such as ML and Haskell is a closure-function.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+envless関数は、
+
+この関数の呼び出しを実行するオブジェクトコードが配置されている、
+コードセグメントを指し示すポインタによって表現されます。
+プログラミング言語Cにおいて、全ての関数はenvlessです。
+クロージャ関数もまたポインタで表現されますが、
+そのポインタはヒープ中の(実行時に)割り当てられたタプルがある場所を指し示しています。
+通常、このタプルの1つ目の要素はenvless関数を表わすポインタで、残りの要素は束縛群を表わしています。
+そのようなタプルはしばしばクロージャ関数もしくは単純にクロージャと呼ばれ、
+環境とペアになったenvless関数であると考えることができます。
+クロージャ関数の環境が空であっても問題ありませんが、
+これはenvless関数のクロージャ関数と同じではありません。
+MLやHaskellのような関数型言語の全ての関数はクロージャ関数です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 In the following example, the function #dyncode("sum"), which is assigned
@@ -2060,7 +2098,35 @@ int"). Hence, envless functions and closure-functions can be distinguished
 at the level of types.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次の例では、型 #dyncode("(int) -> int") が割り当てられた関数 #dyncode("sum")
+は1から与えられた自然数までの全ての整数を合計します:
+
+#atscode("\
+fun sum
+  (n: int): int = let
+  fun loop
+  (
+    i: int, res: int
+  ) :<cloref1> int =
+    if i <= n then loop (i+1, res+i) else res
+  // end of [loop]
+in
+  loop (1(*i*), 0(*res*))
+end // end of [sum]
+")
+
+内側の関数 #dyncode("loop") は特別な構文 #dyncode(":&lt;cloref1&gt;") で示されるクロージャ関数です。
+また #dyncode("loop") に割り当てられた型は #dyncode("(int, int) -&lt;cloref1&gt; int") です。
+それゆえにenvless関数とクージャ関数は型レベルで見分けることができます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 If the syntax #dyncode(":&lt;cloref1&gt;") is replaced with the colon
@@ -2093,7 +2159,39 @@ more or less, into the second implementation, and there is #emphasis("no")
 actual creation of closures at run-time.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+もし構文 #dyncode(":&lt;cloref1&gt;") を単独のコロン記号 #dyncode(":") に置き換えると、
+コードは型検査を通りますが、 #dyncode("loop") をC言語のトップレベル関数にコンパイルできないことを示す、
+警告もしくはエラーを引き起こす可能性があります。
+この警告/エラーの理由は、トップレベルでもなく #dyncode("loop") 関数自身の引数でもない値 #dyncode("n") を
+#dyncode("loop") の本体が含んでいることにあります。
+#dyncode("n") を元の関数への追加の引数として #dyncode("loop") をenvless関数 にするのは簡単です:
+
+#atscode("\
+fun sum
+  (n: int): int = let
+  fun loop
+  (
+    n:int, i: int, res: int
+  ) : int =
+    if i <= n then loop (n, i+1, res+i) else res
+  // end of [loop]
+in
+  loop (n, 1(*i*), 0(*res*))
+end // end of [sum]
+")
+
+実際のコンパイルの中では、
+1番目の #dyncode("sum") と #dyncode("loop") の実装はおおよそ2番目の実装に変換され、
+実行時に実際のクロージャが作られるわけでは#emphasis("ありません")。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The need for creating closures often appears when a function is not
@@ -2126,13 +2224,53 @@ the body of the envless function in #dyncode("plus1"), which is
 #dyncode("1") as is expected.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+関数が直接適用されない時でも、しばしばクロージャを作る必要があります。
+例えば、関数呼び出しの返値もまた関数であるかもしれません。
+次のコードで、定義された関数 #dyncode("addx") は与えられた整数 #dyncode("x") に適用した別の関数を返します。
+この返値の関数は、いつも整数 integer #dyncode("x") と自分への引数の和を取るクロージャ関数です:
+
+
+#atscode("\
+fun addx (x: int): int -<cloref1> int = lam y => x + y
+
+val plus1 = addx (1) // [plus1] is of the type int -<cloref1> int
+val plus2 = addx (2) // [plus2] is of the type int -<cloref1> int
+")
+
+#dyncode("plus1(0)") と #dyncode("plus2(0)") がそれぞれ #dyncode("1") と #dyncode("2") を返すのは自明でしょう。
+#dyncode("plus1") の名前が与えられたクロージャ関数はenvless関数と
+#dyncode("x") を #dyncode("1") に束縛した環境から構成されています。
+#dyncode("env") と #dyncode("env.x") が環境とその環境で #dyncode("x") に束縛された値を参照する時、
+このenvless関数は本質的に仮構文で #dyncode("lam (env, y) => env.x + y") と表現できます。
+#dyncode("plus1(0)") を評価すると、
+はじめに #dyncode("env") と #dyncode("y") をそれぞれ #dyncode("plus1") 内の環境と引数 #dyncode("0")
+に束縛します。
+それから、 #dyncode("env.x + y") である #dyncode("plus1") 内のenvless関数の本体の評価を開始します。
+この評価によって期待通り値 #dyncode("1") が生成されることは明確です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Closures are often passed as arguments to functions that are referred
 to as higher-order functions.  It is also fairly common for closures to
 be embedded in data structures.\
 
+")
+")
+#langja("
+#para("\
+
+クロージャはしばしば高階関数と呼ばれる関数への引数として渡されることがあります。
+クロージャがデータ構造に埋め込まれることも一般的です。\
+
+")
 ")
 
 </sect1>
