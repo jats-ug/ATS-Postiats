@@ -2806,8 +2806,14 @@ the entire code in this section plus some additional code for testing.
 
 <sect1
 id="currying-and-uncurrying">
+#langeng("
 #title("Currying and Uncurrying")
+")
+#langja("
+#title("カリー化とアンカリー化")
+")
 
+#langeng("
 #para("\
 
 Currying, which is named after the logician Haskell Curry, means to
@@ -2844,7 +2850,45 @@ generates a closure-function, which causes a memory-leak unless it can be
 reclaimed by garbage collection (GC) at run-time.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+論理学者 Haskell Curry の名前に由来する、
+カリー化は同時に複数の引数を取る関数を、
+それらの引数を連続して取るような同じ本体の関数に変換することを意味します。
+アンカリー化はカリー化の反対です。
+次のコードでは、
+定義された関数 #dyncode("acker1") と #dyncode("acker2") はアッカーマン関数を実装しています。
+この関数は原始再帰関数でない再帰として有名です:
+
+#atscode('\
+fun acker1
+  (m: int, n: int): int =
+(
+  if m > 0 then
+    if n > 0 then acker1 (m-1, acker1 (m, n-1)) else acker1 (m-1, 1)
+  else n+1 // end of [if]
+)
+
+fun acker2
+  (m: int) (n: int): int =
+(
+  if m > 0 then
+    if n > 0 then acker2 (m-1) (acker2 m (n-1)) else acker2 (m-1) 1
+  else n+1 // end of [if]
+)
+')
+
+関数 #dyncode("acker2") は #dyncode("acker1") のカリー化されたバージョンです。
+また関数 #dyncode("acker1") は #dyncode("acker2") のアンカリー化されたバージョンです。
+#dyncode("acker2") を整数の値に適用するとクロージャ関数を生成します。
+実行時にガベージコレクション(GC)によって回収されないと、このクロージャ関数はメモリリークを引き起こします。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 In functional languages such as ML and Haskell, a function of multiple
@@ -2860,7 +2904,25 @@ ATS is greatly diminished. Unless convincing reasons can be given, currying
 is in general #emphasis("not") a recommended programming style in ATS.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+MLやHaskellのような関数型言語では、
+複数引数の関数はカリー化するか、唯一の引数としてタプルを取るunary関数に変換する必要があります。
+そのような言語では、カリー化はしばしば実行時の効率を向上させるので好んで使用されんます。
+ATSでは、複数引数の関数は直接サポートされています。
+また複数引数の関数が与えられた時、
+その関数のカリー化されたバージョンは元のバージョンより実行時の効率が悪くなることがあります。
+これはATSコンパイラ <command>atsopt</command> のカリー化された関数の取り扱いに起因します。
+そのため、ATSにおいてカリー化の必要性はとても小さいことになります。
+一般に説得力のある理由なしに、
+カリー化はATSにおいて推奨されるプログラミングスタイルでは#emphasis("ありません")。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find
@@ -2869,6 +2931,16 @@ the entire code in this section plus some additional
 code for testing.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_FUNCTION/acker.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </sect1>
 
