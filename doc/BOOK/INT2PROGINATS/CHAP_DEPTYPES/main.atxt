@@ -783,8 +783,14 @@ ATSに定理証明を使ったプログラミングを採用する必要があ�
 
 <sect1
 id="constraint-solving_during_typechecking">
+#langeng("
 #title("Constraint-Solving during Typechecking")
+")
+#langja("
+#title("型検査中での制約解決")
+")
 
+#langeng("
 #para("\
 
 Typechecking in ATS involves generating and solving constraints.
@@ -848,7 +854,68 @@ explicitly. I will cover the issue of explicit proof construction in an
 elaborated manner elsewhere.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATSにおける型検査は制約の生成と解決を引き起こします。
+例として、次のコードはよく知られた階乗関数を実装しています:
+
+#atscode("\
+fun
+fact{n:nat}
+  (x: int n): [r:nat] int r = if x > 0 then x * fact (x-1) else 1
+// end of [fact]
+")
+
+この実装では、関数 #dyncode("fact") には次の型が割り当てられています:
+
+#atscode("\
+{n:nat} int(n) -> [r:nat] int(r)
+")
+
+これは、 #dyncode("fact") は自然数 n に適用されると自然数 r を返すことを意味しています。
+このコードが型検査されるとき、次の制約が解決される必要があります:
+
+<itemizedlist>
+
+<listitem>
+#para("
+それぞれの自然数 n について、 n &gt; 0 が n - 1 &gt;= 0 の意味を含む
+")
+</listitem>
+
+<listitem>
+#para("\
+それぞれの自然数 n とそれぞれの自然数 r#sub("1") について、 n &gt; 0 が n * r#sub("1")&gt;= 0 の意味を含む
+")
+</listitem>
+
+<listitem>
+#para("
+それぞれの自然数 n について、常に 1 &gt;= 0 である
+")
+</listitem>
+
+</itemizedlist>
+
+1番目の制約は呼び出し #dyncode("fact(x-1)") によって生成されています。
+#dyncode("x-1") が自然数であることが要求されているからです。
+2番目の制約は、 #dyncode("fact(x-1)") が自然数であるという仮定の下で、
+#dyncode("x * fact(x-1)") が自然数であるかどうか検証することで生成されています。
+3番目の制約は #dyncode("1") が自然数であるかどうか検証することで生成されています。
+1番目と3番目の制約はATSの制約ソルバによってたやすく解決できます。
+この手法は Fourier-Motzkin 変数消去法にもとづいています。
+けれども、2番目の制約は線形ではないため制約ソルバで取り扱うことができません:
+この制約は、線形でない項 (n*r#sub("1")) が存在するために、線形整数プログラミングの問題に変形できないのです。
+ATSの制約ソルバは非線形の制約を自動的に取り扱うことはできませんが、
+ATSの証明を明示的に構築することでプログラマはそれらを検証することができます。
+精巧にそして明示的に構築する証明については別の章で紹介します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 By default, the constraint-solver implemented for ATS/Postiats makes use of
@@ -859,6 +926,18 @@ constraint-solver that uses machine-level arithmetic can be incorrect (but
 we have so far never knowingly encountered such a situation in practice).\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+初期設定では、ATS/Postiatsで実装されている制約ソルバは標準の任意精度演算を用いています。
+効率の理由で、整数の制約の解決にマシンレベル演算を使うこともまた選択できます。
+演算のオーバーフローの可能性があるため、
+マシンレベル演算を使う制約ソルバが返す結果は不正確である可能性があります。
+(しかし今までのところ意図せず実際にはそのような状況に遭遇したことはありません。)\
+
+")#comment("para")
+")
 
 </sect1><!--id="constraint-solving_during_typechecking"-->
 
