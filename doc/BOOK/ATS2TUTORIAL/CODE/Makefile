@@ -8,6 +8,14 @@ include $(PATSHOME)/share/atsmake-pre.mk
 
 ######
 #
+all:: chap_exception
+chap_exception: \
+  chap_exception.dats ; \
+  $(PATSCC2) -D_GNU_SOURCE -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) chap_exception
+#
+######
+#
 all:: chap_reference
 chap_reference: \
   chap_reference.dats ; $(PATSCC2) -DATS_MEMALLOC_LIBC -o $@ $<
@@ -22,10 +30,24 @@ cleanall:: ; $(RMF) chap_arrayref
 #
 ######
 #
+all:: chap_arrszref
+chap_arrszref: \
+  chap_arrszref.dats ; $(PATSCC2) -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) chap_arrszref
+#
+######
+#
 all:: chap_matrixref
 chap_matrixref: \
   chap_matrixref.dats ; $(PATSCC2) -DATS_MEMALLOC_LIBC -o $@ $<
 cleanall:: ; $(RMF) chap_matrixref
+#
+######
+#
+all:: chap_mtrxszref
+chap_mtrxszref: \
+  chap_mtrxszref.dats ; $(PATSCC2) -DATS_MEMALLOC_LIBC -o $@ $<
+cleanall:: ; $(RMF) chap_mtrxszref
 #
 ######
 #

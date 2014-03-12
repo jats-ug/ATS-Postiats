@@ -15,10 +15,12 @@
 <!ENTITY chap_filename SYSTEM "CHAP_FILENAME/main.db">
 <!ENTITY chap_fileincl SYSTEM "CHAP_FILEINCL/main.db">
 <!ENTITY chap_fixity SYSTEM "CHAP_FIXITY/main.db">
+<!ENTITY chap_exception SYSTEM "CHAP_EXCEPTION/main.db">
 <!ENTITY chap_reference SYSTEM "CHAP_REFERENCE/main.db">
 <!ENTITY chap_arrayref SYSTEM "CHAP_ARRAYREF/main.db">
 <!ENTITY chap_arrszref SYSTEM "CHAP_ARRSZREF/main.db">
 <!ENTITY chap_matrixref SYSTEM "CHAP_MATRIXREF/main.db">
+<!ENTITY chap_mtrxszref SYSTEM "CHAP_MTRXSZREF/main.db">
 <!ENTITY chap_tailrec SYSTEM "CHAP_TAILREC/main.db">
 <!ENTITY chap_hordfun SYSTEM "CHAP_HORDFUN/main.db">
 <!ENTITY chap_cloptr SYSTEM "CHAP_CLOPTR/main.db">
@@ -46,10 +48,12 @@ To Jinning, Zoe, and Chloe
 &chap_filename;
 &chap_fileincl;
 &chap_fixity;
+&chap_exception;
 &chap_reference;
 &chap_arrayref;
 &chap_arrszref;
 &chap_matrixref;
+&chap_mtrxszref;
 &chap_tailrec;
 &chap_hordfun;
 &chap_stream;
