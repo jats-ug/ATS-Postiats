@@ -588,8 +588,14 @@ fun{a,b:type} swap_boxed (xy: (a, b)): (b, a) = (xy.1, xy.0)
 
 <sect1
 id="polymorphic_datatypes">
+#langeng("
 #title("Polymorphic Datatypes")
+")
+#langja("
+#title("多相データ型")
+")
 
+#langeng("
 #para("\
 
 Code sharing also applies to datatype declarations. For instance, a
@@ -630,7 +636,48 @@ verbose, is likely to yield more informative messages in case type-errors
 occur.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+コード共有はデータ型の宣言についても適用できます。
+例えば、なじみ深い多相データ型 #stacode("list0") は次のように宣言されます:
+
+#atscode("\
+datatype
+list0 (a:t@ype) =
+  | list0_nil (a) of () | list0_cons (a) of (a, list0 a)
+// end of [list0]
+")
+
+より正確には、 #stacode("list0") は型コンストラクタです。
+型 T が与えられた時、型 T を要素とするリストである型 #stacode("list0(T)") を作ることができます。
+例えば、 #stacode("list0(char)") は文字のリストで、 #stacode("list0(int)") は整数のリスト、
+#stacode("list0(list0(int))") は整数のリストを要素とするリストである、などです。
+関数テンプレートや多相関数の主な必要性は多相データ型の可用性から大いに生じています。
+例として、関数テンプレート #dyncode("list0_length") は与えられたリストの長さを計算するよう、
+次のように実装されます:
+
+#atscode("\
+fun{a:t@ype}
+list0_length (xs: list0 a): int =
+(
+  case+ xs of
+  | list0_cons (_, xs) => 1 + list0_length<a> (xs) | list0_nil () => 0
+) (* end of [list0_length] *)
+")
+
+#dyncode("list0_length") をリスト xs に適用する時、
+型検査器が #dyncode("list0_length") の型パラメータを適切に推論してくれることを期待して、
+一般に #dyncode("list0_length(xs)") と書くことができます。
+また xs の要素が型 T であるとき、
+#dyncode("list0_length&lt;")#stacode("T")#dyncode("&gt;(xs)") と書くこともできます。
+後者のスタイルは少し冗長ですが、型エラーが発生した際により有用なメッセージが得られるため好ましいと言えます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Another commonly used polymorphic datatype #stacode("option0") is declared as
@@ -690,6 +737,65 @@ the list is empty. Otherwise, the value is formed by applying
 #dyncode("option0_some") to the last element of the given list.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+もう一つの多相データ型の一般的な使い方 #stacode("option0") は次のような宣言です:
+
+#atscode("\
+datatype
+option0 (a:t@ype) =
+  | option0_none (a) of () | option0_some (a) of a
+// end of [option0]
+")
+
+#stacode("option0") の典型的な使い方はエラーの取り扱いです。
+整数の除算関数を実装しようとしていて、
+0で除算してしまった時でも関数が返ってくることを保証したくなったとしましょう。
+これは次のようにすれば可能です:
+
+#atscode("\
+fun divopt
+(
+  x: int, y: int
+) : option0 (int) =
+  if y != 0 then option0_some{int}(x/y) else option0_none((*void*))
+// end of [divopt]
+")
+
+#dyncode("divopt") 返値を検査することで、
+整数の除算が正常終了したのか、0除算が起きてエラー終了した見分けることができます。
+#stacode("option0") の実際の使用例は次の実装 #dyncode("list0_last") になります:
+
+#atscode("\
+fun{
+a:t@ype
+} list0_last
+(
+  xs: list0 a
+) : option0 (a) = let
+//
+fun loop
+  (x: a, xs: list0 a): a =
+(
+  case+ xs of
+  | list0_nil () => x | list0_cons (x, xs) => loop (x, xs)
+) (* end of [loop] *)
+//
+in
+  case+ xs of
+  | list0_nil () => option0_none((*void*))
+  | list0_cons (x, xs) => option0_some{a}(loop (x, xs))
+end // end of [list0_last]
+")
+
+リストに適用されると、 #dyncode("list0_last") はオプション値を返します。
+もしこの値がパターン #dyncode("option0_none()") にマッチすれば、このリストは空です。
+そうでなければ、この値は #dyncode("option0_some") を与えられたリストの最後の要素に適用したものになります。\
+
+")#comment("para")
+")
 
 </sect1><!--id="polymorphic_datatypes"-->
 
