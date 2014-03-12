@@ -330,8 +330,14 @@ template from now on if no confusion is expected.\
 
 <sect1
 id="polymorphic_functions">
+#langeng("
 #title("Polymorphic Functions")
+")
+#langja("
+#title("多相関数")
+")
 
+#langeng("
 #para("\
 
 A polymorphic function is rather similar to a function template.
@@ -360,7 +366,37 @@ type-error is reported. For instance, calling #dyncode("swap_boxed") on
 boxed.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+多相関数はどちらかといえば関数テンプレートに似ています。
+けれども、前者はATSにおける第一級の値ですが、後者は違います。
+例として、次に定義する関数 #dyncode("swap_boxed") は多相的です:
+
+#atscode("\
+fun swap_boxed{a,b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
+")
+
+型変数 #stacode("a") と #stacode("b") はしばしば静的引数と呼ばれ、 #dyncode("xy") は動的引数と呼ばれます。
+次のコードは多相関数 #dyncode("swap_boxed") を使っています:
+
+#atscode('\
+val AB = ("A", "B")
+val BA1 = swap_boxed{string,string} (AB)
+val BA2 = swap_boxed (AB) // omitting type arguments may be fine
+')
+
+もし型 T1 と T2 が与えられ #stacode("swap_boxed") をタプル型 (T1, T2) に対して呼び出した場合、
+T1とT2はボックス化されていなければなりません。
+そうでなければ型エラーが発生します。
+例えば #dyncode("swap_boxed") を #dyncode("(0, 1)") に呼び出すと、
+型 #dyncode("int") がボックス化されていないことを示す型エラーを誘発します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 When calling a polymorphic function, we often omit passing static
@@ -371,7 +407,18 @@ successfully synthesized or what is synthesized is not exactly what is
 expected by the programmer.\
 
 ")
+")
+#langja("
+#para("\
 
+多相関数を呼び出す時、静的引数をしばしば省略してコンパイラによって推論されることを期待します。
+けれども推論に失敗したり、推論がプログラマが意図していたものとは違っているために、
+明示的に静的引数を指定することが必要になることも珍しくはありません。\
+
+")
+")
+
+#langeng("
 #para("\
 
 It is also possible to pass static arguments sequentially as is
@@ -395,7 +442,31 @@ be synthesized while the special syntax #stacode("{...}") means that the
 rest of static arguments should all be synthesized.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次の多相関数の実装スタイルのように、静的引数を連続して渡すことも可能です:
+
+#atscode('\
+fun swap2_boxed{a:type}{b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
+
+val AB = ("A", "B")
+val BA1 = swap2_boxed (AB) // both static arguments to be synthesized
+val BA2 = swap2_boxed{...} (AB) // both static arguments to be synthesized
+val BA3 = swap2_boxed{..}{string} (AB) // 1st static argument to be synthesized
+val BA4 = swap2_boxed{string}{..} (AB) // 2nd static argument to be synthesized
+val BA5 = swap2_boxed{..}{..} (AB) // both static arguments to be synthesized
+val BA6 = swap2_boxed{string}{string} (AB) // both static arguments are provided
+')
+
+特殊構文 #stacode("{..}") はこの適用に含まれる静的引数が推論されるべきであることを型検査器に指示します。
+さらに特殊構文 #stacode("{...}") は残りの静的引数全がを推論されるべきであることを型検査器に指示します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 I have seen two kinds of errors involving polymorphic functions that are
@@ -453,6 +524,63 @@ we encounter polymorphic function templates, that is, templates for
 polymorphic functions.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+
+実際の場面でも非常に一般的な多相関数に由来する2種類のエラーを見てます:
+
+<itemizedlist>
+
+<listitem>
+
+#para("\
+1番目のエラーの種類は次のような例です:
+
+#atscode("\
+fun swap_boxed{a,b:t@ype} (xy: (a, b)): (b, a) = (xy.1, xy.0)
+")
+
+型変数 #stacode("a") と #stacode("b") の種が #stacode("type") の代わりに #stacode("t@ype")
+であることに注意してください。
+この例は型検査には通りますが、コンパイル時に起きるエラーは、多くのプログラマにとって不可解なものでしょう。
+このエラーを発生させる単純な理由は、コンパイラが #stacode("a") と #stacode("b")
+のサイズを算出できないことです。
+種 #stacode("t@ype") のC言語コードを生成しようとした時、型のサイズが特定できないのです。
+
+")#comment("para")
+
+</listitem>
+
+<listitem>
+#para("\
+2番目のエラーの種類は次のような例です:
+
+#atscode("\
+fun{a,b:type} swap_boxed (xy: (a, b)): (b, a) = (xy.1, xy.0)
+")
+
+厳密に言えば、この例には実際エラーはありません。
+もしこのような定義がされると、 #stacode("swap_boxed") は多相関数の代わりに関数テンプレートになります。
+けれども、
+このような関数テンプレートはボックス化されていない型でインスタンス化できないよう、
+使用が厳しく制限されています。
+これが意図してものでなければ、好ましくないでしょう。\
+
+")#comment("para")
+
+</listitem>
+
+</itemizedlist>
+
+混乱する可能性があるのに、なぜ関数テンプレートと多相関数が必要になるのでしょうか？
+関数テンプレートだけを使い、多相関数を使うべきではない、というのがもちろん現時点ではもっともらしく思えます。
+けれども、多相関数は依存型に強く結びついています。
+多相関数のためのテンプレートである多相関数テンプレートに、実際には数多く出会うことになるでしょう。\
+
+")#comment("para")
+")
 
 </sect1><!--id="polymorphic_functions"-->
 
