@@ -1418,8 +1418,14 @@ zs のそれぞれの要素 z は x と y をそれぞれ xs と ys の対応す
 
 <sect1 id="example_mergesort" xreflabel="implementation of mergesort on lists">
 
+#langeng("
 #title("Example: Mergesort on Lists")
+")
+#langja("
+#title("例: リストのマージソート")
+")
 
+#langeng("
 #para("\
 
 Mergesort is simple sorting algorithm that is guaranteed to be log-linear.
@@ -1428,7 +1434,18 @@ the same after sorting. I give as follows a typical functional style of
 implementation of mergesort on lists.
 
 ")
+")
+#langja("
+#para("\
 
+マージソートは最悪計算量 O(n log n) の単純なソートアルゴリズムです。
+2つの等しい要素がソートした後でも同じ配置であるという意味で安定です。
+次にリストに対するマージソートの典型的な関数型スタイルの実装を示します。
+
+")
+")
+
+#langeng("
 #para('\
 
 First, let us introduce abbreviations
@@ -1452,7 +1469,31 @@ In practice, there is of course no point in mixing #dyncode("cons0")
 with #dyncode("::").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+はじめに、リストコンストラクタ #dyncode("list0_nil") と #dyncode("list0_cons") の省略形を導入しましょう:
+
+#atscode("\
+\#define :: list0_cons // writing [::] for list0_cons
+\#define cons0 list0_cons // writing [cons0] for list0_cons
+\#define nil0 list0_nil // writing [nil0] for list0_nil
+")
+
+演算子 #dyncode("::") は既に中置に設定されていることに注意してください。
+例えば、自然数のはじめの5個からなるリストは次のようにコンストラクトできます:
+
+#atscode("\
+cons0 (0, cons0 (1, 2 :: 3 :: 4 :: nil0 ()))
+")
+
+もちろん実際には、 #dyncode("cons0") と #dyncode("::") を混ぜる意味はありません。
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 We next implement a function template #dyncode("merge") to merge two given
@@ -1493,7 +1534,49 @@ given the infix status, and thus the expression #dyncode("x \\\\lte y")
 means the same as #dyncode("lte(x, y)").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次に、与えられた2つの整列されたリストを1つの整列されたリストにマージする関数テンプレート
+#dyncode("merge") を実装します:
+
+#atscode("\
+typedef
+lte (a:t@ype) = (a, a) -> bool
+
+fun{
+a:t@ype
+} merge (
+  xs: list0 a, ys: list0 a, lte: lte a
+) : list0 a =
+(
+  case+ xs of
+  | cons0 (x, xs1) => (
+    case+ ys of
+    | cons0 (y, ys1) =>
+        if x \lte y then
+          cons0{a}(x, merge<a> (xs1, ys, lte))
+        else
+          cons0{a}(y, merge<a> (xs, ys1, lte))
+        // end of [if]
+    | nil0 () => xs
+    ) // end of [cons0]
+  | nil0 () => ys
+) (* end of [merge] *)
+")
+
+例えば、与えられた2つのリストが (1, 3, 4, 8) と (2, 5, 6, 7, 9) だと考えてみましょう。
+#dyncode("merge") の第3引数である比較関数は整数の標準的な less-than-or-equal-to 関数です。
+すると #dyncode("merge") はリスト (1, 2, 3, 4, 5, 6, 7, 8, 9) を返します。
+構文 #dyncode("\lte") はほぼ #dyncode("lte") と同じ意味をしていますが、バックスラッシュ記号
+(#dyncode("\\\\")) を前に付けるとは中置設定になります。
+したがって式 #dyncode("x \\\\lte y") は #dyncode("lte(x, y)") と同じ意味です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The following function template #dyncode("mergesort") implements the
@@ -1543,7 +1626,60 @@ list (1, 2, 3, 4, 5, 6, 7, 8, 9), which is a permutation of the original
 list (8, 3, 4, 1, 2, 7, 6, 5, 9).\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次の関数テンプレート #dyncode("mergesort") は標準のマージソートアルゴリズムを実装しています:
+
+#atscode("\
+fun{
+a:t@ype
+} mergesort
+(
+  xs: list0 a, lte: lte a
+) : list0 a = let
+//
+val n = list0_length<a> (xs)
+//
+fun msort
+(
+  xs: list0 a, n: int, lte: lte a
+) : list0 a =
+  if n >= 2 then split (xs, n, lte, n/2, nil0) else xs
+//
+and split
+(
+  xs: list0 a, n: int, lte: lte a, i: int, xsf: list0 a
+) : list0 a =
+  if i > 0 then let
+    val-cons0 (x, xs) = xs
+  in
+    split (xs, n, lte, i-1, cons0{a}(x, xsf))
+  end else let
+    val xsf = list0_reverse<a> (xsf) // make sorting stable!
+    val xsf = msort (xsf, n/2, lte) and xs = msort (xs, n-n/2, lte)
+  in
+    merge<a> (xsf, xs, lte)
+  end // end of [if]
+//
+in
+  msort (xs, n, lte)
+end // end of [mergesort]
+")#comment("atscode")
+
+リスト (8, 3, 4, 1, 2, 7, 6, 5, 9) をソートしてみましょう;
+はじめに2つのリストに分割します:
+(8, 3, 4, 1) と (2, 7, 6, 5, 9) です;
+これらそれぞれにマージソートをほどこすことで、2つの整列されたリストが得られます:
+(1, 3, 4, 8) と (2, 5, 6, 7, 9) です;
+これら2つの整列済みリストをマージして、整列済みリスト (1, 2, 3, 4, 5, 6, 7, 8, 9) が得られます。
+これは元のリスト (8, 3, 4, 1, 2, 7, 6, 5, 9) の置換になっています。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Note that the function template #dyncode("merge") is not tail-recursive as
@@ -1553,12 +1689,35 @@ to occur if the above implementation of mergesort is employed to sort a
 list that is very long (e.g., containing 1,000,000 elements or more). I
 will later give a tail-recursive implementation of the #dyncode("merge")
 function in ATS that makes use of linear types.  ")
+")
+#langja("
+#para("\
 
+関数テンプレート #dyncode("merge") は末尾再帰ではないことに注意してください。
+#dyncode("merge") 本体の自分自身の呼び出しが末尾呼出ではありません。
+これは実際の使用において大きな問題です:
+上記のマージソートの実装がとても長い(例えば1,000,000以上の要素を含む)リストのソートに対して呼び出されたら、
+スタックオーバーフローが引き起こされることは疑う余地がありません。
+後の章で、ATSの線形型を使って #dyncode("merge") 関数の末尾再帰的実装を紹介します。
+")
+")
+
+#langeng("
 #para("\
 
 Please find the entire code in this section plus some additional code for
 testing #mycodelink("CHAP_POLYMORPH/mergesort.dats", "on-line").\
 
+")
+")
+#langja("
+#para("\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_POLYMORPH/mergesort.dats", "オンライン")
+から入手できます。\
+
+")
 ")
 
 </sect1><!--id="example_mergesort"-->
