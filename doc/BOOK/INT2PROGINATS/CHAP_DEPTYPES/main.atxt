@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="introduction-to-dependent-types">
+#langeng("
 #title("Introduction to Dependent Types")
+")
+#langja("
+#title("依存型入門")
+")
 
+#langeng("
 #para("\
 
 The types we have encountered so far in this book are often not adequately
@@ -28,7 +34,22 @@ become a crippling limitation if we ever want to build a type-based
 specification language that is reasonably expressive for practical use.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+この本でこれまで見てきた型は、しばしばプログラミングの不変条件を正確に表現していませんでした。
+例えば型 #stacode("int") を整数0と1の両方に割り当てると、型のレベルでは0と1を単純に見分けることができません。
+これは型検査の範囲では0と1が交換可能であることを意味しています。
+別の言い方をすると、もし0であるべきところろ1とミスタイプして、
+型検査中に捕捉すべきプログラムのエラーが起きても、型検査時に予測できません。
+もし、実際の使用のために表現力豊かな型ベースの仕様記述言語を作ろうとしたなら、
+型におけるこの種の不正確さは不自由な制限になりえます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("CHAP_DEPTYPES/", "on-line")
@@ -36,13 +57,29 @@ the code employed for illustration in this chapter plus some additional
 code for testing.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介するコードとテストのための追加コードは
+#mycodelink("CHAP_DEPTYPES/", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 <!-- ****** ****** -->
 
 <sect1
 id="enhanced_expressiveness_for_specification">
+#langeng("
 #title("Enhanced Expressiveness for Specification")
+")
+#langja("
+#title("仕様に対する表現力の強化")
+")
 
+#langeng("
 #para("\
 
 The primary purpose of introducing dependent types into the type system of
@@ -64,7 +101,30 @@ In particular, I will present a flexible means for the programmer to
 declare dependent datatypes.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATSの型システムに依存型を導入する主要な目的は、
+プログラムの不変条件をより正確に捕捉できるように、
+型の表現力をより強化することです。
+一般的に言うと、依存型は式の値に依存した型のことです。
+例えば、 #stacode("bool")
+は与えられたブール値 b に適用されると型 #stacode("bool(b)") を作るようなATSの型コンストラクタです。
+この型は値 b のブール式にのみ割り当てることができ、
+これはしばしばシグルトン型と呼ばれ、つまりきっちり1つの値しか持たない型を意味します。
+明らかに、 #stacode("bool(b)") の意味はブール値 b に依存しています。
+同様に、 #stacode("int") はATSの型コンストラクタで、
+与えられた整数 i に適用されて型 #stacode("int(i)") を作ります。
+また、この型は値 i の整数式にのみ割り当てることができるようなシングルトン型です。
+#stacode("bool") と #stacode("int") は両方ともオーバーロードされて非依存型を参照していることに注意してください。
+依存型の他の例を徐々に紹介します。
+特に、依存データ型を宣言するプログラマにとって柔軟な手法を紹介します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The statics of ATS is a simply-typed language, and the types in this
@@ -246,9 +306,188 @@ where #stacode("||") and #stacode("&&") stands for disjunction and
 conjunction, respectively.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+ATSの静的な部分は単純型付き言語で、混乱する可能性を回避するために、
+この言語の型は #emphasis("種(sort)") と呼ばれます(動的な項では型と読んでいました)。
+次に挙げる4つの種は一般的に使用されます:
+
+<itemizedlist>
+
+<listitem>
+#para("
+#emphasis("bool"): ブール値の静的な項
+")
+</listitem>
+
+<listitem>
+#para("
+#emphasis("int"): 整数値の静的な項
+")
+</listitem>
+
+<listitem>
+#para("
+#emphasis("type"): 動的な項のボックス化型を表現する静的な項
+")
+</listitem>
+
+<listitem>
+#para("
+#emphasis("t@ype"): 動的な項のアンボックス化型を表現する静的な項
+")
+</listitem>
+
+</itemizedlist>
+
+種 #emphasis("bool") と #emphasis("int") は述語種(predicative sorts)に、
+種 #emphasis("type") と #emphasis("t@ype") は非述語種(impredicative sorts)に分類されます
+ボックス化型は種 #emphasis("type") の静的な項です。
+アンボックス化型は種 #emphasis("t@ype") の静的な項です。
+型としての #stacode("bool") と #stacode("int") は種 #emphasis("t@ype") の静的な項です。
+型コンストラクタとしての #stacode("bool") と #stacode("int")
+はそれぞれ種 (#emphasis("bool -&gt; t@ype")) と (#emphasis("int -&gt; t@ype")) の静的な項です。
+型コンストラクタ #stacode("list0") もまた種 (#emphasis("t@ype -&gt; type")) であることに注意してください。
+これは #stacode("list0") はアンボックス化型に適用するとボックス化型を作ることを示しています。
+種 #emphasis("bool") と #emphasis("int") の静的な項をコンストラクトするために、
+ATSにはビルトインの静的な関数が多数用意されています。
+次にこのような関数のいくつかを割り当てられた種と一緒に挙げてみます:
+
+<itemizedlist>
+
+<listitem>
+#para("
+~ (negation): #emphasis("(int) -&gt; int")
+")
+</listitem>
+
+<listitem>
+#para("
++ (addition): #emphasis("(int, int) -&gt; int")
+")
+</listitem>
+
+<listitem>
+#para("
+- (subtraction): #emphasis("(int, int) -&gt; int")
+")
+</listitem>
+
+<listitem>
+#para("
+* (multiplication): #emphasis("(int, int) -&gt; int")
+")
+</listitem>
+
+<listitem>
+#para("
+/ (division): #emphasis("(int, int) -&gt; int")
+")
+</listitem>
+
+<listitem>
+#para("
+> (greater-than): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+>= (greater-than-or-equal-to): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+< (less-than): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+<= (less-than-or-equal-to): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+== (equal-to): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+!= (not-equal-to): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+<> (not-equal-to): #emphasis("(int, int) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+~ (boolean negation): #emphasis("(bool) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+|| (disjunction): #emphasis("(bool, bool) -&gt; bool")
+")
+</listitem>
+
+<listitem>
+#para("
+&& (conjunction) : #emphasis("(bool, bool) -&gt; bool")
+")
+</listitem>
+
+</itemizedlist>
+
+種と1つ以上の述語を結合して、サブセット種を定義できます。
+例えば、次のサブセット種が #myatscodelink("prelude/basics_pre.sats", "basics_pre.sats")
+ファイルで定義されていて、ATSコンパイラが自動的にロードします:
+
+#atscode("\
+sortdef nat = {a: int | a >= 0} // for natural numbers
+sortdef pos = {a: int | a >= 1}  // for positive numbers
+sortdef neg = {a: int | a <= ~1}  // for negative numbers
+
+sortdef nat1 = {a: nat | a < 1} // for 0
+sortdef nat2 = {a: nat | a < 2} // for 0, 1
+sortdef nat3 = {a: nat | a < 3} // for 0, 1, 2
+sortdef nat4 = {a: nat | a < 4} // for 0, 1, 2, 3
+")
+
+
+セミコロン記号 (;) を使って述語群を結合して連続させることができることに注意してください:
+
+#atscode("\
+sortdef nat2 = {a: int | 0 <= a; a < 2} // for 0, 1
+sortdef nat3 = {a: int | 0 <= a; a < 3} // for 0, 1, 2
+sortdef sgn = { i:int | ~1 <= i; i <= 1 } // for ~1, 0, 1
+")
+
+次のようにサブセット種 #emphasis("nat2") と #emphasis("nat3") を定義することも可能です:
+
+#atscode("\
+sortdef nat2 = {a: int | a == 0 || a == 1} // for 0, 1
+sortdef nat3 = {a: int | 0 <= a && a <= 2} // for 0, 1, 2
+")
+
+ここで #stacode("||") と #stacode("&&") はそれぞれ論理和と論理積を表わしています。
+
+")#comment("para")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para("\
 In order to unleash the expressiveness of dependent types, we need
 to employ both universal and existential quantification over static
@@ -290,7 +529,48 @@ where the syntax #stacode("[a:nat]") is just a form of syntactic sugar that
 automatically expands into #stacode("[a:int | a >= 0]").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+依存型の表現力を解き放つために、
+静的な値の上に全称量化(universal quantification)と存在量化(existential quantification)
+の両方を採用する必要があります。
+例えば、ATSの型  #stacode("Int") は次のように定義されています:
 
+#atscode("\
+typedef Int = [a:int] int (a) // for unspecified integers
+")
+
+ここでは、構文 #stacode("[a:int]") は種 #emphasis("int") の静的な変数 #stacode("a")
+の上の存在量化を意味しています。
+本質的にこれは、型 #stacode("Int") のそれぞれの値に対して、型 #stacode("int(I)")
+の値になるような整数 I が存在することを意味します。
+したがって、型 #stacode("int") が与えられるどのような値にも型 #stacode("Int") を与えることができます。
+#stacode("Int") のような型はしばしば存在量化型(existentially quantified type)と呼ばれます。
+別の例として、ATSの型 #stacode("Nat") は次のように定義されます:
+
+#atscode("\
+typedef Nat = [a:int | a >= 0] int (a) // for natural numbers
+")
+
+構文 #stacode("[a:int | a >= 0]") は、不変条件 #stacode("a >= 0") を満たすような種
+#emphasis("int") の静的な変数 #stacode("a") の上の存在量化を意味しています。
+したがって、型 #stacode("Nat") のそれぞれの値には
+I >= 0 を満たす整数 I を使った型 #stacode("int(I)") を割り当てることができます。
+#stacode("int(I)") がシングルトン型として与えられると、その値は I に等しく、つまり自然数になります。
+つまり型 #stacode("Nat") は自然数を意味することになります。
+#stacode("Nat") はまた次のようにも定義できます:
+
+#atscode("\
+typedef Nat = [a:nat] int (a) // for natural numbers
+")
+
+構文 #stacode("[a:nat]") は単なる構文糖衣で、自動的に #stacode("[a:int | a >= 0]") に展開されます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 At this point, types have already become much more expressive. For
 instance, we could only assign the type #stacode("(int) -&gt; int") to a
@@ -365,7 +645,79 @@ standard names:
 &lt;&gt; for g1int_neq (most of the time).
 
 ")#comment("para")
+")
+#langja("
+#para("\
+現時点で型の表現力はすでに強化されています。
+例えば、型 #stacode("(int) -&gt; int") は整数を自然数に写像する関数にしか割り当てることができません
+(例: 与えられた整数の絶対値を計算する関数)。
+しかし、そのような関数には型 #stacode("(Int) -&gt; Nat") を割り当てた方がより良いでしょう。
+その方がより明確になります。
+型レベルで関数の返値とその引数を関連付けるためには、全称量化が必要になります。
+例えば、次の全称量化型は整数の引数の次の数を返すような関数を表わしています:
 
+#atscode("\
+{i:int} int (i) -> int (i+1)
+")
+
+構文 #stacode("{i:int}") は種 #stacode("int") の静的な変数 #stacode("i") の上の全称量化を意味しています。
+この全称量化のスコープはそれに続く関数型の中です。
+この型の唯一の関数は整数の後者関数(successor function)であり、
+この関数型もまたシングルトン型であると考えるかもしれません。
+実際には、この型を与えられる部分関数が無限に存在します。
+自然数の後者関数に、次のような型を使うことができます:
+
+#atscode("\
+{i:int | i >= 0} int (i) -> int (i+1)
+")
+
+構文 #stacode("{i:int | i >= 0}") は不変条件 #stacode("i >= 0") を満たすような種 #emphasis("int")
+の静的な変数 #stacode("i") の上の全称量化を意味しています。
+この型はまた次のように書くこともできます:
+
+#atscode("\
+{i:nat} int (i) -> int (i+1)
+")
+
+構文 #stacode("{i:nat}") は自動的に #stacode("{i:int | i >= 0}") に展開されます。
+整数に一般的に使われるいくつかのインターフェイスを次に挙げます:
+
+#atscode("\
+fun g1int_neg {i:int} (int i): int (~i) // negation
+fun g1int_add {i,j:int} (int i, int j): int (i+j) // addition
+fun g1int_sub {i,j:int} (int i, int j): int (i-j) // subtraction
+fun g1int_mul {i,j:int} (int i, int j): int (i*j) // multiplication
+fun g1int_div {i,j:int} (int i, int j): int (i/j) // division
+
+fun g1int_lt {i,j:int} (int i, int j): bool (i < j) // less-than
+fun g1int_lte {i,j:int} (int i, int j): bool (i <= j) // less-than-or-equal-to
+fun g1int_gt {i,j:int} (int i, int j): bool (i > j) // greater-than
+fun g1int_gte {i,j:int} (int i, int j): bool (i >= j) // greater-than-or-equal-to
+fun g1int_eq {i,j:int} (int i, int j): bool (i == j) // equal-to
+fun g1int_neq {i,j:int} (int i, int j): bool (i != j) // not-equal-to
+")
+
+これらのインターフェイスは全て #myatscodelink("prelude/SATS/integer.sats", "integer.sats")
+ファイルで宣言されていて、ATSコンパイラが自動的にロードします。
+ここで挙げた関数群は全てそれらの標準名で参照可能であることに注意してください:
+ほとんどの場合、
+~ は g1int_neg,
++ は g1int_add,
+- は g1int_sub,
+* は g1int_mul,
+/ は g1int_div,
+&lt; は g1int_lt,
+&lt;= は g1int_lte,
+&gt; は g1int_gt,
+&gt;= は g1int_gte,
+= は g1int_eq,
+!= は g1int_neq,
+&lt;&gt; は g1int_neq を参照しています。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 It is now a proper moment for me to raise an interesting question: What
@@ -395,6 +747,35 @@ for combining programming with theorem-proving.  This is a topic I will
 cover later.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この興味深い質問を持ち出すには今が適切な時でしょう:
+階乗関数の依存型インターフェイスはどのようになるでしょうか？
+上記の例を見た後では次の行のように考えるのが自然でしょう:
+
+#atscode("\
+fun g1int_fact {i:nat} (i: int i): int (fact (i))
+")
+
+#emphasis("fact") は階乗関数の静的なバージョンです。
+この答には大きな問題があります。
+#emphasis("fact") のような静的な関数をATSでは定義できないのです。
+ATSの静的な部分は単純型付き言語であり、
+静的な項のコンストラクトにおいてどのような再帰的な意味も許されていません。
+主に現実的なアルゴリズムをベースに静的な項の等価性を決定できるように保証するために、
+このデザインは採用されています。
+本質的に、依存型を伴う型検査は、
+保持している静的な項における等価性(とビルトインの述語)の集合の検査に変化します。
+そのようなデザインは依存型を使った実際のプログラミングをサポートするためにきわめて重要です。
+
+関数の定義に正確に一致する階乗関数にインターフェイスを割り当てるために、
+ATSに定理証明を使ったプログラミングを採用する必要があります。
+このトピックは後の章で取り上げます。\
+
+")#comment("para")
+")
 
 </sect1><!--id="enhanced_expressiveness_for_specification"-->
 
