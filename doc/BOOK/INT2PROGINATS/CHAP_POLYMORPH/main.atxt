@@ -803,8 +803,14 @@ end // end of [list0_last]
 
 <sect1
 id="example_function_templates_on_lists">
+#langeng("
 #title("Example: Function Templates on Lists")
+")
+#langja("
+#title("例: リストに対する関数テンプレート")
+")
 
+#langeng("
 #para("\
 
 In functional programming, lists are ubiquitous. We implement as follows
@@ -815,19 +821,50 @@ certain programming features (such as linear datatypes) that have not been
 covered so far.\
 
 ")
+")
+#langja("
+#para("\
 
+関数型プログラミングでは、リストはどこででも使用されます。
+一般に使われるリストに対する関数テンプレートを次に実装します。
+これらのテンプレートは全て、ATSのいくつかのライブラリで利用できることに注意すべきです。
+これらは線形データ型のようなこれまで紹介してないプログラミングの機能を使って、
+より効果的な方法で実装されていることがあります。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find the entire code in this section plus some additional
 code for testing #mycodelink("CHAP_POLYMORPH/listfun.dats", "on-line").\
 
 ")
+")
+#langja("
+#para("\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_POLYMORPH/listfun.dats", "オンライン")
+から入手できます。\
+
+")
+")
 
 <sect2 id="list0_append">
+#langeng("
 #title("
 Appending: #dyncode("list0_append")
 ")
+")
+#langja("
+#title("
+連結: #dyncode("list0_append")
+")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the type #stacode("list0(T)") for some type T,
@@ -854,15 +891,50 @@ Clearly, this implementation of #dyncode("list0_append") is not
 tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T と型 #stacode("list0(T)") の2つのリスト xs と ys が与えられた時、
+#dyncode("list0_append(xs, ys)") は xs と ys を連結した1つのリストを返します:
+
+#atscode("\
+fun{
+a:t@ype
+} list0_append
+(
+  xs: list0 a
+, ys: list0 a
+) : list0 a =
+(
+case+ xs of
+| list0_cons (x, xs) =>
+    list0_cons{a}(x, list0_append<a> (xs, ys))
+| list0_nil ((*void*)) => ys
+) (* end of [list0_append] *)
+")
+
+明らかに、この #dyncode("list0_append") は末尾再帰ではありません。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list0_append"-->
 
 <sect2
 id="list0_reverse_append">
+#langeng("
 #title("
 Reverse-Appending: #dyncode("list0_reverse_append")
 ")
+")
+#langja("
+#title("
+逆順連結: #dyncode("list0_reverse_append")
+")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the type #dyncode("list0(T)") for some type T,
@@ -888,15 +960,49 @@ Clearly, this implementation of #dyncode("list0_reverse_append") is
 tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T と型 #dyncode("list0(T)") の2つのリスト xs と ys が与えられた時、
+#dyncode("list0_reverse_append(xs, ys)") は xs と ys の逆順を連結したリストを返します:
+
+#atscode("\
+fun{
+a:t@ype
+} list0_reverse_append
+(
+  xs: list0 a, ys: list0 a
+) : list0 a =
+(
+case+ xs of
+| list0_cons (x, xs) =>
+    list0_reverse_append<a> (xs, list0_cons{a}(x, ys))
+| list0_nil () => ys
+) (* end of [list0_reverse_append] *)
+")
+
+明らかに、 #dyncode("list0_reverse_append") のこの実装は末尾再帰です。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list0_reverse_append"-->
 
 <sect2
 id="list0_reverse">
+#langeng("
 #title("
 Reversing: #dyncode("list0_reverse")
 ")
+")
+#langja("
+#title("
+逆順: #dyncode("list0_reverse")
+")
+")
 
+#langeng("
 #para("\
 
 Given a list xs, #dyncode("list0_reverse(xs)") returns the
@@ -909,14 +1015,36 @@ list0_reverse
 // end of [list0_reverse]
 ")
 ")#comment("para")
+")
+#langja("
+#para("\
+
+リスト xs が与えられた時、 #dyncode("list0_reverse(xs)") は xs の逆順を返します:
+
+#atscode("\
+fun{a:t@ype}
+list0_reverse
+  (xs: list0 a): list0 a = list0_reverse_append<a> (xs, list0_nil)
+// end of [list0_reverse]
+")
+")#comment("para")
+")
 
 </sect2><!--id="list0_reverse"-->
 
 <sect2 id="list0_map">
+#langeng("
 #title("
 Mapping: #dyncode("list0_map")
 ")
+")
+#langja("
+#title("
+マップ: #dyncode("list0_map")
+")
+")
 
+#langeng("
 #para("\
 
 Given a list xs of the type #stacode("list0(T1)") for some type T1 and a
@@ -944,14 +1072,50 @@ where x is the corresponding element in xs.  Clearly, this implementation
 of #dyncode("list0_map") is not tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T1 、型 T2、型 T1 -&lt;cloref1&gt; T2 のクロージャ関数 f 、型 #stacode("list0(T1)") のリスト xs
+が与えられた時、
+#dyncode("list0_map(xs)") は #stacode("list0(T2)") 型のリスト ys を返します:
+
+#atscode("\
+fun
+{a:t@ype}
+{b:t@ype}
+list0_map
+(
+  xs: list0 a, f: a -<cloref1> b
+) : list0 b =
+(
+case+ xs of
+| list0_cons (x, xs) =>
+    list0_cons{b}(f x, list0_map<a><b> (xs, f))
+| list0_nil ((*void*)) => list0_nil ()
+) (* end of [list0_map] *)
+")
+
+ys の長さは xsの長さに等しく、
+ys 中のそれぞれの要素 y は xs 中の関連する要素をxとしたとき f(x) に等しくなります。
+明らかに、 #dyncode("list0_map") のこの実装は末尾再帰ではありません。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list0_map"-->
 
 <!-- ****** ****** -->
 
 <sect2 id="list0_foldleft">
+#langeng("
 #title("Left-Folding: #dyncode("list0_foldleft")")
+")
+#langja("
+#title("左fold: #dyncode("list0_foldleft")")
+")
 
+#langeng("
 #para('\
 
 Given xs, ini and f, #dyncode("list0_foldleft(ini, xs, f)") computes the
@@ -976,14 +1140,47 @@ list0_foldleft
 ')
 
 ')
+")
+#langja("
+#para('\
+
+xs, ini, f が与えられた時、
+#dyncode("list0_foldleft(ini, xs, f)") は式 f(... f(f(ini, xs[0]), xs[1]) ..., xs[n-1]) の値を計算します。
+このとき n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
+次の #dyncode("list0_foldleft") の実装は末尾再帰です:
+
+#atscode('\
+fun
+{a:t@ype}
+{b:t@ype}
+list0_foldleft
+(
+  ini: a, xs: list0 (b), f: (a, b) -> a
+) : a =
+(
+  case+ xs of
+  | list0_cons
+      (x, xs) => list0_foldleft<a><b> (f (ini, x), xs, f)
+  | list0_nil ((*void*)) => ini
+)
+')
+
+')
+")
 
 </sect2><!--id="list0_foldleft"-->
 
 <!-- ****** ****** -->
 
 <sect2 id="list0_foldright">
+#langeng("
 #title("Right-Folding: #dyncode("list0_foldright")")
+")
+#langja("
+#title("右fold: #dyncode("list0_foldright")")
+")
 
+#langeng("
 #para('\
 
 Given xs, res and f, #dyncode("list0_foldright(xs, res, f)") computes the
@@ -1008,14 +1205,47 @@ list0_foldright
 ')
 
 ')
+")
+#langja("
+#para('\
+
+xs, res, f が与えられた時、
+#dyncode("list0_foldright(xs, res, f)") は式 f(xs[0], f(xs[1], f(... f(xs[n-1], res) ...))) の値を計算します。
+このとき、 n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
+次の #dyncode("list0_foldright") 実装は末尾再帰ではありません:
+
+#atscode('\
+fun
+{a:t@ype}
+{b:t@ype}
+list0_foldright
+(
+  xs: list0 (a), res: b, f: (a, b) -> b
+) : b =
+(
+  case+ xs of
+  | list0_cons
+      (x, xs) => f (x, list0_foldright<a><b> (xs, res, f))
+  | list0_nil ((*void*)) => res
+)
+')
+
+')
+")
 
 </sect2><!--id="list0_foldright"-->
 
 <!-- ****** ****** -->
 
 <sect2 id="list0_zip">
+#langeng("
 #title("Zipping: #dyncode("list0_zip")")
+")
+#langja("
+#title("zip関数: #dyncode("list0_zip")")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the types #stacode("list0(T1)") and
@@ -1051,14 +1281,57 @@ elements in xs and ys, respectively.  Clearly, this implementation of
 #dyncode("list0_zip") is not tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T1 と T2、型 #stacode("list0(T1)") と #stacode("list0(T2)") の2つのリスト xs と ys がそれぞれ与えられた時、
+#dyncode("list0_zip(xs, ys)") は型 #stacode("list0 @(T1, T2)") のリスト zs を返します:
+
+#atscode("\
+fun{
+a,b:t@ype
+} list0_zip
+(
+  xs: list0 a
+, ys: list0 b
+) : list0 @(a, b) = let
+  typedef ab = @(a, b)
+in
+//
+case+ (xs, ys) of
+| (list0_cons (x, xs),
+   list0_cons (y, ys)) =>
+  (
+    list0_cons{ab}((x, y), list0_zip<a,b> (xs, ys))
+  )
+| (_, _) => list0_nil ()
+//
+end // end of [list0_zip]
+")
+
+zs の長さは xs と ys の長さの小さい方で、
+zs のそれぞれの要素 z は x と y をそれぞれ xs と ys の対応する要素としたときの @(x, y) に等しくなります。
+明らかに、この #dyncode("list0_zip") の実装は末尾再帰ではありません。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list0_zip"-->
 
 <sect2 id="list0_zipwith">
+#langeng("
 #title("
 Zipping with: #dyncode("list0_zipwith")
 ")
+")
+#langja("
+#title("
+zip with関数: #dyncode("list0_zipwith")
+")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the types #stacode("list0(T1)") and
@@ -1098,6 +1371,44 @@ This function template is also named #dyncode("list0_map2") for the obvious
 reason.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T1, T2, T3 と、型 (T1, T2) -&lt;cloref1&gt; T3 のクロージャ関数 f と、
+それぞれ #stacode("list0(T1)") と #stacode("list0(T2)")  型の2つのリスト xs と ys が与えられた時、
+#dyncode("list0_zipwith(xs, ys, f)") は #stacode("list0(T3)") 型のリスト zs を返します:
+
+#atscode("\
+fun
+{a,b:t@ype}
+{c:t@ype}
+list0_zipwith
+(
+  xs: list0 a
+, ys: list0 b
+, f: (a, b) -<cloref1> c
+) : list0 c =
+(
+case+ (xs, ys) of
+| (list0_cons (x, xs),
+   list0_cons (y, ys)) =>
+  (
+    list0_cons{c}(f (x, y), list0_zipwith<a,b><c> (xs, ys, f))
+  )
+| (_, _) => list0_nil ()
+) (* end of [list0_zipwith] *)
+")
+
+zs の長さは xs と ys の長さの小さい方で、
+zs のそれぞれの要素 z は x と y をそれぞれ xs と ys の対応する要素としたときの f(x, y) に等しくなります。
+明らかに、この #dyncode("list0_zipwith") の実装は末尾再帰ではありません。
+3番目の引数 #dyncode("f") を #dyncode("lam (x, y) => @(x, y)") で置き換えれば、
+#dyncode("list0_zipwith") は #dyncode("list0_zip") とまったく同じ振る舞いをすることに注意してください。
+この関数テンプレートは #dyncode("list0_map2") という名前も持っています。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list0_zipping_with"-->
 
