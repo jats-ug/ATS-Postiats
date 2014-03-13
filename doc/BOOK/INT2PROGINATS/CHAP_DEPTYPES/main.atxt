@@ -1346,8 +1346,14 @@ ATSでは、線形型を使ってC言語スタイル文字列を適切に処理�
 
 <sect1
 id="example_binary_search_on_arrays">
+#langeng("
 #title("Example: Binary Search on Arrays")
+")
+#langja("
+#title("例: 配列の二分探索")
+")
 
+#langeng("
 #para("\
 
 Given a type T of the sort #emphasis("t@ype") and a static integer I (i.e.,
@@ -1386,7 +1392,46 @@ used for array subscripting is always legal, that is, within the bounds of
 the array being subscripted.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+種 #emphasis("t@ype") の型 T と静的な整数 I (例: 種 #emphasis("int") の静的な項)が与えられた時、
+#stacode("arrayref(T, I)") はボックス化型で、保管されている要素が型 T であるサイズ I の配列です。
+このような配列はサイズに関する情報を付随して持っていないことに注意してください。
+次のインターフェイスは
+配列を生成するための関数テンプレート #dyncode("array_make_elt") です。
+このテンプレートが生成する配列もまたサイズ情報を持っていません:
+
+#atscode("\
+fun{a:t@ype}
+array_make_elt{n:int} (asz: size_t n, elt: a): arrayref (a, n)
+")
+
+静的な整数 I が与えられた時、
+型 #stacode("size_t(I)") はシングルトン型で、I と等しい整数を表わすC言語の型size_tの値を表わします。
+配列要素の読み書きのための関数テンプレートは次のようなインターフェイスを持ちます:
+
+#atscode("\
+fun{a:t@ype}
+arrayref_get_at
+  {n:int}{i:nat | i < n} (A: arrayref (a, n), i: size_t i): a
+overload [] with arrayref_get_at
+
+fun{a:t@ype}
+arrayref_set_at
+  {n:int}{i:nat | i < n} (A: arrayref (a, n), i: size_t i, x: a): void
+overload [] with arrayref_set_at
+")
+
+これら2つの関数テンプレートはどのような実行時の配列境界チェックもしないことに注意してください:
+これらに割り当てられた型は配列の添字として使われるそれぞれのインデックスが常に正当であることを保証します。
+つまり配列の添字が範囲内であることを保証します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As a convincing example of practical programming with dependent types, the
@@ -1434,7 +1479,56 @@ We can not only specify much more precisely than before but also enforce
 effectively the enhanced precision in specification.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+依存型を使った実際のプログラミングの説得力のある例として、
+次のコードでは整列された配列に対する標準の二分探索アルゴリズムを実装しています:
+
+#atscode("\
+fun{
+a:t@ype
+} bsearch_arr{n:nat}
+(
+  A: arrayref (a, n), n: int n, x0: a, cmp: (a, a) -> int
+) : int = let
+//
+fun loop
+  {i,j:int |
+   0 <= i; i <= j+1; j+1 <= n}
+(
+  A: arrayref (a, n), l: int i, u: int j
+) :<cloref1> int =
+(
+  if l <= u then let
+    val m = l + half (u - l)
+    val x = A[m]
+    val sgn = cmp (x0, x)
+  in
+    if sgn >= 0 then loop (A, m+1, u) else loop (A, l, m-1)
+  end else u // end of [if]
+) (* end of [loop] *)
+//
+in
+  loop (A, 0, n-1)
+end // end of [bsearch_arr]
+")
+
+#dyncode("bsearch_arr") の本体で定義されている関数 #dyncode("loop") は配列 #dyncode("A")
+のインデックス #dyncode("l") と #dyncode("u") の間の部分を探索します。
+#dyncode("loop") に割り当てられた型は、
+引数 #dyncode("l") と #dyncode("u") の整数の値 i と j が、
+制約 0 <= i, i <= j+1, j+1 <= n から成る前提条件を必ず満たすことを明確に示しています。
+このとき n は探索する配列のサイズです。
+依存型をATSに導入したことによる進歩はこの例で明白になったでしょう:
+導入前よりはるかに正確に仕様を規定できるようになっただけでなく、
+強化した正確さを効果的に強制することも可能になったのです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("CHAP_DEPTYPES/bsearch_arr.dats", "on-line") the
@@ -1442,6 +1536,16 @@ code employed for illustration in this section plus some additional code
 for testing.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコードと追加のテストコードは
+#mycodelink("CHAP_DEPTYPES/bsearch_arr.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </sect1><!--id="example_binary_search_on_arrays"-->
 
