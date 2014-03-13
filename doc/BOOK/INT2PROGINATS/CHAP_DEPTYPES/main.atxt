@@ -945,8 +945,14 @@ we have so far never knowingly encountered such a situation in practice).\
 
 <sect1
 id="example_string_processing">
+#langeng("
 #title("Example: String Processing")
+")
+#langja("
+#title("例: 文字列処理")
+")
 
+#langeng("
 #para("\
 
 A string in ATS is represented in the same manner as in C: It is a sequence
@@ -1010,7 +1016,68 @@ it was actually an exciting achievement in the pursuit of practical
 programming with dependent types.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATSの文字列はC言語と同じ方法で表現されています:
+それはNULL文字で終端される非NULL文字群が隣接して保存された列で、
+その長さはその列の中の非NULL文字の数です。
+慣習的に、このような文字列をしばしばC言語スタイル文字列と呼びます。
+また安全に処理することが困難であるために悪評が高いことでも知られています
+(この文字列の誤用に起因する多くのバグと欠陥が明確に物語っています)。
+実際のところ、私の知るかぎりATSはC言語スタイルの文字列に対する安全な処理を完全にサポートするはじめての実用的なプログラミング言語です。
+ATSでは、 #stacode("string") は種 #emphasis("(int) -&gt; type") の型コンストラクタです。
+
+静的な整数 n が与えられた時、 #stacode("string(n)") は長さ n の文字列の型です。
+#stacode("string") は長さが指定されていない文字列の非依存型をも参照していることに注意してください。
+この非依存型は次に定義する型 #stacode("String") と基本的に同等です:
+
+#atscode("\
+typedef String = [n:nat] string (n)
+")
+
+次の2つの関数は与えられた文字列を横断する用途に一般に使われます:
+
+#atscode("\
+fun string_is_atend
+  {n:int}{i:nat | i <= n}
+  (str: string (n), i: size_t (i)): bool (i==n)
+// end of [string_is_atend]
+
+fun string_isnot_atend
+  {n:int}{i:nat | i <= n}
+  (str: string (n), i: size_t (i)): bool (i < n)
+// end of [string_isnot_atend]
+")
+
+明らかに、これら内のどちらかはもう一方を元にして実装することができます。
+例として、次のコードは与えられた文字列の長さを算出する関数を実装しています:
+
+#atscode("\
+fun
+string_length
+  {n:nat} (
+  str: string (n)
+) : size_t (n) = let
+  fun loop {i:nat | i <= n} .<n-i>.
+    (str: string n, i: size_t i): size_t (n) =
+    if string_isnot_atend (str, i) then loop (str, succ(i)) else i
+  // end of [loop]
+in
+  loop (str, i2sz(0))
+end // end of [string_length]
+")
+
+#dyncode("string_length") の本体中の関数 #dyncode("loop") は末尾再帰的な定義であることに注意してください。
+これは生成されたC言語コード中では純粋なループになります。
+現時点では #dyncode("string_length") のこの実装はかなり簡素に見えますが、
+依存型を使った実践的なプログラミングを突き詰めると実に面白い成果が得られます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The following two functions are for accessing and updating characters
@@ -1069,7 +1136,66 @@ position of the first occurrence of #dyncode("c0") (counting from left to
 right). Otherwise, the value #dyncode("None()") is returned.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次の2つの関数は文字列に保存されている文字へのアクセスと更新です:
+
+#atscode("\
+typedef charNZ = [c:char | c <> '\\\\000'] char (c)
+
+fun
+string_get_at{n:int}
+  {i:nat | i < n} (str: string n, i: size_t i): charNZ
+overload [] with string_get_at
+
+fun
+string_set_char_at{n:int}
+  {i:nat | i < n} (str: string n, i: size_t i, c: charNZ): void
+overload [] with string_set_char_at
+")
+
+型コンストラクタ #stacode("char") には種 #emphasis("(char) -&gt; t@ype") が割り当てられています。
+このコンストラクタは静的な文字 c を取って c と等しい文字しか持てないシングルトン型 #stacode("char(c)")
+を作ります。
+したがって型 #stacode("charNZ") は全ての非NULL文字を表わします。
+次に定義される関数 #dyncode("string_find") は文字列を左から右に横断して、
+与えられた文字が文字列の中に見つかるか判定します:
+
+#atscode("\
+//
+typedef
+sizeLt (n:int) = [i:nat | i < n] size_t (i)
+//
+fun string_find{n:nat}
+(
+  str: string n, c0: char
+) : Option (sizeLt n) = let
+  typedef res = sizeLt (n)
+  fun loop{i:nat | i <= n}
+  (
+    str: string n, c0: char, i: size_t i
+  ) : Option (res) =
+  (
+    if string_isnot_atend (str, i) then
+      if (c0 = str[i]) then Some{res}(i) else loop (str, c0, succ(i))
+    else None () // end of [if]
+  ) (* end of [loop] *)
+in
+  loop (str, c0, i2sz(0))
+end // end of [string_find]
+//
+")
+
+もし文字 #dyncode("c0") が文字列 #dyncode("str") の中に存在するなら #dyncode("Some(i)") の値を返します。
+この i は #dyncode("c0") がはじめに出現した位置を(左から右に数えて)参照しています。
+そうでなければ値 #dyncode("None()") が返ります。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 There is some inherent inefficiency in the implementation of
@@ -1129,7 +1255,68 @@ we can readily tell whether the position #dyncode("i") is at the end of
 the string #dyncode("str").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#dyncode("string_find") の実装にはいくらか非効率な部分があります:
+最初に #dyncode("string_isnot_atend") 呼び出して、与えられた位置 #dyncode("i") は 文字列 #dyncode("str")
+の長さより短かいかどうか検査されます。
+そしてもし短かければ #dyncode("string_get_at") を呼び出して、
+文字列の当該位置に保存されている文字を取り出します。
+これら2つの関数呼び出しを次の実装のように1つにまとめましょう:
+
+#atscode("\
+//
+// This implementation does the same as [string_find]
+// but should be more efficient.
+//
+fun
+string_find2{n:nat}
+(
+  str: string n, c0: char
+) : Option (sizeLt n) = let
+//
+fun
+loop{i:nat | i <= n}
+(
+  str: string n
+, c0: char, i: size_t i
+) : Option (sizeLt n) = let
+  typedef res = sizeLt (n)
+  val c = string_test_at (str, i)
+in
+  if c != '\\\\000' then
+  (
+    if (c0 = c) then Some{res}(i) else loop (str, c0, succ(i))
+  ) else None ((*void*)) // end of [if]
+end // end of [loop]
+//
+in
+  loop (str, c0, i2sz(0))
+end // end of [string_find2]
+")
+
+The interface for the function #dyncode("string_test_at") is given as
+follows:
+
+#atscode("\
+fun
+string_test_at
+  {n:int}{i:nat | i <= n}
+(
+  str: string (n), i: size_t (i)
+) : [c:char | (c != NUL && i < n) || (c == NUL && i >= n)] char c
+// end of [string_test_at]
+")
+
+#dyncode("string_test_at") 呼び出しの返値を検査することで、
+位置 #dyncode("i") が文字列 #dyncode("str") の最後かどうかすぐに判定できます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Handling strings safely and efficiently is a complicated matter in
@@ -1140,6 +1327,18 @@ essential use of linear types, which I will cover in another part of this
 book.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+文字列を安全に効率的に取り扱うことはプログラミング言語のデザインにおいて厄介事の一つです。
+またプログラミング言語に関する大量の情報は、
+文字列の取り扱いを単にすることでしばしば明らかになることがあります。
+ATSでは、線形型を使ってC言語スタイル文字列を適切に処理することができます。
+このトピックはこの本の別の章で紹介します。\
+
+")#comment("para")
+")
 
 </sect1><!--id="example_string_processing"-->
 
