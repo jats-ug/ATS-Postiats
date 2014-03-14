@@ -1553,8 +1553,14 @@ for testing.\
 
 <sect1
 id="termination-checking_for_recursive_functions">
+#langeng("
 #title("Termination-Checking for Recursive Functions")
+")
+#langja("
+#title("再帰関数の停止性検査")
+")
 
+#langeng("
 #para("\
 
 There is a mechanism in ATS that allows the programmer to supply
@@ -1565,7 +1571,20 @@ theorem-proving subsystem of ATS, where proofs are constructed as total
 functional programs.\
 
 ")
+")
+#langja("
+#para("\
 
+ATS には、再帰的に定義された関数の停止性を検査するための停止性メトリクス (termination metrics)
+をプログラマ自身で提供できるような、メカニズムがあります。
+すぐに明らかになることですが、この停止性検査のメカニズムは
+ATS/LF のデザインにおいて基本的な役割を果たします。
+この ATS/LF は ATS における定理証明サブシステムで、その証明は全域関数プログラミングによって構成されます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 A termination metric is just a tuple of natural numbers and the standard
@@ -1586,7 +1605,29 @@ is #stacode("n-1"), which is strictly less than the initial metric
 metric attached to each recursive call in the body of a function is
 strictly less that the initial metric attached to the function.
 ")#comment("para")
+")
+#langja("
+#para("\
 
+停止性メトリクスは自然数の単純なタプルで、
+そのタプルの順序には標準の自然数の辞書順が使われます。
+次の例では、再帰関数 #dyncode("fact") が停止するか検査するために、シングルトンメトリクス
+(singleton metric) #stacode("n") を与えています。
+このとき #stacode("n") は #dyncode("fact") の整数引数の値です:
+
+#atscode("\
+fun fact {n:nat} .<n>.
+  (x: int n): int = if x > 0 then x * fact (x-1) else 1
+// end of [fact]
+")
+
+再帰呼び出し #dyncode("fact(x-1)") に付随したメトリクスは #stacode("n-1")
+であり、これは最初のメトリクス #stacode("n") よりも小さいことに注意してください。
+本質的に、ATS における停止性検査とは、関数の本体にあるそれぞれの再帰呼び出しに付随するメトリクスがその関数に付随する初期のメトリクスよりも必ず小さくなること検証することです。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A more difficult and also more interesting example is given as follows,
@@ -1605,7 +1646,28 @@ integer argument of #dyncode("f91"). Please try to verify manually that
 this metric suffices for verifying the termination of #dyncode("f91").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+より難しくまた興味深い例は次のマッカーシーの91関数 (MacCarthy's 91-function) の実装です:
+
+#atscode("\
+fun f91 {i:int} .<max(101-i,0)>. (x: int i)
+  : [j:int | (i < 101 && j==91) || (i >= 101 && j==i-10)] int (j) =
+  if x >= 101 then x-10 else f91 (f91 (x+11))
+// end of [f91]
+")
+
+#dyncode("f91") の停止性を証明するために与えられたメトリクスは
+#stacode("max(101-i,0)") です。
+このとき #stacode("i") は #dyncode("f91") の整数引数の値です。
+このメトリクスが #dyncode("f91") の停止性検証するのに十分であるかどう、手で検証してみてください。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As another example, the following code implements the Ackermann's function,
@@ -1631,7 +1693,35 @@ initial metric #stacode("(m,n)") according to the lexicographic ordering on
 pairs of natural numbers.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+別の例として、次のコードはアッカーマン関数を実装しています。
+この関数は原始再帰関数でない再帰として有名です:
+
+#atscode("\
+fun acker
+  {m,n:nat} .<m,n>.
+  (x: int m, y: int n): Nat =
+  if x > 0 then
+    if y > 0 then acker (x-1, acker (x, y-1)) else acker (x-1, 1)
+  else y + 1
+// end of [acker]
+")
+
+#dyncode("acker") の停止性検証のために与えられたメトリックはペア #stacode("(m,n)") です。
+このとき #stacode("m") と #stacode("n") は #dyncode("acker") の2つの整数引数の値です。
+#dyncode("acker") への3つの再帰呼び出しに付随するメトリクスは、左から右に
+#stacode("(m-1,k)"), #stacode("(m,n-1)"), #stacode("(m-1,1)") です。
+このとき k はなんらかの自然数です。
+自然数のペアを辞書順によれば、これらのメトリクスは初期のメトリクス #stacode("(m,n)")
+よりも小さくなっていることは明白です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Termination-checking for mutually recursive functions is similar.  In the
@@ -1659,6 +1749,33 @@ also be verified.  Note that it is required that the metrics for mutually
 recursively defined functions be tuples of the same length.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+相互再帰関数の停止性検査も同様です。
+次の例では、#dyncode("isevn") と #dyncode("isodd") が相互再帰的に定義されています:
+
+#atscode("\
+fun isevn
+  {n:nat} .<2*n>.
+  (n: int n) : bool =
+  if n = 0 then true else isodd (n-1)
+and isodd
+  {n:nat} .<2*n+1>.
+  (n: int n) : bool = not (isevn (n))
+")
+
+#dyncode("isevn") と #dyncode("isodd") の停止性を検査するために与えられたメトリクスはそれぞれ
+#stacode("2*n") と #stacode("2*n+1") です。
+このとき #stacode("n") は #dyncode("isevn") の整数引数の値であり、さらにまた
+#dyncode("isodd") の整数引数の値です。
+#dyncode("isevn") と #dyncode("isodd") に #stacode("(n, 0)") と #stacode("(n, 1)")
+のメトリクスを与えれば、これら2つの関数の停止性もまた検査できることは明白です。
+相互再帰的に定義された関数のメトリクスは同じ長さのタプルであることが要求されることに注意してください。\
+
+")#comment("para")
+")
 
 </sect1><!--id="termination-checking_for_recursive_functions"-->
 
