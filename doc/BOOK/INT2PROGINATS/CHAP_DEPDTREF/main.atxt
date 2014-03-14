@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="datatype_refinement">
+#langeng("
 #title("Datatype Refinement")
+")
+#langja("
+#title("データ型の改良")
+")
 
+#langeng("
 #para("\
 
 The datatype mechanism in ATS is adopted from ML directly, and it is really
@@ -31,12 +37,40 @@ ATS. With such refinement, datatypes can classify values with greatly
 enhanced precision.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS におけるデータ型のメカニズムは ML から直接輸入しています。
+関数型プログラミングにおいてこの機能はお墨付きです。
+けれども、これまで見てきたデータ型は値を分類するに十分に正確というわけでもありません。
+例えば型 T が与えられた時、
+型 T の要素から成る空のリストと空でないリストを表わす値は両方とも型 #stacode("list0(T)") です。
+したがって、空のリストと空でないリストは型レベルで区別がつきません。
+プログラムの不変条件を捕捉する ML スタイルのデータ型の有効性が、この制限によってしばしば減少してしまいます。
+ATS では、ML スタイルのデータ型は DML スタイルの依存データ型に改良することができます。
+この DML とは ATS の祖先であるプログラミング言語 Dependent ML のことです。
+このような改良によって、データ型は値をより正確に分類できます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_DEPDTREF/", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+この章で紹介するコードと追加のテストコードは
+#mycodelink("CHAP_DEPDTREF/", "オンライン")
+から入手できます。
+
+")
 ")
 
 <!-- ****** ****** -->
