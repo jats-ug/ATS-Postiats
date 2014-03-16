@@ -77,8 +77,14 @@ code for testing is available #mycodelink("CHAP_DEPDTREF/", "on-line").
 
 <sect1
 id="dependent_datatypes">
+#langeng("
 #title("Dependent Datatypes")
+")
+#langja("
+#title("依存データ型")
+")
 
+#langeng("
 #para("\
 
 The syntax for declaring dependent datatypes is mostly similar to the
@@ -103,7 +109,35 @@ parameter, but it is rarely used in practice. Also, keywords like
 #keycode("type+") and #keycode("type-") are interpreted similarly.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+依存データ型を宣言する構文は非依存データ型を宣言する構文とほとんど同じです:
+例えば、ATSの依存データ型 #stacode("list") は次のように宣言されています:
+
+#atscode("\
+datatype list (t@ype+, int) =
+  | {a:t@ype} list_nil (a, 0) of () // [of ()] is optional
+  | {a:t@ype} {n:nat} list_cons (a, n+1) of (a, list (a, n))
+")
+
+より正確には、#stacode("list") は種 #emphasis("(t@ype, int) -> type")
+の型コンストラクタとして宣言されています。
+これは #stacode("list") はアンボックス化型と静的な整数を取りボックス化型を作ることを意味しています。
+キーワード #keycode("t@ype+") は、
+#stacode("list") が種 #emphasis("t@ype") である最初のパラメータについて共変 (covariant)
+であることを示しています。
+つまり T1 が T2 のサブタイプであるなら、#stacode("list(T1, I)") は #stacode("list(T2, I)")
+のサブタイプであるということになります。
+また、宣言された型コンストラクタがパラメータについて反変 (contravariant) であることを示すキーワード
+#keycode("t@ype-") も存在しますが、実際にはあまり使われません。
+また #keycode("type+") や #keycode("type-") のようなキーワードは同等に解釈されます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 There two data (or value) constructors #dyncode("list_nil") and
@@ -135,7 +169,40 @@ to each data constructor associated with the declared type constructor
 #stacode("list").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#stacode("list") に関連して、2つのデータコンストラクタ (や値コンストラクタ)
+#dyncode("list_nil") と #dyncode("list_cons") があります。
+これらは次の型で宣言されています:
+
+#atscode("\
+list_nil : {a:t@ype} () -> list(a, 0)
+list_cons : {a:t@ype}{n:nat} (a, list(a, n)) -> list(a, n+1)
+")
+
+型 T と静的な整数 I が与えられた時、
+要素の型が T で長さが I のリストを表現する値は型 #stacode("list(T, I)") です。
+ゆえに、型 #dyncode("list_nil") は長さ0のリストを、
+型 #dyncode("list_cons") は要素と長さ n のリストに適用すると長さ n+1 のリストを作ることを意味しています。
+次のようなより簡潔なスタイルで #stacode("list") を宣言することもできることに注意してください:
+
+#atscode("\
+datatype list (a:t@ype+, int) =
+  | list_nil (a, 0) of () // [of ()] is optional
+  | {n:nat} list_cons (a, n+1) of (a, list (a, n))
+")
+
+#keycode("t@ype+") の代わりに #stacode("a:t@ype+") を使うことで #stacode("a")
+の上に全称量化を暗黙的に導入します。
+この #stacode("a") は宣言された型コンストラクタ #stacode("list")
+に関連するのデータコンストラクタに割り当てられた型です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As an example of programming with dependent datatypes, the following code
@@ -181,12 +248,60 @@ implies #stacode("n=1+n1"), #dyncode("1 + list_length(xs1)") can be given
 the type #stacode("int(n)"). So this clause typechecks.  Note that matching
 #dyncode("xs") against the pattern #dyncode("list_nil()") generates the
 assumption #stacode("n=0"), which implies that #stacode("0") is of the type
-#stacode("int(n)"). Therefore, the following clause typechecks: ")
+#stacode("int(n)"). Therefore, the following clause typechecks:
+")
+")
+#langja("
+#para("\
+
+依存データ型を用いたプログラミングの例として、次のコードは与えられたリストの長さを算出する関数テンプレートを実装しています:
+
+#atscode("\
+fun{
+a:t@ype
+} list_length
+  {n:nat} .<n>.
+  // .<n>. is a termination metric
+  (xs: list (a, n)): int (n) = case+ xs of
+  | list_nil () => 0
+  | list_cons (_, xs1) => 1 + list_length (xs1)
+// end of [list_length]
+")
+
+関数 #dyncode("list_length") の型は自然数 n 長さのリストを取り、整数の値 n を返すことを示しています。
+加えて、この関数は停止することが検査されています。
+したがって、#dyncode("list_length")
+が与えられたリストの長さを計算する関数を実装していることが保証されています。
+#dyncode("list_length") の定義に対する型検査がどのように行なわれるのか簡単に説明してみます。
+はじめに次の節の型検査を見てみましょう:
+
+#atscode("\
+  | list_cons (_, xs1) => 1 + list_length (xs1)
+")
+
+私達が検査しなければならないのは、
+#dyncode("xs") 記号 #keycode("=>") の左側にあるパターンにマッチと仮定して、記号 #keycode("=>")
+の右側にある式に型 #stacode("int(n)") を割り当てることができるかどうかです。
+自然数  #stacode("n1") について #dyncode("xs1") の型が #stacode("list(a, n1)") だと仮定してみましょう。
+この仮定はパターン #dyncode("list_cons(_, xs1)") は型 #stacode("list(a, n1+1)") であることを意味します。
+#dyncode("xs") がパターン #dyncode("list_cons(_, xs1)") にマッチすることから、#stacode("n=n1+1") は明確です。
+#dyncode("list_length(xs1)") の型が #stacode("int(n1)") であり、したがって  #dyncode("1 + list_length(xs1)")
+の型が #stacode("int(1+n1)") であることもまた明確です。
+#stacode("n=n1+1") であれば #stacode("n=1+n1") であるので、
+#dyncode("1 + list_length(xs1)") には型 #stacode("int(n)") が与えられることになります。
+この節の型検査はこのようになりました。
+パターン #dyncode("list_nil()") に #dyncode("xs") がマッチする場合、#stacode("n=0")
+を仮定できることに注意してください。
+この仮定は #stacode("0") が型 #stacode("int(n)") であることを示しています。
+したがって、次の節が型検査できました:
+")
+")
 
 #atscode("\
   | list_nil () => 0
 ")
 
+#langeng("
 #para("\
 
 Given that the two clauses typecheck properly, the case-expression
@@ -194,7 +309,17 @@ containing them can be assigned the type #stacode("int(n)"). Therefore, the
 definition of #dyncode("list_length") typechecks.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+与えられた2つの節の型検査がおわれば、それらを含む case 式には型 #stacode("int(n)") を割り当てることができます。
+したがって #dyncode("list_length") の定義が型検査できました。\
+
+")#comment("para")
+")
+
+#langeng("
 #para('\
 
 As the recursive call in the body of the above defined function
@@ -204,6 +329,16 @@ following code gives another implementation for computing the length of a
 given list:
 
 ')
+")
+#langja("
+#para('\
+
+上記で定義されている関数 #dyncode("list_length") の本体での再帰呼出 は末尾呼出ではないため、この関数は
+(例えば100万個の要素を持つような) 長いリストを扱うことができません。
+次のコードは与えられたリストの長さを計算する別の実装です:
+
+')
+")
 
 #atscode('\
 fun{
@@ -221,6 +356,7 @@ in
 end // end of [list_length]
 ')
 
+#langeng("
 #para('\
 
 This time, #dyncode("list_length") is based on a tail-recursive function
@@ -231,13 +367,34 @@ natural numbers i and j and returns an integer of value i+j. Also,
 #dyncode("loop") is verified to be terminating.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+このとき #dyncode("list_length") は末尾再帰関数 #dyncode("loop") を使っています。
+そのためどのような長さのリストも一定のスタック量で扱うことができます。
+#dyncode("loop") の型は、自然数 i と j について #dyncode("loop") が長さ i のリストと値 j の整数を取り、値
+i+j の整数を返すことを示していることに注意してください。
+また #dyncode("loop") が停止することは検査済みです。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 There is also a dependent datatype #stacode("option") in ATS for forming
 optional values:
 
 ')
+")
+#langja("
+#para('\
+
+ATS ではオプション値を成す依存データ型 #stacode("option") もまた存在します:
+
+')
+")
 
 #atscode('\
 datatype
@@ -246,12 +403,22 @@ option (a:t@ype+, bool) =
 // end of [option]
 ')
 
+#langeng("
 #para('\
 
 As an example, the following function template #dyncode("list_last") tries to
 find the last element in a given list:
 
 ')
+")
+#langja("
+#para('\
+
+例として、
+次の関数テンプレート #dyncode("list_last") は与えられたリストの最後の要素を探します:
+
+')
+")
 
 #atscode('\
 fun{
@@ -282,13 +449,23 @@ in
 end // end of [list_last]
 ')
 
+#langeng("
 #para('\
 
 The inner function #dyncode("loop") is evidently tail-recursive and it is
 verified to be terminating.
 
 ')
+")
+#langja("
+#para('\
 
+内部の関数 #dyncode("loop") は明らかに末尾再帰であり、停止することは検査済みです。
+
+')
+")
+
+#langeng("
 #para('\
 
 After a programmer becomes familar with #stacode("list") and
@@ -300,6 +477,18 @@ between values of #stacode("list") and #stacode("list0").  The same applies
 to values of #stacode("option") and #stacode("option0") as well.
 
 ')
+")
+#langja("
+#para('\
+
+プログラマは #stacode("list") と #stacode("option") に慣れ親しんだ後
+#stacode("list0") と #stacode("option0") を使う動機はほとんどないでしょう。
+内部では、#stacode("list") と #stacode("list0") の値は全く同じ表現を持ちます。
+さらに #stacode("list") と #stacode("list0") の値を相互変換するキャスト関数が ATS にはあります。
+#stacode("option") と #stacode("option0") の値についても同様です。
+
+')
+")
 
 </sect1><!--id="dependent_datatypes"-->
 
