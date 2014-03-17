@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="theorem-proving_in_ats_lf">
+#langeng("
 #title("Theorem-Proving in ATS/LF")
+")
+#langja("
+#title("ATS/LF を使った定理証明")
+")
 
+#langeng("
 #para("\
 
 Within the ATS programming langauge system, there is a component named
@@ -27,7 +33,20 @@ with theorem-proving"). Moreover, ATS/LF can be employed to encode various
 deduction systems and their meta-properties.\
 
 ")
+")
+#langja("
+#para("\
 
+ATS プログラミング言語システムには、(対話的な) 定理証明をサポートする ATS/LF という名前の部品あります。
+ATS/LF では、全域関数のプログラムとして証明をコンストラクトすることで定理証明は行なわれます。
+このスタイルの定理証明は関数型プログラミングと組み合わさってあるプログラミングパラダイムを産み出すことがすぐに明確になるでしょう。
+このようなパラダイムを ATS では #emphasis("定理証明を使ったプログラミング") と呼んでいます。
+その上、ATS/LF は様々な演繹システムとそれらのメタ属性をエンコードすることができます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("CHAP_THMPRVING/", "on-line")
@@ -35,13 +54,29 @@ the code employed for illustration in this chapter plus some additional
 code for testing.\
 
 ")
+")
+#langja("
+#para("\
+
+この章で解説するコードとテストのための追加コードは
+Please find #mycodelink("CHAP_THMPRVING/", "オンライン")
+から入手できます。\
+
+")
+")
 
 <!-- ****** ****** -->
 
 <sect1
 id="encoding_relations_as_dataprops">
+#langeng("
 #title("Encoding Relations as Dataprops")
+")
+#langja("
+#title("dataprop として関係をエンコードする")
+")
 
+#langeng("
 #para("\
 
 In the statics of ATS, there is a built-in sort #emphasis("prop") for
@@ -121,7 +156,87 @@ only if fib(n) equals r. For instance, the proof value
 1)"), attesting to fib(2) equaling 1.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS の静的な部分には、証明の型を表わす静的な項のためのビルトインの種 #emphasis("prop") があります。
+種 #emphasis("prop") の静的な項は、型もしくはより正確に prop 型や単に prop と呼ばれます。
+dataprop は datatype の宣言とよく似た作法で宣言できます。
+例えば、#stacode("FIB") をコンストラクトする prop は次の dataprop 宣言で導入できます:
+
+#atscode("\
+dataprop FIB (int, int) =
+  | FIB0 (0, 0) of () // [of ()] can be dropped
+  | FIB1 (1, 1) of () // [of ()] can be dropped
+  | {n:nat}{r0,r1:nat}
+    FIB2 (n+2, r0+r1) of (FIB (n, r0), FIB (n+1, r1))
+// end of [FIB]
+")
+
+#stacode("FIB") に割り当てられた種は #emphasis("(int, int) -&gt; prop") で、#stacode("FIB")
+が2つの静的な整数を取って prop 型を作ることを示していいます。
+#stacode("FIB") に関連して3つのデータ (もしくは証明の) コンストラクタがあります:
+それらは #dyncode("FIB0"), #dyncode("FIB1"), #dyncode("FIB2") で、次の関数型 (もしくはより正確に prop 型)
+が割り当てられています:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+#dyncode("FIB0"): #stacode("() -> FIB (0, 0)")
+")
+</listitem>
+
+<listitem>
+#para("\
+#dyncode("FIB1"): #stacode("() -> FIB (1, 1)")
+")
+</listitem>
+
+<listitem>
+#para("\
+#dyncode("FIB2"):
+ #stacode("{n:nat}{r0,r1:int} (FIB(n, r0), FIB(n+1, r1)) -> FIB(n+2, r0+r1)")
+")
+</listitem>
+
+</itemizedlist>
+
+自然数 n と整数 r が与えられた時、#stacode("FIB(n, r)") が関係 fib(n) = r
+をエンコードしていることは明確でしょう。
+この fib は次の3つの等式で定義されます:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+fib(0) = 0, and
+")
+</listitem>
+
+<listitem>
+#para("
+fib(1) = 1, and
+")
+</listitem>
+
+<listitem>
+#para("\
+fib(n+2) = fib(n+1) + fib(n) for n >= 2.
+")
+</listitem>
+
+</itemizedlist>
+
+証明の値 prop #stacode("FIB(n, r)") は fib(n) が r と等しい場合のみコンストラクトできます。
+例えば、証明の値 #dyncode("FIB2(FIB0(), FIB1())") には prop  #dyncode("FIB(2, 1)") が割り当てられ、
+これは fib(2) が 1 に等しいことを証明しています。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As another example of dataprop, the following declaration introduces a prop
@@ -168,7 +283,55 @@ In other words, the dataprop declaration for #stacode("MUL") encodes the
 relation that represents the standard multiplication function on integers.\
 
 ")
+")
+#langja("
+#para("\
 
+dataprop の別の例として、
+次の宣言は prop コンストラクタ #stacode("MUL") と関連する3つの証明コンストラクタを導入しています:
+
+#atscode("\
+dataprop MUL (int, int, int) =
+  | {n:int} MULbas (0, n, 0) of ()
+  | {m:nat}{n:int}{p:int}
+    MULind (m+1, n, p+n) of MUL (m, n, p)
+  | {m:pos}{n:int}{p:int}
+    MULneg (~m, n, ~p) of MUL (m, n, p)
+// end of [MUL]
+")
+
+3つの整数 m, n, p が与えられた時、prop #stacode("MUL(m, n, p)") は関係 m*n = p をエンコードしています。
+#dyncode("MULbas"), #dyncode("MULind"), #dyncode("MULneg") はそれぞれ次の3つの等式に相当します:
+
+<itemizedlist>
+
+<listitem>
+#para("\
+全ての整数 n について 0*n = 0 、かつ
+")
+</listitem>
+
+<listitem>
+#para("\
+整数 m と n のペアそれぞれについて (m+1)*n = m*n + n 、かつ
+")
+</listitem>
+
+<listitem>
+#para("\
+整数 m と n のペアそれぞれについて (~m)*n = ~(m*n)
+")
+</listitem>
+
+</itemizedlist>
+
+言い換えると、
+dataprop 宣言 #stacode("MUL") は整数の乗法関数を表わす関係をエンコードしています。\
+
+")
+")
+
+#langeng("
 #para("\
 
 It can be readily noticed that the process of encoding a functional
@@ -177,6 +340,15 @@ analogous to implementing a function in a logic programming language such
 as Prolog.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数的な関係 (例: 関数を表わす関係) を dataprop にエンコードする過程は Prolog
+のような論理型プログラミング言語における関数の実装に類似していることにすぐに気が付くでしょう。\
+
+")#comment("para")
+")
 
 </sect1><!--id="encoding_relations_as_dataprops"-->
 
