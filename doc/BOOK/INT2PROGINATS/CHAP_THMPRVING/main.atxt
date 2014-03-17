@@ -41,7 +41,7 @@ ATS プログラミング言語システムには、(対話的な) 定理証明�
 ATS/LF では、全域関数のプログラムとして証明をコンストラクトすることで定理証明は行なわれます。
 このスタイルの定理証明は関数型プログラミングと組み合わさってあるプログラミングパラダイムを産み出すことがすぐに明確になるでしょう。
 このようなパラダイムを ATS では #emphasis("定理証明を使ったプログラミング") と呼んでいます。
-その上、ATS/LF は様々な演繹システムとそれらのメタ属性をエンコードすることができます。\
+その上、ATS/LF は様々な演繹システムとそれらのメタな性質をエンコードすることができます。\
 
 ")
 ")
@@ -991,7 +991,7 @@ establishes that the power function is increasing.\
 ")
 #langja("
 #para("\
-はじめに、2を底にした累乗関数のいくつかの基本的な属性を作ります:
+はじめに、2を底にした累乗関数のいくつかの基本的な性質を作ります:
 
 #atscode("\
 prfun pow2_istot
@@ -1154,8 +1154,14 @@ end // end of [lemma_tree_size_height]
 
 <sect1
 id="example_proving_properties_on_braun_trees">
+#langeng("
 #title("Example: Proving Properties on Braun Trees")
+")
+#langja("
+#title("例: ブラウンツリーの性質を証明する")
+")
 
+#langeng("
 #para("\
 
 As stated previously in this book, a binary tree is a Braun tree if it is
@@ -1175,7 +1181,27 @@ dataprop isBraun (tree) =
 // end of [isBraun]
 ")
 ")
+")
+#langja("
+#para("\
 
+この本で以前示したように、空であるか、もしくは左と右の子がブラウンツリーでなおかつ左の子のサイズから右の子のサイズを引くと0もしくは1なら、そのような二分木はブラウンツリーです。
+形式的には、ブラウンツリーの概念を捕捉するために、次の dataprop #dyncode("isBraun") を宣言できます:
+
+#atscode("\
+dataprop isBraun (tree) =
+  | isBraunE (E) of ()
+  | {tl,tr:tree}
+    {sl,sr:nat | sr <= sl; sl <= sr + 1}
+    isBraunB (
+      B(tl, tr)) of (isBraun tl, isBraun tr, SZ (tl, sl), SZ (tr, sr)
+    ) // end of [isBraunB]
+// end of [isBraun]
+")
+")
+")
+
+#langeng("
 #para("\
 We first prove that there exists a Braun tree of any given size.
 This property can be encoded as follows in ATS:
@@ -1216,7 +1242,50 @@ this keyword can be chosen to replace the keyword #keycode("typedef") (for
 introducing a name and a static term of the sort #keycode("t@ype")).
 
 ")#comment("para")
+")
+#langja("
+#para("\
+与えられたどんなサイズのブラウンツリーも存在することをはじめに証明しましょう。
+この性質は ATS では次のようにエンコードできます:
 
+#atscode("\
+extern
+prfun lemma_existence {n:nat} (): [t:tree] (isBraun (t), SZ (t, n))
+")
+
+事実上、#dyncode("lemma_existence") に割り当てられた型は
+t がブラウンツリーで t のサイズが n であるような自然数 n が与えられた時、木 t が存在することを意味しています。
+次のコードは #dyncode("lemma_existence") の実装です:
+
+#atscode("\
+primplement
+lemma_existence {n} () = let
+  prfun lemma {n:nat} .<n>.
+    (): [t:tree] (isBraun (t), SZ (t, n)) =
+    sif n > 0 then let
+      stadef nl = n / 2 // size for the left subtree
+      stadef nr = n - 1 - nl // size for the right subtree
+      val (pfl1, pfl2) = lemma {nl} ()
+      and (pfr1, pfr2) = lemma {nr} ()
+    in
+      (isBraunB (pfl1, pfr1, pfl2, pfr2), SZB (pfl2, pfr2))
+    end else
+      (isBraunE (), SZE ())
+    // end of [sif]
+in
+  lemma {n} ()
+end // end of [lemma_existence]
+")
+
+#keycode("stadef") は、名前と (なんらかの種の) 静的な項の間に静的な束縛を導入するための ATS
+のキーワードであることに注意してください。
+もし望めば、このキーワードは #keycode("typedef") で置き換えることもできます
+(名前と種 #keycode("t@ype") の静的な項を束縛します)。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Next we show that two Braun trees of the same size are identical. This
 property can be encoded as follows:
@@ -1302,7 +1371,90 @@ and t2 are the same; by the definition of tree equality (encoded by
 #stacode("EQ")), t1 and t2 are the same.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+次に、同じサイズの2つのブラウンツリーが同一であることを示します。
+この性質は次のようにエンコードできます:
 
+#atscode("\
+extern
+prfun
+lemma_unicity
+  {n:nat}{t1,t2:tree}
+(
+  pf1: isBraun t1, pf2: isBraun t2, pf3: SZ (t1, n), pf4: SZ (t2, n)
+) : EQ (t1, t2) // end of [lemma_unicity]
+")
+
+#stacode("EQ") は次の dataprop 宣言で導入されている prop コンストラクタです:
+
+#atscode("\
+dataprop EQ (tree, tree) =
+  | EQE (E, E) of ()
+  | {t1l,t1r:tree}{t2l,t2r:tree}
+    EQB (B (t1l, t1r), B (t2l, t2r)) of (EQ (t1l, t2l), EQ (t1r, t2r))
+// end of [EQ]
+")
+
+#stacode("EQ") が木の等式を帰納的に定義していることは明確です。
+証明関数 #dyncode("lemma_unicity") の実装は次のようになります:
+
+#atscode("\
+primplement
+lemma_unicity
+  (pf1, pf2, pf3, pf4) = let
+  prfun lemma{n:nat}{t1,t2:tree} .<n>.
+  (
+    pf1: isBraun t1, pf2: isBraun t2, pf3: SZ (t1, n), pf4: SZ (t2, n)
+  ) : EQ (t1, t2) =
+    sif n > 0 then let
+      prval SZB (pf3l, pf3r) = pf3
+      prval SZB (pf4l, pf4r) = pf4
+      prval isBraunB (pf1l, pf1r, pf1lsz, pf1rsz) = pf1
+      prval isBraunB (pf2l, pf2r, pf2lsz, pf2rsz) = pf2
+      prval () = SZ_istot (pf1lsz, pf3l) and () = SZ_istot (pf1rsz, pf3r)
+      prval () = SZ_istot (pf2lsz, pf4l) and () = SZ_istot (pf2rsz, pf4r)
+      prval pfeql = lemma (pf1l, pf2l, pf3l, pf4l)
+      prval pfeqr = lemma (pf1r, pf2r, pf3r, pf4r)
+    in
+      EQB (pfeql, pfeqr)
+    end else let
+      prval SZE () = pf3 and SZE () = pf4
+      prval isBraunE () = pf1 and isBraunE () = pf2
+    in
+      EQE ()
+    end // end of [sif]
+in
+  lemma (pf1, pf2, pf3, pf4)
+end // end of [lemma_unicity]
+")
+
+#dyncode("lemma_unicity") のこの実装内の証明関数 #dyncode("SZ_istot")
+は次のインターフェイスを持つことに注意してください:
+
+#atscode("\
+extern
+prfun SZ_istot{t:tree}{n1,n2:int}
+  (pf1: SZ (t, n1), pf2: SZ (t, n2)): [n1==n2] void
+")
+
+これは #stacode("SZ") がその最初のパラメータに関して関数的な関係であることを単純に表わしています。
+つまり、#stacode("SZ") によって関係付けられた t と n があるとい、どのような t が与えられても1つ以上の n
+が存在します。
+
+明確に、この実装に対応する数学的証明は与えられた2つの木 t1 と t2 のサイズ n に対する帰納法で証明されます。
+n が 0 のベースケースでは、t1 と t2 は両方とも空の木なので等しくなります。
+n > 0 の場合、帰納的に、それぞれ t1 と t2 の左の子のサイズである n1l と n2l が同じ値であることを証明します;
+同様に、それぞれ t1 と t2 の右の子のサイズである n1r と n2r が同じ値であることを証明します;
+n1l について帰納法の仮定から、t1 と t2 の左の子は同じです;
+n1r について帰納法の仮定から、t1 と t2 の右の子は同じです;
+木の等式の定義 (#stacode("EQ") にエンコードされています) から、t1 と t2 は同じです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As a comparison, the following code gives another implementation of
@@ -1355,6 +1507,59 @@ right-hand side of the clause. Please find the entirety of the above code
 #mycodelink("CHAP_THMPRVING/brauntree.dats", "on-line").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+比較として、次のコードは #dyncode("lemma_unicity") の別の実装ですが、少し独特のスタイルです:
+
+#atscode("\
+primplement
+lemma_unicity
+  (pf1, pf2, pf3, pf4) = let
+  prfun lemma{n:nat}{t1,t2:tree} .<t1>.
+  (
+    pf1: isBraun t1, pf2: isBraun t2, pf3: SZ (t1, n), pf4: SZ (t2, n)
+  ) : EQ (t1, t2) =
+    case+ (pf1, pf2) of
+    | (isBraunE (), isBraunE ()) => EQE ()
+    | (isBraunB (pf11, pf12, pf13, pf14),
+       isBraunB (pf21, pf22, pf23, pf24)) => let
+//
+        prval SZB (pf31, pf32) = pf3
+        prval SZB (pf41, pf42) = pf4
+//
+        prval () = SZ_istot (pf13, pf31)
+        prval () = SZ_istot (pf23, pf41)
+//
+        prval () = SZ_istot (pf14, pf32)
+        prval () = SZ_istot (pf24, pf42)
+//
+        prval pfeq1 = lemma (pf11, pf21, pf31, pf41)
+        prval pfeq2 = lemma (pf12, pf22, pf32, pf42)
+      in
+        EQB (pfeq1, pfeq2)
+      end
+    | (isBraunE _, isBraunB _) =/=> let
+        prval SZE _ = pf3 and SZB _ = pf4 in (*none*)
+      end
+    | (isBraunB _, isBraunE _) =/=> let
+        prval SZB _ = pf3 and SZE _ = pf4 in (*none*)
+      end
+in
+  lemma (pf1, pf2, pf3, pf4)
+end // end of [lemma_unicity]
+")
+
+この実装は与えられた木 t1 の構造に対する帰納法の証明に対応します。
+特殊記号 #keycode("=/=>") の使用に注意してください。
+これは ATS のキーワードで、パターンマッチに含まれる節が #emphasis("到達不能") であることを ATS
+の型検査器に指示します;
+節の右辺にうそを書くのはプログラマの責務です。
+上記のコード全体は #mycodelink("CHAP_THMPRVING/brauntree.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </sect1><!--id="example_proving_properties_on_braun_trees"-->
 
