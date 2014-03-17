@@ -59,7 +59,7 @@ code for testing.\
 #para("\
 
 この章で解説するコードとテストのための追加コードは
-Please find #mycodelink("CHAP_THMPRVING/", "オンライン")
+#mycodelink("CHAP_THMPRVING/", "オンライン")
 から入手できます。\
 
 ")
@@ -356,8 +356,14 @@ as Prolog.\
 
 <sect1 id="constructing_proofs_as_total_functions">
 
+#langeng("
 #title("Constructing Proofs as Total Functions")
+")
+#langja("
+#title("全域関数として証明をコンストラクトする")
+")
 
+#langeng("
 #para("\
 Theorems are represented as types (or more accurately, props) in
 ATS/LF. For instance, the following prop states that integer multiplication
@@ -373,7 +379,24 @@ encoding of the theorem in ATS/LF, where being total means being pure and
 terminating. Please note that this style of theorem-proving may seem rather
 peculiar to those who have never tried it before.
 ")#comment("para")
+")
+#langja("
+#para("\
+ATS/LF では、定理は型 (もしくはより正確に prop)によって表現されます。
+例えば、次の prop は整数の乗法が可換であると言っています:
 
+#atscode("\
+{m,n:int}{p:int} MUL (m, n, p) -<prf> MUL (n, m, p)
+")
+
+ATS/LF において定理の証明をコンストラクトすることは、
+ATS/LF 内にエンコーディングされた定理である型の全域値 (ほぼ全域関数でしょう) を実装することを意味します。
+ここでの全域とは純粋で停止することを意味しています。
+このスタイルの定理証明はまだ体験していない人にはやや風変わりに見えるかもしれません。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 As a simple introductory example, let us first construct a proof
 function in ATS/LF that is given the following interface:
@@ -428,7 +451,56 @@ for some integer p1 and thus m, n and p are related for p = ~p1 according
 to the rule encoded by #dyncode("MULneg").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+はじめに単純な初歩の例として、次のインターフェイスで与えられる ATS/LF の証明関数をコンストラクトしてみましょう:
 
+#atscode("\
+prfun mut_istot {m,n:int} (): [p:int] MUL (m, n, p)
+")
+
+キーワード #keycode("prfun") は (非証明関数ではなく) 証明関数のインターフェイスを示しています。
+#dyncode("mul_istot") は次の型 (より正確には prop) で宣言されていることに注意してください:
+
+#atscode("\
+{m,n:int} () -<prf> [p:int] MUL (m, n, p)
+")
+
+これは本質的に整数の乗法が全域関数であると言っています:
+2つのどのような整数 m と n が与えられても、構造的帰納的に定義 #stacode("MUL") に従った m, n, p
+の関係にあるような整数 p が存在します。
+次のコードは #dyncode("mul_istot") の実装です:
+
+#atscode("\
+primplement
+mul_istot {m,n} () = let
+  prfun istot
+    {m:nat;n:int} .<m>. (): [p:int] MUL (m, n, p) =
+    sif m > 0 then MULind (istot {m-1,n} ()) else MULbas ()
+  // end of [istot]
+in
+  sif m >= 0 then istot {m,n} () else MULneg (istot {~m,n} ())
+end // end of [mul_istot]  
+")
+
+(#keycode("implement") ではなく) キーワード #keycode("primplement") は証明の実装の開始です。
+内部の証明関数 #dyncode("istot") は、与えられたどんな自然数 m と整数 n についても #stacode("MUL")
+に従った m, n, p の関係にあるような整数 p が存在することを示す証明をエンコードしています。
+キーワード #keycode("sif") は条件が静的な式であるような (証明の) 条件式を作るのに使われます。
+#dyncode("istot") にエンコードされている証明は m について帰納的に進みます;
+もし m > 0 なら、m-1, n, p1 が (m-1 としてときの) 帰納法の仮定関係しているような整数 p1
+が存在し、したがって m, n, p は関係していて #dyncode("MULind") にエンコードされた規則によれば p = p1+n です;
+もし m = 0 なら、m, n, p は関係していて p = 0 です。
+#dyncode("mul_istot") の実装にエンコードされている証明は次のようなものです:
+もし m が自然数なら、#dyncode("istot") で 証明された補題が m, n, p が関係していることを示しています;
+もし m が負の数なら、同じ補題がなんらかの整数 p1 について ~m, n, p1 が関係しているこを示していて、したがって
+m, n, p は関係していて #dyncode("MULneg") にエンコードされた規則によれば p = ~p1 です。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As another example of theorem-proving in ATS/LF, a proof function of
@@ -470,7 +542,50 @@ equivalent to #keycode("val+") (as proofs cannot contain any effects such
 as failures of pattern matching).\
 
 ")
+")
+#langja("
+#para("\
 
+ATS/LF における定理証明の別の例として、
+次のような #dyncode("mul_isfun") という名前の証明関数を見てみましょう:
+
+#atscode("\
+prfn mul_isfun
+  {m,n:int}{p1,p2:int}
+(
+  pf1: MUL (m, n, p1), pf2: MUL (m, n, p2)
+) : [p1==p2] void = let
+  prfun isfun
+    {m:nat;n:int}{p1,p2:int} .<m>.
+  (
+    pf1: MUL (m, n, p1), pf2: MUL (m, n, p2)
+  ) : [p1==p2] void =
+    case+ pf1 of
+    | MULind (pf1prev) => let
+        prval MULind (pf2prev) = pf2 in isfun (pf1prev, pf2prev)
+      end // end of [MULind]
+    | MULbas () => let
+        prval MULbas () = pf2 in ()
+      end // end of [MULbas]
+  // end of [isfun]
+in
+  case+ pf1 of
+  | MULneg (pf1nat) => let
+      prval MULneg (pf2nat) = pf2 in isfun (pf1nat, pf2nat)
+    end // end of [MULneg]
+  | _ =>> isfun (pf1, pf2)
+end // end of [mul_isfun]
+")
+
+キーワード #keycode("prfn") は再帰的ではない証明関数を定義するために使われます。
+またキーワード #keycode("prval") は証明の式、つまり prop 型の式、に関連する名前を束縛します。
+網羅的なパターンマッチの範囲では、#keycode("prval") は #keycode("val+") と等価です
+(証明はパターンマッチの失敗のような効果を含むことができません)。\
+
+")
+")
+
+#langeng("
 #para("\
 
 What #dyncode("mul_isfun") proves is that the relation #stacode("MUL") is
@@ -493,6 +608,29 @@ in the body of #dyncode("isfun") can be readily understood, which
 corresponds to the base case in the inductive proof encoded by
 #dyncode("isfun").\
 
+")
+")
+#langja("
+#para("\
+
+#dyncode("mul_isfun") が証明しているのは、関係 #stacode("MUL") が最初の2つの引数について関数的だということです:
+もし m, n, p1 が #stacode("MUL") によって関係していて、m, n, p2 もまた #stacode("MUL")
+によって関係しているなら、p1 と p2 は等しくなります。
+この文は、m が自然数であるという仮定で内部の証明関数 #dyncode("isfun") によって1番目に証明されます。
+そしてその後この仮定は破棄されます。
+ここで #dyncode("isfun") の本体で1番目にマッチする節を見てみましょう。
+もしこの節が選択されたら、
+#dyncode("pf1") はパターン #dyncode("MULind(pf1prev)") にマッチし、従って #dyncode("pf1prev") の型は自然数
+m1 と 整数 n1, p1 があるとき #dyncode("MUL(m1, n1, q1)") になります。
+そして m=m1+1, n=n1, p1=q1+n1 であるような整数 p1 が存在します。
+これは m2+1=m, n2=n, p2=q2+n2 のような型 #dyncode("MUL(m2, n2, q2)") の #dyncode("pf2prev")
+があるとき、 #dyncode("pf2") が #dyncode("MULind(pf2prev)") でなければならないことを意味しています。
+#dyncode("pf1prev") と #dyncode("pf2prev") について #dyncode("isfun") を呼び出すし、 m-1
+における帰納法の仮定を使うと、q1=q2 を証明でき、これは p1=p2 を示しています。
+#dyncode("isfun") の本体で2番目にマッチする節はたやすく理解できるでしょう。
+これは #dyncode("isfun") にエンコードされた帰納的証明のベースケースに相当します。\
+
+")
 ")
 
 </sect1><!--id="constructing_proofs_as_total_functions"-->
