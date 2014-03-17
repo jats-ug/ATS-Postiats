@@ -781,8 +781,14 @@ m は自然数の範囲を取り、n1 と n2 は整数の範囲を取ります�
 
 <sect1
 id="datasorts">
+#langeng("
 #title("Datasorts")
+")
+#langja("
+#title("datasort")
+")
 
+#langeng("
 #para("\
 A datasort is rather similar to a dataype. However, the former is
 declared in the statics of ATS while the latter in the dynamics of ATS. To
@@ -805,7 +811,30 @@ consisting of exactly one node.  Please note that the trees formed by E and
 B are really just tree skeletons carrying no data.\
 
 ")
+")
+#langja("
+#para("\
+datasort は datatype に少し似ています。
+けれども、後者は ATS の動的な宣言ですが、前者はATSの静的な宣言です。
+datasort の典型的な用途を見るために、
+s と h がそれぞれ与えられた二分木のサイズと高さであるなら、s がきっちり 2<superscript>h</superscript>
+より小さくなることを示す定理を ATS でエンコードしてみましょう。
+二分木を静的に表わすために、まず次の datasort を宣言しましょう:
 
+#atscode("\
+datasort tree = E of () | B of (tree, tree)
+")
+
+宣言した datasort の名前は #stacode("tree") で、関連する2つのコンストラクタがあります:
+それは #stacode("E") と #stacode("B") で、E は空の木を作り、B は与えられた2つの木を結合した木を作ります。
+例えば、#stacode("B(E(), E())") は種 #stacode("tree") の静的な項で、シングルトン木を表わしています。
+つまりノードが1つしかない木です。
+E と B で作った木は全くデータを保持しない骨だけの木であることに注意してください。\
+
+")
+")
+
+#langeng("
 #para("\
 We now declare two dataprops as follows for capturing the notion of
 size and height of trees:
@@ -828,7 +857,31 @@ Given a tree t and an integer s, SZ(t, s) encodes the relation that the
 size of t equals s. Similiarly, given a tree t and an integer h, HZ(t, h)
 encodes the relation that the height of t equals h.
 ")
+")
+#langja("
+#para("\
+次のように木のサイズと高さの概念を捕捉するために2つの dataprop を宣言しましょう:
 
+#atscode("\
+dataprop SZ (tree, int) =
+  | SZE (E (), 0) of ()
+  | {tl,tr:tree}{sl,sr:nat}
+    SZB (B (tl, tr), 1+sl+sr) of (SZ (tl, sl), SZ (tr, sr))
+// end of [SZ]
+
+dataprop HT (tree, int) =
+  | HTE (E (), 0) of ()
+  | {tl,tr:tree}{hl,hr:nat}
+    HTB (B (tl, tr), 1+max(hl,hr)) of (HT (tl, hl), HT (tr, hr))
+// end of [HT]
+")
+
+木 t と整数 s が与えられた時、SZ(t, s) は t のサイズが s に等しいという関係をエンコードします。
+同様に、木 t と整数 h が与えられた時、HZ(t, h) は t の高さが h に等しいという関係をエンコードします。
+")
+")
+
+#langeng("
 #para("\
 As the power function (of base 2) is not available in the statics of ATS,
 we declare a dataprop as follows to capture it:
@@ -843,7 +896,24 @@ dataprop POW2 (int, int) =
 Given two integers h and p, POW2 (h, p) encodes the relation that
 2<superscript>h</superscript> equals p.
 ")
+")
+#langja("
+#para("\
+2を底にした累乗関数は ATS の静的な部分にはないので、それを捕捉する次の dataprop を宣言します:
 
+#atscode("\
+dataprop POW2 (int, int) =
+  | POW2bas (0, 1)
+  | {n:nat}{p:int} POW2ind (n+1, p+p) of POW2 (n, p)
+// end of [POW2]
+")
+
+2つの整数 h と p が与えられた時、POW2 (h, p) は 2<superscript>h</superscript> が p
+に等しいという関係をエンコードします。
+")
+")
+
+#langeng("
 #para("\
 It should be clear by now that the following proof function
 interface encodes the theorem stating that s is strictly less than
@@ -862,7 +932,28 @@ lemma_tree_size_height
 
 Let us now construct an implementation of this proof function as follows.
 ")#comment("para")
+")
+#langja("
+#para("\
+s と h が与えられた二分木のサイズと高さである時、
+s がきっちり 2<superscript>h</superscript> より小さくなることを表わす定理を、
+次の証明関数のインターフェイスがエンコードしていることは明確でしょう:
 
+#atscode("\
+extern
+prfun
+lemma_tree_size_height
+  {t:tree}{s,h:nat}{p:int}
+(
+  pf1: SZ (t, s), pf2: HT (t, h), pf3: POW2 (h, p)
+) : [s < p] void // end of [prfun]
+")
+
+この証明関数の実装を次のようにコンストラクトしてみましょう。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 We first establish some elementary properties on the power function
 (of base 2):
@@ -897,7 +988,44 @@ that the power of each natural number is positive; #dyncode("pow2_inc")
 establishes that the power function is increasing.\
 
 ")
+")
+#langja("
+#para("\
+はじめに、2を底にした累乗関数のいくつかの基本的な属性を作ります:
 
+#atscode("\
+prfun pow2_istot
+  {h:nat} .<h>. (): [p:int] POW2 (h, p) =
+  sif h > 0 then POW2ind (pow2_istot {h-1} ()) else POW2bas ()
+// end of [pow2_istot]
+
+prfun pow2_pos
+  {h:nat}{p:int} .<h>.
+  (pf: POW2 (h, p)): [p > 0] void =
+  case+ pf of
+  | POW2ind (pf1) => pow2_pos (pf1) | POW2bas () => ()
+// end of [pow2_pos]
+
+prfun pow2_inc
+  {h1,h2:nat | h1 <= h2}{p1,p2:int} .<h2>.
+  (pf1: POW2 (h1, p1), pf2: POW2 (h2, p2)): [p1 <= p2] void =
+  case+ pf1 of
+  | POW2ind (pf11) => let
+      prval POW2ind (pf21) = pf2 in pow2_inc (pf11, pf21)
+    end
+  | POW2bas () => pow2_pos (pf2)
+// end of [pow2_inc]
+")
+
+明確に、#dyncode("pow2_istot") は dataprop #stacode("POW2")
+にエンコードされた関係が全域な関係であることを表わしています;
+#dyncode("pow2_pos") は自然数の累乗が正の数になることを証明しています;
+#dyncode("pow2_inc") は累乗関数が単調増加であることを証明しています。\
+
+")
+")
+
+#langeng("
 #para("\
 
 The function #dyncode("lemma_tree_size_height") can be implemented
@@ -959,6 +1087,66 @@ and #keycode("case").  Please find the entirety of the above code
 #mycodelink("CHAP_THMPRVING/tree.dats", "on-line").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数 #dyncode("lemma_tree_size_height") は次のように実装できます:
+
+#atscode("\
+primplement
+lemma_tree_size_height
+  (pf1, pf2, pf3) = let
+//
+prfun
+lemma{t:tree}
+  {s,h:nat}{p:int} .<t>.
+(
+  pf1: SZ (t, s)
+, pf2: HT (t, h)
+, pf3: POW2 (h, p)
+) : [p > s] void =
+(
+  scase t of
+  | B (tl, tr) => let
+      prval SZB (pf1l, pf1r) = pf1
+      prval HTB {tl,tr}{hl,hr} (pf2l, pf2r) = pf2
+      prval POW2ind (pf31) = pf3
+      prval pf3l = pow2_istot {hl} ()
+      prval pf3r = pow2_istot {hr} ()
+      prval () = lemma (pf1l, pf2l, pf3l)
+      prval () = lemma (pf1r, pf2r, pf3r)
+      prval () = pow2_inc (pf3l, pf31)
+      prval () = pow2_inc (pf3r, pf31)
+    in
+      // nothing
+    end // end of [B]
+  | E () => let
+      prval SZE () = pf1
+      prval HTE () = pf2
+      prval POW2bas () = pf3
+   in
+     // nothing
+   end // end of [E]
+) (* end of [lemma] *)
+//
+in
+  lemma (pf1, pf2, pf3)
+end // end of [lemma_tree_size_height]
+")
+
+内部の関数 #dyncode("lemma") は、種 #stacode("tree") の静的な項で構成されている停止性メトリクスを持ちます。
+またこの関数は二分木 #dyncode("t") に関連する構造的な帰納法の証明に対応しています。
+2つの項 t1 と t2 が種 #stacode("tree") として与えられ、t1 が t2 より小さい構造であるなら、t1 は きっちり t2
+より小さくなります。
+明らかに、これは根拠の確かな順序です。
+キーワード #keycode("scase") は (宣言された datasort に関連するコンストラクタで構築される)
+静的な項のcase判定をする動的な式を作るのに使われます。
+そのため、#keycode("sif") と #keycode("scase") の関係は #keycode("if") と #keycode("case") の関係と同じです。
+上記のコード全体は #mycodelink("CHAP_THMPRVING/tree.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </sect1><!--id="datasorts"-->
 
