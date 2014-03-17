@@ -638,8 +638,14 @@ m1 と 整数 n1, p1 があるとき #dyncode("MUL(m1, n1, q1)") になります
 <!-- ****** ****** -->
 
 <sect1 id="example_proving_distributivity_of_multiplication">
+#langeng("
 #title("Example: Proving Distributivity of Multiplication")
+")
+#langja("
+#title("例: 乗法の分配法則を証明する")
+")
 
+#langeng("
 #para("\
 The distributivity of multiplication over addition means that the following
 equation holds
@@ -703,6 +709,70 @@ for m ranging over natural numbers and n1 and n2 ranging over integers. The
 function #dyncode("mul_distribute") can then be implemented immediately
 based on #dyncode("aux").\
 
+")
+")
+#langja("
+#para("\
+加法に対する乗法の分配法則は次の等式を意味しています:
+
+#atscode("\
+m * (n1 + n2) = m * n1 + m * n2
+")
+
+m, n1, n2 は整数の範囲を持ちます。
+この等式を直接エンコードすると次のような (証明の) 関数インターフェイスが得られます:
+
+#atscode("\
+extern
+prfun
+mul_distribute
+  {m:int}{n1,n2:int}{p1,p2:int}
+  (pf1: MUL (m, n1, p1), pf2: MUL (m, n2, p2)): MUL (m, n1+n2, p1+p2)
+// end of [mul_distribute]
+")
+
+端的に言うと、このエンコードは
+m と n1 の積が p1 でありかつ m と n2 の積が p2 であったなら m と (n1+n2) の積は p1+p2 になる、と言っています。
+#dyncode("mul_distribute") の実装は次のようになります:
+
+#atscode("\
+primplement
+mul_distribute
+  {m}{n1,n2}{p1,p2} (pf1, pf2) = let
+  prfun aux
+    {m:nat}
+    {n1,n2:int}
+    {p1,p2:int}
+    .<m>. (
+    pf1: MUL (m, n1, p1), pf2: MUL (m, n2, p2)
+  ) : MUL (m, n1+n2, p1+p2) =
+    case+ (pf1, pf2) of
+    | (MULbas (), MULbas ()) => MULbas ()
+    | (MULind pf1, MULind pf2) => MULind (aux (pf1, pf2))
+  // end of [aux]
+in
+  sif m >= 0 then
+    aux (pf1, pf2)
+  else let
+    prval MULneg (pf1) = pf1
+    prval MULneg (pf2) = pf2
+  in
+    MULneg (aux (pf1, pf2))
+  end
+end // end of [mul_distribute]
+")
+
+本質的に、
+内部の関数 #dyncode("aux") は次の等式を満たす数学的帰納法の証明を素直にエンコードしています:
+
+#atscode("\
+m * (n1 + n2) = m * n1 + m * n2
+")
+
+m は自然数の範囲を取り、n1 と n2 は整数の範囲を取ります。
+関数 #dyncode("mul_distribute") は #dyncode("aux") を使ってすぐに実装できます。\
+
+")
 ")
 
 </sect1><!--id="example_proving_distributivity_of_multiplication"-->
