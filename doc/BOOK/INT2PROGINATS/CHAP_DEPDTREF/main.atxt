@@ -496,8 +496,14 @@ to values of #stacode("option") and #stacode("option0") as well.
 
 <sect1
 id="example_function_templates_on_lists_redux">
+#langeng("
 #title("Example: Function Templates on Lists (Redux)")
+")
+#langja("
+#title("例: リストに対する関数テンプレート (再)")
+")
 
+#langeng("
 #para("\
 
 I have presented previously implementation of some commonly used function
@@ -508,15 +514,42 @@ the corresponding function templates on lists formed with the constructors
 assign more accurate types to these templates.
 
 ")
+")
+#langja("
+#para("\
 
+コンストラクタ #dyncode("list0_nil") と #dyncode("list0_cons")
+で作られるリストに対する関数テンプレートを使った一般的な実装を以前紹介しました。
+ここでは、コンストラクタ #dyncode("list_nil") と #dyncode("list_cons")
+で作られるリストに対する関数テンプレートを次のように実装します。
+この実装によってこれらのテンプレートにより正確な型を割り当てることができます。
+
+")
+")
+
+#langeng("
 #para("\
 Please find the entire code in this section plus some additional
 code for testing #mycodelink("CHAP_DEPDTREF/listfuns.dats", "on-line").
 ")
+")
+#langja("
+#para("\
+この章のコード全体とテストのための追加コードは
+#mycodelink("CHAP_DEPDTREF/listfuns.dats", "オンライン")
+から入手できます。
+")
+")
 
 <sect2 id="list_append">
+#langeng("
 #title("Appending: #dyncode("list_append")")
+")
+#langja("
+#title("連結: #dyncode("list_append")")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the types #stacode("list(T, I1)") and
@@ -541,12 +574,43 @@ Clearly, this implementation of #dyncode("list_append") is not
 tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T と整数 I1 と I2 があり、2つのリスト xs と ys が型 #stacode("list(T, I1)") と #stacode("list(T, I2)")
+で与えられた時、#dyncode("list_append(xs, ys)") は xs と ys を連結した型 #stacode("list(T,I1+I2)")
+のリストを返します:
+
+#atscode("\
+fun{
+a:t@ype
+} list_append
+  {m,n:nat} .<m>.
+(
+  xs: list (a, m), ys: list (a, n)
+) : list (a, m+n) = case+ xs of
+  | list_nil () => ys
+  | list_cons (x, xs) => list_cons (x, list_append (xs, ys))
+// end of [list_append]
+")
+
+#dyncode("list_append") のこの実装が末尾再帰でないことは明確です。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list_append"-->
 
 <sect2 id="list_reverse_append">
+#langeng("
 #title("Reverse Appending: #dyncode("list_reverse_append")")
+")
+#langja("
+#title("逆順連結: #dyncode("list_reverse_append")")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the type #stacode("list(T, I1)") and
@@ -573,12 +637,44 @@ Clearly, this implementation of #dyncode("list_reverse_append") is
 tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T と整数 I1 と I2 があり、2つのリスト xs と ys が型 #stacode("list(T, I1)") と #stacode("list(T, I2)")
+で与えられた時、#dyncode("list_reverse_append(xs, ys)") は xs と ys を逆順にして連結した型
+#stacode("list(T, I1+I2)") のリストを返します:
+
+#atscode("\
+fun{
+a:t@ype
+} list_reverse_append
+  {m,n:nat} .<m>.
+(
+  xs: list (a, m), ys: list (a, n)
+) : list (a, m+n) = case+ xs of
+  | list_nil () => ys
+  | list_cons (x, xs) =>
+      list_reverse_append (xs, list_cons (x, ys))
+// end of [list_reverse_append]
+")
+
+#dyncode("list_reverse_append") のこの実装が末尾再帰であることは明確です。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list_reverse_append"-->
 
 <sect2 id="list_reverse">
+#langeng("
 #title("Reversing: #dyncode("list_reverse")")
+")
+#langja("
+#title("逆順: #dyncode("list_reverse")")
+")
 
+#langeng("
 #para("\
 
 Given a list xs, #dyncode("list_reverse(xs)") returns the reverse of xs,
@@ -591,12 +687,33 @@ list_reverse{n:nat} .<>. // defined non-recursively
 // end of [list_reverse]
 ")
 ")#comment("para")
+")
+#langja("
+#para("\
+
+リスト xs が与えられた時、#dyncode("list_reverse(xs)") は xs の逆順を返します。
+この返値は xs と同じ長さになります:
+
+#atscode("\
+fun{a:t@ype}
+list_reverse{n:nat} .<>. // defined non-recursively
+  (xs: list (a, n)): list (a, n) = list_reverse_append (xs, list_nil)
+// end of [list_reverse]
+")
+")#comment("para")
+")
 
 </sect2><!--id="list_reverse"-->
 
 <sect2 id="list_map">
+#langeng("
 #title("Mapping: #dyncode("list_map")")
+")
+#langja("
+#title("マップ: #dyncode("list_map")")
+")
 
+#langeng("
 #para("\
 
 Given a list xs of the type #stacode("list(T1, I)") for some type T1 and
@@ -622,12 +739,45 @@ xs.  Clearly, this implementation of #dyncode("list_map") is not
 tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T1, T2 と整数 I があり、型 #stacode("list(T1, I)") のリスト xs
+と型 #stacode("T1 -&lt;cloref1&gt; T2") のクロージャ関数 f が与えられた時、#dyncode("list_map(xs)")
+は型 #stacode("list(T2, I))" のリスト ys を返します:
+
+#atscode("\
+fun{
+a:t@ype}
+{b:t@ype
+} list_map
+  {n:nat} .<n>.
+(
+  xs: list (a, n), f: a -<cloref1> b
+) : list (b, n) = case+ xs of
+  | list_nil () => list_nil ()
+  | list_cons (x, xs) => list_cons (f x, list_map (xs, f))
+// end of [list_map]
+")
+
+ys のそれぞれの要素 y は、xs の対応する要素を x とすれば f(x) に等しいことになります。
+#dyncode("list_map") のこの実装が末尾再帰でないことは明確です。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list_map"-->
 
 <sect2 id="list_zip">
+#langeng("
 #title("Zipping: #dyncode("list_zip")")
+")
+#langja("
+#title("zip関数: #dyncode("list_zip")")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the types #stacode("list(T1, I)") and
@@ -656,12 +806,48 @@ corresponding elements in xs and ys, respectively.  Clearly, this
 implementation of #dyncode("list_zip") is not tail-recursive.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T1, T2 と整数 I があり、型 #stacode("list(T1, I)") と #stacode("list(T2, I)") のリスト xs と ys
+がそれぞれ与えられた時、#dyncode("list_zip(xs, ys)") は型 #stacode("list((T1,T2), I)")
+のリスト zs を返します。
+
+#atscode("\
+fun{
+a,b:t@ype
+} list_zip
+  {n:nat} .<n>.
+(
+  xs: list (a, n), ys: list (b, n)
+) : list ((a, b), n) =
+(
+  case+ (xs, ys) of
+  | (list_cons (x, xs),
+     list_cons (y, ys)) =>
+      list_cons ((x, y), list_zip (xs, ys))
+  | (list_nil (), list_nil ()) => list_nil ()
+) (* end of [list_zip] *)
+")
+
+zs のそれぞれの要素 z は、xs と ys の対応する要素をそれぞれ x と y とすれば、ペア (x, y)
+に等しいことになります。#dyncode("list_zip") のこの実装が末尾再帰でないことは明確です。\
+
+")#comment("para")
+")
 
 </sect2><!--id="list_zip"-->
 
 <sect2 id="list_zipwith">
+#langeng("
 #title("Zipping with: #dyncode("list_zipwith")")
+")
+#langja("
+#title("zip with関数: #dyncode("list_zipwith")")
+")
 
+#langeng("
 #para("\
 
 Given two lists xs and ys of the types #stacode("list(T1, I)") and
@@ -692,6 +878,36 @@ Each element z in zs equals f(x, y), where x and y are the corresponding
 elements in xs and ys, respectively.  Clearly, this implementation of
 #dyncode("list_zipwith") is not tail-recursive.
 ")#comment("para")
+")
+#langja("
+#para("\
+
+型 T1, T2, T3 と整数 I があり、2つのリスト xs と ys がそれぞれ型 #stacode("list(T1, I)") と
+#stacode("list(T2, I)") で、クロージャ関数 f が型 #stacode("(T1, T2) -&lt;cloref1&gt; T3")
+で与えられた時、#dyncode("list_zipwith(xs, ys, f)") は型 #stacode("list(T3, I)") のリスト zs を返します:
+
+#atscode("\
+fun{
+a,b:t@ype
+}{c:t@ype
+} list_zipwith
+  {n:nat} .<n>.
+(
+  xs: list (a, n)
+, ys: list (b, n)
+, f: (a, b) -<cloref1> c
+) : list (c, n) = case+ (xs, ys) of
+  | (list_cons (x, xs),
+     list_cons (y, ys)) =>
+      list_cons (f (x, y), list_zipwith (xs, ys, f))
+  | (list_nil (), list_nil ()) => list_nil ()
+// end of [list_zipwith]
+")
+
+zs のそれぞれの要素 z は、xs と ys の対応する要素をそれぞれ x と y とすれば、f(x, y) に等しいことになります。
+#dyncode("list_zipwith") のこの実装が末尾再帰でないことは明確です。
+")#comment("para")
+")
 
 </sect2><!--id="list_zipping_with"-->
 
