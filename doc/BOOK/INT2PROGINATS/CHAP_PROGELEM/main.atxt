@@ -87,7 +87,7 @@ ATS: the former is an integer while the latter is a floating point number
 まず整数の算術式(IAE)からはじめましょう:
 #dyncode("1"), #dyncode("~2"), #dyncode("1+2"), #dyncode("1+2*3-4"),
 #dyncode("(1+2)/(3-4)"), などです。
-マイナス記号はATSでは波形符号 (#dyncode("~")) で表わすことに注意してください。
+負の符号はATSではチルダ (#dyncode("~")) で表わすことに注意してください。
 また浮動小数点数もサポートしています。
 浮動小数点数の定数をいくつか挙げてみましょう:
 #dyncode("1.0"), #dyncode("~2.0"), #dyncode("3."), #dyncode("0.12345"),
