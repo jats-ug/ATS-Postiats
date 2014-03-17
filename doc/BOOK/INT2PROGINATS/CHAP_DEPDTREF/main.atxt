@@ -916,8 +916,14 @@ zs のそれぞれの要素 z は、xs と ys の対応する要素をそれぞ�
 <!-- ****** ****** -->
 
 <sect1 id="example_mergesort_redux">
+#langeng("
 #title("Example: Mergesort on Lists (Redux)")
+")
+#langja("
+#title("例: リストのマージソート (再)")
+")
 
+#langeng("
 #para('\
 
 I have previously presented an <xref linkend="example_mergesort"/>
@@ -930,7 +936,22 @@ function that guarantees the function to be length-preserving, that is, the
 function always returns a list of the same length as the list it sorts.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+以前の章 <xref linkend="example_mergesort"/>
+でコンストラクタ #dyncode("list0_nil") と #dyncode("list0_cons") を使ってリストのマージソートを実装しました。
+この章では コンストラクタ #dyncode("list_nil") と #dyncode("list_cons")
+を使ってリストのマージソートを実装します。
+この実装は以前の章と同じアルゴリズムを用いています。
+しかし、長さを保持するよう関数を保証するために、実装したソート関数に型を割り当てます。
+つまり、この関数はソートする前のリストと同じ長さのリストを常に返します。
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 The following defined function #dyncode("merge") combines two
 ordered list (according to a given ordering) into a single ordered list:
@@ -967,7 +988,44 @@ lists. Note that a termination metric is present for verifying that
 #dyncode("merge") is a terminating function.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+次に定義する関数 #dyncode("merge") は2つの整列済みリストを連結して1つの整列済みリストにします:
 
+#atscode("\
+typedef lte (a:t@ype) = (a, a) -> bool
+
+fun{
+a:t@ype
+} merge
+  {m,n:nat} .<m+n>.
+(
+  xs: list (a, m), ys: list (a, n), lte: lte a
+) : list (a, m+n) =
+  case+ xs of
+  | list_nil () => ys
+  | list_cons (x, xs1) =>
+    (
+    case+ ys of
+    | list_nil () => xs
+    | list_cons (y, ys1) =>
+        if x \lte y then
+          list_cons (x, merge (xs1, ys, lte))
+        else
+          list_cons (y, merge (xs, ys1, lte))
+        // end of [if]
+    ) // end of [list_cons]
+// end of [merge]
+")
+
+#dyncode("merge") に割り当てられている型は、入力された2つのリストの長さの和と等しい長さのリストをこの関数が返すことを明確に示しています。
+停止性メトリクスが #dyncode("merge") が停止する関数であることを検査していることに注意してください。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The following defined function #dyncode("mergesort") mergesorts a
@@ -1029,10 +1087,79 @@ one (while incuring no cost at run-time). I will explain what linear lists
 are elsewhere.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+次に定義する関数 #dyncode("mergesort") は与えられた順序付けでリストをマージソートします:
+
+#atscode("\
+fun{
+a:t@ype
+} mergesort{n:nat}
+(
+  xs: list (a, n), lte: lte a
+) : list (a, n) = let
+  fun msort
+    {n:nat} .<n,n>.
+  (
+    xs: list (a, n), n: int n, lte: lte a
+  ) : list (a, n) =
+    if n >= 2 then split (xs, n, lte, n/2, list_nil) else xs
+  // end of [msort]
+  and split
+    {n:int | n >= 2}{i:nat | i <= n/2} .<n,i>.
+  (
+    xs: list (a, n-n/2+i)
+  , n: int n, lte: lte a, i: int i, xsf: list (a, n/2-i)
+  ) : list (a, n) =
+    if i > 0 then let
+      val+ list_cons (x, xs) = xs
+    in
+      split (xs, n, lte, i-1, list_cons (x, xsf))
+    end else let
+      val xsf = list_reverse<a> (xsf) // make sorting stable!
+      val xsf = list_of_list_vt (xsf) // linear list -> nonlinear list
+      val xsf = msort (xsf, n/2, lte) and xs = msort (xs, n-n/2, lte)
+    in
+      merge (xsf, xs, lte)
+    end // end of [if]
+  // end of [split]
+  val n = list_length<a> (xs)
+in
+  msort (xs, n, lte)
+end // end of [mergesort]
+")
+
+#dyncode("mergesort") に割り当てられた型は
+#dyncode("mergesort") が入力されたリストと同じ長さのリストを返すことを示しています。
+2つの内部関数 #dyncode("msort") と #dyncode("split") は相互再帰的に定義されています。
+そしてそれらの停止性メトリクスは自然数のペアで、整数列は標準の辞書順で比較されます。
+#dyncode("msort") に割り当てられた型は、リスト引数の長さのために整数引数が必要であることを示しています。
+これら2つの整数が一致しないと型エラーを引き
+起こします。
+#dyncode("split") に割り当てられた型は特に有益です。
+この関数の引数と返値の間の関係を表わしていて、コードを理解しようとする人の助けになるでしょう。
+関数 #dyncode("list_reverse") は入力を逆順にした線形リストを返します。
+キャスト関数 #dyncode("list_of_list_vt") は線形リストを非線形のリストに変換します。
+この変換では実行時のコストは発生しません。
+線形リストついては別の章で解説します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Please find the entire code in this section plus some additional
 code for testing #mycodelink("CHAP_DEPDTREF/mergesort.dats", "on-line").
+")
+")
+#langja("
+#para("\
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_DEPDTREF/mergesort.dats", "オンライン")
+から入手できます。
+")
 ")
 
 </sect1><!--id="example_mergesort_redux"-->
