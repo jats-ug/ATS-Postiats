@@ -1168,8 +1168,15 @@ code for testing #mycodelink("CHAP_DEPDTREF/mergesort.dats", "on-line").
 
 <sect1
 id="sequentiality_of_pattern_matching"
->#title("Sequentiality of Pattern Matching")
+>
+#langeng("
+#title("Sequentiality of Pattern Matching")
+")
+#langja("
+#title("パターンマッチの連続性")
+")
 
+#langeng("
 #para("\
 
 In ATS, pattern matching is performed sequentially at run-time. In other
@@ -1251,7 +1258,85 @@ typechecking is essentially done as if the second clause was written as follows:
 ")
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS では、パターンマッチは実行時において連続して評価されます。
+別の言い方をすると、節が選択されるのは与えられた値がその節に関連するパターンガードにマッチし、しかも値がその前にあるどの節のパターンにもマッチしない場合にだけです。
+当然、#dyncode("list_zipwith") 次の実装も型検査できると期待するでしょう:
+
+#atscode("\
+fun{
+a1,
+a2:t@ype
+}{b:t@ype
+} list_zipwith
+  {n:nat}
+(
+  xs1: list (a1, n)
+, xs2: list (a2, n)
+, f: (a1, a2) -<cloref1> b
+) : list (b, n) =
+  case+ (xs1, xs2) of
+  | (list_cons (x1, xs1),
+     list_cons (x2, xs2)) =>
+    (
+      list_cons{b}(f (x1, x2), list_zipwith<a1,a2><b> (xs1, xs2, f))
+    )
+  | (_, _) => list_nil (*void*)
+// end of [list_zipwith]
+")
+
+けれども、この場合は型検査に失敗します。
+ATS では、節の型検査は(連続的と言うよりむしろ)非決定的です。
+この例では、2番目の節が型検査に失敗します。
+与えられたペア #dyncode("(xs1, xs2)") が最初の節のパターンガードへのマッチに失敗することが仮定されていないからです。
+次のように少し修正することで2番目の節は型検査を通ります:
+
+#atscode("\
+  | (_, _) =>> list_nil ()
+")
+
+記号 #keycode("=>") の代わりに #keycode("=>>") を使うと、前の節それぞれのパターンガードに与えられたマッチするかしないか連続的な仮定において、この節が型検査されるべきであると、型検査器に指示します。
+したがって、修正された2番目の節が型検査されると、パターン #dyncode("(_, _)") にマッチするペア
+#dyncode("(xs1, xs2)") は次の2つのパターンのにマッチするはずだということが仮定できます:
+
+<itemizedlist>
+
+<listitem>
+#para("
+#dyncode("(list_cons (_, _), list_nil ())")
+")
+</listitem>
+
+<listitem>
+#para("
+#dyncode("(list_nil (), list_cons (_, _))")
+")
+</listitem>
+
+<listitem>
+#para("
+#dyncode("(list_nil (), list_nil ())")
+")
+</listitem>
+
+</itemizedlist>
+
+同じ長さの #dyncode("xs1") と #dyncode("xs2") が与えられた時、
+型検査器は #dyncode("(xs1, xs2)") は最初の2パターンにマッチしないとたやすく推論できます。
+これら2パターンが除外されたら、2番目の節が次のように書かれていることになり、
+型検査は本質的に終わったとことになります:
+
+#atscode("\
+  | (list_nil (), list_nil ()) => list_nil ()
+")
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 One may be wondering why typechecking clauses is not required to be
@@ -1260,6 +1345,15 @@ if fully enforced, can have a great negative impact on the efficiency of
 typechecking. Therefore, it is a reasonable design to provide the
 programmer with an explict means to occasionally make use of the
 sequentiality assumption needed for typechecking a particular clause.
+")
+")
+#langja("
+#para("\
+
+なぜ節の型検査がデフォルトで連続的に行なわれないのか気にするかもしれません。
+その単純な理由は、全体に適用すると型検査の効率に大きなマイナスの影響があるからです。
+したがって、特定の節の型検査に連続的な仮定を時々使うための明確な手段をプログラマに提供するのは、妥当なデザインなのです。
+")
 ")
 
 </sect1><!--id="sequentiality_of_pattern_matching"-->
