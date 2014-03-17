@@ -1363,8 +1363,15 @@ sequentiality assumption needed for typechecking a particular clause.
 <sect1
 id="example_fun_red-black_trees"
 xreflabel="implementation of functional red-black trees"
->#title("Example: Functional Red-Black Trees")
+>
+#langeng("
+#title("Example: Functional Red-Black Trees")
+")
+#langja("
+#title("例: 関数的な赤黒木")
+")
 
+#langeng("
 #para('\
 
 A red-black tree is defined as a binary tree such that each node in it is
@@ -1377,13 +1384,37 @@ occurring on each path in a red-black tree is often referred to as the
 #emphasis("black height") of the tree.
 
 ')
+")
+#langja("
+#para('\
 
+赤黒木は、
+それぞれのノードが赤もしくは黒であり、
+根からそれぞれの葉までのパスが同じ数の黒ノードを持ち、
+1つの列に赤ノードが2つ連続しないような二分木として定義されます。
+明確に、
+赤黒木の最も長いパスの長さはその木の最も短かいパスの長さの2倍が限界です。
+したがって、赤黒木は平衡木の一種です。
+赤黒木のそれぞれのパス黒ノードの数はしばしばその木の #emphasis("黒高さ (black height)") と呼ばれます。
+
+')
+")
+
+#langeng("
 #para('\
 
 Formally, a datatype precisely for red-black trees can be declared in ATS
 as follows:
 
 ')
+")
+#langja("
+#para('\
+
+形式的に、赤黒木のデータ型は ATS では次のように宣言できます:
+
+')
+")
 
 #atscode('\
 \#define BLK 0
@@ -1398,6 +1429,7 @@ datatype rbtree
 // end of [rbtree]
 ')
 
+#langeng("
 #para('\
 
 The color of a tree is the color of its root node or is black if the tree
@@ -1407,7 +1439,18 @@ carrying elements of the type T that is of the color C and the black height
 BH.
 
 ')
+")
+#langja("
+#para('\
 
+木の色は、その木が空であれば根ノードの色は黒になります。
+型 T と整数で表わされる色  C と整数 BH が与えられた時、
+型 #stacode("rbtree(T, C, BH)") は色 C で黒高さ BH で型 T の要素を持つような赤黒木を表わします。
+
+')
+")
+
+#langeng("
 #para('\
 
 When implementing various operations (such as insertion and deletion) on a
@@ -1419,6 +1462,19 @@ any intermediate trees containing color violations. To address this issue,
 we can declare #stacode("rbtree") as follows:
 
 ')
+")
+#langja("
+#para('\
+
+赤黒木に対する (挿入や削除のような) 様々な操作を実装する際、
+はじめに赤ノードの連続を許すような色の違反を含む中間生成の木をコンストラクトする必要がしばしばあります。
+それからそのような違反を修正するために木を回転させるのです。
+このためには上記のデータ型 #stacode("rbtree") は厳格すぎます。
+色が違反するようなどんな中間生成した木にも型を割り当てられないのです。
+この問題に対処するために、次のような #stacode("rbtree") を宣言しましょう:
+
+')
+")
 
 #atscode('\
 datatype rbtree
@@ -1441,6 +1497,7 @@ where rbtree0 (a:t@ype, c:int, bh:int) = rbtree (a, c, bh, 0)
 
 ')
 
+#langeng("
 #para('\
 
 We count each occurrence of two red nodes in a row as one color violation.
@@ -1452,7 +1509,19 @@ contains exactly V color violations. Therefore, the type
 color violations).
 
 ')
+")
+#langja("
+#para('\
 
+1つの列における2つの赤ノードの発生を1つの色違反として数えましょう。
+型 T と整数として表わされる色 C と整数 BH, V が与えられた時、型 #stacode("rbtree(T, C, BH, V)")
+は型 T の要素を持ち、色 C で、黒高さ BH で、きっかり V 回の色違反を含む木を表わします。
+したがって、型 #stacode("rbtree(T, C, BH, 0)") は色違反のない有効な赤黒木です。
+
+')
+")
+
+#langeng("
 #para('\
 
 Given a tree containing at most one color violation, an element and another
@@ -1460,6 +1529,15 @@ tree containing no violations, the following operation constructs a valid
 red-black tree:
 
 ')
+")
+#langja("
+#para('\
+
+1以上の色違反を含む木と1つの要素、別の色違反を含まない木が与えられた時、
+次の操作は有効な赤黒木をコンストラクトします:
+
+')
+")
 
 #atscode('\
 fn{
@@ -1479,6 +1557,7 @@ in
 end // end of [insfix_l]
 ')
 
+#langeng("
 #para('\
 
 By simply reading the interface of #dyncode("insfix_l"), we can see that the
@@ -1486,13 +1565,31 @@ two tree arguments are required to be of the same black height bh for some
 natural number bh and the returned tree is of the black height bh+1.
 
 ')
+")
+#langja("
+#para('\
 
+#dyncode("insfix_l") のインターフェイスを読んでみることで、引数である2つの木は自然数の黒高さ bh
+が同じで、なおかつ返値の木の黒高さが bh+1 でなくてはいけないことが分かります。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following operation #dyncode("insfix_r") is just the mirror image of
 #dyncode("insfix_l"):
 
 ')
+")
+#langja("
+#para('\
+
+次の操作 #dyncode("insfix_r") は #dyncode("insfix_l") の単純な鏡像です:
+
+')
+")
 
 #atscode('\
 fn{
@@ -1512,6 +1609,7 @@ in
 end // end of [insfix_r]
 ')
 
+#langeng("
 #para('\
 
 The preparation for implementing insertion on a red-black tree is all done
@@ -1521,6 +1619,16 @@ tree is always a valid red-black tree itself. This guarantee is precisely
 captured in the following interface for insertion:
 
 ')
+")
+#langja("
+#para('\
+
+これで赤黒木への挿入を実装する準備が整いました。
+与えられた赤黒木に要素を挿入した木は常に有効な赤黒木であることを保証するような、挿入の実装できます。
+次の挿入インターフェイスが正確に保証します:
+
+')
+")
 
 #atscode('\
 extern
@@ -1533,6 +1641,7 @@ a:t@ype
 ) : [bh1:nat] rbtree0 (a, BLK, bh1)
 ')
 
+#langeng("
 #para('\
 
 Interestingly, this interface also implies that the tree returned by a call
@@ -1540,6 +1649,16 @@ to #dyncode("rbtree_insert") is always black. The code presented below
 gives an implementation of #dyncode("rbtree_insert"):
 
 ')
+")
+#langja("
+#para('\
+
+興味深いことに、このインターフェイスは #dyncode("rbtree_insert")
+を呼び出して得られる木が常に黒であることも示しています。
+以下のコードは #dyncode("rbtree_insert") の実装です:
+
+')
+")
 
 #atscode('\
 implement{a}
@@ -1589,6 +1708,7 @@ in
 end // end of [rbtree_insert]
 ')
 
+#langeng("
 #para('\
 
 Note that the type assigned to the inner function #dyncode("ins") is so
@@ -1604,7 +1724,22 @@ the other hand, knowing this invariant is essential to gaining a thorough
 understanding of the insertion algorithm on red-black trees.
 
 ')
+")
+#langja("
+#para('\
 
+内部関数 #dyncode("ins")
+に割り当てれらた型が、赤黒木にへの挿入方法について形式的な説明を事実上与えていることに注意してください。
+このアルゴリズムの内部構造についてほとんど理解していない疑似コードとして書かれたアルゴリズムを単に頼って、多くのプログラマは赤黒木を実装します。
+例えば、上記の内部関数 #dyncode("ins") がC言語で実装されたとしたら、
+その関数が常に与えられた赤黒木の黒高さを管理できているか、判断できるプログラマはほとんどいないでしょう。
+そして木の値が赤になった場合、色違反のある木を作ってしまうかもしれません。
+一方、この不変条件は赤黒木の挿入アルゴリズムとしてよく知られたものと本質的に同じです。
+
+')
+")
+
+#langeng("
 #para('\
 
 The insertion operation implemented above does not insert an element if it
@@ -1617,7 +1752,21 @@ inserted. I will explain elsewhere what call-by-reference is and how it is
 supported in ATS.
 
 ')
+")
+#langja("
+#para('\
 
+もし既に与えられた赤黒木に要素が含まれていたら、上記で実装した挿入操作はその要素を挿入しません。
+もしそのような場合、呼び出し元に知らせた方が望ましいかもしれません。
+例えば、この目的のために例外を発生させることもできます。
+代案として、#dyncode("rbtree_insert") に参照渡し (call-by-reference) 引数を与えて、
+挿入しようとした要素が実際に挿入されたのか示すフラグを返す方法があります。
+別の章で参照渡しの意味とATSでそれがどのようにサポートされているのか解説します。
+
+')
+")
+
+#langeng("
 #para('\
 
 Often deleting an element from a binary search tree is significantly more
@@ -1628,12 +1777,34 @@ trees that can guarantee based on types each tree returned by the operation
 being a valid red-black tree (containing no color violations).
 
 ')
+")
+#langja("
+#para('\
 
+しばしば2分探索木の要素の削除を実装するのは挿入よりもきわめて難しいことがあります。
+これは赤黒木において特に顕著です。
+興味のある読者には、型を使って返値の木が有効な赤黒木であることを保証する赤黒木の削除操作の実装コードとして、
+ATS の libats ライブラリをおすすめします。
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find the entire code in this section plus some additional code for
 testing #mycodelink("CHAP_DEPDTREF/rbtree.dats", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_DEPDTREF/rbtree.dats", "オンライン")
+から入手できます。
+
+")
 ")
 
 </sect1><!--id="example_fun_red-black_trees"-->
