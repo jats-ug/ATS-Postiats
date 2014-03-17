@@ -27,6 +27,10 @@
 *)
 
 (* ****** ****** *)
+
+#define ATS_DYNLOADFLAG 0
+
+(* ****** ****** *)
 //
 #include
 "share/atspre_define.hats"
@@ -79,6 +83,11 @@ implement{
 //
 (* ****** ****** *)
 
+staload
+TOPWIN = "./the_topwin.dats"
+
+(* ****** ****** *)
+
 implement{}
 gtkcairotimer_main
   ((*void*)) = () where
@@ -89,7 +98,10 @@ val win0 =
 //
 val win0 = win0 // HX: fix the master type
 //
-val () = assertloc (ptrcast(win0) > 0)
+val p_win0 = ptrcast(win0)
+val () = assertloc (p_win0 > 0)
+//
+val () = $TOPWIN.set (p_win0)
 val () = gtk_window_set_default_size (win0, (gint)600, (gint)400)
 //
 val opt = gtkcairotimer_title ()

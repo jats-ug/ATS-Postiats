@@ -509,6 +509,17 @@ d2e0.d2exp_node of
     jsonval_conarg4 ("D2Elam_dyn", jsv1, jsv2, jsv3, jsv4)
   end // end of [D2Elam_dyn]
 //
+| D2Elam_met
+    (ref, s2es_met, d2e_body) => let
+(*
+    val jsv1 = jsonize_d2varlst (!ref)
+*)
+    val jsv2 =
+      jsonize_s2explst (0(*flag*), s2es_met)
+    val jsv3 = jsonize_d2exp (d2e_body)
+  in
+    jsonval_conarg2 ("D2Elam_met", jsv2, jsv3)
+  end // end of [D2Elam_met]
 | D2Elam_sta
     (s2vs, s2ps, d2e) => let
     val jsv1 = jsonize_s2varlst (s2vs)
@@ -714,6 +725,15 @@ d2c0.d2ecl_node of
   in
     jsonval_conarg3 ("D2Cextcode", knd, pos, code)
   end // end of [D2Cextcode]
+//
+| D2Cdcstdecs
+    (knd, dck, d2cs) => let
+    val knd = jsonval_int (knd)
+    val dck = jsonize_dcstkind (dck)
+    val d2cs = jsonize_list_fun (d2cs, jsonize_d2cst)
+  in
+    jsonval_conarg3 ("D2Cdcstdecs", knd, dck, d2cs)
+  end // end of [D2Cdcstdecs]
 //
 | D2Cimpdec
     (knd, i2mp) => let
