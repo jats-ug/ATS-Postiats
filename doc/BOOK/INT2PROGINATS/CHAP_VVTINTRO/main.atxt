@@ -13,10 +13,16 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="introduction-to-views-and-viewtypes">
+#langeng("
 #title("Introduction to Views and Viewtypes")
+")
+#langja("
+#title("view と viewtype 入門")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para('\
 
 Probably the single greatest motivation behind the development of ATS is
@@ -36,13 +42,45 @@ demonstrate the validity of linear propositions, which are referred to as
 views in ATS, for classifying resources as well as capabilities.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+おそらく、ATS 開発の背後にある最も大きな動機は、ATS
+をオペレーティングシステムのカーネルの中で実行される安全で信頼できるプログラムを効果的に構築できるようなプログラミング言語にしたいという要求です。
+一見したところ自然なアプローチは、
+C言語の "安全な" サブセットを苦心して作り上げることに集中したり、
+C言語の "安全でない" プログラミングの機能のラッパーを作ったりすることでしょう。
+このようなアプローチの代わりに、ATS は定理証明によるプログラミングのパラダイムを信頼しています。
+このおかげで、メモリのようなリソースが誤って仕様されたり誤って処置されたりするのを防ぐことができます。
+一般化と柔軟性を両立した安全性のためにこのアプローチを指示しています。
+例えば、ATS ではポインタ演算がサポートされているにもかわらず、ATS
+で構築された型付けされたプログラムは実行時にバッファオーバーランを引き起しません。
+より具体的には、もしポインタがデリファレンスされると、
+ATS はデリファレンス操作の安全性を実証するような証明を要求します。
+このような証明は線形命題の正当性を立証することで構築されます。
+この線形命題は ATS では view と呼ばれ、リソースおよび性能を分類します。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("CHAP_VVTINTRO/", "on-line") the code presented
 for illustration in this chapter.
 
 ')
+")
+#langja("
+#para('\
+
+この章で紹介するコードは
+#mycodelink("CHAP_VVTINTRO/", "オンライン")
+から入手できます。
+
+')
+")
 
 <!-- ****** ****** -->
 
