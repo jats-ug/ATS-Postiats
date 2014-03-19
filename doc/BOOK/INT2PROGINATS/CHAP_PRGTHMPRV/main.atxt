@@ -668,8 +668,14 @@ Please find the entirety of the above presented code plus some testing code
 
 <sect1
 id="example_another_verified_factorial">
+#langeng("
 #title("Example: Another Verified Factorial")
+")
+#langja("
+#title("例: もう一つの検証された階乗")
+")
 
+#langeng("
 #para("\
 
 The function #dyncode("ifact") presented in the section on <xref
@@ -731,12 +737,81 @@ function on i. This precondition is captured by the type assigned to
 the implementation of #dyncode("ifact2").
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+<xref linkend=\"specifying_with_precision\"/> の章で示した関数 #dyncode("ifact")
+は階乗関数の検証された実装の一つでした。
+その型は #dyncode("ifact") が dataprop #stacode("FACT")
+にエンコードされた階乗の仕様を実装していることを保証しています。
+明確に、#dyncode("ifact") の実装は #stacode("FACT") の宣言にきっちり従っています。
+もし後者をロジックプログラムと考えれば、本質的に前者はロジックプログラムから展開された関数的なバージョンです。
+けれども、仕様の実装の実際はアルゴリズム的な仕様からしばしば遠く外れたものになることがあります。
+例えば、階乗の検証された実装を末尾再帰として得たいかもしれません。
+これは次のようになるでしょう:
+
+#atscode("\
+fun ifact2
+  {n:nat} .<>.
+(
+  n: int (n)
+) :<> [r:int] (FACT (n, r) | int r) = let
+  fun loop
+    {i:nat | i <= n}{r:int} .<n-i>.
+  (
+    pf: FACT (i, r) | n: int n, i: int i, r: int r
+  ) :<> [r:int] (FACT (n, r) | int r) =
+    if n - i > 0 then let
+      val (pfmul | r1) = (i+1) imul2 r in loop (FACTind (pf, pfmul) | n, i+1, r1)
+    end else (pf | r) // end of [if]
+  // end of [loop]
+in
+  loop (FACTbas () | n, 0, 1)
+end // end of [ifact2]
+")
+
+関数 #dyncode("ifact2") には #dyncode("ifact2") が階乗の検証された実装であることを示す型が割り当てられています。
+内部の関数 #dyncode("loop") は明確に末尾再帰で、関数 #dyncode("ifact2")
+はこの関数を呼び出すことで定義されています。
+もし型と証明を削除したら、関数 #dyncode("ifact2") は本質的に次のような定義になります:
+
+#atscode("\
+fun ifact2 (n) = let
+  fun loop (n, i, r) =
+    if n - i > 0 then let
+      val r1 = (i+1) * r in loop (n, i+1, r1)
+    end else r
+  // end of [loop]
+in
+  loop (n, 0, 1)
+end // end of [ifact2]
+")
+
+内部の関数 #dyncode("loop") が3つの引数 n, i, r で呼び出される時、
+この呼び出しの前提条件は i が n 以下の自然数であり、なおかつ r が fact(i) つまり i の階乗の値に等しいことです。
+この前提条件は #dyncode("loop") に割り当てられた型によって捕捉されています。
+したがって、#dyncode("ifact2") の実装において、この条件は #dyncode("loop") の呼び出し毎に強制されます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("CHAP_PRGTHMPRV/ifact23.dats", "on-line")
 the entirety of the above presented code plus some testing code.\
 
+")
+")
+#langja("
+#para("\
+
+この章のコード全体とテストコードは
+#mycodelink("CHAP_PRGTHMPRV/ifact23.dats", "オンライン")
+から入手できます。\
+
+")
 ")
 
 </sect1><!--"example_another_verified_factorial"-->
