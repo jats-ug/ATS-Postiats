@@ -86,8 +86,14 @@ for illustration in this chapter.
 
 <sect1
 id="views_for_pointers">
+#langeng("
 #title("Views for Memory Access through Pointers")
+")
+#langja("
+#title("ポインタを通じたメモリアクセスのための view")
+")
 
+#langeng("
 #para('\
 
 A view is a linear version of prop, where the word #emphasis("linear")
@@ -110,7 +116,33 @@ ptr_set0 {l:addr} (pf: a? @ l | p: ptr l, x: a): (a @ l | void)
 ')
 
 ')
+")
+#langja("
+#para('\
 
+view は prop の線形バージョンです。
+#emphasis("線形 (linear)") という単語は、
+Jean-Yves Girard によって考案されたリソースを意識した論理である線形論理に由来します。
+view を表わす静的な項のためにビルトインの種 #stacode("view") があります。
+型 T とメモリ位置 L が与えられた時、#stacode("T@L") という view を作ることができ、
+これは型 T の値が位置 L にあるメモリに格納されていることを示しています。
+#stacode("@") は中置の特殊演算子です。
+この形の view は実用上非常に一般的で、それらはしばしば at-view と呼ばれます。
+例として、次の関数テンプレート #dyncode("ptr_get0") と #dyncode("ptr_set0") は、
+与えられたポインタを通して読み書きをするためで、at-view を含む型が割り当てられています:
+
+#atscode('\
+fun{a:t@ype}
+ptr_get0 {l:addr} (pf: a @ l | p: ptr l): (a @ l | a)
+
+fun{a:t@ype}
+ptr_set0 {l:addr} (pf: a? @ l | p: ptr l, x: a): (a @ l | void)
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Note that #stacode("ptr") is a type constructor that forms a type
@@ -119,7 +151,18 @@ Note that #stacode("ptr") is a type constructor that forms a type
 pointer that points to the location denoted by L.
 
 ')
+")
+#langja("
+#para('\
 
+#stacode("ptr") は型コンストラクタで、種 #stacode("addr") の静的な項 L に適用されると型 #stacode("ptr(L)")
+を作ることに注意してください。
+型 #stacode("ptr(L)") の唯一の値は L によって示された位置を指すポインタです。
+
+')
+")
+
+#langeng("
 #para('\
 
 Given a type T, the function #dyncode("ptr_get0&lt;T&gt;") is assigned the
@@ -141,18 +184,48 @@ and another proof of the same view #stacode('T@L') is generated when
 memory location L would have been precluded.
 
 ')
+")
+#langja("
+#para('\
 
+型 T が与えられた時、関数 #dyncode("ptr_get0&lt;T&gt;") には次の型が割り当てられます:
+
+#atscode('\
+{l:addr} (T @ l | ptr (l)) -> (T @ l | T)
+')
+
+これは view #stacode("T@L") の証明とどこか L について型 #stacode("ptr(L)") のポインタに適用すると、
+関数 #dyncode("ptr_get0&lt;T&gt;") が view #stacode("T@L") の証明と型 T の値を返すことを示しています。
+直感的に言うと、#stacode("T@L") が線形であるようなリソースである view #stacode("T@L")
+の証明は、#dyncode("ptr_get0&lt;T&gt;") に渡された時に #emphasis("消費 (consumed)") されます。
+さらに同じ view #stacode('T@L') の別の証明が #dyncode("ptr_get0&lt;T&gt;") が返る時に生成されます。
+view #stacode('T@L') の証明が返らなければならないことに注意してください。
+さもなければ後続のメモリ位置 L へのアクセスは不可能になります。
+
+')
+")
+
+#langeng("
 #para('\
 
 Similarly, the function #dyncode("ptr_set0&lt;T&gt;") is assigned the
 following type:
 
 ')
+")
+#langja("
+#para('\
+
+同様に、関数 #dyncode("ptr_set0&lt;T&gt;") には次の型が割り当てられます:
+
+')
+")
 
 #atscode('\
 {l:addr} (T? @ l | ptr (l)) -> (T @ l | void)
 ')
 
+#langeng("
 #para('\
 
 Note that T? is a type for values of size #stacode("sizeof(T)") that are
@@ -164,7 +237,20 @@ memory location at L is assumed to be uninitialized when
 #dyncode("ptr_set0&lt;T&gt;") is called.
 
 ')
+")
+#langja("
+#para('\
 
+T? は未初期化であることを仮定したサイズ #stacode("sizeof(T)") の値のための型であることに注意してください。
+関数 #dyncode("ptr_set0&lt;T&gt;") は、view #stacode("T?@L") の証明と型 #stacode("ptr(L)")
+のポインタ、型 T の値に適用されると、view #stacode("T@L") の証明を返します。
+view #stacode("T?@L") の使用は、#dyncode("ptr_set0&lt;T&gt;")
+が呼び出された時に、L のメモリ位置が未初期化であると仮定されていることを示しています。
+
+')
+")
+
+#langeng("
 #para('\
 
 As an example, a function template #dyncode("swap0") is implemented as follows
@@ -187,7 +273,33 @@ end // end of [swap0]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+例として、与えられた2つの位置にあるメモリコンテンツをスワップする関数テンプレート #dyncode("swap0")
+は次のように実装されます:
+
+#atscode('\
+fn{a:t@ype}
+swap0 {l1,l2:addr}
+(
+  pf1: a @ l1, pf2: a @ l2
+| p1: ptr (l1), p2: ptr (l2)
+) : (a @ l1, a @ l2 | void) = let
+  val (pf1 | x1) = ptr_get0<a> (pf1 | p1)
+  val (pf2 | x2) = ptr_get0<a> (pf2 | p2)
+  val (pf1 | ()) = ptr_set0<a> (pf1 | p1, x2)
+  val (pf2 | ()) = ptr_set0<a> (pf2 | p2, x1)
+in
+  (pf1, pf2 | ())
+end // end of [swap0]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Compared to a corresponding implementation in C, the verbosity of this one
@@ -198,7 +310,19 @@ now present some special syntax to significantly alleviate the need for
 such administrative code.
 
 ')
+")
+#langja("
+#para('\
 
+対応するC言語の実装と比較して、ATSでのこの実装が冗長であることは明白です。
+特に、リソースを使用する関数の呼び出しを通じて、線形の証明が #emphasis("分断") されてしまうため、
+多くの #emphasis("管理上の") コードを書くことになってしまいます。
+ここで、このような管理上のコードの必要性を大きく緩和するために、いくつか特別な構文を紹介します。
+
+')
+")
+
+#langeng("
 #para('\
 
 The function templates #dyncode("ptr_get1") and #dyncode("ptr_set1") are
@@ -264,7 +388,69 @@ Clearly, this implementation is considerably cleaner when compared to the
 above implementation of #dyncode("swap0").
 
 ')
+")
+#langja("
+#para('\
 
+関数テンプレート #dyncode("ptr_get1") と #dyncode("ptr_set1") は次のようなインターフェイスを持ちます:
+
+#atscode('\
+fun{a:t@ype}
+ptr_get1 {l:addr} (pf: !a @ l >> a @ l | p: ptr l): a
+
+fun{a:t@ype}
+ptr_set1 {l:addr} (pf: !a? @ l >> a @ l | p: ptr l, x: a): void
+')
+
+明確に、それぞれの型 T について、関数 #dyncode("ptr_get1&lt;T&gt;") には次の型が割り当てられます:
+
+#atscode('\
+{l:addr} (!T @ l >> T @ l | ptr(l)) -> T
+')
+
+どこか L と型 #stacode("ptr(L)") のポインタ p について、view #stacode("T@L") の線形の証明 pf
+が与えられた時、関数呼び出し #dyncode("ptr_get1&lt;T&gt;")(pf, p) は型 T の値を返すことが期待されています。
+けれども、証明 pf は消費されません。
+その代わりに、関数呼び出しが返った後も view #stacode("T@L") の証明はまだ在ります。
+同様に、関数 #dyncode("ptr_set1&lt;T&gt;") には次の型が割り当てられます:
+
+#atscode('\
+{l:addr} (!T? @ l >> T @ l | ptr(l), T) -> void
+')
+
+どこか L と型 #stacode("ptr(L)") のポインタ p、型 T の値 v について、view #stacode("T?@L") の線形の証明 pf
+が与えられた時、関数呼び出し #dyncode("ptr_set1&lt;T&gt;")(pf, p, v) は pf の view を #stacode("T?@L")
+から #stacode("T@L") に変えて、void 値を返すことが期待されています。
+一般に、view V1 と V2 が与えられた時、f には次の形の型が与えられます:
+
+#atscode('\
+(...,!V1 >> V2, ...) -> ...
+')
+
+そのとき、view V1 の証明の値 pf について、関数呼び出し f(..., pf, ...) は返る時に pf の view を V2 に変えます。
+V1 と V2 が同じ場合には、!V1 >> V2 は単に !V1 と書くこともできます。
+例として、
+与えられた2つのメモリ位置のコンテンツをスワップする関数テンプレート #dyncode("swap1") は次のように実装されます:
+
+#atscode('\
+fn{a:t@ype}
+swap1 {l1,l2:addr} (
+  pf1: !a@l1, pf2: !a@l2 | p1: ptr l1, p2: ptr l2
+) : void = let
+  val x = ptr_get1<a> (pf1 | p1)
+  val () = ptr_set1<a> (pf1 | p1, ptr_get1<a> (pf2 | p2))
+  val () = ptr_set1<a> (pf2 | p2, x)
+in
+  // nothing
+end // end of [swap1]
+')
+
+この実装は #dyncode("swap0") の上記の実装と比較してかなり綺麗なことは明確です。
+
+')
+")
+
+#langeng("
 #para('\
 
 A further simplied implementation of #dyncode("swap1") is given as follows:
@@ -295,6 +481,37 @@ that this implementation of #dyncode("swap1") makes no use of
 administrative code for handling linear proofs explicitly.
 
 ')
+")
+#langja("
+#para('\
+
+#dyncode("swap1") のさらに簡単な実装は次のようになります:
+
+#atscode('\
+fn{a:t@ype}
+swap1{l1,l2:addr}
+(
+  pf1: !a@l1, pf2: !a@l2
+| p1: ptr (l1), p2: ptr (l2)
+) : void = let
+  val tmp = !p1 in !p1 := !p2; !p2 := tmp
+end // end of [swap1]
+')
+
+どこか L について型 #stacode("ptr(L)") のポインタ p が与えられた時、#dyncode("!p")
+はメモリ位置 L に保存された値を生じます。
+#dyncode("!p") を型検査すると、型検査器はまずはじめに現在有効な全ての証明の中で T について
+view #stacode("T@L") の証明を検索します:
+もしそのような証明 pf が見つかったら、#dyncode("!p") は本質的に #dyncode("ptr_get1(pf | p)")
+に詳細化されて、型検査は終わります。
+#dyncode("!p") が左辺値 (詳細は後に説明します) である場合、
+なんらかの値 v について #dyncode("!p := v") のような割り当てで使うこともできます。
+もし現在有効な全ての証明の中である型 T について at-view #stacode("T@L") の証明が見つかれば、
+型検査器は型検査のために #dyncode("!p := v") を #dyncode("ptr_set1(pf | p, v)") に詳細化します。
+#dyncode("swap1") のこの実装は線形の証明を明示的に扱うための管理上のコードを使っていないことに注意してください。
+
+')
+")
 
 </sect1>#comment("sect1/id=views_for_pointers")
 
