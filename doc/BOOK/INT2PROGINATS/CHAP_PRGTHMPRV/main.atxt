@@ -274,8 +274,14 @@ a:t@ype
 
 <sect1
 id="example_safe_matrix_subscripting">
+#langeng("
 #title("Example: Safe Matrix Subscripting")
+")
+#langja("
+#title("例: 安全な行列の添字演算")
+")
 
+#langeng("
 #para("\
 
 Internally, a matrix of the dimension m by n is represented as an array
@@ -348,7 +354,79 @@ implementation of #dyncode("matrix_get") to show i*n+j &lt; m*n proves
 (m-1-i)*n &gt;= 0, which clearly implies m*n >= i*n+n > i*n+j.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+内部では、次元 m x n の行列はサイズ m*n の配列として表現されます。
+行列の添字演算のために、次のインターフェイスの関数テンプレートを実装する必要があります:
+
+#atscode("\
+extern
+fun{
+a:t@ype
+} matrix_get
+  {m,n:int}{i,j:nat | i < m; j < n}
+  (A: arrayref (a, m*n), col: int n, i: int i, j: int j): a
+// end of [matrix_get]
+")
+
+行列が行優先スタイルで表現されていると仮定しましょう。
+すると、その行列の i と j で指定された要素は、その行列を表現する配列では i*n + j で指定されることになります。
+ここで、i と j はそれぞれ m と n より小さい自然数です。
+けれども、次の実装の型検査には失敗します:
+
+#atscode("\
+implement{a}
+matrix_get (A, n, i, j) = A[i*n+j] // it fails to typecheck!!!
+")#comment("para")
+
+この推論失敗の簡単な理由は、i*n+j が m*n より正確に小さい自然数であることを、
+ATS の制約ソルバが自動的に検査できないためです。
+型検査を通る #dyncode("matrix_get") の実装は次のようになります:
+
+#atscode("\
+implement
+{a}(*tmp*)
+matrix_get
+  {m,n}{i,j}
+  (A, n, i, j) = let
+//
+  val (pf_i_n | _i_n) = imul2 (i, n)
+  prval () = mul_nat_nat_nat (pf_i_n)
+  prval () = mul_gte_gte_gte{m-1-i,n} ()
+  prval () = mul_elim (pf_i_n)
+//
+in
+  A[_i_n+j]
+end // end of [matrix_get]
+")
+
+#dyncode("matrix_get") の本体から呼び出される関数には次のインターフェイスが割り当てられています:
+
+#atscode("\
+fun imul2{i,j:int}
+  (i: int i, j: int j): [ij:int] (MUL (i, j, ij) | int ij)
+
+prfun mul_nat_nat_nat
+  {i,j:nat}{ij:int} (pf: MUL (i, j, ij)): [ij >= 0] void
+
+prfun mul_gte_gte_gte
+  {m,n:int | m >= 0; n >= 0} ((*void*)): [m*n >= 0] void
+
+prfun mul_elim
+  {i,j:int}{ij:int} (pf: MUL (i, j, ij)): [i*j==ij] void
+")
+
+m と n が自然数で、i と j がそれぞれ m と n より小さい自然数であると仮定します。
+i*n+j &lt; m*n を示すために #dyncode("matrix_get") の実装で用いられている証明コードは、
+(m-1-i)*n &gt;= 0 を証明しています。
+これは明確に m*n >= i*n+n > i*n+j を暗示しています。
+
+")#comment("para")
+")
+
+#langeng("
 #para("
 
 Note that there are a variety of proof functions declared in
@@ -358,13 +436,36 @@ construction in ATS, please find the implementation of some of these proof
 functions in #myatscodelink("prelude/DATS/arith_prf.dats", "arith_prf.dats").\
 
 ")#comment("para")
+")
+#langja("
+#para("
 
+様々な証明関数が #myatscodelink("prelude/SATS/arith_prf.sats", "arith_prf.sats")
+で宣言されていることに注意してください。
+これらの証明は算術演算を含む定理を証明するのに役に立ちます。
+ATSにおける証明の構成例として、#myatscodelink("prelude/DATS/arith_prf.dats", "arith_prf.dats")
+にある証明関数の実装を参照してください。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The entirety of the above presented code is available
 #mycodelink("CHAP_PRGTHMPRV/matget.dats", "on-line").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章のコード全体は
+#mycodelink("CHAP_PRGTHMPRV/matget.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </sect1><!--"example_safe_matrix_subscripting"-->
 
