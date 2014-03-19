@@ -474,8 +474,14 @@ The entirety of the above presented code is available
 <sect1
 id="specifying_with_precision"
 xreflabel="specifying with enhanced precision">
+#langeng("
 #title("Specifying with Enhanced Precision")
+")
+#langja("
+#title("強化された正確性を使って明記する")
+")
 
+#langeng("
 #para("
 The integer addition function can be assigned the following
 (dependent) type in ATS to indicate that it returns the sum of
@@ -503,7 +509,33 @@ only construct such a type but also assign it to a (terminating) function
 implemented in ATS.\
 
 ")#comment("para")
+")
+#langja("
+#para("
+整数の加算関数には ATS では次のような依存型を割り当てることができます。
+これはこの関数が2つの整数の引数の和を返すことを示しています:
 
+#atscode("\
+{i,j:int} (int (i), int (j)) -> int (i+j)
+")
+
+この型は整数の加算に対する完全な仕様です。この型を取るような停止する関数は、整数の加算関数だけです。
+けれども、自然数 n に適用すると最初の n 個の正の整数の積を得るような、階乗関数には次のような型を与えることができません:
+
+#atscode("\
+{n:nat} int (n) -> int (fact(n))
+")
+
+階乗関数を指す #stacode("fact") は ATS の静的な部分には存在しないからです。
+明らかに、大変興味深く適切な疑問は次のようなものでしょう。
+#stacode("fact") で明記された関数的関係を完全に捕捉するような型を ATS で作れるのでしょうか？
+その答は肯定的なものです。
+そのような型をコンストラクトできるだけでなく、ATS で実装された停止する関数に適用することもできるのです。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 Let us recall that the factorial function can be defined by the following
 two equations:
@@ -557,12 +589,77 @@ After proof erasure, #dyncode("ifact") precisely implements the factorial
 function.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+階乗関数は次の2つの等式で定義できることを思い出してみましょう:
 
+#atscode("\
+fact(0) = 1
+fact(n) = n * fact(n-1) (n > 0 のような全ての n について)
+")
+
+当然これらの等式は、次のように宣言される dataprop #stacode("FACT")
+に関連したコンストラクタでエンコードできます:
+
+#atscode("\
+dataprop FACT (int, int) =
+  | FACTbas (0, 1)
+  | {n:nat}{r1,r:int}
+    FACTind (n, r) of (FACT (n-1, r1), MUL (n, r1, r))
+// end of [FACT]
+")
+
+与えられたどのような自然数 n と 整数 r についても、
+#dyncode("fact(n)") が r に等しいかどうか証明するために #stacode("FACT(n, r)")
+を割り当てられることに注意してください。
+したがって、次のような型:
+
+#atscode("\
+{n:nat} int (n) -> [r:int] (FACT (n, r) | int (r))
+")
+
+は自然数 n に適用されると証明と整数を返すような関数にのみ割り当てることができます。
+この証明はその整数が #dyncode("fact(n)") に等しいことを立証しています。
+例えば、次に定義された関数 #dyncode("ifact") にはこの型が割り当てられています:
+
+#atscode("\
+fun ifact
+  {n:nat} .<n>.
+  (n: int (n)):<> [r:int] (FACT (n, r) | int r) =
+(
+  if n > 0 then let
+    val (pf1 | r1) = ifact (n-1) // pf1: FACT (n-1, r1)
+    val (pfmul | r) = imul2 (n, r1) // pfmul: FACT (n, r1, r)
+  in (
+    FACTind (pf1, pfmul) | r
+  ) end else (
+    FACTbas () | 1 // the base case
+  ) // end of [if]
+) (* end of [ifact] *)
+")
+
+証明が削除されると、#dyncode("ifact") は階乗関数の正確な実装になります。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find the entirety of the above presented code plus some testing code
 #mycodelink("CHAP_PRGTHMPRV/ifact.dats", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+この章で紹介したコードの全体とテストのための追加コードは
+#mycodelink("CHAP_PRGTHMPRV/ifact.dats", "オンライン")
+から入手できます。
+
+")
 ")
 
 </sect1><!--"specifying_with_precision"-->
