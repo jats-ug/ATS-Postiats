@@ -519,8 +519,14 @@ view #stacode("T@L") の証明を検索します:
 
 <sect1
 id="viewtypes_as_combination">
+#langeng("
 #title("Viewtypes as a Combination of Views and Types")
+")
+#langja("
+#title("view と型を組み合わせた viewtype")
+")
 
+#langeng("
 #para("\
 
 A linear type in ATS is given the name #emphasis("viewtype"), which is
@@ -536,7 +542,24 @@ which stresses that the linearity of a viewtype comes #emphasis("entirely")
 from the view part residing within it.
 
 ")
+")
+#langja("
+#para("\
 
+ATS の線形型は #emphasis("viewtype") という名前です。
+これは線形型は2つの部分から構成されることを示しています: 一つは view でもう一つが型 (type) です。
+例えば、view V と型 T が与えられた時、タプル (V | T) は viewtype で、バー記号 (|) は view と型を
+(コンマのように) 分離しています。
+少し意外かもしれませんが、反対に:
+それぞれの viewtype VT について、VT が (V | T) と等しいような view V と型 T の存在を仮定できます。
+形式上、ATS ではこの T は VT?! として参照されます。
+この幾分意外な線形型の解釈は ATS の目立った新規性です。
+それは viewtype の線形性は #emphasis("完全に") その中に存在する view 部分に由来することを強調しています。
+
+")
+")
+
+#langeng("
 #para('\
 
 The built-in sorts #stacode("viewtype") and #stacode("viewt@ype") are for static
@@ -571,7 +594,42 @@ fn getinc
 ')
 
 ')
+")
+#langja("
+#para('\
 
+ビルトインの種 #stacode("viewtype") と #stacode("viewt@ype") は、型部分がそれぞれ種
+#stacode("type") と #stacode("t@ype") であるような viewtype を表わす静的な項です。
+言い方をすると、前者にはポインタのサイズに等しいサイズの線形値の viewtype
+が割り当てられ、そして後者には詳細不明のサイズの線形値の viewtype が割り当てられます。
+例えば、型と、種 #stacode("viewtype") の viewtype 作るアドレスを取るような、#stacode("tptr")
+は次のように定義されます:
+
+#atscode('\
+viewtypedef tptr (a:t@ype, l:addr) = (a @ l | ptr l)
+')
+
+型 T とアドレス L が与えられた時、viewtype #stacode("tptr(T, L)") は
+L に格納された型 T の値を示す線形の証明とペアになった L のポインタです。
+カウントを表わす整数を指すポインタを示す証明とペアになったポインタとしてのカウンタのことを考えるなら、
+次に定義する関数 #dyncode("getinc") は与えられたカウンタを1増やした後、現時点でのカウントを返します:\
+
+#atscode('\
+
+fn getinc
+  {l:addr}{n:nat}
+(
+  cnt: !tptr (int(n), l) >> tptr (int(n+1), l)
+) : int(n) = n where {
+  val n = ptr_get1<int(n)> (cnt.0 | cnt.1)
+  val () = ptr_set1<int(n+1)> (cnt.0 | cnt.1, n+1)
+} (* end of [getinc] *)
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 A particularly interesting example of a viewtype is the following one:
@@ -620,6 +678,52 @@ explain within ATS programming features such as closure function is a
 convincing indication of the expressiveness of the type system of ATS.
 
 ')
+")
+#langja("
+#para('\
+
+次は viewtype の特に興味深い例です:
+
+#atscode('\
+viewtypedef cloptr
+  (a:t@ype, b:t@ype, l:addr) =
+  [env:t@ype] (((&env, a) -> b, env) @ l | ptr l)
+// end of [cloptr_app]
+')
+
+2つの型 A と B が与えられた時、型 A の値を取り型 B の値を返すようなクロージャ関数が保管されたアドレス L
+を指すポインタには viewtype #stacode("cloptr(A, B, L)") を与えることができます。
+クロージャ関数は、外から導入されたクロージャ関数本体内の値の束縛を含む環境とペアになった単なる
+envless 関数であることに注意してください。
+関数型 #stacode("(&amp;env, a) -> b") において、記号 #stacode("&amp;")
+は対応する関数の引数が参照で渡されていることを示しています。
+つまり、この引数は左辺値であることが要求されていて、実行時に実際に渡されるものは左辺値のアドレスです。
+参照渡し (call-by-reference) については別の章でより詳細に解説します。
+次のコードは与えられた引数で呼び出されるクロージャ関数へのポインタを説明しています:\
+
+#atscode('\
+fun{
+a:t@ype}{b:t@ype
+} cloptr_app {l:addr}
+(
+  pclo: !cloptr (a, b, l), x: a
+) : b = let
+  val p = pclo.1
+  prval pf = pclo.0 // take out pf: ((&env, a) -> b, env) @ l
+  val res = !p.0 (!p.1, x)
+  prval () = pclo.0 := pf // put the proof pf back
+in
+  res
+end // end of [cloptr]
+')
+
+p のデリファレンスが型検査を通すために、#dyncode("pclo")
+内の線形の証明がはじめに取り出されることに注意してください。
+そして #dyncode("pclo") の型が元の位置に復帰されて返ります。
+クロージャ関数のような ATS プログラミングの機能を説明する能力は、ATS の型システムの表現力の説得力ある証拠です。
+
+')
+")
 
 </sect1>#comment("sect1/id=viewtypes_as_combination")
 
