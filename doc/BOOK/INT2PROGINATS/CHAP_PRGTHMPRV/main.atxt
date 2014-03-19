@@ -95,8 +95,14 @@ code for testing.\
 
 <sect1
 id="circumventing_nonlinear_constraints">
+#langeng("
 #title("Circumventing Nonlinear Constraints")
+")
+#langja("
+#title("非線形の制約を回避する")
+")
 
+#langeng("
 #para("
 The constraint-solver of ATS is of rather diminished power. In particular,
 constraints containing nonlinear integer terms (e.g., those involving the
@@ -106,7 +112,17 @@ crippling limitation on practicality of the type system of ATS. I now use
 a simple example to demonstrate how theorem-proving can be employed to
 circumvent the need for handling nonlinear constraints directly.
 ")#comment("para")
+")
+#langja("
+#para("
+ATS の制約ソルバはやや非力な力しか持っていません。
+特に、非線形の整数項を含む制約 (例: 値の乗法の使用を意味するような制約) はただちに破棄されます。
+この非力さは当然対策されるべきです。さもなくば ATS の型システムの実用性における深刻な制限になってしまいます。
+ここでは単純な例を使って、非線形の制約を直接扱う必要性を回避して定理証明を使うことができるのか説明します。
+")#comment("para")
+")
 
+#langeng("
 #para("\
 
 A function template #dyncode("list_concat") is implemented as follows:
@@ -180,6 +196,77 @@ the previous one (as far as dynamic semantics is concerned). In particular,
 there is no need for proof construction at run-time.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+関数テンプレート #dyncode("list_concat") は次のような実装です:
+
+#atscode("\
+//
+// [list_concat] does not typecheck!!!
+//
+fun{
+a:t@ype
+} list_concat{m,n:nat}
+  (xss: list (list (a, n), m)): list (a, m * n) =
+  case+ xss of
+  | list_cons (xs, xss) => list_append<a> (xs, list_concat xss)
+  | list_nil () => list_nil ()
+// end of [list_concat]
+")
+
+#dyncode("list_append") のインターフェイスは次のようになります:
+
+#atscode("\
+fun{
+a:t@ype
+} list_append {n1,n2:nat}
+  (xs: list (a, n1), ys: list (a, n2)): list (a, n1+n2)
+")
+
+長さ #stacode("m") のリスト #dyncode("xss") が与えられ、その要素がある型 T について型 #stacode("list(T,n)")
+である時、#dyncode("list_concat&lt;T&gt;(xss)") は型 #stacode("list(T,m*n)") のリストをコンストラクトします。
+#dyncode("list_concat") のコードの最初のマッチ節が型検査されると、本質的に次のような制約が発生します:
+
+#atscode("\
+全ての自然数 m, m1, n について、m = m1 + 1 は n + (m1 * n) = m * n を意味している。
+")
+
+この制約は単純に見えますが、非線形な整数の項 (例: #stacode("m1*n") や #stacode("m*n"))
+を含んでいるので ATS の制約ソルバは破棄してしまいます。
+この制限を克服 (もしくは回避) すれば、定理証明を使えるようになるはずです。
+#dyncode("list_concat") の別の実装は次のようになります:
+
+#atscode("\
+fun{
+a:t@ype
+} list_concat{m,n:nat}
+(
+  xss: list (list (a, n), m)
+) : [p:nat] (MUL (m, n, p) | list (a, p)) =
+  case+ xss of
+  | list_cons (xs, xss) => let
+      val (pf | res) = list_concat (xss)
+    in
+      (MULind pf | list_append<a> (xs, res))
+    end
+  | list_nil () => (MULbas () | list_nil ())
+// end of [list_concat]
+")
+
+型 #stacode("list(list(T,n),m)") のリスト #dyncode("xss") が与えられた時、
+#dyncode("list_concat(xss)") はペア #dyncode("(pf | res)") を返します。
+このペアの中で、自然数 #stacode("p") があるとき #dyncode("pf") は prop 型 #stacode("MUL(m,n,p)") の証明で、
+#dyncode("res") は型 #stacode("list(T,p)") のリストです。
+この記号バー (|) は証明と値を分離するために使われます。
+別の言い方をすると、#dyncode("pf") は等式 #stacode("p=m*n") の証拠となります。
+証明が削除されると、#dyncode("list_concat") のこの実装は本質に (関係する動的な意味論に関する限りは)
+以前のバージョンに変換されます。
+特に実行時には証明の構成は不要になります。\
+
+")#comment("para")
+")
 
 </sect1><!--"circumventing_nonlinear_constraints"-->
 
