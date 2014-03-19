@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="programming_with_theorem-proving">
+#langeng("
 #title("Programming with Theorem-Proving")
+")
+#langja("
+#title("定理証明によるプログラミング")
+")
 
+#langeng("
 #para("\
 
 #emphasis("Programming with Theorem-Proving") (PwTP) is a rich and broad
@@ -31,7 +37,25 @@ fundamentally important in terms of syntax design for ATS, for the need to
 combine programs with proofs would otherwise be greatly more challenging.
 
 ")
+")
+#langja("
+#para("\
 
+#emphasis("定理証明によるプログラミング - Programming with Theorem-Proving") (PwTP)
+は豊かで広いプログラミングパラダイムで、プログラムと証明が構文的に絡み合って密着させることができます。
+PwTP をサポートすることは ATS の主要な機能で、ATS の新規性は主にここにあります。
+カリー＝ハワード同型対応に馴染んだ人々にとって、少しでも証明とプログラムの間でこの同型を本質的に使ったことがあれば、ATS
+でサポートされている PwTP は簡単であることを強調したいです:
+書かれた ATS プログラムの動的な部分はもちろん純粋ではありませんし、
+ATS/LF にエンコードされた証明は積極的に必要なわけでもありません。
+けれども、ATS での関数型プログラミングのスタイルで記述できる証明の構築は ATS
+のデザインの観点で根本的に重要です。
+プログラムを証明と結合することが必要なのです。
+
+")
+")
+
+#langeng("
 #para("\
 In this chapter, I will present some simple but convincing examples to
 illustrate the power and flexibility of PwTP as is supported in
@@ -41,11 +65,30 @@ with programs to track and safely manipulate resources such as memory and
 objects (e.g, file handles). In particular, PwTP is to form the cornersone
 of the support for imperative programming in ATS.
 ")
+")
+#langja("
+#para("\
+この章では、単純だけれど説得力のある例を使って ATS でサポートされる PwTP のパワー柔軟性を説明します。
+けれでも、PwTP を使った実用例は ATS の線形型を導入した後まで紹介できません。
+線形型の証明はプログラムと結合して、メモリやオブジェクト (例: ファイルハンドル)
+のようなリソースを追跡したり安全に操作したりすることができます。
+特に、PwTP は ATS における命令型プログラミングをサポートする土台となります。
+")
+")
 
+#langeng("
 #para("\
 Please find #mycodelink("CHAP_PRGTHMPRV/", "on-line")
 the code employed for illustration in this chapter plus some additional
 code for testing.\
+")
+")
+#langja("
+#para("\
+この章で解説するコードと追加のテストコードは
+#mycodelink("CHAP_PRGTHMPRV/", "オンライン")
+から入手できます。\
+")
 ")
 
 <!-- ****** ****** -->
