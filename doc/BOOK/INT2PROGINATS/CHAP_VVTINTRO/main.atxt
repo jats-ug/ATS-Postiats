@@ -931,8 +931,14 @@ fun dotprod
 
 <sect1
 id="stack-allocated_variables">
+#langeng("
 #title("Stack-Allocated Variables")
+")
+#langja("
+#title("スタックに確保された値")
+")
 
+#langeng("
 #para('\
 
 Given a type T and an address L, how can a proof of the view
@@ -941,13 +947,34 @@ variety of methods for obtaining such proofs in practice, and I present one
 as follows that is based on stack-allocation of local variables.
 
 ')
+")
+#langja("
+#para('\
 
+型 T とアドレス L が与えられた時、
+最初の段階で view #stacode("T@L") の証明はどのように得られるのでしょうか？
+実際にそのような証明を得る方法は様々です。
+次のようにローカルの値としてスタックに確保する方法を紹介します。
+
+')
+")
+
+#langeng("
 #para('\
 
 In the body of the following function #dyncode("foo"), some stack-allocated
 local variables are declared:
 
 ')
+")
+#langja("
+#para('\
+
+次の関数 #dyncode("foo") の本体では、
+いくつかのスタックに確保されたローカルな値が宣言されています:
+
+')
+")
 
 #atscode('\
 fn foo (): void = let
@@ -965,6 +992,7 @@ in
 end // end of [foo]
 ')
 
+#langeng("
 #para('\
 
 The keyword #dyncode("var") is for declaring a local variable. When a
@@ -987,12 +1015,42 @@ initial value 3 while #dyncode("pfz") is introduced as an alias for
 #dyncode("view@(z)").
 
 ')
+")
+#langja("
+#para('\
 
+キーワード #dyncode("var") はローカルな値の宣言です。
+値は宣言された時、その型またはその初期値を与える必要があります。
+もし値が型をともなわずに宣言されたら、その初期値の型がその型であると見なされます。
+値 x が型 T で宣言されていたと仮定しましょう。
+するとその値の位置を指すポインタは #dyncode("addr@(x)") で表わされ、関連した (at-view の) 線形の証明は
+#dyncode("view@(x)") で表わされます。
+このとき #dyncode("addr@") と #dyncode("view@") はキーワードです。
+値は ATS における左辺値のもう一つの形です。
+#dyncode("foo") の本体では、#dyncode("x0") が型 #stacode("int") の値として宣言されて整数0で初期化されます;
+#dyncode("x1") が型 #stacode("int") の値として宣言されて初期値1が与えられます;
+#dyncode("pfy") が #dyncode("view@(y)") の別名として導入されているとき、
+#dyncode("y") が型 #stacode("int") の値として宣言されて整数2で初期化されます;
+#dyncode("pfz") が #dyncode("view@(z)") の別名として導入されているとき、
+#dyncode("z") が型 #stacode("int") の値として宣言されて初期値3が与えられます。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following code gives an implementation of the factorial function:
 
 ')
+")
+#langja("
+#para('\
+
+次のコードは階乗関数の実装です:
+
+')
+")
 
 #atscode('\
 fn fact{n:nat}
@@ -1010,6 +1068,7 @@ in
 end // end of [fact]
 ')
 
+#langeng("
 #para('\
 
 Note that the variable #dyncode("res") holds the intermediate result during
@@ -1030,7 +1089,28 @@ reclaimed as no linear proof of the at-view associated with the variable is
 ever available from that point on.
 
 ')
+")
+#langja("
+#para('\
 
+loop を実行している間、#dyncode("res") の値は中間結果を保持していることに注意してください。
+#dyncode("res") はスタックに確保されるので、
+#dyncode("fact") 呼び出しが評価された後にゴミが生成されることはありません。
+C言語でこのスタイルのプログラミングをする時、#dyncode("fact") 呼び出しが返った後に
+#dyncode("res") を指すポインタがデリファレンスされてしまう不安がしばしばあります。
+これは一般に、宙ぶらりんなポインタのデリファレンス (derefencing a dangling pointer) と呼ばれます。
+ATS ではこの不安は完全に取り除かれています。
+変数 #dyncode("res") に関連する at-view の線形証明は、#dyncode("res")
+のスコープが終わるまで存在することが ATS の型システムによって要求されます。
+より具体的には、もし型 T の変数 x が宣言されていたら、L がアドレス x のとき view #stacode("T?@L")
+の線形証明は、x のスコープの終わりに型検査が到達するまで有効でなければなりません。
+この要求は、確保されたスタックの割り当てが終わった後、もはや変数にアクセスできないことを保証します。
+その変数に関連した at-view の線形証明がその時点では無効なのです。
+
+')
+")
+
+#langeng("
 #para('\
 
 Arrays in ATS can also be stack-allocated. For instance, the following code
@@ -1061,7 +1141,38 @@ as follows: Given a type T and an integer N, the syntax
 of type T.
 
 ')
+")
+#langja("
+#para('\
 
+ATS の配列もまたスタックに確保できます。
+例えば、次のコードは関数 #dyncode("main0") のスタックフレームに double の2つの配列を確保します。
+それからそれらを #dyncode("dotprod") に渡してドット積を計算します:
+
+#atscode('\
+implement
+main0 () =
+{
+//
+var A = @[double][3](1.0) // initialized with 1.0, 1.0, 1.0
+var B = @[double](1.0, 2.0, 3.0) // initialized with 1.0, 2.0, 3.0
+//
+val () = println! ("A * B = ", dotprod (A, B)) // A * B = 6.0
+//
+} (* end of [main0] *)
+')
+
+変数 A に関連した at-view は #stacode("(@[double][3])@A") です。
+このとき A は 値 A のアドレスもまた参照しています。
+同様に変数 B に関連した at-view は #stacode("(@[double][3])@B") です。
+
+完全を期すために、次のような未初期化の配列のための構文を紹介します:
+型 T と整数 N が与えられた時、構文 #dyncode("@[T][N]()") は型 T の N 個の未初期化の値からなる配列を表わします。
+
+')
+")
+
+#langeng("
 #para('\
 
 Note that allocating large arrays in the call frame of a function may not
@@ -1069,7 +1180,17 @@ be a good practice as doing so can greatly increase the likelihood of
 stack-overflow at run-time.
 
 ')
+")
+#langja("
+#para('\
 
+関数の呼び出しフレーム中に大きな配列確保するのは良い慣習とは言えないことに注意してください。
+実行時にスタックオーバーフローが非常に発生しやすくなります。
+
+')
+")
+
+#langeng("
 #para('\
 
 It is also allowed in ATS to allocate a closure in the call frame of a
@@ -1112,7 +1233,49 @@ Note that the special keyword #keycode("fix@") should be used to form
 a flat recursive closure-function.
 
 ')
+")
+#langja("
+#para('\
 
+ATS では、関数の呼び出しフレーム内にクロージャを確保することもできます。
+例えば、次のコードは #dyncode("bar") という名前でスタックに確保された変数にフラットなクロージャ関数を置く
+#dyncode("foo") という名前の関数を実装しています:
+
+#atscode('\
+fun foo
+(
+  x: int, y: int
+) : int = let
+//
+var bar = lam@ (): int => x * y
+//
+in
+  bar ()
+end // end of [foo]
+')
+
+特殊キーワード #keycode("lam@") はフラットなクロージャ関数を作るのに使われることに注意してください。
+完全を期すために、再帰クロージャ関数もまたスタックに確保された変数に格納できることを示す次のような別の例を紹介します:
+
+#atscode('\
+fun foo2
+(
+  x: int, y: int
+) : int = let
+//
+var bar2 = fix@ f (x: int): int => if x > 0 then y + f(x-1) else 0
+//
+in
+  bar2 (x)
+end // end of [foo]
+')
+
+特殊キーワード #keycode("fix@") はフラットな再帰クロージャ関数を作るのに使われることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 In a setting where dynamic memory allocation is not
@@ -1120,6 +1283,14 @@ allowed, stack-allocated closures can play a pivotal role in supporting
 programming with higher-order functions.
 
 ')
+")
+#langja("
+#para('\
+
+動的なメモリ確保が使えない状況下では、スタックに確保されたクロージャは高階関数を使ったプログラミングをサポートする極めて重要な存在です。
+
+')
+")
 
 </sect1>#comment("sect1/id=stack_allocated_variables")
 
