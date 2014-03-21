@@ -1298,15 +1298,30 @@ programming with higher-order functions.
 
 <sect1
 id="heap-allocated-linear-closure-functions">
+#langeng("
 #title("Heap-Allocated Linear Closure-Functions")
+")
+#langja("
+#title("ヒープに確保された線形クロージャ関数")
+")
 
+#langeng("
 #para('\
 
 In ATS, a closure-function can be assiged a linear type, allowing
 it to be properly tracked within the type system and also explicitly
 freed by the programmer.
 ')
+")
+#langja("
+#para('\
 
+ATS では、クロオージャ関数には線形型を割り当てることができます。
+これは型システムによって適切に追跡され、またプログラマによって明示的に解放されます。
+')
+")
+
+#langeng("
 #para('\
 
 The following code implements a higher-order function
@@ -1336,7 +1351,35 @@ front of the function type means that the second (linear) argument of
 after #dyncode("list_map_cloptr") returns.\
 
 ')
+")
+#langja("
+#para('\
 
+次のコードは、第二引数に線形クロージャ関数を取る高階関数 #dyncode("list_map_cloptr") を実装しています:
+
+#atscode('\
+fun{
+a:t@ype}{b:vt@ype
+} list_map_cloptr{n:int}
+(
+  xs: list (a, n), f: !(a) -<cloptr1> b
+) : list_vt (b, n) =
+(
+  case+ xs of
+  | list_nil () => list_vt_nil ()
+  | list_cons (x, xs) => list_vt_cons (f (x), list_map_cloptr<a><b> (xs, f))
+)
+')
+
+キーワード #keycode("-&lt;cloptr1&gt;") はその関数型が線形クロージャ関数であること示すことに注意してください。
+もし純粋な線形クロージャ関数の型が必要であれば、キーワード  #keycode("-&lt;cloptr0&gt;") が使えます。
+関数型の前にある記号 #keycode("!") は #dyncode("list_map_cloptr")
+の線形の第二引数が値渡しであり、#dyncode("list_map_cloptr") が返った後もそれが有効であることを意味します。\
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us now see some concrete code in which a linear closure-function is
@@ -1379,7 +1422,50 @@ Also, the cast involved in
 #dyncode("$UNSAFE.castvwtp0{cloptr(void)}(f)") is a safe cast.
 
 ')
+")
+#langja("
+#para('\
 
+線形クロージャ関数が生成され、呼び出され、最後に解放されるような具体的なコードをいくつか見てみましょう:
+
+#atscode('\
+implement
+main0 () =
+{
+//
+val xs =
+$list_vt{int}(0, 1, 2, 3, 4)
+//
+val len = list_vt_length (xs)
+//
+val f = lam (x: int): int =<cloptr1> x * len
+//
+val ys =
+list_map_cloptr<int><int> ($UNSAFE.list_vt2t(xs), f)
+//
+val () = cloptr_free($UNSAFE.castvwtp0{cloptr(void)}(f))
+//
+val () = println! ("xs = ", xs) // xs = 0, 1, 2, 3, 4
+val () = println! ("ys = ", ys) // ys = 0, 5, 10, 15, 20
+//
+val ((*freed*)) = list_vt_free (xs)
+val ((*freed*)) = list_vt_free (ys)
+//
+} (* end of [main0] *)
+')
+
+関数 #dyncode("cloptr_free") には次のインターフェイスが与えられます:
+
+#atscode('\
+fun cloptr_free{a:t0p}(pclo: cloptr (a)):<!wrt> void
+')
+
+また、#dyncode("$UNSAFE.castvwtp0{cloptr(void)}(f)") に含まれるキャストは安全なキャストです。
+
+')
+")
+
+#langeng("
 #para('\
 
 The support for linear closure-functions in ATS1 is crucial in a setting
@@ -1392,6 +1478,20 @@ without causing memory leaks, it is necessary to use linear closure-functions
 unless GC can be relied upon to reclaim memory.\
 
 ')
+")
+#langja("
+#para('\
+
+ATS1 での線形クロージャ関数のサポートは、高階関数が必要だけれど実行時のガベージコレクション (GC)
+が使えないような場面で重要でした。
+ATS2 では、線形クロージャ関数は GC のない高階関数を使ったプログラミングでも重要ではなくなりました。
+好都合なことにテンプレートを使うことができるのです。
+けれども、もしメモリリークを引き起こさずにデータ構造にクロージャ関数を埋め込みたい場合で、
+さらにメモリを再利用するために GC に頼ることもできない場合には、
+線形クロージャ関数の使用が必要になります。\
+
+')
+")
 
 </sect1>#comment("sect1/id=heap-allocated-linear-closure-functions")
 
