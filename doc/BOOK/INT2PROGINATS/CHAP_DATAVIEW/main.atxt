@@ -151,8 +151,14 @@ ptr_alloc_opt (): [l:addr] (option_v (a? @ l, l > null) | ptr l)
 
 <sect1
 id="disjunctive_views">
+#langeng("
 #title("Disjunctive Views")
+")
+#langja("
+#title("分離 view")
+")
 
+#langeng("
 #para('\
 
 The dataview #stacode("VOR") is declared as follows:
@@ -171,7 +177,27 @@ V#sub("1"), 0)") can be turned into a proof of V#sub("0") and a proof of
 V#sub("1").
 
 ')
+")
+#langja("
+#para('\
 
+dataview #stacode("VOR") が次のように宣言されています:
+
+#atscode('\
+dataview VOR (v0:view+, v1:view+, int) =
+  | VORleft (v0, v1, 0) of (v0) | VORright (v0, v1, 1) of (v1)
+')
+
+この宣言は dataview #stacode("VOR") が1番目と2番目の引数について共変であることを示しています。
+そして関連する2つの証明コンストラクタ #dyncode("VORleft") と #dyncode("VORright") があります。
+view V#sub("0") と V#sub("1") が与えられた時、
+#stacode("VOR(V#sub("0"), V#sub("1"), 0)") の証明は V#sub("0") の証明になります。
+また #stacode("VOR(V#sub("0"), V#sub("1"), 1)") の証明は V#sub("1") の証明になります。
+
+')
+")
+
+#langeng("
 #para('\
 
 Let T be some type. The following function interface states that
@@ -204,7 +230,42 @@ end // end of [foo]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+なんらかの型 T を考えます。次の関数インターフェイスは #dyncode("getopt")
+が未初期化のポインタを取り、ポインタが初期化されたかどうかを示す整数を返すことを表わしています:
+
+#atscode('\
+fun getopt{l:addr}
+  (pf: T? @ l | ptr (l)): [i:int] (VOR (T? @ l, T @ l, i) | int (i))
+')
+
+次のコードは #dyncode("getopt") の典型的な使用例を示しています:
+
+#atscode('\
+fun foo (): void = let
+  var x: T?
+  val (pfor | i) = getopt (view@(x) | addr@(x))
+in
+//
+if i = 0
+  then let
+    prval VORleft (pf0) = pfor in view@(x) := pf0 // uninitialized
+  end // end of [then]
+  else let
+    prval VORright (pf1) = pfor in view@(x) := pf1 // initialized
+  end // end of [else]
+// end of [if]
+//
+end // end of [foo]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 In ATS, there is a type constructor #stacode("opt") that takes a type T and
@@ -249,6 +310,51 @@ Compared to the version that uses #stacode("VOR"), this version based on
 opt-type is considerably less verbose.
 
 ')
+")
+#langja("
+#para('\
+
+ATS では、型 T とブール B を取り、opt 型 #dyncode("opt(T, B)") を作るような型コンストラクタ #stacode("opt")
+があります。
+このとき B が true ならば #dyncode("opt(T, B)") は T に等しく、B が false ならそれは T? に等しくなります。
+関数 #dyncode("getopt") には次のような opt 型を使ったインターフェイスを与えることができます:
+
+#atscode('\
+fun getopt (x: &T? >> opt (T, b)): #[b:bool] bool(b)
+')
+
+これで #dyncode("getopt") 呼び出しコードは次のように実装できます:
+
+#atscode('\
+fun foo (): void = let
+  var x: T?
+  val ans = getopt (x)
+in
+//
+if (ans)
+  then let
+    prval () = opt_unsome(x) in (*initialized*)
+  end // end of [then]
+  else let
+    prval () = opt_unnone(x) in (*uninitialized*)
+  end // end of [else]
+// end of [if]
+//
+end // end of [foo]
+')
+
+このとき、証明関数 #dyncode("opt_unsome") と #dyncode("opt_unnone") には次の型が割り当てられています:
+
+#atscode('\
+prfun opt_unsome{a:t@ype} (x: !opt (a, true) >> a): void
+prfun opt_unnone{a:t@ype} (x: !opt (a, false) >> a?): void
+')
+
+#stacode("VOR") を使うバージョンと比較して、
+opt 型を用いたこのバージョンはかなりすっきりしています。
+
+')
+")
 
 </sect1>#comment("sect1/id=disjunctive_views")
 
