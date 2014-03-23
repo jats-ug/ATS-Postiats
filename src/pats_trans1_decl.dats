@@ -605,8 +605,10 @@ val () = println! ("Including [", fil, "] finishes.")
 
 fun
 ats_packname_get
-  (): Stropt = let
-  val opt = the_e1xpenv_find (ATS_PACKNAME)
+  ((*void*)): Stropt = let
+//
+val opt = the_e1xpenv_find (ATS_PACKNAME)
+//
 in
 //
 case+ opt of
@@ -623,6 +625,37 @@ case+ opt of
 | ~None_vt () => stropt_none (*void*)
 //
 end // end of [ats_packname_get]
+
+(* ****** ****** *)
+
+fun
+ats_packname_get2
+  (opt: Stropt, nspace: symbol): Stropt = let
+//
+val opt2 = ats_packname_get ()
+val issome = stropt_is_some (opt2)
+//
+in
+//
+if issome
+  then opt2
+  else let
+    val issome = stropt_is_some (opt)
+  in
+    if issome
+      then let
+        val name = stropt_unsome (opt)
+        val nspace = $SYM.symbol_get_name (nspace)
+        val name = sprintf ("%s%s", @(name, nspace))
+        val name = string_of_strptr (name)
+      in
+        stropt_some (name)
+      end // end of [then]
+      else stropt_none (*void*)
+    // end of [issome]
+  end // end of [else]
+//
+end // end of [ats_packname_get2]
 
 (* ****** ****** *)
 
@@ -651,7 +684,7 @@ fun s0taload_tr
 (
   d0c0: d0ecl
 , idopt: symbolopt, given: string
-, loadflag: &int? >> int
+, ldflag: &int? >> int
 , filref: &filename? >> filename
 ) : d1eclist // end of [s0taload_tr]
 
@@ -659,12 +692,13 @@ local
 
 fun auxload
 (
-  fil: filename, loadflag: &int >> int
+  fil: filename, ldflag: &int >> int
 ) : d1eclist = let
 //
-val pname = $FIL.filename_get_partname (fil)
-//
+val pname =
+  $FIL.filename_get_partname (fil)
 val isdats = string_suffix_is_dats (pname)
+//
 val flag = (if isdats then 1(*dyn*) else 0(*sta*)): int
 val d0cs = $PAR.parse_from_filename_toplevel (flag, fil)
 //
@@ -674,8 +708,8 @@ val (pfpush | ()) = $FIL.the_filenamelst_push (fil)
 val d1cs = d0eclist_tr (d0cs) // HX: it is done in [fil]
 val ((*void*)) = $FIL.the_filenamelst_pop (pfpush | (*none*))
 //
-val packname = ats_packname_get ()
-val d1c_pack = d1ecl_packname (packname)
+val pack = ats_packname_get ()
+val d1c_pack = d1ecl_packname (pack)
 val d1cs = list_cons{d1ecl}(d1c_pack, d1cs)
 //
 val ans = the_e1xpenv_find (ATS_STALOADFLAG)
@@ -683,30 +717,30 @@ val ans = the_e1xpenv_find (ATS_STALOADFLAG)
 val () = (
   case+ ans of
   | ~Some_vt e1xp => let
-      val v1al = e1xp_valize (e1xp) in if v1al_is_false v1al then loadflag := 0
+      val v1al = e1xp_valize (e1xp) in if v1al_is_false v1al then ldflag := 0
     end // end of [Some_vt]
   | ~None_vt () => () // the default value
 ) : void // end of [val]
 //
-val (
-) = the_trans1_env_restore (pfsave | (*none*))
+val () = the_trans1_env_restore (pfsave | (*none*))
 //
-val () = staload_file_insert (fil, loadflag, d1cs)
+val ((*void*)) = staload_file_insert (fil, ldflag, d1cs)
 //
 in
   d1cs
-end // end of [s0taload_tr_load]
+end // end of [auxload]
 
 in (* in of [local] *)
 
-implement s0taload_tr
+implement
+s0taload_tr
 (
-  d0c0, idopt, given, loadflag, filref
+  d0c0, idopt, given, ldflag, filref
 ) = let
 //
 val loc0 = d0c0.d0ecl_loc
 //
-val () = loadflag := 1 // HX: for ATS_STALOADFLAG
+val () = ldflag := 1 // HX: for ATS_STALOADFLAG
 //
 val filopt = $FIL.filenameopt_make_relative (given)
 //
@@ -753,12 +787,12 @@ case+ opt of
 | ~Some_vt
     (flagd1cs) => flagd1cs.1 where
   {
-    val () = loadflag := flagd1cs.0
+    val () = ldflag := flagd1cs.0
 (*
     val () = println! ("The file [", fil, " is already loaded.")
 *)
   } // end of [Some_vt]
-| ~None_vt ((*void*)) => auxload (fil, loadflag)
+| ~None_vt ((*void*)) => auxload (fil, ldflag)
 //
 end // end of [s0taload_tr]
 
@@ -840,28 +874,37 @@ end // end of [guad0ecl_tr]
 
 implement
 d0ecl_tr (d0c0) = let
-  val loc0 = d0c0.d0ecl_loc
+//
+val loc0 = d0c0.d0ecl_loc
 (*
-  val () = begin
-    print "d0ecl_tr: loc0 = "; $LOC.print_location (loc0); print_newline ()
-  end // end of [val]
+val () =
+(
+  print "d0ecl_tr: loc0 = ";
+  $LOC.print_location (loc0); print_newline ()
+) (* end of [val] *)
 *)
 in
 //
 case+ d0c0.d0ecl_node of
-| D0Cfixity (f0xty, ids) => (
+//
+| D0Cfixity
+    (f0xty, ids) => (
     d0ecl_fixity_tr (f0xty, ids); d1ecl_none (loc0)
   ) // end of [D0Cfixity]
-| D0Cnonfix ids => let
+| D0Cnonfix (ids) => let
     val () = d0ecl_nonfix_tr (ids) in d1ecl_none (loc0)
   end // end of [D0Cnonfix]
 //
 | D0Csymintr (ids) => d1ecl_symintr (loc0, ids)
 | D0Csymelim (ids) => d1ecl_symelim (loc0, ids)
-| D0Coverload (id, qid, pval) => d1ecl_overload (loc0, id, qid, pval)
+//
+| D0Coverload
+    (id, qid, pval) => d1ecl_overload (loc0, id, qid, pval)
+  // end of [D0Coverload]
 //
 | D0Ce0xpdef (id, def) => let
-    val def = (case+ def of
+    val def = (
+      case+ def of
       | Some e0xp => e0xp_tr e0xp | None () => e1xp_none (loc0)
     ) : e1xp // end of [val]
     val () = the_e1xpenv_add (id, def)
@@ -872,7 +915,7 @@ case+ d0c0.d0ecl_node of
   end // end of [D0Ce0xpdef]
 | D0Ce0xpundef (id) => let
     val def = e1xp_undef (loc0)
-    val () = the_e1xpenv_add (id, def)
+    val ((*void*)) = the_e1xpenv_add (id, def)
   in
     d1ecl_e1xpundef (loc0, id, def)
   end // end of [D0Ce0xpundef]
@@ -904,7 +947,7 @@ case+ d0c0.d0ecl_node of
     val d1cs = l2l (list_map_fun (d0cs, s0rtdef_tr))
   in
     d1ecl_srtdefs (loc0, d1cs)
-  end
+  end // end of [D0Csrtdefs]
 //
 | D0Cstacsts (d0cs) => let
     val d1cs = l2l (list_map_fun (d0cs, s0tacst_tr))
@@ -952,13 +995,13 @@ case+ d0c0.d0ecl_node of
 //
 | D0Cextype (name, def) => let
     val def = s0exp_tr (def) in d1ecl_extype (loc0, name, def)
-  end
+  end // end of [D0Cextype]
 | D0Cextype (knd, name, def) => let
     val def = s0exp_tr (def) in d1ecl_extype2 (loc0, knd, name, def)
-  end
+  end // end of [D0Cextype]
 | D0Cextval (name, def) => let
     val def = d0exp_tr (def) in d1ecl_extval (loc0, name, def)
-  end
+  end // end of [D0Cextval]
 | D0Cextcode (knd, pos, code) => d1ecl_extcode (loc0, knd, pos, code)
 //
 | D0Cdcstdecs
@@ -1012,23 +1055,54 @@ case+ d0c0.d0ecl_node of
     val d1cs = i0nclude_tr (d0c0, stadyn, given)
     val () = $FIL.the_filenamelst_pop (pfpush | (*none*))
   in
-    d1ecl_include (loc0, d1cs)
+    d1ecl_include (loc0, stadyn, d1cs)
   end // end of [D0Cinclude]
+//
 | D0Cstaload
-    (pfil, idopt, given) => let
-    var loadflag: int // unitialized
+  (
+    pfil, idopt, given
+  ) => let
+//
+    var ldflag: int // unitialized
     var fil: filename // unitialized
 //
     val (
       pfpush | ()
     ) = $FIL.the_filenamelst_push (pfil)
-    val d1cs = s0taload_tr (d0c0, idopt, given, loadflag, fil)
+    val d1cs =
+      s0taload_tr (d0c0, idopt, given, ldflag, fil)
     val () = $FIL.the_filenamelst_pop (pfpush | (*none*))
 //
   in
-    d1ecl_staload (loc0, idopt, fil, loadflag, d1cs)
+    d1ecl_staload (loc0, idopt, fil, ldflag, d1cs)
   end // end of [D0Cstaload]
-| D0Cdynload (pfil, given) => let
+//
+| D0Cstaloadnm
+    (pfil, alias, nspace) => d1ecl_staloadnm (loc0, alias, nspace)
+  // end of [D0Cstaloadnm]
+//
+| D0Cstaloadloc
+  (
+    pfil, nspace, d0cs
+  ) => let
+//
+    val opt = ats_packname_get ()
+//
+    val (pfsave | ()) = the_trans1_env_save ()
+//
+    val d1cs = d0eclist_tr (d0cs) // HX: it is done in [pfil]
+//
+    val pack2 = ats_packname_get2 (opt, nspace)
+    val d1c_pack2 = d1ecl_packname (pack2) // HX: special decl
+    val d1cs = list_cons{d1ecl}(d1c_pack2, d1cs)
+//
+    val () = the_trans1_env_restore (pfsave | (*none*))
+  in
+    d1ecl_staloadloc (loc0, pfil, nspace, d1cs)
+  end // end of [D0Cstaloadloc]
+//
+| D0Cdynload
+    (pfil, given) => let
     val (
       pfpush | ()
     ) = $FIL.the_filenamelst_push (pfil)

@@ -128,7 +128,8 @@ p_s0expseq_BAR_s0expseq (
 // end of [p_s0expseq_BAR_s0expseq]
 
 fun
-p_labs0expseq_BAR_labs0expseq (
+p_labs0expseq_BAR_labs0expseq
+(
   buf: &tokbuf, bt: int, err: &int
 ) : labs0explst12 = let
   val _ = p_COMMA_test (buf) in
@@ -224,11 +225,14 @@ s0taq
 
 implement
 p_s0taq (buf, bt, err) = let
+//
   val n0 = tokbuf_get_ntok (buf)
   val tok = tokbuf_get_token (buf)
   val loc = tok.token_loc
-  var ent: synent?
+  var ent: synent? // uninitized
+//
   macdef incby1 () = tokbuf_incby1 (buf)
+//
 in
 //
 case+ 0 of
@@ -247,7 +251,7 @@ case+ 0 of
     | T_COLON () => let
         val () = incby1 () in s0taq_symcolon (ent1, tok2)
       end
-    | _ => let
+    | _ (*non-DOT-COLON*) => let
         val () = the_parerrlst_add_ifnbt (bt, loc, PE_s0taq)
       in
         tokbuf_set_ntok_null (buf, n0)
@@ -352,8 +356,9 @@ p_s0arrdim (
   val ent1 = p_LBRACKET (buf, bt, err)
   val bt = 0
   val ent2 = (
-    if err = err0 then
-      pstar_fun0_COMMA (buf, bt, p_s0exp) else list_vt_nil ()
+    if err = err0
+      then pstar_fun0_COMMA{s0exp}(buf, bt, p_s0exp)
+      else list_vt_nil ((*void*))
     // end of [if]
   ) : s0explst_vt
   val ent3 = pif_fun (buf, bt, err, p_RBRACKET, err0)
@@ -1025,7 +1030,7 @@ case+ tok.token_node of
 | T_LPAREN () => let
     val bt = 0
     val () = incby1 ()
-    val ent2 = pstar_fun0_COMMA {s0exp} (buf, bt, p_s0exp)
+    val ent2 = pstar_fun0_COMMA{s0exp}(buf, bt, p_s0exp)
     val ent3 = p_RPAREN (buf, bt, err)
   in
     if err = err0 then let
@@ -1232,10 +1237,13 @@ case+ tok.token_node of
     val () = incby1 () in S0VARARGall (tok)
   end
 | _ => let
-    val xs = pstar_fun0_COMMA (buf, bt, p_s0arg)
-    val xs = (l2l)xs
-    val loc = (case+ xs of
-      | list_cons (x0, xs) => let
+    val xs =
+      pstar_fun0_COMMA{s0arg}(buf, bt, p_s0arg)
+    val xs = list_of_list_vt (xs)
+    val loc = (
+      case+ xs of
+      | list_cons
+          (x0, xs) => let
           val x0 = x0: s0arg
           val opt = list_last_opt<s0arg> (xs)
         in
@@ -1270,7 +1278,8 @@ case+ tok.token_node of
     val () = incby1 () in S0EXPARGall ()
   end
 | _ => let
-    val xs = pstar_fun0_COMMA (buf, bt, p_s0exp) in S0EXPARGseq ((l2l)xs)
+    val xs =
+    pstar_fun0_COMMA{s0exp}(buf, bt, p_s0exp) in S0EXPARGseq((l2l)xs)
   end (* end of [_] *)
 //
 end // end of [p_s0exparg]
@@ -1324,6 +1333,8 @@ case+ tok.token_node of
 //
 end // end of [p_atms0exp_ngt]
 
+(* ****** ****** *)
+
 fun
 p_tmps0exp
 (
@@ -1358,10 +1369,12 @@ end // end of [p_tmps0exp]
 implement
 p_tmps0expseq
   (buf, bt, err) = let
-  val tok = tokbuf_get_token (buf)
-  val xs = pstar_fun0_COMMA {s0exp} (buf, bt, p_tmps0exp)
+//
+val tok = tokbuf_get_token (buf)
+val s0es = pstar_fun0_COMMA{s0exp}(buf, bt, p_tmps0exp)
+//
 in
-  t0mpmarg_make (tok, (l2l)xs)
+  t0mpmarg_make (tok, (l2l)s0es)
 end // end of [p_tmps0expseq]
 
 (* ****** ****** *)

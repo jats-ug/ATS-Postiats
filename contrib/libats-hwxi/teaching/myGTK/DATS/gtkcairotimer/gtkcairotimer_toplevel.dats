@@ -1,22 +1,48 @@
 (* ****** ****** *)
 //
-// HX: lib-support for gtkcairodraw
-//
-(* ****** ****** *)
-//
 #define ATS_PACKNAME
-"ATSCNTRB.libats-hwxi.teaching.gtkcairotimer_the_timer"
+"ATSCNTRB.libats-hwxi.\
+teaching.gtkcairotimer_toplevel"
 //
 (* ****** ****** *)
 
-#include "share/atspre_define.hats"
 #include "share/atspre_staload.hats"
 
 (* ****** ****** *)
+
+staload
+NCLICK = {
 //
-staload TIMER =
-"{$LIBATSHWXI}/teaching/myGTK/DATS/gtkcairotimer/timer.dats"
+typedef T = int
 //
+fun
+initize (x: &T? >> T): void = x := 0
+//
+#include "share/atspre_define.hats"
+#include "{$LIBATSHWXI}/globals/HATS/globvar.hats"
+//
+} (* end of [NCLICK] *)
+
+(* ****** ****** *)
+
+staload
+TOPWIN = {
+//
+typedef T = ptr
+//
+fun
+initize (x: &T? >> T): void = x := the_null_ptr
+//
+#include "share/atspre_define.hats"
+#include "{$LIBATSHWXI}/globals/HATS/globvar.hats"
+//
+} (* end of [TOPWIN] *)
+
+(* ****** ****** *)
+
+staload
+TIMER = "./gtkcairotimer_timer.dats"
+
 (* ****** ****** *)
 //
 extern
@@ -142,4 +168,4 @@ end // end of [local]
 
 (* ****** ****** *)
 
-(* end of [the_timer.dats] *)
+(* end of [gtkcairotimer_toplevel.dats] *)

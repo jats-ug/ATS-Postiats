@@ -22,13 +22,15 @@ abstype charptrptr = $extype"charptrptr"
 //
 staload "./../SATS/gtkcairotimer.sats"
 //
-staload "./../DATS/gtkcairotimer/the_timer.dats"
-dynload "./../DATS/gtkcairotimer/the_timer.dats"
+staload "./../DATS/gtkcairotimer/gtkcairotimer_toplevel.dats"
+dynload "./../DATS/gtkcairotimer/gtkcairotimer_toplevel.dats"
 //
-staload _ = "./../DATS/gtkcairotimer/timer.dats"
-staload _ = "./../DATS/gtkcairotimer/ControlPanel.dats"
-staload _ = "./../DATS/gtkcairotimer/DrawingPanel.dats"
-staload _ = "./../DATS/gtkcairotimer/gtkcairotimer_main.dats"
+staload CP = "./../DATS/gtkcairotimer/ControlPanel.dats"
+staload DP = "./../DATS/gtkcairotimer/DrawingPanel.dats"
+//
+staload MAIN = "./../DATS/gtkcairotimer/gtkcairotimer_main.dats"
+//
+staload TIMER = "./../DATS/gtkcairotimer/gtkcairotimer_timer.dats"
 //
 (* ****** ****** *)
 //
