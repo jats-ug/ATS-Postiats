@@ -796,8 +796,14 @@ Please find the entirety of the above presented code
 
 <sect1
 id="singly-linked_lists">
+#langeng("
 #title("Views for Singly-Linked Lists")
+")
+#langja("
+#title("片方向リストの view")
+")
 
+#langeng("
 #para('\
 
 The following dataview #stacode("slseg_v") captures the notion of a
@@ -824,6 +830,33 @@ There are two proof constructors #dyncode("slseg_v_nil") and
 assigned the following types:
 
 ')
+")
+#langja("
+#para('\
+
+次の dataview #stacode("slseg_v") は片方向リストの部分の概念を捕捉しています:
+
+#atscode('\
+dataview
+slseg_v (
+  a:t@ype+ // covariant argument
+, addr(*beg*)
+, addr(*end*)
+, int(*len*)
+) =
+  | {l:addr}
+    slseg_v_nil (a, l, l, 0) of ()
+  | {l_fst:agz}{l_nxt,l_end:addr}{n:nat}
+    slseg_v_cons (a, l_fst, l_end, n+1) of
+      ((a, ptr l_nxt) @ l_fst, slseg_v (a, l_nxt, l_end, n))
+// end of [slseg]_v
+')
+
+#stacode("slseg_v") に関連する2つの証明コンストラクタ #dyncode("slseg_v_nil") と #dyncode("slseg_v_cons")
+があり、それらに割り当てられた型は次のようになります:
+
+')
+")
 
 #atscode('\
 slseg_v_nil :
@@ -833,6 +866,7 @@ slseg_v_cons :
   ((a, ptr l_nxt) @ l_fst, slseg_v (a, l_nxt, l_end, n)) -> slseg_v (a, l_fst, l_end, n+1)
 ')
 
+#langeng("
 #para('\
 
 Note that #stacode("agz") is a subset sort for addresses that are not null.
@@ -843,6 +877,18 @@ In the case where L2 is the null pointer, then the list segment is considered
 a list as is formally defined below:
 
 ')
+")
+#langja("
+#para('\
+
+#stacode("agz") は NULL ではないアドレスのサブセット種であることに注意してください。
+型 T, 2つのアドレス L1 と L2, 自然数 N が与えられた時、
+view #stacode("slseg_v(T, L1, L2, N)") は L1 からはじまり L2 で終わるような型 T の N
+個の要素を含む片方向リストの部分を表わします。
+L2 が NULL ポインタである場合、このリスト部分は次に形式的に定義されるリストと考えられます:
+
+')
+")
 
 #atscode('\
 viewdef slist_v
@@ -850,6 +896,7 @@ viewdef slist_v
 // end of [slist_v]
 ')
 
+#langeng("
 #para('\
 
 Given a type T, a pointer pointing to L plus a proof of the view
@@ -858,6 +905,15 @@ same as a pointer to a struct of the following declared type
 #stacode("slist_struct") in C:
 
 ')
+")
+#langja("
+#para('\
+
+型 T が与えられた時、L を指すポインタと自然数 N について view #stacode("slist_v(T, L, N)") の証明は、
+C言語において次に宣言された構造体型 #stacode("slist_struct") へのポインタと本質的に同じです:
+
+')
+")
 
 #atscode('\
 typedef
@@ -867,6 +923,7 @@ struct slist {
 } slist_struct ;
 ')
 
+#langeng("
 #para('\
 
 Let us now see a simple example involving singly-linked lists:
@@ -904,6 +961,45 @@ tail-recursive. The above implementation of #dyncode("slist_ptr_length")
 essentially corresponds to the following implementation in C:
 
 ')
+")
+#langja("
+#para('\
+
+ここで片方向リストを使った単純な例を見てみましょう:
+
+#atscode('\
+fn{a:t@ype}
+slist_ptr_length
+  {l:addr}{n:nat}
+(
+  pflst: !slist_v (a, l, n) | p: ptr l
+) : int (n) = let
+  fun loop
+    {l:addr}{i,j:nat} .<i>.
+  (
+    pflst: !slist_v (a, l, i) | p: ptr l, j: int (j)
+  ) : int (i+j) =
+    if p > 0 then let
+      prval slseg_v_cons (pfat, pf1lst) = pflst
+      val res = loop (pf1lst | !p.1, j+1) // !p.1 points to the tail
+      prval () = pflst := slseg_v_cons (pfat, pf1lst)
+    in
+      res
+    end else let // the length of a null list is 0
+      prval slseg_v_nil () = pflst in pflst := slseg_v_nil (); j
+    end (* end of [if] *)
+  // end of [loop]
+in
+  loop (pflst | p, 0)
+end // end of [slist_ptr_length]
+')
+
+関数テンプレート #dyncode("slist_ptr_length") は与えられた片方向リストの長さを計算します。
+内部の関数 #dyncode("loop") が末尾再帰であることに注意してください。
+#dyncode("slist_ptr_length") の上記の実装はC言語における次の実装と本質的に一致します:
+
+')
+")
 
 #atscode('\
 int slist_ptr_length (slist_struct *p) {
@@ -913,6 +1009,7 @@ int slist_ptr_length (slist_struct *p) {
 } // end of [slist_ptr_length]
 ')
 
+#langeng("
 #para('\
 
 As another example, the following function template
@@ -964,7 +1061,59 @@ slist_ptr_reverse (slist_struct *p)
 ')
 
 ')
+")
+#langja("
+#para('\
 
+もう一つの例として、次の関数テンプレート #dyncode("slist_ptr_reverse") は与えられた連結リストを逆順にします:
+
+#atscode('\
+fn{a:t@ype}
+slist_ptr_reverse
+  {l:addr}{n:nat}
+(
+  pflst: slist_v (a, l, n) | p: ptr l
+) : [l:addr] (slist_v (a, l, n) | ptr l) = let
+  fun loop
+    {n1,n2:nat}
+    {l1,l2:addr} .<n1>. (
+    pf1lst: slist_v (a, l1, n1)
+  , pf2lst: slist_v (a, l2, n2)
+  | p1: ptr l1, p2: ptr l2
+  ) : [l:addr] (slist_v (a, l, n1+n2) | ptr l) =
+    if p1 > 0 then let
+      prval slseg_v_cons (pf1at, pf1lst) = pf1lst
+      val p1_nxt = !p1.1
+      val () = !p1.1 := p2
+    in
+      loop (pf1lst, slseg_v_cons (pf1at, pf2lst) | p1_nxt, p1)
+    end else let
+      prval slseg_v_nil () = pf1lst in (pf2lst | p2)
+    end // end of [if]
+in
+  loop (pflst, slseg_v_nil | p, the_null_ptr)
+end // end of [slist_ptr_reverse]
+')
+
+末尾再帰関数 #dyncode("loop") を while ループに翻訳すれば、ATS における #dyncode("slist_ptr_reverse")
+の実装を次のようなC言語の実装にたやすく変換できるでしょう:
+
+#atscode('\
+slist_struct*
+slist_ptr_reverse (slist_struct *p)
+{
+  slist_struct *tmp, *res = NULL ;
+  while (p != NULL) {
+    tmp = p->next ; p->next = res ; res = p ; p = tmp ;
+  }
+  return res ;
+} // end of [slist_ptr_reverse]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us see yet another example.
@@ -990,6 +1139,33 @@ then replaced with #dyncode("q").  This implementation of
 the following one in ATS:
 
 ')
+")
+#langja("
+#para('\
+
+また別の例を見てみましょう。
+様々なリストにおいてリストの連結は共通した操作です。
+ここで、まずはじめにC言語でリストの連結を実装してみましょう:
+
+#atscode('\
+slist_struct*
+slist_ptr_append
+  (slist_struct *p, slist_struct *q) {
+  slist_struct *p1 = p ;
+  if (p1 == NULL) return q ;
+  while (p1->next != NULL) p1 = p1->next ; p1->next = q ;
+  return p ;
+} // end of [slist_ptr_append]
+')
+
+素直なアルゴリズムです。
+もし #dyncode("p") が NULL だった場合、#dyncode("q") が返されます。
+そうでなければ、はじめに #dyncode("p") で指し示されたリストの最後のノードを見つけて、
+そのノードの #dyncode("next") フィールドは #dyncode("q") に置換されます。
+C言語における #dyncode("slist_ptr_append") のこの実装は、次のような ATS の実装に直接変換できます:
+
+')
+")
 
 #atscode('\
 fn{a:t@ype}
@@ -1032,6 +1208,7 @@ in
 end // end of [slist_ptr_append]
 ')
 
+#langeng("
 #para('\
 
 In the above examples, it is evident that the code in ATS is a lot more
@@ -1045,6 +1222,19 @@ implementation of #dyncode("slist_ptr_reverse") in C is certainly
 type-correct:
 
 ')
+")
+#langja("
+#para('\
+
+上記の例では、ATS のコードがC言語の該当するコードよりも冗長であることは明らかです。
+けれども、前者は後者よりも次の点でより堅牢です:
+もし ATS のコードに小さな変更 (例: 識別子の名前変更、関数の引数の並べ替え) を加えた場合、
+変更したコードは型検査されておそらく型エラーが発生します。
+他方、C言語で書かれたコードについては同じことは起きません。
+例えば、次のようなC言語における #dyncode("slist_ptr_reverse") の誤った実装はもちろん正しい型です:
+
+')
+")
 
 #atscode('\
 /*
@@ -1062,6 +1252,7 @@ slist_ptr_reverse
 } // end of [slist_ptr_reverse]
 ')
 
+#langeng("
 #para('\
 
 I now point out that the dataview #stacode("slseg_v") is declared here in a
@@ -1076,6 +1267,20 @@ structures (e.g. doubly-linked lists) that can only be properly handled
 with dataviews in ATS.
 
 ')
+")
+#langja("
+#para('\
+
+ここで宣言した dataview #stacode("slseg_v")
+はリストのノードを確保/解放する問題に対処していないことを指摘しておこうと思います。
+これは複雑な表現を避けることを意図しています。
+確保と解放を扱うような片方向リストの dataview もまた ATS で宣言することができます。
+しかし dataviewtype で宣言することでそのようなリストをより使い易くすることができます。
+けれども、dataview は根本的に dataviewtype よりも一般的で柔軟です。
+多くの一般的なデータ構造 (例: 双方向リスト) は ATS において dataview を用いてのみ適切に取り扱うことができます。
+
+')
+")
 
 </sect1>#comment("sect1/id=singly-linked_lists")
 
