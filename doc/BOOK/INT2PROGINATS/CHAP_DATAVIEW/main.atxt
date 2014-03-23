@@ -360,8 +360,14 @@ opt 型を用いたこのバージョンはかなりすっきりしています�
 
 <sect1
 id="linear_arrays">
+#langeng("
 #title("Views for Linear Arrays")
+")
+#langja("
+#title("線形配列の view")
+")
 
+#langeng("
 #para('\
 
 Unlike in most programming languages, arrays are not a primitive data
@@ -376,6 +382,22 @@ number of bytes needed to store a value of the type T. The following
 declared dataview #stacode("array_v") precisely captures this intuituion:
 
 ')
+")
+#langja("
+#para('\
+
+ほとんどのプログラミング言語と異なり、ATS では配列はプリミティブなデータ構造ではありません。
+もっと正確に言えば、永続的な配列はプログラマが安全に解放できる線形配列を用いて実装できます。
+その線形配列は at-view を用いて実装できます。
+直観的には、N 個の at-view からなる 型 T の N 個の要素が保存されている配列の view :
+T@L#sub("0"), T@L#sub("1"), ..., T@L#sub("N-1") です。
+ここで、L#sub("0") は配列の開始アドレスで、L に続くそれぞれの要素は直前の要素に T
+のサイズを加えたものと等しくなります。
+すなわち、型 T の値を保存するのに必要なバイト数です。
+次に宣言する dataview #stacode("array_v") はこの直感を正確に捕捉しています:
+
+')
+")
 
 #atscode('\
 dataview array_v
@@ -387,6 +409,7 @@ dataview array_v
 // end of [array_v]
 ')
 
+#langeng("
 #para('\
 
 Given a type T, an address L and an integer N, #stacode("array_v(T, L, N)")
@@ -395,6 +418,17 @@ As can be readily expected, the function templates for array-accessing and
 array-updating are given the following interfaces:
 
 ')
+")
+#langja("
+#para('\
+
+型 T, アドレス L, 整数 N が与えられた時、#stacode("array_v(T, L, N)")
+は型 T の N 個の要素を保存する L からはじまる配列の view です。
+すぐに予想できることですが、
+配列をアクセスしたり更新する関数テンプレートは次のインターフェイスで与えられます:
+
+')
+")
 
 #atscode('\
 fun{
@@ -410,6 +444,7 @@ a:t@ype
 // end of [arrset] // end of [fun]
 ')
 
+#langeng("
 #para('\
 
 Before implementing #dyncode("arrget") and #dyncode("arrset"), I present as
@@ -417,6 +452,15 @@ follows some code that implements a function template to access the first
 element of a nonempty array:
 
 ')
+")
+#langja("
+#para('\
+
+#dyncode("arrget") と #dyncode("arrset")
+を実装する前に、空でない配列の最初の要素にアクセスする関数テンプレートを実装する次のコードを紹介します:
+
+')
+")
 
 #atscode('\
 fun{
@@ -432,12 +476,21 @@ a:t@ype
 } // end of [arrgetfst]
 ')
 
+#langeng("
 #para('\
 
 Obviously, the function template #dyncode("arrget") can be implemented
 based on #dyncode("arrgetfst"):
 
 ')
+")
+#langja("
+#para('\
+
+明らかに、関数テンプレート #dyncode("arrget") は #dyncode("arrgetfst") を用いて実装することができます:
+
+')
+")
 
 #atscode('\
 implement{a}
@@ -453,6 +506,7 @@ arrget (pf | p, i) =
   // end of [if]
 ')
 
+#langeng("
 #para('\
 
 This is a tail-recursive implementation of time-complexity O(n). However,
@@ -462,7 +516,18 @@ operations immediately dawned on me the need to construct proof functions
 for supporting view-changes (of no run-time cost).
 
 ')
+")
+#langja("
+#para('\
 
+これは末尾再帰的な実装で時間的計算量は O(n) です。
+けれども、配列の重要なメリットは O(1) の時間でアクセスと更新操作ができることにあります。
+(実行時のコストなしに) view の変更をサポートするような証明関数をコンストラクトする必要性に気づき、私は最初にそのような即時的な操作を実装することに注力しました。
+
+')
+")
+
+#langeng("
 #para('\
 
 Clearly, an array starting at L that stores N elements of type T can also
@@ -472,6 +537,17 @@ an natural number less that or equal to N. Formally, this statement can be
 encoded in the type of the proof function #dyncode("array_v_split"):
 
 ')
+")
+#langja("
+#para('\
+
+明確に、型 T の N 個の要素を保存する L から開始する配列は2つの方法で考えることができます:
+一つは I 個の要素が L から保管されている考える方法で、もう一つは N-I 個の要素が L+I*sizeof(T)
+から保管されていると考える方法です。このとき I は N 以下の自然数です。
+形式的には、この文は証明関数 #dyncode("array_v_split") の型にエンコードできます:
+
+')
+")
 
 #atscode('\
 prfun
@@ -483,12 +559,21 @@ array_v_split
 ) : (array_v (a, l, i), array_v (a, l+i*sizeof(a), n-i))
 ')
 
+#langeng("
 #para('\
 
 The other direction of the above statement can be encoded in the type of
 the proof function #dyncode("array_v_unsplit"):
 
 ')
+")
+#langja("
+#para('\
+
+上記の文のもう一方は証明関数 #dyncode("array_v_unsplit") の型にエンコードできます:
+
+')
+")
 
 #atscode('\
 prfun
@@ -500,6 +585,7 @@ array_v_unsplit
 ) : array_v (a, l, n1+n2)
 ')
 
+#langeng("
 #para('\
 
 With #dyncode("array_v_split") and #dyncode("array_v_unsplit"), we can
@@ -507,6 +593,15 @@ readily give implementations of #dyncode("arrget") and #dyncode("arrset")
 that are O(1)-time:
 
 ')
+")
+#langja("
+#para('\
+
+#dyncode("array_v_split") と #dyncode("array_v_unsplit") を使って、
+O(1) 時間の #dyncode("arrget") と #dyncode("arrset") をたやすく実装することができます:
+
+')
+")
 
 #atscode('\
 implement{a}
@@ -530,6 +625,7 @@ arrset{l}{n,i}
 } // end of [arrset]
 ')
 
+#langeng("
 #para('\
 
 Of course, the proof functions #dyncode("array_v_split") and
@@ -537,7 +633,17 @@ Of course, the proof functions #dyncode("array_v_split") and
 covering the topic of view-change.
 
 ')
+")
+#langja("
+#para('\
 
+もちろん、証明関数 #dyncode("array_v_split") と #dyncode("array_v_split") はまだ実装されていません。
+これは、view の変更に関するトピックを紹介するときに説明します。
+
+')
+")
+
+#langeng("
 #para('\
 
 Given a type T, an address L and a natural number N, a proof of the view
@@ -547,6 +653,18 @@ to be explained in details elsewhere. I now give as follows an implemention
 of a function template for array intialization:
 
 ')
+")
+#langja("
+#para('\
+
+型 T, アドレス L, 自然数 N が与えられた時、
+view #stacode("array_v(T?, L, N)") の証明は関数 #dyncode("malloc") と #dyncode("free")
+をそれぞれ使って獲得と解放をすることができます。
+これについては別の章で詳細を解説します。
+ここで、次のような配列を初期化する関数テンプレートの実装を見てみましょう:
+
+')
+")
 
 #atscode('\
 typedef natLt (n:int) = [i:nat | i < n] int (i)
@@ -579,6 +697,7 @@ in
 end // end of [array_ptr_tabulate]
 ')
 
+#langeng("
 #para('\
 
 Given a natural number n, the type #stacode("natLt(n)") is for all natural
@@ -591,7 +710,20 @@ array stores a tabulation of the given function f after the initialization
 is over.
 
 ')
+")
+#langja("
+#para('\
 
+自然数 n が与えられた時、型 #stacode("natLt(n)") は n より小さい全ての自然数です。
+型 T が与えられた時、関数 #dyncode("array_ptr_tabulate&lt;T&gt;") は未初期化配列へのポインタ、
+その配列のサイズ、そして型 T の値に n より小さい自然数それぞれをマップする関数 f を取ります。
+そしてこの関数は配列を f(0), f(1), ..., f(n-1) の値のシーケンスで初期化します。
+言い方をかえると、初期化が終わるとこの配列は与えられた関数 f の表を保存していることになります。
+
+')
+")
+
+#langeng("
 #para('\
 
 Given a type T and an integer N, @[T][N] is a built-in type in ATS for N
@@ -615,12 +747,47 @@ These interfaces are more concise as they obviate the need to mention
 explicitly where the array argument is located.
 
 ')
+")
+#langja("
+#para('\
 
+型 T と自然数 N が与えられた時、@[T][N] は ATS のビルトイン型で 型 T の N 個連続した値を表わします。
+したがって、与えられたアドレス L について at-view @[T][N]@L は配列 view #dyncode("array_v(T, L, N)")
+と等価です。
+参照渡しの機能を使えば、以前示した関数 #dyncode("arrget") と #dyncode("arrset")
+に次のインターフェイスを割り当てることができます:
+
+#atscode('\
+fun{
+a:t@ype
+} arrget {n,i:nat | i < n} (A: &(@[a][n]), i: int i): a
+
+fun{
+a:t@ype
+} arrset {n,i:nat | i < n} (A: &(@[a][n]), i: int i, x: a): void
+')
+
+配列引数が配置された場所を明示的に示す必要がないので、これらのインターフェイスはより簡潔です。
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find the entirety of the above presented code
 #mycodelink("CHAP_DATAVIEW/array.dats", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+上記で紹介したコードの全体は
+#mycodelink("CHAP_DATAVIEW/array.dats", "オンライン")
+から入手できます。
+
+")
 ")
 
 </sect1>#comment("sect1/id=linear_arrays")
