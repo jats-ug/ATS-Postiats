@@ -1287,8 +1287,14 @@ with dataviews in ATS.
 <!-- ****** ****** -->
 
 <sect1 id="view-changes">
+#langeng("
 #title("Proof Functions for View-Changes")
+")
+#langja("
+#title("view 変更のための証明関数")
+")
 
+#langeng("
 #para("\
 
 By the phrase #emphasis("view-change"), I mean applying a function to
@@ -1302,7 +1308,24 @@ view-changes involve recursively defined proof functions, and I present
 several of such cases in the rest of this section.
 
 ")
+")
+#langja("
+#para("\
 
+#emphasis("view 変更 (view-change)") という言いまわしは、関数を一連の view の証明に適用してそれらを別の
+view の証明に変換することを意味しています。
+この関数自身も証明関数なので、view 変更それぞれに関連する実行時のコストはありません。
+例えば、
+どこかのアドレス L について at-view int32@L の証明は4つの at-view: int8@L, int8@L+1, int8@L+2, int8@L+3
+からなるタプルに変化できます。
+このとき int32 と int8 はそれぞれ32ビットと8ビット整数の型です。
+しばしばより興味深い view 変更が証明関数としてそれぞれ定義されています。
+この章の残りではそのようないくつかの例を紹介します。
+
+")
+")
+
+#langeng("
 #para("\
 
 When implementing an array subscripting operation of O(1)-time, we need a
@@ -1311,6 +1334,17 @@ adjacently located arrays and another proof function to do precisely the
 opposite. Formally speaking, we need to construct the following two proof
 functions #dyncode("array_v_split") and #dyncode("array_v_unsplit"):
 
+")
+")
+#langja("
+#para("\
+
+配列の添字操作を O(1) 時間で実装するには、1つの配列の view を2つの隣接した配列の view
+に変換する証明関数と、その逆の変換を行なう別の証明関数が必要です。
+形式的に言うと、次の2つの証明関数 #dyncode("array_v_split") と #dyncode("array_v_unsplit")
+をコンストラクトする必要があるのです:
+
+")
 ")
 
 #atscode('\
@@ -1331,11 +1365,20 @@ array_v_unsplit
 ) : array_v (a, l, n1+n2)
 ')
 
+#langeng("
 #para('\
 
 An implementation of #dyncode("array_v_split") is given as follows:
 
 ')
+")
+#langja("
+#para('\
+
+#dyncode("array_v_split") の実装は次のように与えられます:
+
+')
+")
 
 #atscode('\
 primplement
@@ -1364,6 +1407,7 @@ in
 end // end of [array_v_split]
 ')
 
+#langeng("
 #para('\
 
 Note that the keyword #dyncode("primplement") (instead of
@@ -1401,7 +1445,46 @@ The proof function #dyncode("unsplit") also directly encodes a proof based on
 mathematical induction.
 
 ')
+")
+#langja("
+#para('\
 
+(#dyncode("implement") の代わりに) キーワード #dyncode("primplement")
+は証明関数の実装に使われることに注意してください。
+明確に、証明関数 #dyncode("split") は数学的帰納法を使って証明を直接エンコードしています。
+#dyncode("array_v_unsplit") の実装を次に示します:
+
+#atscode('\
+primplement
+array_v_unsplit
+  {a}{l}{n1,n2}
+  (pf1arr, pf2arr) = let
+  prfun unsplit
+    {l:addr}{n1,n2:nat} .<n1>.
+  (
+    pf1arr: array_v (a, l, n1)
+  , pf2arr: array_v (a, l+n1*sizeof(a), n2)
+  ) : array_v (a, l, n1+n2) =
+    sif n1 > 0 then let
+      prval
+      array_v_cons (pf1, pf1arr) = pf1arr
+      prval pfres = unsplit (pf1arr, pf2arr)
+    in
+      array_v_cons (pf1, pfres)
+    end else let
+      prval array_v_nil () = pf1arr in pf2arr
+    end // end of [sif]
+in
+  unsplit (pf1arr, pf2arr)
+end // end of [array_v_unsplit]
+')
+
+証明関数 #dyncode("unsplit") もまた数学的帰納法を用いて証明を直接エンコードしています。
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us now see an even more interesting proof function for performing
@@ -1409,6 +1492,15 @@ view-change.  The interface of the proof function #dyncode("array_v_takeout")
 is given as follows:
 
 ')
+")
+#langja("
+#para('\
+
+ここで view 変更を行なうより興味深い証明関数を見てみましょう。
+証明関数 #dyncode("array_v_takeout") のインターフェイスは次のように与えられます:
+
+')
+")
 
 #atscode('\
 prfun
@@ -1420,6 +1512,7 @@ array_v_takeout
 ) : (a @ l+i*sizeof(a), a @ l+i*sizeof(a) -<lin,prf> array_v (a, l, n))
 ')
 
+#langeng("
 #para('\
 
 Note that the following type is for a linear proof function that takes a
@@ -1447,12 +1540,49 @@ arrget{l}{n,i}
 ')
 
 ')
+")
+#langja("
+#para('\
 
+次の型は、at-view の証明を取り配列 view の証明を返すような線形証明関数を表わすことに注意してください:
+
+#atscode('\
+a @ l+i*sizeof(a) -<lin,prf> array_v (a, l, n)
+')
+
+そのような関数は1つ要素が欠けた配列を本質的に表わし、単純に
+#dyncode("array_v_takeout") は配列の view を (1つの要素に対する) at-view と配列の残りを表わす view
+に変更すると、表現することができます。
+#dyncode("array_v_takeout") を使うことで、#dyncode("arrget") に別の実装を与えることができます:
+
+#atscode('\
+implement{a}
+arrget{l}{n,i}
+  (pf | p, i) = x where {
+  prval (pf1, fpf2) =
+  array_v_takeout{a}{l}{n,i} (pf)
+  val x = ptr_get1<a> (pf1 | ptr_add<a> (p, i))
+  prval () = pf := fpf2 (pf1) // putting the cell and the rest together
+} // end of [arrget]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 The proof function #dyncode("array_v_takeout") can be implemented as follows:\
 
 ')
+")
+#langja("
+#para('\
+
+証明関数 #dyncode("array_v_takeout") は次のように実装できます:\
+
+')
+")
 
 #atscode('\
 primplement
@@ -1483,6 +1613,7 @@ in
 end // end of [array_v_takeout]
 ')
 
+#langeng("
 #para('\
 
 Note that #dyncode("llam") is a keyword for forming linear functons.  Once
@@ -1490,7 +1621,17 @@ a linear function is applied, it is consumed and the resource in it, if not
 reclaimed, moves into the result it returns.
 
 ')
+")
+#langja("
+#para('\
 
+#dyncode("llam") は線形関数を作るキーワードであることに注意してください。
+線形関数が適用されるとそれは消費されてその内にリソースを作り、そしてもし未回収ならば、それが返す結果の中に移動します。
+
+')
+")
+
+#langeng("
 #para('\
 
 The proof functions presented so far for view-changes are all manipulating
@@ -1535,14 +1676,68 @@ end // end of [slseg_v_unsplit]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+これまで示してきた view 変更のための証明関数はは全て配列 view の操作でした。
+次のコードはこれらとは異なり、片方向リストを表わす2つの view を1つに結合するものと考えることができます:
+
+#atscode('\
+prfun slseg_v_unsplit
+  {a:t@ype}
+  {l1,l2,l3:addr}{n1,n2:nat}
+(
+  pf1lst: slseg_v (a, l1, l2, n1), pf2lst: slseg_v (a, l2, l3, n2)
+) : slseg_v (a, l1, l3, n1+n2)
+')
+
+#dyncode("slseg_v_unsplit") の型は、長さ N1 の L1 から L2 へのリスト片と長さ N2 の L2 から L3
+への別のリスト片は、長さ N1+N2 の L1 から L3 へのリスト片であると考えることができることを本質的に表わしています。
+次の #dyncode("slseg_v_unsplit") の実装は #dyncode("array_v_unsplit") の実装とおおまかに類似しています:
+
+#atscode('\
+primplement
+slseg_v_unsplit
+  {a}(pf1lst, pf2lst) = let
+  prfun unsplit
+    {l1,l2,l3:addr}{n1,n2:nat} .<n1>.
+  (
+    pf1lst: slseg_v (a, l1, l2, n1), pf2lst: slseg_v (a, l2, l3, n2)
+  ) : slseg_v (a, l1, l3, n1+n2) =
+    sif n1 > 0 then let
+      prval slseg_v_cons (pf1at, pf1lst) = pf1lst
+    in
+      slseg_v_cons (pf1at, unsplit (pf1lst, pf2lst))
+    end else let
+      prval slseg_v_nil () = pf1lst in pf2lst
+    end // end of [sif]
+in
+  unsplit (pf1lst, pf2lst)
+end // end of [slseg_v_unsplit]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 The reader may find it interesting to give an implementation of
 #dyncode("slist_ptr_append") by making use of #dyncode("slseg_v_unsplit").
 
 ')
+")
+#langja("
+#para('\
 
+興味深くも #dyncode("slseg_v_unsplit") を使って #dyncode("slist_ptr_append")
+を実装できることに読者は気が付くかもしれえません。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find on-line the files #mycodelink("CHAP_DATAVIEW/array.dats",
@@ -1550,6 +1745,15 @@ Please find on-line the files #mycodelink("CHAP_DATAVIEW/array.dats",
 which contains the code employed for illustration in this section.
 
 ')
+")
+#langja("
+#para('\
+
+オンラインのファイル #mycodelink("CHAP_DATAVIEW/array.dats", "array.dats") と
+#mycodelink("CHAP_DATAVIEW/slist.dats", "slist.dats") からこの章で紹介したコードを入手できます。
+
+')
+")
 
 </sect1>#comment("sect1/id=view-changes")
 
