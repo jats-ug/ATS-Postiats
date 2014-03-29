@@ -218,8 +218,14 @@ list_optcons
 
 <sect1
 id="linear_lists">
+#langeng("
 #title("Linear Lists")
+")
+#langja("
+#title("線形リスト")
+")
 
+#langeng("
 #para('\
 
 A linear list is essentially the same as a singly-linked list depicted by
@@ -242,7 +248,31 @@ Given a type T and an integer I, #stacode("list_vt(T, I)") is
 for linear lists of length I in which each element is of the type T.
 
 ')
+")
+#langja("
+#para('\
 
+線形リストは dataview #stacode("slist_v") で表現された片方向リストと本質的に同じです。
+けれども、以前の実装ではできなかったリストノードのメモリ確保と解放が可能になります。
+次の宣言は線形 datatype #stacode("list_vt") を導入しています。
+これは型と整数に適用されると、(#stacode("viewtype") である) ボックス型を作ります:
+
+#atscode('\
+datavtype
+list_vt (a:t@ype+, int) =
+  | list_vt_nil (a, 0) of ()
+  | {n:nat}
+    list_vt_cons (a, n+1) of (a, list_vt (a, n))
+// end of [list_vt]
+')
+
+型 T と整数 I が与えられた時、#stacode("list_vt(T, I)") は、それぞれの要素が型 T である長さ I
+の線形リストを表わします。
+
+')
+")
+
+#langeng("
 #para('\
 
 Assume that a data constructor named #emphasis("foo") is associated with a
@@ -258,7 +288,23 @@ at-views associated with L1 and L2 are put in the store for currently
 available proofs.
 
 ')
+")
+#langja("
+#para('\
 
+ある dataviewtype に関連する #emphasis("foo") という名前のデータコンストラクタあると仮定しましょう。
+すると、n が #emphasis("foo") のアリティのとき、n+1 個のアドレスを取り viewtype を作るような、一致する
+#emphasis("foo_unfold") という名前の viewtype コンストラクタがあります。
+例えば、viewtype コンストラクタ #stacode("list_vt_cons_unfold") は3つのアドレス L0, L1, L2
+を取り、viewtype #stacode("list_vt_cons_unfold(L0, L1, L2)") を作ります。
+この viewtype は、リストノードが L0 に配置されていて、#dyncode("list_vt_cons") の2つの引数が L1 と L2
+に配置されているような、#dyncode("list_vt_cons") を呼び出して作られたリストノードを表わします。
+このとき L1 と L2 に関連する at-view の証明は現在有効な証明として保管されます。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following function template #dyncode("length") computes the length of a
@@ -295,7 +341,44 @@ the name #dyncode("xs1") is bound to the tail of #dyncode("xs"). Note that
 that #dyncode("xs1") be modified into another value (of a different type).
 
 ')
+")
+#langja("
+#para('\
 
+次の関数テンプレート #dyncode("length") は与えられた線形のリストの長さを計算します:
+
+#atscode('\
+fn{
+a:t@ype
+} length{n:nat}
+  (xs: !list_vt (a, n)): int n = let
+  fun loop
+    {i,j:nat | i+j==n} .<i>.
+    (xs: !list_vt (a, i), j: int j): int (n) =
+    case+ xs of
+    | list_vt_cons (_, xs1) => loop (xs1, j+1) | list_vt_nil () => j
+  // end of [loop]
+in
+  loop (xs, 0)
+end // end of [length]
+')
+
+#dyncode("length") インターフェイスは、型 #dyncode("list_vt(T, I)")
+のリストに適用されると、#dyncode("length&lt;T&gt;") が I に等しい整数を返すことを示しています。
+このとき T と I はそれぞれ型と整数です。
+関数引数の型の前にある記号 #dyncode("!")
+は、その引数が値渡しで関数呼び出しが完了した後も保持されることに注意してください。
+#dyncode("length") の本体内の関数 #dyncode("loop") は末尾再帰です。
+線形のリストと整数が与えられた時、#dyncode("loop") はそのリストの長さとその整数の和を返します。
+#dyncode("loop") の本体において、もし #dyncode("xs") が パターン #dyncode("list_vt_cons(_, xs1)")
+にマッチするなら、名前 #dyncode("xs1") は #dyncode("xs") の tail に束縛されます。
+#dyncode("xs1") は (変数ではなく) 値であり、#dyncode("xs1")
+を違う型の別の値に変更することはできないことに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 Suppose that we do want to modify the content stored in a list-node.
@@ -337,12 +420,61 @@ left-value). The special proof function #dyncode("fold@") is called on
 into a linear list.
 
 ')
+")
+#langja("
+#para('\
 
+リストノードに保管された中身を修正したくなったとしましょう。
+例えば、線形の整数リストに保管されているそれぞれの整数の値を2倍したいかもしれません。
+次のコードは、このようなことを行なうたに #dyncode("list_vt_2x") という名前の関数を実装しています:
+
+#atscode('\
+fun
+list_vt_2x{n:nat}
+  (xs: !list_vt (int, n) >> _): void =
+(
+  case+ xs of
+  | @list_vt_cons
+      (x, xs1) => let
+      val () = x := 2 * x
+      val () = list_vt_2x (xs1)
+      prval () = fold@ (xs)
+    in
+      // nothing
+    end // end of [list_vt_cons]
+  | list_vt_nil () => ()
+) (* end of [list_vt_2x] *)
+')
+
+型 T が与えられた時、(#stacode("!T &gt;&gt; _")) という記法は (#stacode("!T &gt;&gt; T")) の略です。
+パターン #dyncode("list_vt_cons(x, xs1)") の前にある特殊記号 #keycode("@") は
+#emphasis("unfolding") を意味することに注意してください。
+もし #dyncode("xs") がこのパターンにマッチした場合、
+#dyncode("x") と #dyncode("xs1") は、それぞれ #dyncode("xs") の head と tail が格納された場所 L1 と L2
+を指すポインタに束縛されます。
+そして #dyncode("xs") が参照するリストノードの位置を L0 とするために、#dyncode("xs") の型は
+#stacode("list_vt_cons_unfold(L0, L1, L2)") に変化します。
+パターン #dyncode("list_vt_cons(x, xs1)") によるガード節の本体において、#dyncode("x") と #dyncode("xs1")
+は (左辺値の) 変数として扱われます。
+特別な証明関数 #dyncode("fold@") は #dyncode("xs") に対して呼び出され、それを畳み込むと同時に L1 と L2 に付属した at-view の証明を線形リストにします。
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us now see an example where linear list-nodes are explicitly freed:
 
 ')
+")
+#langja("
+#para('\
+
+線形リストのノードが正確に解放される例を見てみましょう:
+
+')
+")
 
 #atscode('\
 fun{
@@ -358,6 +490,7 @@ a:t@ype
 ) (* end of [list_vt_free] *)
 ')
 
+#langeng("
 #para('\
 
 Given a linear list, the function #dyncode("list_vt_free") frees all the
@@ -374,7 +507,24 @@ freed; nothing in this case is actually freed at run-time as
 #dyncode("list_vt_nil") is mapped to the null pointer.
 
 ')
+")
+#langja("
+#para('\
 
+線形リストが与えられた時、関数 #dyncode("list_vt_free") はそのリスト中の全てのノードを解放します。
+#dyncode("list_vt_free") の本体を注意深く調べてみましょう。
+#dyncode("xs") がパターン #dyncode("list_vt_cons(x, xs1)") にマッチするなら、
+名前 #dyncode("x") と #dyncode("xs1") はそれぞれ #dyncode("xs") の head と tail に束縛されます;
+パターンの前にある特殊記号 #keycode("~") は、#dyncode("xs") がパターンにマッチした後、#dyncode("xs")
+で参照されるリストノードが即座に解放されることを意味しています。
+もし #dyncode("xs") がパターン #dyncode("list_vt_nil()") にマッチするなら、束縛は生成されません;
+パターンの前にある特殊記号 #keycode("~") は #dyncode("xs") で参照されるリストノードが解放されることを示しています;
+この場合 #dyncode("list_vt_nil") は NULL ポインタにマップされているので、実際に実行時には何も解放されません。
+
+')
+")
+
+#langeng("
 #para('\
 
 It is also possible to use the special function #dyncode("free@") to
@@ -384,6 +534,17 @@ with some dataviewtype. For instance, the following code gives another
 implementation of #dyncode("list_vt_free"):
 
 ')
+")
+#langja("
+#para('\
+
+変数が dataviewtype に関連するコンストラクタで作られたパターンにマッチした後に、線形変数はそのまま残して
+(またはスケルトンとも呼ばれます)
+ノードを明示的に解放するために特殊関数 #dyncode("free@") を使うことも可能です。
+例えば、次のコードは #dyncode("list_vt_free") の別の実装です:
+
+')
+")
 
 #atscode('\
 fun{
@@ -400,6 +561,7 @@ a:t@ype
 // end of [list_vt_free]
 ')
 
+#langeng("
 #para('\
 
 As it can be a bit tricky to use #dyncode("free@") in practice, I present
@@ -408,6 +570,15 @@ more details as follows. First, let us note that the constructors
 #stacode("list_vt") are assigned the following types:
 
 ')
+")
+#langja("
+#para('\
+
+実際の場面における #dyncode("free@") の少し巧妙な使い方として、次に詳しく解説します。
+はじめに #stacode("list_vt") に関連するコンストラクタ #dyncode("list_vt_nil") と #dyncode("list_vt_cons") には次のような型が割り当てられています:
+
+')
+")
 
 #atscode('\
 list_vt_nil : // one quantifier
@@ -416,6 +587,7 @@ list_vt_cons : // two quantifiers
   {a:t@ype}{n:nat} (a, list_vt (a, n)) -> list_vt (a, n+1)
 ')
 
+#langeng("
 #para('\
 
 If #dyncode("free@") is applied to a node of the type
@@ -435,6 +607,23 @@ natural number can be used in place of 0 as the second static argument of
 #dyncode("free@").
 
 ')
+")
+#langja("
+#para('\
+
+もし #dyncode("free@") が型 #dyncode("list_vt_nil()") ノードに適用されたら、コンストラクタ
+#dyncode("list_vt_nil") の型に量化子をインスタンス化するために、型としての静的引数を1つ必要とします。
+もし #dyncode("free@") が型 #stacode("list_vt_cons_unfold(L0, L1, L2)") ノードに適用されたら、コンストラクタ
+#dyncode("list_vt_cons") の型に2つの量化子をインスタンス化するために、2つの型と整数の静的引数を必要とします。
+#dyncode("xs") の型が #stacode("list_vt_cons_unfold(L0, L1, L2)") である場合、
+#dyncode("free@{a}{0}(xs)") 呼び出しを型検査すると at-view #stacode("a?@L1") と
+at-view #stacode("list_vt(a, 0)?@L2") の証明を暗黙的に消費します。
+どのような T と I においても、#stacode("list_vt(T, 0)?") と #stacode("list_vt(T, I)?")
+の間に違いがないので、静的引数 0 をこのコードでは使っています。
+実際のところ、どのような自然数も #dyncode("free@") の第二静的引数として0の代わりに使うことができます。
+
+')
+")
 
 <sect2
 id="linear-list-reversing">
