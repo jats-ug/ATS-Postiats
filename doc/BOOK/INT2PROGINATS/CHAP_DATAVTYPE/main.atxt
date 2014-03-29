@@ -627,8 +627,14 @@ at-view #stacode("list_vt(a, 0)?@L2") の証明を暗黙的に消費します。
 
 <sect2
 id="linear-list-reversing">
+#langeng("
 #title("Linear List-Reversing")
+")
+#langja("
+#title("線形リストの逆順")
+")
 
+#langeng("
 #para('\
 
 The following code implements a function #dyncode("reverse") that turns a
@@ -673,13 +679,62 @@ of types. For instance, there is no explicit mentioning of pointers in the
 types assigned to functions #dyncode("reverse") and #dyncode("revapp").
 
 ')
+")
+#langja("
+#para('\
+
+次のコードは、与えられた線形リストを逆順にする関数 #dyncode("reverse") を実装しています:
+
+#atscode('\
+fn{
+a:t@ype
+} reverse{n:nat}
+(
+  xs: list_vt (a, n)
+) : list_vt (a, n) = let
+  fun revapp
+    {i,j:nat | i+j==n} .<i>.
+  (
+    xs: list_vt (a, i), ys: list_vt (a, j)
+  ) : list_vt (a, n) =
+    case+ xs of
+    | @list_vt_cons
+        (_, xs1) => let
+        val xs1_ = xs1
+        val () = xs1 := ys
+        prval () = fold@ (xs)
+      in
+        revapp (xs1_, xs)
+      end // end of [list_vt_cons]
+    | ~list_vt_nil ((*void*)) => ys
+  // end of [revapp]
+in
+  revapp (xs, list_vt_nil)
+end // end of [reverse]
+')
+
+#dyncode("reverse") に割り当てられた型は、この関数が線形リストを消費してそれと同じ長さの線形リストを返すことを示しています。
+内部の関数 #dyncode("revapp") は末尾再帰であることに注意してください。
+線形リストの逆順のこの実装は、以前示した dataview #stacode("slseg_v") (これは片方向リストでした)
+を使った実装に直接対応しています。
+これら2つの実装を比較すると、dataviewtype を使った実装は型レベルで著しく単純化されています。
+例えば、関数 #dyncode("reverse") と #dyncode("revapp") に割り当てられた型において、ポインタに関して明示的な言及をしていません。
+
+')
+")
 
 </sect2>#comment("sect2/id=linear-list-reversing")
 
 <sect2
 id="linear-list-appending">
+#langeng("
 #title("Linear List-Appending")
+")
+#langja("
+#title("線形リストの連結")
+")
 
+#langeng("
 #para('\
 
 The following code implements a function #dyncode("append") that
@@ -722,7 +777,52 @@ argument is changed from a list of length #stacode("m") into a list of
 length #stacode("m+n") while its second argument is consumed.
 
 ')
+")
+#langja("
+#para('\
 
+次のコードは、与えられた2つの線形リストを1つに連結する関数 #dyncode("append") を実装しています:
+
+#atscode('\
+fn{
+a:t@ype
+} append{m,n:nat}
+(
+  xs: list_vt (a, m)
+, ys: list_vt (a, n)
+) : list_vt (a, m+n) = let
+  fun loop {m,n:nat} .<m>. // [loop] is tail-recursive
+  (
+    xs: &list_vt (a, m) >> list_vt (a, m+n), ys: list_vt (a, n)
+  ) : void =
+    case+ xs of
+    | @list_vt_cons
+        (_, xs1) => let
+        val () = loop (xs1, ys) in fold@ (xs)
+      end // end of [list_vt_cons]
+    | ~list_vt_nil ((*void*)) => xs := ys
+  // end of [loop]
+  var xs: List_vt (a) = xs // creating a left-value for [xs]
+  val () = loop (xs, ys)
+in
+  xs
+end // end of [append]
+')
+
+関数 #dyncode("loop") の本体にある #dyncode("fold@(xs)") 呼び出しは型検査後に消去されるので、#dyncode("loop")
+は末尾再帰関数です。
+したがって、スタックオーバーフローの可能性を気にせず、どのような長さのリストに対しても #dyncode("append")
+を呼び出すことができます。
+#dyncode("loop") の最初の引数の型は記号 #dyncode("&amp;") ではじまっています。
+これはこの引数が参照渡しであることを示しています。
+#dyncode("loop") の型は、1番目の引数が長さ #stacode("m") のリストから長さ #stacode("m+n")
+のリストに変化することを単に意味しています。
+この時、2番目の引数は消費されます。
+
+')
+")
+
+#langeng("
 #para('\
 
 This implementation of list append essentially corresponds to the
@@ -732,7 +832,18 @@ and cleaner, demonstrating concretely some advantage of dataviewtypes over
 dataviews.
 
 ')
+")
+#langja("
+#para('\
 
+リスト連結のこの実装は、以前紹介した dataview #dyncode("slseg_v") を用いた実装と本質的に一致しています。
+これら2つの比較すると、上記の実装がはるかに単純できれいで、dataview に対する dataviewtype
+の利点を具体的に立証していることがわかるでしょう。
+
+')
+")
+
+#langeng("
 #para('\
 
 This is also a good place for me to mention a closely related issue
@@ -814,13 +925,99 @@ to #stacode("list(T, N+1)") by consuming a proof of the at-view
 N)@L2"), where T and N are a type and an integer, respectively.
 
 ')
+")
+#langja("
+#para('\
+
+これはまた、関数的なリスト連結と末尾再帰に関連する問題について言及する良い機会です。
+次は関数的なリスト連結の典型的な実装です:
+
+#atscode('\
+fun{
+a:t@ype
+} append1{m,n:nat}
+(
+  xs: list (a, m), ys: list (a, n)
+) : list (a, m+n) =
+  case+ xs of
+  | list_cons (x, xs) => list_cons (x, append1 (xs, ys))
+  | list_nil () => ys
+// end of [append1]
+')
+
+明確に #dyncode("append1") は末尾再帰ではありません。
+つまり、もし1番目の引数がとても長かった (例: 百万個の要素を含むような)
+場合には実行時にスタックオーバーフローを引き起こす可能性があります。
+けれども、関数的なリスト連結を末尾再帰的に実装するために、ATS では直接的かつ化安全な方法があります。
+スタックオーバーフローの可能性を取り除くことができます。
+例えば、
+次のような #dyncode("append2") の実装は与えられた関数的な2つのリストを、末尾再帰的に連結して返します:
+
+#atscode('\
+fun{
+a:t@ype
+} append2{m,n:nat}
+(
+  xs: list (a, m), ys: list (a, n)
+) : list (a, m+n) = let
+//
+fun loop
+  {m,n:nat} .<m>.
+(
+  xs: list (a, m), ys: list (a, n)
+, res: &(List a)? >> list (a, m+n)
+) : void =
+(
+  case+ xs of
+  | list_cons
+      (x, xs) => let
+      val () = 
+      res := list_cons{a}{0}(x, _)
+      val+ list_cons (_, res1) = res
+      val () = loop (xs, ys, res1)
+      prval ((*void*)) = fold@ (res)
+    in
+      // nothing
+    end // end of [list_cons]
+  | list_nil () => (res := ys)
+) (* end of [loop] *)
+//
+var res: List(a)
+val () = loop (xs, ys, res)
+//
+in
+  res
+end // end of [append2]
+')
+
+型検査の間では、アドレス L0, L1, L2 について、式 #dyncode("list_cons{a}{0}(x, _)") には線形型
+#stacode("list_cons(L0, L1, L2)") が割り当てられています。
+このとき、at-view #stacode("a@L1") と at-view #stacode("list(a, 0)?@L2") の証明が現在有効な証明として保存されます。
+特殊記号 #keycode("_") は単に、新しくコンストラクトされたリストの tail
+が未初期化であることを示すことに注意してください。
+型 #stacode("list_cons(L0, L1, L2)") の部分的に初期化されたリストはパターン #dyncode("list_cons(_, res1)")
+にマッチすることが保証されます。
+この時、#dyncode("res1") と当該リストの (未初期化の可能性がある) tail を格納した L2
+を指すポインタの間に束縛ができます。
+T と N がそれぞれ型と整数であるとき、型 #stacode("list_cons(L0, L1, L2)") の変数に #dyncode("fold@")
+が呼び出されると、それは #stacode("list(T, N+1)") 型に変化します。
+この時、at-view #stacode("T@L1") と at-view #stacode("list(T, N)@L2") の証明が消費されます。
+
+')
+")
 
 </sect2>#comment("sect2/id=linear-list-appending")
 
 <sect2
 id="linear-list-summary">
+#langeng("
 #title("Summary")
+")
+#langja("
+#title("要約")
+")
 
+#langeng("
 #para('\
 
 With dataviewtypes, we can largely retain the convenience of pattern
@@ -831,6 +1028,18 @@ then the solution is often significantly simpler and cleaner than an
 alternative dataview-based one.
 
 ')
+")
+#langja("
+#para('\
+
+datatype に関連付けれられているパターンマッチの利便性を、dataviewtype
+を用いて明示的なメモリ管理をサポートする際にも享受することができました。
+dataview と比較すると dataviewtype は一般的ではありません。
+けれども、もし dataviewtype を用いて問題を解決できれば、
+その解決策は dataview を用いた時よりしばしばきわめて単純できれいになります。
+
+')
+")
 
 </sect2>#comment("sect2/id=linear-list-summary")
 
