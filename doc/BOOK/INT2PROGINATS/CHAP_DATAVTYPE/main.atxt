@@ -1049,8 +1049,14 @@ dataview と比較すると dataviewtype は一般的ではありません。
 
 <sect1
 id="example_mergeSort_lin">
+#langeng("
 #title("Example: Merge-Sort on Linear Lists")
+")
+#langja("
+#title("例: 線形リストのマージソート")
+")
 
+#langeng("
 #para("\
 
 When merge-sort is employed to sort an array of elements, it requires
@@ -1065,7 +1071,21 @@ provide strong evidence that attests to ATS being a programming language
 capable of enforcing great precision in practical programming.
 
 ")
+")
+#langja("
+#para("\
 
+配列の要素をソートするためにマージソートをすると、要素を移動させるために配列のサイズに比例した追加のメモリが必要になります。
+これはマージソートの重大な欠点と考えられます。
+けれども、線形リストに対するマージソートにはこのような要求はありません。
+C言語の相当する実装に時間効率と空間効率の両面で匹敵できるような、線形リストのマージソートを次に示します。
+この実装にて捕捉された不変条件とその捕捉の容易さは、現実のプログラミングにおいて ATS
+が高い正確さを強制できるプログラミング言語であることを実証する大きな証拠です。
+
+")
+")
+
+#langeng("
 #para('\
 
 Let us first introduce a type definition and an interface for a function
@@ -1099,7 +1119,41 @@ one. In particular, the implementation of #dyncode("mergeSort") given as
 follows does not involve any memory allocation or deallocation.
 
 ')
+")
+#langja("
+#para('\
 
+はじめに、ソートするリストの要素を比較する関数テンプレートの型定義とインターフェイスを導入しましょう:
+
+#atscode('\
+//
+typedef cmp (a:t@ype) = (&a, &a) -> int
+//
+fun{a:t@ype} compare (x: &a, y: &a, cmp: cmp (a)): int
+//
+')
+
+マージソートのインターフェイスは次のように与えられます:
+
+#atscode('\
+fun{
+a:t@ype
+} mergeSort{n:nat}
+  (xs: list_vt (a, n), cmp: cmp a): list_vt (a, n)
+// end of [mergeSort]
+')
+
+#dyncode("mergeSort") の1番目の引数は (ソートする)
+線形リストで、2番目の引数は線形リストの要素を比較するための関数です。
+明確に、#dyncode("mergeSort") のインターフェイスは #dyncode("mergeSort")
+が1番目の引数を消費してから、1番目の引数と同じ長さの線形リストを返すことを示しています。
+明確になったように、返される線形リストは消費されたリストのノードでコンストラクトされたことになります。
+特に、次に与えられた #dyncode("mergeSort") の実装はどのようなメモリの確保/解放も必要としません。
+
+')
+")
+
+#langeng("
 #para('\
 
 The function template for merging two sorted lists into one is given as follows:
@@ -1149,7 +1203,58 @@ containing 1 million elements) due to potential stack overflow is
 eliminated.
 
 ')
+")
+#langja("
+#para('\
 
+2つのソート済みリストを1つにマージする関数テンプレートは次のように与えられます:
+
+#atscode('\
+fun{
+a:t@ype
+} merge{m,n:nat} .<m+n>.
+(
+  xs: list_vt (a, m), ys: list_vt (a, n)
+, res: &List_vt(a)? >> list_vt (a, m+n)
+, cmp: cmp a
+) : void =
+  case+ xs of
+  | @list_vt_cons (x, xs1) => (
+    case+ ys of
+    | @list_vt_cons (y, ys1) => let
+        val sgn = compare<a> (x, y, cmp)
+      in
+        if sgn <= 0 then let // stable sorting
+          val () = res := xs
+          val xs1_ = xs1
+          prval () = fold@ (ys)
+          val () = merge<a> (xs1_, ys, xs1, cmp)
+        in
+          fold@ (res)
+        end else let
+          val () = res := ys
+          val ys1_ = ys1
+          prval () = fold@ (xs)
+          val () = merge<a> (xs, ys1_, ys1, cmp)
+        in
+          fold@ (res)
+        end // end of [if]
+      end (* end of [list_vt_cons] *)
+    | ~list_vt_nil () => (fold@ (xs); res := xs)
+    ) // end of [list_vt_cons]
+  | ~list_vt_nil () => (res := ys)
+// end of [merge]
+')
+
+以前の紹介した関数実装と異なり、#dyncode("merge") のこの実装は末尾再帰です。
+そのため ATS コンパイラはC言語のループに変換します。
+つまり、スタックオーバフローの可能性のために (例: 百万個の要素を含むような)
+とても長いリストを扱えないような心配はこの #dyncode("merge") にはありません。
+
+')
+")
+
+#langeng("
 #para('\
 
 The next function template is for splitting a given linear lists into two:
@@ -1175,7 +1280,36 @@ a:t@ype
 Note that the implementation of #dyncode("split") is also tail-recursive.
 
 ')
+")
+#langja("
+#para('\
 
+次の関数テンプレートは与えられた線形リストを2つに分割します:
+
+#atscode('\
+fun{
+a:t@ype
+} split{n,k:nat | k <= n} .<n-k>.
+(
+  xs: &list_vt (a, n) >> list_vt (a, n-k), nk: int (n-k)
+) : list_vt (a, k) =
+  if nk > 0 then let
+    val+@list_vt_cons(_, xs1) = xs
+    val res = split<a> (xs1, nk-1); prval () = fold@(xs)
+  in
+    res
+  end else let
+    val res = xs; val () = xs := list_vt_nil () in res
+  end // end of [if]
+// end of [split]
+')
+
+#dyncode("split") の実装もまた末尾再帰であることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following function template #dyncode("msort") takes a linear list, its
@@ -1209,7 +1343,41 @@ the list being sorted does not have to be computed directly by traversing
 the list when each recursive call to #dyncode("msort") is made.
 
 ')
+")
+#langja("
+#para('\
 
+次の関数テンプレート #dyncode("msort")
+は線形リストとその長さ、比較関数を取り、そして与えられた線形リストをソートしたものを返します:
+
+#atscode('\
+fun{
+a:t@ype
+} msort{n:nat} .<n>.
+(
+  xs: list_vt (a, n), n: int n, cmp: cmp(a)
+) : list_vt (a, n) =
+  if n >= 2 then let
+    val n2 = half(n)
+    val n3 = n - n2
+    var xs = xs // lvalue for [xs]
+    val ys = split<a> (xs(*cbr*), n3)
+    val xs = msort<a> (xs, n3, cmp)
+    val ys = msort<a> (ys, n2, cmp)
+    var res: List_vt (a) // uninitialized
+    val () = merge<a> (xs, ys, res(*cbr*), cmp)
+  in
+    res
+  end else xs
+// end of [msort]
+')
+
+#dyncode("msort") を再帰呼び出しする際、ソートされるリストの長さをそのリストを辿って直接算出する必要がないように、#dyncode("msort") の2番目の引数が渡されます。
+
+')
+")
+
+#langeng("
 #para('\
 
 Finally, #dyncode("mergeSort") can be implemented with a call to
@@ -1226,7 +1394,25 @@ stable sorting, that is, it preserves the order of equal elements during
 sorting.
 
 ')
+")
+#langja("
+#para('\
 
+最後に、#dyncode("mergeSort") は #dyncode("msort") 呼び出しを使って実装できます:
+
+#atscode('\
+implement{a}
+mergeSort (xs, cmp) = msort<a> (xs, length (xs), cmp)
+')
+
+#dyncode("split") と #dyncode("merge") の実装を調べてみると、#dyncode("mergeSort")
+が安定ソートになっていることがすぐにわかります。
+つまり、ソートしている間に、等しい要素群の順序は保存されています。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("CHAP_DATAVTYPE/mergeSort.dats", "on-line") the
@@ -1234,6 +1420,16 @@ entirety of the code presented in this section plus some additional code
 for testing.
 
 ')
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体と追加のテストコードは
+#mycodelink("CHAP_DATAVTYPE/mergeSort.dats", "オンライン")
+から入手できます。
+
+')
+")
 
 </sect1>#comment("sect1/id=example_mergeSort_lin")
 
