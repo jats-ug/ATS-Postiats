@@ -1437,8 +1437,14 @@ for testing.
 
 <sect1
 id="example_insertionSort_lin">
+#langeng("
 #title("Example: Insertion Sort on Linear Lists")
+")
+#langja("
+#title("例: 線形リストの挿入ソート")
+")
 
+#langeng("
 #para('\
 
 I present a standard implementation of insertion sort on linear lists in
@@ -1458,7 +1464,29 @@ linear list, #dyncode("insertionSort") essentially shuffles the nodes in
 the list to form a sorted list.
 
 ')
+")
+#langja("
+#para('\
 
+この章では線形リストの挿入ソートの一般的な実装を紹介します。
+挿入ソートのインターフェイスは次のように与えられます:
+
+#atscode('\
+fun{
+a:t@ype
+} insertionSort{n:nat}
+  (xs: list_vt (a, n), cmp: cmp a): list_vt (a, n)
+// end of [insertionSort]
+')
+
+#dyncode("mergeSort") のように、#dyncode("insertionSort") の実装はメモリの確保/解放を行ないません。
+線形リストが与えられた時、本質的に #dyncode("insertionSort")
+はそのリストのノードを入れ換えてソートされたリストを作ります。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following code implements a function #dyncode("insord") that inserts a
@@ -1518,7 +1546,68 @@ initiates. The proof arguments pf1 and pf2 are needed so that the pointers
 bound to p1 and p2 can be accessed and updated.
 
 ')
+")
+#langja("
+#para('\
 
+次のコードは関数 #dyncode("insord") を実装しています。
+この関数は与えられたリストノードをソート済みの線形リストに挿入して、別のソート済み線形リストを作ります:
+
+#atscode('\
+fun{
+a:t@ype
+} insord
+  {l0,l1,l2:addr}{n:nat}
+(
+  pf1: a @ l1
+, pf2: list_vt (a, 0)? @ l2
+| xs0: &list_vt (a, n) >> list_vt (a, n+1)
+, nx0: list_vt_cons_unfold (l0, l1, l2), p1: ptr (l1), p2: ptr (l2)
+, cmp: cmp (a)
+) : void =
+(
+  case+ xs0 of
+  | @list_vt_cons
+      (x0, xs1) => let
+      val sgn = compare<a> (x0, !p1, cmp)
+    in
+      if sgn <= 0 // HX: for stableness: [<=] instead of [<]
+        then let
+          val () = insord<a> (pf1, pf2 | xs1, nx0, p1, p2, cmp)
+          prval () = fold@ (xs0)
+        in
+          // nothing
+        end // end of [then]
+        else let
+          prval () = fold@ (xs0)
+          val () = (!p2 := xs0; xs0 := nx0)
+          prval () = fold@ (xs0)
+        in
+          // nothing
+        end // end of [else]
+      // end of [if]
+    end // end of [list_vt_cons]
+  | ~list_vt_nil () =>
+    {
+      val () = xs0 := nx0
+      val () = !p2 := list_vt_nil ()
+      prval () = fold@ (xs0)
+    }
+) (* end of [insord] *)
+')
+
+#dyncode("insord") の実装は末尾再帰です。
+#dyncode("insord") に割り当てられた型は #dyncode("insord") の引数 xs0 が参照渡しであることを示しています。
+もし #dyncode("insord") が呼び出された時に xs0 が長さ n のリストを保持していたら、
+#dyncode("insord") が返る時には xs0 は長さ n+1 のリストを保持していることになります。
+引数 nx0, p1, p2 は値渡しで、#dyncode("insord") が呼び出される時それらはそれぞれ
+リストノード, リストノードの1番目のフィールド, 2番目のフィールド に束縛されています。
+p1 と p2 を束縛するポインタにアクセスしたり更新したりするために、証明引数 pf1 と pf2 が必要です。
+
+')
+")
+
+#langeng("
 #para('\
 
 The function template #dyncode("insertionSort") can now be readily
@@ -1593,13 +1682,98 @@ Note that the stableness of #dyncode("mergeSort") is maintained as
 #dyncode("insertionSort") also performs stable sorting.
 
 ')
+")
+#langja("
+#para('\
 
+関数テンプレート #dyncode("insertionSort") は #dyncode("insord") を用いてすぐに実装できます:
+
+#atscode('\
+implement{a}
+insertionSort
+  (xs, cmp) = let
+//
+fun loop{m,n:nat}
+(
+  xs: list_vt (a, m)
+, ys: &list_vt (a, n) >> list_vt (a, m+n)
+, cmp: cmp (a)
+) : void =
+  case+ xs of
+  | @list_vt_cons
+      (x, xs1) => let
+      val xs1_ = xs1
+      val ((*void*)) =
+        insord<a> (view@x, view@xs1 | ys, xs, addr@x, addr@xs1, cmp)
+      // end of [va]
+    in
+      loop (xs1_, ys, cmp)
+    end // end of [list_vt_cons]
+  | ~list_vt_nil ((*void*)) => ()
+//
+var ys = list_vt_nil{a}()
+val () = loop (xs, ys, cmp)
+//
+in
+  ys
+end // end of [insertionSort]
+')
+
+明確に、#dyncode("insertionSort") のこの実装は末尾再帰です。
+挿入ソートの時間的計算量は O(n^2)
+ですが、ソートするリストがとても短かい場合にはマージソートやクイックソートよりもしばしばより効率的です。
+例えば、短かいリストについて #dyncode("insertionSort") の効率が有利になるような
+(#dyncode("mergeSort") が呼び出す) #dyncode("msort") を次のように実装できます:
+
+#atscode('\
+fun{
+a:t@ype
+} msort{n:nat} .<n>.
+(
+  xs: list_vt (a, n)
+, n: int n, cmp: cmp(a)
+) : list_vt (a, n) = let
+//
+// cutoff is selected to be 10
+//
+in
+  if n > 10 then let
+    val n2 = half(n)
+    val n3 = n - n2
+    var xs = xs // lvalue for [xs]
+    val ys = split<a> (xs, n3)
+    val xs = msort<a> (xs, n3, cmp)
+    val ys = msort<a> (ys, n2, cmp)
+    var res: List_vt (a) // uninitialized
+    val () = merge<a> (xs, ys, res(*cbr*), cmp)
+  in
+    res
+  end else insertionSort<a> (xs, cmp)
+end // end of [msort]
+')
+
+#dyncode("mergeSort") と同様に、#dyncode("insertionSort") も安定ソートであることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find the entire code in this section plus some additional
 code for testing #mycodelink("CHAP_DATAVTYPE/insertionSort.dats", "on-line").
 
 ')
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体と追加のテストコードは
+#mycodelink("CHAP_DATAVTYPE/insertionSort.dats", "オンライン")
+から入手できます。
+
+')
+")
 
 </sect1>#comment("sect1/id=example_insertionSort_lin")
 
