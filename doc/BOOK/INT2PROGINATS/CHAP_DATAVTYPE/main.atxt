@@ -2130,8 +2130,14 @@ code for testing #mycodelink("CHAP_DATAVTYPE/quickSort.dats", "on-line").
 
 <sect1
 id="linear_binary_search_trees">
+#langeng("
 #title("Linear Binary Search Trees")
+")
+#langja("
+#title("線形2分探索木")
+")
 
+#langeng("
 #para("\
 
 A binary search tree with respect to a given ordering is a binary tree such
@@ -2141,7 +2147,18 @@ those stored in the right child of the node.  Binary search trees are a
 common data structure for implementing finite maps.
 
 ")
+")
+#langja("
+#para("\
 
+与えられた順序に対する2分探索木は二分木です。
+この木の中のそれぞれのノードに保管されている値は、そのノードの左の子以上でかつ右の子以下になっています。
+2分探索木は連想配列を実装するのに一般的なデータ構造です。
+
+")
+")
+
+#langeng("
 #para("\
 
 A family of binary
@@ -2155,7 +2172,20 @@ is, the time to complete such an operation is O(log(n)) in the worst case,
 where n is the size of the map.
 
 ")
+")
+#langja("
+#para("\
 
+二分木の最長と最短の高さの比がどの木においても定数 C の範囲におさまるとき、この二分木は平衡木であると呼ばれます。
+例えば、平衡2分探索木の一般的な例としてはAVL木や赤黒木があります。
+平衡2分探索木を用いた連想配列は log 時間で挿入/削除操作ができることを保証します。
+すなわち、n が連想配列のサイズであるとき、そのような操作を完了するのにかかる時間は最悪でも O(log(n))
+になります。
+
+")
+")
+
+#langeng("
 #para('\
 
 In this section, I am to implement several basic operations on linear
@@ -2173,7 +2203,27 @@ bstree_vt (a:t@ype+, int) =
 ')
 
 ')
+")
+#langja("
+#para('\
 
+この章では、線形2分探索木に対するいくつかの基本的な操作を実装します。
+さらにその後 dataviewtype を使った実装を紹介します。
+はじめに、線形2分探索木のために次の dataviewtype #stacode("bstree_vt") を宣言しましょう:
+
+#atscode('\
+datavtype
+bstree_vt (a:t@ype+, int) =
+  | bstree_vt_nil (a, 0) of ()
+  | {n1,n2:nat}
+    bstree_vt_cons (a, n1+n2+1) of (bstree_vt (a, n1), a, bstree_vt (a, n2))
+// end of [bstree_vt]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Note that the integer index of #stacode("bstree_vt") captures the size
@@ -2200,7 +2250,34 @@ a:t@ype
 ')
 
 ')
+")
+#langja("
+#para('\
 
+#stacode("bstree_vt") の整数インデックスは、2分探索木のサイズ情報を捕捉していることに注意してください。
+#stacode("bstree_vt") に関連する2つのコンストラクタ #dyncode("bstree_vt_cons") と #dyncode("bstree_vt_nil")
+があります。
+#dyncode("bstree_vt_nil") によって生成された木は空で葉を持たず、他方ではノードは左と右の子が両方とも空であることは指摘すべきでしょう。
+簡単な例として、次の関数テンプレート #dyncode("size") は与えられた木のサイズを計算します:
+
+#atscode('\
+fun{
+a:t@ype
+} size{n:nat} .<n>.
+(
+  t: !bstree_vt (a, n)
+) : int (n) =
+  case+ t of
+  | bstree_vt_nil () => 0
+  | bstree_vt_cons
+     (tl, _, tr) => 1 + size (tl) + size (tr)
+// end of [size]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Assume that we have a binary search tree with repect to some ordering.  If
@@ -2241,7 +2318,48 @@ family of balanced trees, then the time-complexity of #dyncode("search") is
 O(log(n)) (assuming that #dyncode("P") is O(1)).
 
 ')
+")
+#langja("
+#para('\
 
+なんらかの順序による2分探索木を持っていると仮定します。
+もし木に保管されている要素について x1 が x2 より (順序によると) 小さいなら P(x1) が P(x2)
+を含むような性質を持つ述語 P があるとすると、次の #dyncode("search")
+の実装によって示されるような2分探索によって呼び出される述語 P を満たす木の最小の要素の場所を見つけることができます:
+
+#atscode('\
+fun{
+a:t@ype
+} search
+  {n:nat} .<n>.
+(
+  t: !bstree_vt (a, n), P: (&a) -<cloref> bool
+) : Option_vt (a) =
+  case+ t of
+  | @bstree_vt_cons
+      (tl, x, tr) =>
+      if P (x) then let
+        val res = search (tl, P)
+        val res = (
+          case+ res of
+          | ~None_vt () => Some_vt (x) | _ => res
+        ) : Option_vt (a)
+      in
+        fold@ (t); res
+      end else let
+        val res = search (tr, P) in fold@ (t); res
+      end // end of [if]
+  | @bstree_vt_nil () => (fold@ (t); None_vt ())
+// end of [search]
+')
+
+もし #dyncode("search") の引数 #dyncode("t") が平衡木の一種であるなら、#dyncode("P") の時間的計算量が O(1)
+であると仮定すると #dyncode("search") の計算量は O(log(n)) であることは明確です。
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us next see some code implementing an operation that inserts a given
@@ -2276,7 +2394,44 @@ a:t@ype
 ')
 
 ')
+")
+#langja("
+#para('\
 
+次に、与えられた要素を2分探索木に挿入する操作を実装してみましょう:
+
+#atscode('\
+fun{
+a:t@ype
+} insert{n:nat} .<n>.
+(
+  t: bstree_vt (a, n), x0: &a, cmp: cmp(a)
+) : bstree_vt (a, n+1) =
+  case+ t of
+  | @bstree_vt_cons
+      (tl, x, tr) => let
+      val sgn = compare<a> (x0, x, cmp)
+    in
+      if sgn <= 0 then let
+        val () = tl := insert (tl, x0, cmp)
+      in
+        fold@ (t); t
+      end else let
+        val () = tr := insert (tr, x0, cmp)
+      in
+        fold@ (t); t
+      end (* end of [if] *)
+    end // end of [bstree_vt_cons]
+  | ~bstree_vt_nil () =>
+      bstree_vt_cons (bstree_vt_nil, x0, bstree_vt_nil)
+    // end of [bstree_vt_nil]
+// end of [insert]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 When inserting an element, the function template #dyncode("insert") extends
@@ -2333,7 +2488,63 @@ performs a left tree rotation, which turns T(tl, x, T(trl, xr, trr)) into
 T(T(tl, x, tlr), xr, trr).
 
 ')
+")
+#langja("
+#para('\
 
+要素を挿入する時、関数テンプレート #dyncode("insert") はその要素を含む新しい葉で与えられた木を拡張します。
+このような挿入方法はしばしば leaf-insertion と呼ばれます。
+別の挿入方法として root-insertion
+としばしば呼ばれる方法があり、これは挿入された要素を含む新しいノードをルートに置きます。
+次の関数テンプレート #dyncode("insertRT") は一般的な root-insertion 操作を実装しています:
+
+#atscode('\
+fun{
+a:t@ype
+} insertRT{n:nat} .<n>.
+(
+  t: bstree_vt (a, n), x0: &a, cmp: cmp(a)
+) : bstree_vt (a, n+1) =
+  case+ t of
+  | @bstree_vt_cons
+      (tl, x, tr) => let
+      val sgn = compare<a> (x0, x, cmp)
+    in
+      if sgn <= 0 then let
+        val tl_ = insertRT (tl, x0, cmp)
+        val+@bstree_vt_cons (_, tll, tlr) = tl_
+        val () = tl := tlr
+        prval () = fold@ (t)
+        val () = tlr := t
+      in
+        fold@ (tl_); tl_
+      end else let
+        val tr_ = insertRT (tr, x0, cmp)
+        val+@bstree_vt_cons (trl, _, trr) = tr_
+        val () = tr := trl
+        prval () = fold@ (t)
+        val () = trl := t
+      in
+        fold@ (tr_); tr_
+      end
+    end // end of [bstree_vt_cons]
+  | ~bstree_vt_nil () =>
+      bstree_vt_cons (bstree_vt_nil, x0, bstree_vt_nil)
+    // end of [bstree_vt_nil]
+// end of [insertRT]
+')
+
+1番目の再帰呼び出し #dyncode("insertRT") の直後のコードは木の右回転を行ないます。
+ルートノードが要素 x とその左と右の子としてそれぞれ tl と tr を持つような木として T(tl, x, tr)
+を用いることにしましょう。
+すると T(T(tll, xl, tlr), x, tr) は右回転をすると T(tll, xl, T(tlr, x, tr)) になります。
+2番目の再帰呼び出し #dyncode("insertRT") の直後のコードは木の左回転を行ないます。
+すると T(tl, x, T(trl, xr, trr)) は T(T(tl, x, tlr), xr, trr) になります。
+
+')
+")
+
+#langeng("
 #para('\
 
 To further illustrate tree rotations, I present as follows
@@ -2392,7 +2603,66 @@ located at L1, L2 and L3, and the proofs for the at-views associated with
 L1, L2 and L3 are put in the store for currently available proofs.
 
 ')
+")
+#langja("
+#para('\
 
+さらに木の操作を説明するために、次の2つの関数テンプレート #dyncode("lrotate") と #dyncode("rrotate") を示します。
+これらはそれぞれ木の左回転と右回転を実装しています:
+
+#atscode('\
+fn{
+a:t@ype
+} lrotate
+  {l,l_tl,l_x,l_tr:addr} 
+  {nl,nr:int | nl >= 0; nr > 0}
+(
+  pf_tl: bstree_vt (a, nl) @ l_tl
+, pf_x: a @ l_x
+, pf_tr: bstree_vt (a, nr) @ l_tr
+| t: bstree_vt_cons_unfold (l, l_tl, l_x, l_tr)
+, p_tl: ptr l_tl
+, p_tr: ptr l_tr
+) : bstree_vt (a, 1+nl+nr) = let
+  val tr = !p_tr
+  val+@bstree_vt_cons (trl, _, trr) = tr
+  val () = !p_tr := trl
+  prval () = fold@ (t); val () = trl := t
+in
+  fold@ (tr); tr
+end // end of [lrotate]
+
+fn{
+a:t@ype
+} rrotate
+  {l,l_tl,l_x,l_tr:addr}
+  {nl,nr:int | nl > 0; nr >= 0}
+(
+  pf_tl: bstree_vt (a, nl) @ l_tl
+, pf_x: a @ l_x
+, pf_tr: bstree_vt (a, nr) @ l_tr
+| t: bstree_vt_cons_unfold (l, l_tl, l_x, l_tr)
+, p_tl: ptr l_tl
+, p_tr: ptr l_tr
+) : bstree_vt (a, 1+nl+nr) = let
+  val tl = !p_tl
+  val+@bstree_vt_cons (tll, x, tlr) = tl
+  val () = !p_tl := tlr
+  prval () = fold@ (t); val () = tlr := t
+in
+  fold@ (tl); tl
+end // end of [rrotate]
+')
+
+4つのアドレス L0, L1, L2, L3 が与えられた時、型 #stacode("bstree_vt_cons_unfold(L0, L1, L2, l3)")
+は #dyncode("bstree_vt_cons") 呼び出しによって生成された木のノードを表わします。
+このとき、そのノードは L0 に配置され、#dyncode("bstree_vt_cons") の3つの引数は L1, L2, L3 に配置されます。
+そして L1, L2, L3 に関連する at-view の証明が現在有効な証明として保管されます。
+
+')
+")
+
+#langeng("
 #para('\
 
 The function template #dyncode("insertRT") for root-insertion can now be
@@ -2431,7 +2701,48 @@ a:t@ype
 ')
 
 ')
+")
+#langja("
+#para('\
 
+これで、root-insertion を行なう関数テンプレート #dyncode("insertRT") は
+#dyncode("lrotate") と #dyncode("rrotate") を直接使って次のように実装できます:
+
+#atscode('\
+fun{
+a:t@ype
+} insertRT {n:nat} .<n>.
+(
+  t: bstree_vt (a, n), x0: &a, cmp: cmp(a)
+) : bstree_vt (a, n+1) =
+  case+ t of
+  | @bstree_vt_cons
+      (tl, x, tr) => let
+      prval pf_x = view@x
+      prval pf_tl = view@tl
+      prval pf_tr = view@tr
+      val sgn = compare<a> (x0, x, cmp)
+    in
+      if sgn <= 0 then let
+        val () = tl := insertRT<a> (tl, x0, cmp)
+      in
+        rrotate<a> (pf_tl, pf_x, pf_tr | t, addr@tl, addr@tr)
+      end else let
+        val () = tr := insertRT<a> (tr, x0, cmp)
+      in
+        lrotate<a> (pf_tl, pf_x, pf_tr | t, addr@tl, addr@tr)
+      end (* end of [if] *)
+    end // end of [bstree_vt_cons]
+  | ~bstree_vt_nil () =>
+      bstree_vt_cons (bstree_vt_nil, x0, bstree_vt_nil)
+    // end of [bstree_vt_nil]
+// end of [insertRT]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 I would like to point out that neither #dyncode("insert") nor
@@ -2443,12 +2754,35 @@ pointers (so as to allow each node to gain direct access to its parent),
 which can be done with dataviews but not with dataviewtypes.
 
 ')
+")
+#langja("
+#para('\
 
+#dyncode("insert") も #dyncode("insertRT") も末尾再帰ではないことを指摘したいと思います。
+前者を末尾再帰実装にすることはできますが、後者について同じことをする直接的な方法はありません。
+root-insertion を末尾再帰的に実装するためには、親ポインタのある二分木が必要になります
+(すなわちそれぞれのノードからその親に直接アクセスできるということです)。
+これは dataview で実現できますが、dataviewtype を使って実現することはできません。
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find the entire code in this section plus some additional
 code for testing #mycodelink("CHAP_DATAVTYPE/bstree_vt.dats", "on-line").
 
+")
+")
+#langja("
+#para("\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_DATAVTYPE/bstree_vt.dats", "オンライン")
+から入手できます。
+
+")
 ")
 
 </sect1>#comment("sect1/id=linear_binary_search_trees")
