@@ -1781,8 +1781,14 @@ code for testing #mycodelink("CHAP_DATAVTYPE/insertionSort.dats", "on-line").
 
 <sect1
 id="example_quickSort_lin">
+#langeng("
 #title("Example: Quick-Sort on Linear Lists")
+")
+#langja("
+#title("例: 線形リストのクイックソート")
+")
 
+#langeng("
 #para('\
 
 In this section, I give an implementation of quick-sort on linear
@@ -1800,7 +1806,26 @@ Like the implementation of #dyncode("mergeSort") and
 given as follows makes no use of memory allocation and deallocation.
 
 ')
+")
+#langja("
+#para('\
 
+この章では、線形リストのクイックソートの実装を紹介します。
+リストを用いたクイックソートは実際には望ましいソート方法ではありませんが、にもかかわらずその実装は興味深いものです。
+クイックソートのインターフェイスは次のように与えられます:
+
+#atscode('\
+fun{a:t@ype}
+quickSort{n:nat} (xs: list_vt (a, n), cmp: cmp a): list_vt (a, n)
+')
+
+#dyncode("mergeSort") と #dyncode("insertionSort") の実装のように、
+次のように与えられた #dyncode("quickSort") の実装はメモリの確保/解放を行ないません。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following code implements a function #dyncode("takeout_node_at") that
@@ -1845,7 +1870,54 @@ Essentially, #stacode("list_vt_cons_pstruct(T1, T2)") stands for
 L2 plus two views #stacode("T1@L1") and #stacode("T2@L2").
 
 ')
+")
+#langja("
+#para('\
 
+次のコードは関数 #dyncode("takeout_node_at") を実装しています。
+この関数は線形リストから与えられた位置のノードを取り出します:
+
+#atscode('\
+fun{a:t@ype}
+takeout_node_at
+  {n:int}{k:nat | k < n}
+(
+  xs: &list_vt (a, n) >> list_vt (a, n-1), k: int(k)
+) : list_vt_cons_pstruct (a, ptr?) =
+(
+//
+if k > 0 then let
+  val+@list_vt_cons (x, xs1) = xs
+  val res = takeout_node_at<a> (xs1, k-1)
+  prval () = fold@ (xs)
+in
+  res
+end else let
+  val+@list_vt_cons (x, xs1) = xs
+  val nx = xs
+  val () = xs := xs1
+in
+  $UNSAFE.castvwtp0 ((view@x, view@xs1 | nx)) // HX: this is a safe cast
+end // end of [if]
+//
+) (* end of [takeout_node_at] *)
+')
+
+dataviewtype に関連する #emphasis("foo") という名前のデータコンストラクタを仮定します。
+すると n が #emphasis("foo") のアリティの時、n 個の型を取って viewtype を作るような対応する
+#emphasis("foo_pstruct") という名前の viewtype コンストラクタが存在します。
+例えば、2つの型 T1 と T2 を取って viewtype #stacode("list_vt_cons_pstruct(T1, T2)") を作るような
+viewtype コンストラクタ #stacode("list_vt_cons_pstruct") が存在することになります。
+この viewtype は、#dyncode("list_vt_cons") の2つの引数の型が T1 と T2 であるような、#dyncode("list_vt_cons")
+呼び出しによって生成されるリストノードを表わします。
+アドレス L0, L1, L2 と2つの view #stacode("T1@L1"), #stacode("T2@L2")
+について、#stacode("list_vt_cons_pstruct(T1, T2)") は #stacode("list_vt_cons_unfold(L0, L1, L2)")
+を本質的に表わしています。
+
+')
+")
+
+#langeng("
 #para('\
 
 A key step in quick-sort lies in partitioning a linear list based on a
@@ -1894,7 +1966,56 @@ res1. The way in which the nodes of the given linear list are moved into
 res1 and res2 is quite an interesting aspect of this implementation.
 
 ')
+")
+#langja("
+#para('\
 
+クイックソートの鍵となるステップは、与えられたピボットを元に線形リストを分割することです。
+このステップは、#dyncode("partition") という名前の関数テンプレートを実装している次のコードで実行されます:
+
+#atscode('\
+fun{
+a:t@ype
+} partition{n,r1,r2:nat}
+(
+  xs: list_vt (a, n), pvt: &a
+, r1: int(r1), res1: list_vt (a, r1), res2: list_vt (a, r2)
+, cmp: cmp (a)
+) : [n1,n2:nat | n1+n2==n+r1+r2]
+  (int(n1), list_vt (a, n1), list_vt (a, n2)) =
+(
+  case+ xs of
+  | @list_vt_cons
+      (x, xs_tail) => let
+      val xs_tail_ = xs_tail
+      val sgn = compare<a> (x, pvt, cmp)
+    in
+      if sgn <= 0 then let
+        val r1 = r1 + 1
+        val () = xs_tail := res1
+        prval () = fold@ (xs)
+      in
+        partition<a> (xs_tail_, pvt, r1, xs, res2, cmp)
+      end else let
+        val () = xs_tail := res2
+        prval () = fold@ (xs)
+      in
+        partition<a> (xs_tail_, pvt, r1, res1, xs, cmp)
+      end // end of [if]
+    end (* end of [list_vt_cons] *)
+  | ~list_vt_nil ((*void*)) => (r1, res1, res2)
+) (* end of [partition] *)
+')
+
+#dyncode("partition") の実装は末尾再帰です。
+線形リストとピボットが与えられた時、#dyncode("partition") はタプル (r1, res1, res2) を返します。
+このとき res1 はリスト中でピボット以下の全ての要素を含み、res2 はその残りを含み、r1 は res1 の長さになります。
+与えらえた線形リストのノードを res1 と res2 に移動させる方法は、この実装の大変興味深い側面です。
+
+')
+")
+
+#langeng("
 #para('\
 
 By making use of #dyncode("takeout_node_at") and #dyncode("partition"),
@@ -1939,13 +2060,69 @@ choosing the first element to be the pivot. However, doing so can
 often lead to degenerated O(n^2)-time performance of quick-sort in practice.
 
 ')
+")
+#langja("
+#para('\
 
+#dyncode("takeout_node_at") と #dyncode("partition") を使って、次のような #dyncode("quickSort") をすぐに実装できます:
+
+#atscode('\
+implement
+{a}(*tmp*)
+quickSort
+  (xs, cmp) = let
+//
+fun sort{n:nat}
+(
+  xs: list_vt (a, n), n: int n
+) : list_vt (a, n) =
+(
+  if n > 10 then let
+    val n2 = half (n)
+    var xs = xs
+    val nx = takeout_node_at<a> (xs, n2)
+    val+list_vt_cons (pvt, nx_next) = nx
+    val (n1, xs1, xs2) =
+    partition<a> (xs, pvt, 0, list_vt_nil, list_vt_nil, cmp)
+    val xs1 = sort (xs1, n1)
+    val xs2 = sort (xs2, n - 1 - n1)
+    val () = nx_next := xs2
+    prval () = fold@ (nx)
+  in
+    list_vt_append (xs1, nx)
+  end else insertionSort<a> (xs, cmp)
+) (* end of [sort] *)
+//
+in
+  sort (xs, list_vt_length (xs))
+end // end of [quickSort]
+')
+
+それぞれの分割におけるピボットはソートされるリストの真ん中に取っていることに注意してください。
+リストの真ん中からノードを取り出す時間的計算量は O(n) です。
+この問題は最初の要素をピボットとしていつも選ぶことによって解決できます。
+けれどもそうすると、実際のクイックソートの効率は結果としてしばしば O(n^2) に悪化してしまいます。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find the entire code in this section plus some additional
 code for testing #mycodelink("CHAP_DATAVTYPE/quickSort.dats", "on-line").
 
 ')
+")
+#langja("
+#para('\
+
+この章のコード全体と追加のテストコードは
+#mycodelink("CHAP_DATAVTYPE/quickSort.dats", "オンライン")
+から入手できます。
+
+')
+")
 
 </sect1>#comment("sect1/id=example_quickSort_lin")
 
