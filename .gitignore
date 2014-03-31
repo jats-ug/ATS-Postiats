@@ -338,9 +338,6 @@ doc/BOOK/INT2PROGINATS/*_atxt.txt
 doc/BOOK/INT2PROGINATS/*_atxt.dats
 doc/BOOK/INT2PROGINATS/CHAP_*/main.db
 doc/BOOK/INT2PROGINATS/*/main.db
-doc/BOOK/INT2PROGINATS/build_ja
-doc/BOOK/INT2PROGINATS/HTML_EUC
-doc/BOOK/INT2PROGINATS/HTML_UTF8
 
 #
 # ATS2TUTORIAL
@@ -352,5 +349,13 @@ doc/BOOK/ATS2TUTORIAL/CHAP_*/*_atxt.txt
 doc/BOOK/ATS2TUTORIAL/CHAP_*/*_atxt.dats
 doc/BOOK/ATS2TUTORIAL/CHAP_*/main.db
 doc/BOOK/ATS2TUTORIAL/HTML
+
+#
+# JATS-UG
+#
+doc/BOOK/*/build_ja
+doc/BOOK/*/HTML_EUC
+doc/BOOK/*/HTML_UTF8
+doc/BOOK/*/TEMP
 
 ###### end of [.gitignore] ######
