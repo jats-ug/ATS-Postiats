@@ -31,7 +31,7 @@ all:: $(MYTARGET)
 $(MYTARGET): \
   $($(MYTARGET)_SATS_O) \
   $($(MYTARGET)_DATS_O) ; \
-  $(PATSCC) $(INCLUDE) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+  $(PATSCC) $(INCLUDE) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRAFLAGS)
 cleanall:: ; $(RMF) $(MYTARGET)
 endif # end of [ifeq]
 endif # end of [ifdef]
@@ -76,11 +76,14 @@ endif
 #
 ifdef MYPORTDIR
 #
+$(MYPORTDIR)/Makefile: Makefile ; cp -f $< $@
+#
 $(MYPORTDIR)_SATS_C := \
   $(patsubst %.sats, $(MYPORTDIR)/%_sats.c, $(SOURCES_SATS))
 $(MYPORTDIR)_DATS_C := \
   $(patsubst %.dats, $(MYPORTDIR)/%_dats.c, $(SOURCES_DATS))
 #
+$(MYPORTDIR):: $(MYPORTDIR)/Makefile
 $(MYPORTDIR):: $($(MYPORTDIR)_SATS_C)
 $(MYPORTDIR):: $($(MYPORTDIR)_DATS_C)
 #

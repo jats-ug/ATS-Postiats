@@ -22,4 +22,19 @@ in (*nothing*) end
 
 (* ****** ****** *)
 
+staload
+PATHLST = {
+//
+staload
+DF = "./../depth-first.sats"
+//
+typedef T = $DF.nodelst
+//
+#include "share/atspre_define.hats"
+#include "{$LIBATSHWXI}/globals/HATS/gstacklst.hats"
+//
+} (* end of [staload] *)
+
+(* ****** ****** *)
+
 (* end of [gtkcairotimer_toplevel.dats] *)
