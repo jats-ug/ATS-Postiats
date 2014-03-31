@@ -647,10 +647,18 @@ entirety of the code presented in this section plus some testing code.
 <!-- ****** ****** -->
 
 <sect1 id="array-based-circular-buffer">
+#langeng("
 #title("\
 Example: An Array-Based Circular Buffer\
 ")
+")
+#langja("
+#title("\
+例: 配列を用いたリングバッファ\
+")
+")
 
+#langeng("
 #para("\
 
 Array-based circular buffers are of common use in practice. For instance,
@@ -662,7 +670,20 @@ buffer can be created for each priority to hold requests of that particular
 priority.\
 
 ")
+")
+#langja("
+#para("\
 
+配列を用いたリングバッファは実用でも一般的に使われます。
+例えば、典型的なクライアントサーバモデルにおいて、first-in-first-out (FIFO)
+に従ってサーバが処理するべき複数のクライアントによる要求を保持するためにリングバッファを用いることができます。
+それぞれの要求に (決まった範囲から選択することで) 優先度をつける必要がある場合、
+特定の優先度の要求を保持するためにそれぞれの優先度にリングバッファを生成することができます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Let us declare a linear abstract type (that is, abstract viewtype) as
@@ -680,7 +701,25 @@ buffer of maximal capacity M that currently holds N elements of the type
 VT.
 
 ")
+")
+#langja("
+#para("\
 
+リングバッファを表現する値のために、次のような線形抽象型 (つまり抽象 viewtype) を宣言してみましょう:
+
+#atscode('\
+absvtype
+cbufObj (a:vt@ype+, m:int, n: int) = ptr
+')
+
+このような値は (状態を継承によって扱わない) 単純な線形オブジェクトであると考えられます。
+viewtype VT と2つの整数 M と N が与えられた時、viewtype #stacode("cbufObj(VT, M, N)")
+は型 VT の要素を N 個 持つ最大容量 M のバッファを表わします。
+
+")
+")
+
+#langeng("
 #para("\
 
 Some properties on the parameters of #stacode("cbufObj") can be captured
@@ -707,7 +746,35 @@ cbufObj_get_size
 ')
 
 ")
+")
+#langja("
+#para("\
 
+#stacode("cbufObj") のパラメータの性質のいくつかは、次の証明関数を導入することで捕捉できます:
+
+#atscode('\
+prfun
+lemma_cbufObj_param
+  {a:vt0p}{m,n:int}
+  (buf: !cbufObj (a, m, n)): [m>=n; n>=0] void
+')
+
+次の2つの関数テンプレートのインターフェイスは、それらが容量とバッファの現在のサイズを算出するために呼び出されることを示しています:
+
+#atscode('\
+fun{a:vt0p}
+cbufObj_get_cap
+  {m,n:int} (buf: !cbufObj (a, m, n)): size_t (m)
+
+fun{a:vt0p}
+cbufObj_get_size
+  {m,n:int} (buf: !cbufObj (a, m, n)): size_t (n)
+')
+
+")
+")
+
+#langeng("
 #para("\
 
 While it is straightforward to use #dyncode("cbufObj_get_cap") and
@@ -729,7 +796,30 @@ cbufObj_is_full
 ')
 
 ")
+")
+#langja("
+#para("\
 
+現在のバッファが空か満杯であるかを判定するのに #dyncode("cbufObj_get_cap") と #dyncode("cbufObj_get_size")
+を単純に使うこともできますが、直接的なアプローチがより効率的です。
+次の2つの関数テンプレートは、与えられたリングバッファが空であるか満杯であるかを判定します:
+
+#atscode('\
+//
+fun{a:vt0p}
+cbufObj_is_empty
+  {m,n:int} (buf: !cbufObj (a, m, n)): bool (n==0)
+//
+fun{a:vt0p}
+cbufObj_is_full
+  {m,n:int} (buf: !cbufObj (a, m, n)): bool (m==n)
+//
+')
+
+")
+")
+
+#langeng("
 #para("\
 
 The functions for creating and destroying circular buffers are named
@@ -757,7 +847,38 @@ fun cbufObj_clear
 ')
 
 ")
+")
+#langja("
+#para("\
 
+リングバッファの生成と解放を行なう関数はそれぞれ #dyncode("cbufObj_new") と #dyncode("cbufObj_free")
+という名前です:
+
+#atscode('\
+fun{a:vt0p}
+cbufObj_new
+  {m:pos} (m: size_t m): cbufObj (a, m, 0)
+//
+fun cbufObj_free
+  {a:vt0p}{m:int} (buf: cbufObj (a, m, 0)): void
+')
+
+
+バッファがリソースを含む可能性がある (なんらかの viewtype の)
+要素を含まない時に限って、そのバッファを解放できることに注意してください。
+バッファ中の要素がなんらかの線形でない型である場合、次の関数を呼び出してバッファ中に保管されている全ての要素を捨てることができます:
+
+#atscode('\
+fun cbufObj_clear
+  {a:t@ype}{m,n:int}
+  (buf: !cbufObj (a, m, n) >> cbufObj (a, m, 0)): void
+// end of [cbufObj_clear]
+')
+
+")
+")
+
+#langeng("
 #para("\
 
 The next two functions are for inserting/removing an element into/from a
@@ -781,7 +902,33 @@ cbufObj_remove
 ')
 
 ")
+")
+#langja("
+#para("\
 
+次の2つの関数は、与えられたバッファに対する要素の挿入と削除を行ないます。
+おそらくこれらはバッファに対して最も頻繁に使われる操作でしょう:
+
+#atscode('\
+//
+fun{a:vt0p}
+cbufObj_insert
+  {m,n:int | n < m}
+(
+  buf: !cbufObj (a, m, n) >> cbufObj (a, m, n+1), x: a
+) : void // end of [cbufObj_insert]
+//
+fun{a:vt0p}
+cbufObj_remove
+  {m,n:int | n > 0}
+  (buf: !cbufObj (a, m, n) >> cbufObj (a, m, n-1)) : (a)
+//
+')
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find on-line the file
@@ -790,7 +937,18 @@ containing the entirety of the interface for functions creating, destroying
 and manipulating circular buffers.\
 
 ")
+")
+#langja("
+#para("\
 
+リングバッファの生成/削除/操作の関数インターフェイス全体を含むファイルは
+#mycodelink("CHAP_ABSVTYPE/circbuf.sats", "circbuf.sats")
+から入手できます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 There are many simple and practical ways to implement the abstract type
@@ -812,7 +970,25 @@ for the functions declared in #mycodelink("CHAP_ABSVTYPE/circbuf.sats",
 point.
 
 ")
+")
+#langja("
+#para("\
 
+抽象型 #stacode("cbufObj") と #mycodelink("CHAP_ABSVTYPE/circbuf.sats", "circbuf.sats")
+で宣言されている関数を実装する簡単で実用的な方法はたくさんあります。
+ファイル #mycodelink("CHAP_ABSVTYPE/circbuf.dats", "circbuf.dats")
+では、リングバッファを表現するのに4つのポインタ p_beg, p_end, p_frst, p_last を用いる実装を与えました:
+p_beg と p_end はそれぞれ下敷にする配列の開始と終了アドレスで、p_frst と p_last はそれぞれ (その配列中の)
+占有している部分と空いている部分の開始アドレスです。
+この実装の特殊な点は、証明の構築を意識的に避けたプログラミングスタイルであることです。
+このスタイルで書かれたコードは型安全が保証されていませんが、正式な証明を構築することが高コストであるような状況下では、このスタイルにも大きな実用上の価値があります。
+#mycodelink("CHAP_ABSVTYPE/circbuf.sats", "circbuf.sats")
+で宣言された関数について型安全な実装を得ようと試してみれば、この点において誠実な評価を実感できるはずです。
+
+")
+")
+
+#langeng("
 #para("\
 
 In the file #mycodelink("CHAP_ABSVTYPE/circbuf2.dats", "circbuf2.dats"), I
@@ -824,6 +1000,18 @@ the buffer and f is the total number of elements that have so far been
 removed from the buffer. Again, proof construction is delibrately eschewed
 in this implementation.
 
+")
+")
+#langja("
+#para("\
+
+ファイル #mycodelink("CHAP_ABSVTYPE/circbuf2.dats", "circbuf2.dats") では、ポインタ p_beg
+と3つの整数 m, n, f によってリングバッファを表現する別の実装を与えています:
+p_beg は下敷にする配列の開始位置を指し、m は配列のサイズ (つまりバッファの容量)、n
+はバッファに現在保存されている要素の数、f は今までにバッファから削除された要素の総数です。
+繰り返しますが、この実装でも故意に証明の構築をしていません。
+
+")
 ")
 
 </sect1><!--id="array-based-circular-buffer"-->
