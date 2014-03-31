@@ -1,0 +1,45 @@
+ATSHOMEQ="$(ATSHOME)"
+ATSCC=$(ATSHOMEQ)/bin/atscc
+ATSDOC=$(ATSHOMEQ)/bin/atsdoc
+CHAPTERS = $(glob CHAP_*/)
+CHAP_DB_FILES = $(addsuffix /main.db, $(CHAPTERS))
+
+.PHONY: clean publish
+.DEFAULT: HTML/index.html
+
+HTML/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
+	rm -rf build_ja
+	mkdir build_ja
+	iconv -f UTF8 -t EUCJP main_ja.db > build_ja/main_ja.db
+	iconv -f UTF8 -t EUCJP bookinfo_ja.db > build_ja/bookinfo_ja.db
+	iconv -f UTF8 -t EUCJP preface.db > build_ja/preface.db
+	foreach(i, $(CHAPTERS))
+		mkdir -p build_ja/$i
+		iconv -f UTF8 -t EUCJP $i/main.db > build_ja/$i/main.db
+	jw -b html --output HTML_EUC build_ja/main_ja.db
+	sh iconv_dir.sh EUCJP UTF8 HTML_EUC HTML_UTF8
+	sh addchaset_dir.sh UTF-8 HTML_UTF8 HTML
+
+preface.db: preface.atxt
+	$(ATSDOC) --outcode preface_atxt.dats -i preface.atxt > preface_atxt.txt
+	$(ATSCC) -D_ATS_GCATS -o preface.exe preface_atxt.dats -latsdoc
+	./preface.exe > $@
+	rm -f preface.exe preface_atxt.dats preface_atxt.txt
+
+.SUBDIRS: $(glob CHAP_*/) .
+	%.db: %.atxt
+		mkdir -p ../TEMP
+		$(ATSDOC) --outcode $(replacesuffixes .atxt, _atxt.dats, $<) -i $< > $(replacesuffixes .atxt, _atxt.txt, $<)
+		$(ATSCC) -D_ATS_GCATS -o $(removesuffix $<) $(replacesuffixes .atxt, _atxt.dats, $<) -latsdoc
+		./$(removesuffix $<) > $@
+		rm -f $(replacesuffixes .atxt, _atxt.dats, $<) $(replacesuffixes .atxt, _atxt.txt, $<) $(removesuffix $<)
+
+publish: HTML/index.html
+	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
+	rm -rf $(HOME)/doc/jats-ug.github.io/doc/ATS2/ATS2TUTORIAL
+	cp -rf HTML $(HOME)/doc/jats-ug.github.io/doc/ATS2/ATS2TUTORIAL
+
+clean:
+	rm -f preface.db $(CHAP_DB_FILES)
+	rm -rf HTML HTML_EUC HTML_UTF8 TEMP build_ja
+	make clean
