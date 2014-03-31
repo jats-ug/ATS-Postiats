@@ -1020,8 +1020,14 @@ p_beg は下敷にする配列の開始位置を指し、m は配列のサイズ
 
 <sect1
 id="memory-allocation-deallocation">
+#langeng("
 #title("Memory Allocation and Deallocation")
+")
+#langja("
+#title("メモリの確保と解放")
+")
 
+#langeng("
 #para("\
 
 The issue of memory allocation and deallocation is of paramount importance
@@ -1032,7 +1038,19 @@ in ATS is firmly rooted in the paradigm of programming with theorem-proving
 (PwTP).
 
 ")
+")
+#langja("
+#para("\
 
+メモリの確保と解放にまつわる問題は、実行時のガベージコレクション (GC)
+が許されないシステムプログラミングにおいて最重要です。
+メモリ管理を安全にかつ効率よく扱うことは、プログラミングの挑戦において長期にわたる未解決問題です。
+そして ATS におけるその新しい解決策は、定理証明によるプログラミング (PwTP) のパラダイムに堅く根差しています。
+
+")
+")
+
+#langeng("
 #para('\
 
 The following function #dyncode("malloc_gc") is available in ATS for memory
@@ -1072,7 +1090,46 @@ Note that #stacode("mfree_gc_v(L)") is so far the first form of view we
 have encountered that is not built on top of any at-views.
 
 ')
+")
+#langja("
+#para('\
 
+次の関数 #dyncode("malloc_gc") がメモリ確保のために ATS では用意されています:
+
+#atscode("\
+fun malloc_gc
+  {n:nat}(n: size_t n)
+  : [l:agz] (b0ytes n @ l, mfree_gc_v (l) | ptr l)
+// end of [malloc_gc]
+")
+
+種 #stacode("agz") は NULL でないアドレスとして定義されたサブセット種です:
+
+#atscode("\
+sortdef agz = {a:addr | a > null} // [gz] for great-than-zero
+")
+
+整数 N が与えられた時、
+型 #stacode("b0ytes(N)") は N バイトの未初期化の配列を表わす #stacode("@[byte?][N]") の略記です
+従って、at-view #stacode("b0ytes(N)@L") は L をメモリ位置とすると、配列 view
+#stacode("array_v(byte?, L, N)") と同じです。
+view コンストラクタ #stacode("mfree_gc_v") は抽象的です。
+与えられた位置 L について、view #stacode("mfree_gc_v(L)") は次の関数 #dyncode("mfree_gc") によって解放されるべき位置 L に確保したメモリを許可する能力を表わします:
+
+#atscode("\
+fun mfree_gc
+  {l:addr}{n:nat}
+  (pfat: b0ytes(n) @ l, pfgc: mfree_gc_v (l) | p: ptr l): void
+// end of [free_gc]
+")
+
+今まで紹介してきた中では、#stacode("mfree_gc_v(L)") はどのような at-view 上にも構築されていないはじめての
+view の形であることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 In practice, it is rather cumbersome to deal with bytes directly.  The
@@ -1116,7 +1173,52 @@ array_ptr_free
 ')
 
 ')
+")
+#langja("
+#para('\
 
+実際には、バイト数を直接扱うのはいくぶん面倒です。
+(ある型の) 単一の値を保管するメモリを確保する関数 #dyncode("ptr_alloc") と、そのようなメモリを解放する関数
+#dyncode("ptr_free") が用意されています:
+
+#atscode('\
+fun{a:vt0p}
+ptr_alloc ()
+  :<> [l:agz] (a? @ l, mfree_gc_v (l) | ptr l)
+// end of [ptr_alloc]
+
+fun ptr_free
+  {a:t@ype}{l:addr}
+  (pfgc: mfree_gc_v (l), pfat: a @ l | p: ptr l):<> void = "mac#%"
+// end of [ptr_free]
+')
+
+さらに、(ある型の) 値の配列を格納するメモリを確保する関数 #dyncode("array_ptr_alloc")
+と、そのようなメモリを解放する関数 #dyncode("array_ptr_free") があります:
+
+#atscode('\
+fun{a:vt0p}
+array_ptr_alloc
+  {n:int}
+(
+  asz: size_t n
+) : [l:agz]
+(
+  array_v (a?, l, n), mfree_gc_v (l) | ptr l
+) // end of [array_ptr_alloc]
+
+fun{}
+array_ptr_free
+  {a:vt0p}{l:addr}{n:int}
+(
+  array_v (a?, l, n), mfree_gc_v (l) | ptr l
+) : void // end of [array_ptr_free]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 I now give a realistic and interesting example involving both array
@@ -1176,13 +1278,82 @@ Clearly, an array is first allocated (to be used as a scratch area) and
 then deallocated after it is no longer needed.
 
 ')
+")
+#langja("
+#para('\
 
+ここで配列の確保と解放の両方を必要とする現実的で興味深い例を紹介します。
+次の2つの関数テンプレート #dyncode("msort1") と #dyncode("msort2") は与えられた配列をマージソートします:
+
+#atscode('\
+typedef cmp (a:t@ype) = (&a, &a) -> int
+
+extern
+fun{
+a:t@ype
+} msort1 {n:nat}
+  (A: &(@[a][n]), n: size_t n, B: &(@[a?][n]), cmp: cmp(a)): void
+// end of [msort1]
+
+extern
+fun{
+a:t@ype
+} msort2 {n:nat}
+  (A: &(@[a][n]), n: size_t n, B: &(@[a?][n]) >> @[a][n], cmp: cmp(a)): void
+// end of [msort2]
+')
+
+与えられた配列の2つのソート済み部分をマージするには追加領域が必要になることがよく知られています。
+#dyncode("msort1") が配列 A と B に対して呼び出された時、配列 A はソートされる対象で、配列 B
+は (ソート済みの配列の領域の) マージを行なうのに必要なスクラッチ領域の一種です。
+#dyncode("msort1") 呼び出しが返ると、A のソートされたバージョンはまだ A に保管されています。
+#dyncode("msort2") が行なうことも同様ですが、#dyncode("msort2") 呼び出しが返ると A のソートされたバージョンは
+B に保管されます。
+興味を持った読者には、良い練習問題として #dyncode("msort1") と #dyncode("msort2")
+の相互再帰的な実装をしてみることをおすすめします。
+#dyncode("msort1") を用いたマージソートの実装は次のようにたやすく与えることができます:
+
+#atscode('\
+extern
+fun{
+a:t@ype
+} mergeSort{n:nat}
+  (A: &(@[a][n]), n: size_t n, cmp: cmp(a)): void
+// end of [mergeSort]
+
+implement
+{a}(*tmp*)
+mergeSort (A, n, cmp) = let
+  val (pfat, pfgc | p) = array_ptr_alloc<a> (n)
+  val ((*void*)) = msort1 (A, n, !p, cmp)
+  val ((*void*)) = array_ptr_free (pfat, pfgc | p)
+in
+  // nothing
+end // end of [mergeSort]
+')
+
+明確に、配列は (スクラッチ領域として使われるために) はじめに確保され、それからもはや使わなくなった後に解放されます。
+
+')
+")
+
+#langeng("
 #para('\
 
 The entire implementation of merge-sort on arrays plus some testing code is
 available #mycodelink("CHAP_ABSVTYPE/mergeSort.dats", "on-line").
 
 ')
+")
+#langja("
+#para('\
+
+配列に対するマージソートの実装全体とテストコードは
+#mycodelink("CHAP_ABSVTYPE/mergeSort.dats", "オンライン")
+から入手できます。
+
+')
+")
 
 </sect1><!--id="memory-allocation-deallocation-->
 
