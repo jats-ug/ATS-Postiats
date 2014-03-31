@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="abstract_views_viewtypes">
+#langeng("
 #title("Abstract Views and Viewtypes")
+")
+#langja("
+#title("抽象 view と viewtype")
+")
 
+#langeng("
 #para('\
 
 I have so far given a presentation of views that solely focuses on at-views
@@ -35,13 +41,37 @@ types effectively in practice to deal with resource-related programming
 issues.
 
 ')
+")
+#langja("
+#para('\
+
+今までは、at-view と at-view の上に構築された view にもっぱら注目した view の表現を見てきました。
+at-view が実際にもっとも広く使われる view の形であり、また ATS がサポートした view
+の最初の形であることが、その大きな理由です。
+けれども、抽象的な view の他の形を ATS に導入することができます。
+view を at-view (もしくは view の他の形) を元にして定義できる場合においてさえ、(view
+変更する証明関数をともなう) 抽象 view として導入したいと思うかもしれません。
+しばしばプログラマが本当に必要とすることは、抽象的に定義された view
+とそれらを操作する証明関数が実際に意味をなすかどうか、#emphasis("概念的に") 理解することです。
+これは関数が計算可能かどうか根拠を示すことに少し似ています:
+例え、計算可能であることを立証するためにチューリングマシンに関数を実際にエンコードするとしても、まれにその必要があります。
+私見ですが、抽象 view と抽象 viewtype の適切な使い方を学ぶことは、実際にリソースに関連するプログラミングの問題に取り組むために、効果的に線形型を使うのに必要なステップです。
+
+')
+")
 
 <!-- ****** ****** -->
 
 <sect1
 id="simple-linear-objects">
+#langeng("
 #title("Simple Linear Objects")
+")
+#langja("
+#title("単純な線形オブジェクト")
+")
 
+#langeng("
 #para("\
 
 Objects in the physical world are conspicuously linear: They cannot be
@@ -52,7 +82,20 @@ to a linear value representing an object of some sort that does not contain
 built-in mechanism for supporting inheritance.\
 
 ")
+")
+#langja("
+#para("\
 
+物理世界のオブジェクトが線形であることははっきりしています:
+それらは無から生成することはできませんし、単に消し去って無へと帰すこともできません。
+従って、物理オブジェクトを表現する値に線形型を割り当てることは極めて自然です。
+継承をサポートするビルトインの仕組みを含まないようなある種のオブジェクトを表わす線形値を参照するのに、ここでは
+#emphasis("単純な線形オブジェクト") という名前を使います。\
+
+")
+")
+
+#langeng("
 #para('\
 
 Let us now take a look at a concrete example of simple linear object.
@@ -100,7 +143,56 @@ assume timer_vtype = timer
 ')
 
 ')
+")
+#langja("
+#para('\
 
+単純な線形オブジェクトの具体的な例を見てみましょう。
+次のコードは、タイマー (つまりストップウォッチです) のインターフェイスを表わしています:
+
+#atscode('\
+absvtype timer_vtype
+vtypedef timer = timer_vtype
+
+fun timer_new (): timer
+fun timer_free (x: timer): void
+fun timer_start (x: !timer): void
+fun timer_finish (x: !timer): void
+fun timer_pause (x: !timer): void
+fun timer_resume (x: !timer): void
+fun timer_get_ntick (x: !timer): uint
+fun timer_reset (x: !timer): void
+')
+
+次に定義されるレコード型 #stacode("timer_struct") によってタイマーの状態が与えられます:
+
+#atscode('\
+typedef
+timer_struct = @{
+  started= bool // the timer has started
+, running= bool // the timer is running
+  // the tick number recorded when the timer
+, ntick_beg= uint // was turned on last time
+, ntick_acc= uint // the number of accumulated ticks
+} (* end of [timer_struct] *)
+')
+
+次の線形 datatype #stacode("timer") はタイマーのために宣言され、また抽象型 #stacode("timer_vtype") は
+#stacode("timer") に等しいと見なされています:
+
+#atscode('\
+//
+datavtype timer =
+  TIMER of (timer_struct)
+//
+assume timer_vtype = timer
+//
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Various functions on timers can now be readily implemented.
@@ -133,7 +225,43 @@ timer_free (timer) =
 ')
 
 ')
+")
+#langja("
+#para('\
 
+タイマーに関する各種の関数をこれですぐに実装できます。
+はじめにタイマーの生成と解放をするコードを見てみましょう:
+
+#atscode('\
+
+implement
+timer_new () = let
+//
+val timer = TIMER (_)
+val TIMER (x) = timer
+//
+val () = x.started := false
+val () = x.running := false
+val () = x.ntick_beg := 0u
+val () = x.ntick_acc := 0u
+//
+prval () = fold@ (timer)
+//
+in
+  timer
+end // end of [timer_new]
+
+implement
+timer_free (timer) =
+  let val ~TIMER _ = timer in (*nothing*) end
+// end of [timer_free]
+
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 The function for starting a timer can be implemented as follows:
@@ -161,7 +289,37 @@ extern fun the_current_tick_get (): uint
 ')
 
 ')
+")
+#langja("
+#para('\
 
+タイマーを開始する関数は次のように実装できます:
+
+#atscode('\
+implement
+timer_start
+  (timer) = let
+  val+@TIMER(x) = timer
+  val () = x.started := true
+  val () = x.running := true
+  val () = x.ntick_beg := the_current_tick_get ()
+  val () = x.ntick_acc := 0u
+  prval () = fold@ (timer)
+in
+  // nothing
+end // end of [timer_start]
+')
+
+このとき #dyncode("the_current_tick_get") は (ティックの数として表現される) 現在時間を読む関数です:
+
+#atscode('\
+extern fun the_current_tick_get (): uint
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 A timer can be stopped or paused. The function for stopping a timer can be
@@ -187,7 +345,36 @@ end // end of [timer_finish]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+タイマーは停止したり休止したりすることができます。
+タイマーを停止させる関数は次のように実装できます:
+
+#atscode('\
+implement
+timer_finish
+  (timer) = let
+  val+@TIMER(x) = timer
+  val () = x.started := false
+  val () =
+  if x.running then
+  {
+    val () = x.running := false
+    val () = x.ntick_acc :=
+      x.ntick_acc + the_current_tick_get () - x.ntick_beg
+  } (* end of [val] *)
+  prval () = fold@ (timer)
+in
+  // nothing
+end // end of [timer_finish]
+')
+
+')
+")
+
+#langeng("
 #para('\
 A timer can be paused and then resumed.
 The following code implements the functions for pausing and resuming a
@@ -232,7 +419,52 @@ where a timer is paused and the point where the timer is resumed
 is not counted.
 
 ')
+")
+#langja("
+#para('\
+タイマーは休止した後に再開することができます。
+次のコードはタイマーの休止と再開の関数を実装しています:
 
+#atscode('\
+
+implement
+timer_pause
+  (timer) = let
+  val+@TIMER(x) = timer
+  val () =
+  if x.running then
+  {
+    val () = x.running := false
+    val () = x.ntick_acc :=
+      x.ntick_acc + the_current_tick_get () - x.ntick_beg
+  } (* end of [val] *)
+  prval () = fold@ (timer)
+in
+  // nothing
+end // end of [timer_pause]
+
+implement
+timer_resume
+  (timer) = let
+  val+@TIMER(x) = timer
+  val () =
+  if x.started && ~(x.running) then
+  {
+    val () = x.running := true
+    val () = x.ntick_beg := the_current_tick_get ()
+  } (* end of [if] *) // end of [val]
+  prval () = fold@ (timer)
+in
+  // nothing
+end // end of [timer_resume]
+')
+
+予想できることですが、タイマーが休止してから再開するまでの時間の総計はカウントされません。
+
+')
+")
+
+#langeng("
 #para('\
 
 It is also possible to reset a timer by calling the function
@@ -254,7 +486,31 @@ end // end of [timer_reset]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+関数 #dyncode("timer_reset") を呼び出すことでタイマーをリセットすることもまた可能です:
+
+#atscode('\
+implement
+timer_reset
+  (timer) = let
+  val+@TIMER(x) = timer
+  val () = x.started := false
+  val () = x.running := false
+  val () = x.ntick_beg := 0u
+  val () = x.ntick_acc := 0u
+  prval () = fold@ (timer)
+in
+  // nothing
+end // end of [timer_reset]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 In order to read the time accumulated by a timer,
@@ -277,7 +533,33 @@ end // end of [timer_get_ntick]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+関数 #dyncode("timer_get_ntick") を呼び出すことで、
+タイマーにたまった時間を読み出すことができます:
+
+#atscode('\
+implement
+timer_get_ntick
+  (timer) = let
+  val+@TIMER(x) = timer
+  var ntick: uint = x.ntick_acc
+  val () =
+  if x.running then (
+    ntick := ntick + the_current_tick_get () - x.ntick_beg
+  ) (* end of [if] *) // end of [val]
+  prval () = fold@ (timer)
+in
+  ntick
+end // end of [timer_get_ntick]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 A straightforward approach to
@@ -309,13 +591,56 @@ have link-time access to #dyncode("clock_gettime") as the function is in
 #dyncode("librt").
 
 ')
+")
+#langja("
+#para('\
 
+#dyncode("the_current_tick_get") を実装するわかりやすいアプローチは、関数
+#dyncode("clock_gettime") を直接用いることでしょう:
+
+#atscode('\
+local
+
+staload "libc/SATS/time.sats"
+
+in (* in-of-local *)
+
+implement
+the_current_tick_get () = let
+  var tv: timespec // uninitialized
+  val err = clock_gettime (CLOCK_REALTIME, tv)
+  val ((*void*)) = assertloc (err >= 0)
+  prval ((*void*)) = opt_unsome{timespec}(tv)
+in
+  $UNSAFE.cast2uint(tv.tv_sec)
+end // end of [the_current_tick_get]
+
+end // end of [local]
+')
+
+リンク時に #dyncode("librt") に含まれる関数 #dyncode("clock_gettime") にアクセスするために、ライブラリフラグ
+#dyncode("-lrt") が必要になることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("CHAP_ABSVTYPE/timer.dats", "on-line") the
 entirety of the code presented in this section plus some testing code.
 
 ')
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体とテストコードは
+#mycodelink("CHAP_ABSVTYPE/timer.dats", "オンライン")
+から入手できます。
+
+')
+")
 
 </sect1><!--id="simple-linear-objects"-->
 
