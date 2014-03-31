@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="EUC-JP" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
 "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
 <!--
@@ -43,7 +43,7 @@ To Jinning, Zoe, and Chloe
 </toc>
 
 <part id="basic_tutorial_topics">
-<title>Basic Tutorial Topics</title>
+<title>基本的なチュートリアル</title>
 &chap_synclr;
 &chap_filename;
 &chap_fileincl;
@@ -60,7 +60,7 @@ To Jinning, Zoe, and Chloe
 </part><!--"basic_tutorial_topics"-->
 
 <part id="advanced_tutorial_topics">
-<title>Advanced Tutorial Topics</title>
+<title>高度なチュートリアル</title>
 &chap_cloptr;
 &chap_stream_vt;
 </part><!--"advanced_tutorial_topics"-->
