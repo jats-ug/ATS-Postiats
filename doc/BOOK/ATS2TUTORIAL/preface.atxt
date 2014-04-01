@@ -18,7 +18,11 @@ Time of Generation: #timestamp()\
 #langchin("
 #title("序言")
 ")
+#langja("
+#title("前書き")
+")
 
+#langeng("
 #para('\
 
 This tutorial covers a variety of issues that a programmer typically
@@ -36,6 +40,22 @@ demonstrate through concrete examples that these features can be made of
 effective use in the construction of high-quality programs.\
 
 ')
+")
+#langja("
+#para('\
+
+このチュートリアルは ATS でプログラミングをするとプログラマが出会う典型的な問題を解説しています。
+このほとんどは例による学習のスタイルで書かれています。
+(MLやC言語に馴染んだ読者であれば) このチュートリアルを通してATS のプログラミングを学ぶことは可能ですが、
+一貫した体系的な方法で ATS の外観を得るには
+<ulink url="http://jats-ug.metasepi.org/doc/ATS2/INT2PROGINATS/index.html">ATSプログラミング入門</ulink>
+の方がはるかに適切であると思います。
+もちろんこれら2つの本の間においては重複した解説も少なくないでしょう。
+このチュートリアルの主要な目的は、豊かな ATS のプログラミングの機能についてより多くの洞察をもたらすことです。
+またさらに高品質なプログラムを構築するために、これらの機能を効果的に使った具体的な例を示します。\
+
+')
+")
 
 </preface>
 
