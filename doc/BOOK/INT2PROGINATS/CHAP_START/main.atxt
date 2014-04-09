@@ -37,7 +37,7 @@ single file, and compile it and then execute it.\
 
 おそらく、あなたはプログラミング言語を学習する際に何かプログラムを書きたくなるでしょう。
 また、この本の見本のいくつかを試して、実際に起きることを目にしたいでしょう。
-そこで、はじめにたった1つのファイルで構成されたプログラムをATSで書く方法を説明します。
+そこで、はじめにたった1つのファイルで構成されたプログラムを ATS で書く方法を説明します。
 その後、コンパイル方法と実行手順を説明します。\
 
 ")
@@ -73,7 +73,7 @@ function to get evaluated.  ')#comment("para")
 #langja("
 #para('\
 
-次の例は"Hello, world!"という文字列と改行をコンソールに印字するプログラムです。
+次の例は "Hello, world!" という文字列と改行をコンソールに印字するプログラムです。
 
 #atscode('\
 val _ = print ("Hello, world!\\\n")
@@ -81,10 +81,10 @@ val _ = print ("Hello, world!\\\n")
 implement main0 () = () // [main] のダミー実装
 ')
 
-#dyncode("val") キーワードは変数 #dyncode("_") (アンダースコア)に、
-関数呼び出し #dyncode('print ("Hello, world!\\\n")') を束縛する。
+#dyncode("val") キーワードは変数 #dyncode("_") (アンダースコア) に、関数呼び出し
+#dyncode('print ("Hello, world!\\\n")') を束縛します。
 この束縛は作られた後に使われるのではありません。
-評価された時に、 #dyncode("print") 関数を呼び出すことが唯一の目的です。  ')#comment("para")
+評価された時に #dyncode("print") 関数を呼び出すことが唯一の目的です。  ')#comment("para")
 ")
 
 #langeng("
@@ -113,19 +113,19 @@ that terminates at the end of the current line.\
 #langja("
 #para("\
 
-#dyncode("main0") 関数はATSにおいて特殊な意味を持っていて #dyncode("main") 関数の変形です。
-CやJava言語を知っているプログラマにとっては、
-#dyncode("main") の役目はCやJavaにおける同じ名前の関数と本質的に同等であると言えるでしょう。
+#dyncode("main0") 関数は ATS において特殊な意味を持っていて #dyncode("main") 関数の変形です。
+C や Java 言語を知っているプログラマにとっては、
+#dyncode("main") の役目は C や Java における同じ名前の関数と本質的に同等であると言えるでしょう。
 #dyncode("implement") キーワードは既に別の箇所でインターフェイスが宣言された関数の実装を作成します。
 
-次に示すATSのソースコードは #dyncode("main0") に対するインターフェイスの宣言です。
+次に示す ATS のソースコードは #dyncode("main0") に対するインターフェイスの宣言です。
 
 #atscode("\
 fun main0 (): void
 ")
 
-このコードは #dyncode("main0") が引数を取らず返値がない関数であることを示しています。
-返値がない、ということはvoid値を返すと言いかえることもできます。
+このコードは #dyncode("main0") が引数を取らず返値もない関数であることを示しています。
+返値がない、ということは void 値を返すと言いかえることもできます。
 #dyncode("//") から行末まではコメントです。 \
 
 ")#comment("para")
@@ -156,7 +156,7 @@ we will soon encounter.\
 ")
 #langja("
 #para("\
-ATSプログラミング言語は既にインストール済みであると仮定します。
+ATS プログラミング言語は既にインストール済みであると仮定します。
 次のコマンドを実行すれば作業中ディレクトリに <filename>hello</filename>
 という名前で実行ファイルが作られます。
 
@@ -166,8 +166,8 @@ ATSプログラミング言語は既にインストール済みであると仮�
 
 <filename>hello.dats</filename> は先程のプログラムを含んだファイルです。
 #command("atscc") コマンドは #command("atsopt") コマンドの便利なラッパーです。
-#command("atsopt") はATSプログラムの型検査とコンパイルを実行します。
-ATSのインストール時の設定によっては、
+#command("atsopt") は ATS プログラムの型検査とコンパイルを実行します。
+ATS のインストール時の設定によっては、
 #command("atscc") と #command("atsopt") はそれぞれ実際には
 #command("patscc") と #command("patsopt") という名前が付けられているかもしれないことに注意してください。
 #emphasis(".dats") という拡張子は #command("atscc")
