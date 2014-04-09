@@ -30,7 +30,7 @@ the notion of binding, which relates names to expressions.\
 ")
 #langja("
 #para("\
-ATSのコアは即時評価(call-by-value)の関数型言語です。
+ATS のコアは値渡し (call-by-value) の関数型言語です。
 この章ではしばらく #emphasis("call-by-value") の意味について説明します。
 関数型プログラミングとしては厳密な定義がないためです。
 これから探検する関数型プログラミングの最も重要な側面は束縛の概念です。
@@ -312,11 +312,11 @@ first line:\
 ATSでは  #dyncode("val") はキーワードであることに注意してください。
 またその宣言はval宣言として分類されます。
 
-概念上、ATSのような即時評価(call-by-value)の言語において実行時に起きることは、
+概念上、ATS のような値渡し (call-by-value) の言語において実行時に起きることは、
 まずはじめに式 #dyncode("1+2") が値 #dyncode("3") に評価されます。
 次に #dyncode("x") と #dyncode("1+2") の間に束縛ができ、
 #dyncode("x") と #dyncode("3") の間に束縛が #emphasis("決着(finalized)") します。
-本質的に即時評価とは、
+本質的に値渡しとは、
 名前と式の束縛はそれ以降の評価で使われる前に、
 その名前とその式の値の束縛に決着されなければならないことを意味します。
 別の例としては、次の構文では3つの束縛を宣言しています。
