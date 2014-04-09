@@ -231,10 +231,10 @@ elsewhere in the book the topic on making use of library in ATS.\
 ")
 #langja("
 #para("
-次に示すコードは1つのファイルで構成されたATSプログラムのひな形です。
+次に示すコードは1つのファイルで構成された ATS プログラムのひな形です。
 またこのひな形は
 #mycodelink("CHAP_START/mytest.dats", "オンライン")
-からも取得できます。
+からも入手できます。
 
 #atscode('\
 (*
@@ -260,9 +260,9 @@ implement main0 () = () // [main] のダミー実装
 
 ')#comment("atscode")
 
-#dyncode("\#include") キーワードではじまる行はATSコンパイラ #command("atsopt") に対して、
+#dyncode("\#include") キーワードではじまる行は ATS コンパイラ #command("atsopt") に対して、
 指定した外部ライブラリパッケージと様々なライブラリ関数へのアクセスを可能にします。
-ATSのライブラリの使用方法はこの本の別の章で説明します。 \
+ATS のライブラリ使用方法はこの本の別の章で説明します。 \
 
 ")#comment("para")
 ")
@@ -365,8 +365,8 @@ cleanall:: clean
 #langja("
 #para('\
 
-次に示すMakefileのひな形はATSプログラムをコンパイルする独自のMakefileを作るのに役立つでしょう。
-またこのひな形は #mycodelink("CHAP_START/Makefile_template", "オンライン") から取得できます。
+次に示す Makefile のひな形は ATS プログラムをコンパイルする独自の Makefile を作るのに役立つでしょう。
+またこのひな形は #mycodelink("CHAP_START/Makefile_template", "オンライン") から入手できます。
 あなたが #command("make") ユーティリティに習熟していなかったとしても、
 オンラインからその学習のための情報を数多く見つけられるでしょう。
 
@@ -391,7 +391,7 @@ ATSOPT=$(ATSHOMEQ)/bin/atsopt
 \#\#\#\#\#\#
 
 \#
-\# HX: どれかの行のコメントを外してください。もしくは読み飛ばすこともできます。
+\# HX: いずれかの行のコメントを外してください。もしくは読み飛ばすこともできます。
 \#
 ATSCCFLAGS=
 \#ATSCCFLAGS=-O2
