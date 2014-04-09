@@ -43,8 +43,8 @@ val () = fprint_string (out, "\
 # This script is automatically generated.\n\
 #\n\
 \n\
-SOURCE=../../doc/EXAMPLE/ATSLIB/\n\
-TARGET=ATS-Postiats/doc/EXAMPLE/ATSLIB/\n\
+SOURCE=../../doc/EXAMPLE/ATSLIB\n\
+TARGET=ATS-Postiats/doc/EXAMPLE/ATSLIB\n\
 \n\
 srcget ()\n\
 {\n\
@@ -163,6 +163,7 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 #packfilename("libc_fnmatch.dats")
 #packfilename("libc_malloc.dats")
 #packfilename("libc_math.dats")
+#packfilename("libc_signal.dats")
 #packfilename("libc_stdio.dats")
 #packfilename("libc_stdlib.dats")
 #packfilename("libc_string.dats")

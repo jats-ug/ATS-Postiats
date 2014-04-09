@@ -159,6 +159,55 @@ end // end of [stream_drop_exn]
 
 (* ****** ****** *)
 
+implement
+{a}(*tmp*)
+stream_append
+  (xs, ys) = let
+//
+fun aux
+(
+  xs: stream(a)
+, ys: stream(a)
+) : stream_con(a) =
+  case+ !xs of
+  | stream_nil () => !ys
+  | stream_cons (x, xs) => stream_cons (x, $delay (aux (xs, ys)))
+//
+in
+//
+  $delay (aux (xs, ys))
+//
+end // end of [stream_append]
+
+(* ****** ****** *)
+
+implement
+{a}(*tmp*)
+stream_concat (xss) = let
+//
+fun aux1
+(
+  xss: stream(stream(a))
+) : stream_con(a) =
+(
+  case+ !xss of
+  | stream_nil () => stream_nil ()
+  | stream_cons (xs, xss) => aux2 (xs, xss)
+)
+and aux2
+(
+  xs: stream(a), xss: stream(stream(a))
+) : stream_con(a) =
+  case+ !xs of
+  | stream_nil () => aux1 (xss)
+  | stream_cons (x, xs) => stream_cons (x, $delay (aux2 (xs, xss)))
+//
+in
+  $delay (aux1 (xss))
+end // end of [stream_concat]
+
+(* ****** ****** *)
+
 local
 
 fun{a:t0p}
@@ -441,6 +490,48 @@ stream_mergeq$cmp (x1, x2) =
 in
   stream_mergeq (xs1, xs2)
 end // end of [stream_mergeq_cloref]
+
+(* ****** ****** *)
+
+implement
+{a}{env}
+stream_foreach$cont (x, env) = true
+
+implement{a}
+stream_foreach (xs) = let
+  var env: void = () in stream_foreach_env<a><void> (xs, env)
+end // end of [stream_foreach]
+
+implement
+{a}{env}
+stream_foreach_env
+  (xs, env) = let
+//
+fun loop
+(
+  xs: stream(a), env: &env >> _
+) : void =
+(
+//
+case+ !xs of
+| stream_nil () => ()
+| stream_cons (x, xs) => let
+    val test =
+      stream_foreach$cont<a><env> (x, env)
+    // end of [val]
+  in
+    if test then let
+      val () = stream_foreach$fwork<a><env> (x, env)
+    in
+      loop (xs, env)
+    end else () // end of [if]
+  end // end of [stream_cons]
+//
+) (* end of [loop] *)
+//
+in
+  loop (xs, env)
+end (* end of [stream_foreach_env] *)
 
 (* ****** ****** *)
 

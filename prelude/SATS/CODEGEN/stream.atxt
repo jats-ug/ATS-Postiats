@@ -73,20 +73,14 @@ stream_drop_exn
 // end of [stream_drop_exn]
 
 #atscode_separator()
-
-fun{
-env:vt0p
-} stream_foreach$cont (env: &env): bool
-fun{
-a:t0p}{env:vt0p
-} stream_foreach$fwork
-  (x: a, env: &env): void // lin-cleared
+//
 fun{a:t0p}
-stream_foreach (xs: stream (a)): void
-fun{
-a:t0p}{env:vt0p
-} stream_foreach_env (xs: stream (a), &env >> _): void
-
+stream_append
+  (xs: stream (INV(a)), ys: stream (a)):<!laz> stream(a)
+//
+fun{a:t0p}
+stream_concat (xss: stream(stream(INV(a)))):<!laz> stream(a)
+//
 #atscode_separator()
 
 fun{a:t0p}
@@ -184,6 +178,21 @@ stream_mergeq_cloref
   xs1: stream (INV(a)), xs2: stream (a), (a, a) -<cloref> int
 ) :<!laz> stream (a) // end of [stream_mergeq_cloref]
 
+#atscode_separator()
+//
+fun{
+a:t0p}{env:vt0p
+} stream_foreach$cont (x: a, env: &env): bool
+fun{
+a:t0p}{env:vt0p
+} stream_foreach$fwork (x: a, env: &env): void
+//
+fun{a:t0p}
+stream_foreach (xs: stream (a)): void
+fun{
+a:t0p}{env:vt0p
+} stream_foreach_env (xs: stream (a), &env >> _): void
+//
 #atscode_separator()
 //
 // overloading for certain symbols

@@ -14,6 +14,14 @@ staload "./../insertsort.dats"
 //
 (* ****** ****** *)
 //
+staload "libats/SATS/hashfun.sats"
+staload "libats/SATS/hashtbl_chain.sats"
+//
+staload _ = "libats/DATS/hashfun.dats"
+staload _ = "libats/DATS/hashtbl_chain.dats"
+//
+(* ****** ****** *)
+//
 staload
 "{$LIBATSHWXI}/testing/SATS/randgen.sats"
 staload _ =
@@ -148,7 +156,9 @@ staload TIMER = "{$LIBATSHWXI}/teaching/myGTK/DATS/gtkcairotimer/gtkcairotimer_t
 //
 (* ****** ****** *)
 
+#ifndef INSERTSORT_ANIM2_ALL
 dynload "./gtkcairotimer_toplevel.dats"
+#endif (* end of [#ifndef] *)
 
 (* ****** ****** *)
 
@@ -235,6 +245,29 @@ cairo_draw_arrszref
 ) : void // end-of-fun
 
 (* ****** ****** *)
+//
+extern
+fun
+colorgen (x: int): color
+//
+implement
+colorgen (x) = let
+//
+  val x = $UN.cast{uint32}(x)
+  val hval = $extfcall (uint32, "atslib_inthash_jenkins", x)
+  val hval = $UN.cast{uint}(hval)
+//
+  val r = $UN.cast{int}(hval mod 256u)
+  val hval = hval / 256u
+  val g = $UN.cast{int}(hval mod 256u)
+  val hval = hval / 256u
+  val b = $UN.cast{int}(hval mod 256u)
+//
+in
+  color_make (r/256.0, g/256.0, b/256.0)
+end // end of [colorgen]
+//
+(* ****** ****** *)
 
 implement
 cairo_draw_arrszref
@@ -255,15 +288,7 @@ in
 end // end of [mydraw_get0_cairo]
 //
 implement
-mydraw_bargraph$color<>
-  (i) = let
-//
-val alpha =
-  0.50 * (ASZ[i]+1) / MYMAX
-//
-in
-  color_make (alpha, alpha, alpha)
-end // end of [mydraw_bargraph$color]
+mydraw_bargraph$color<> (i) = colorgen (ASZ[i])
 
 implement
 mydraw_bargraph$height<> (i) = 1.0 * (ASZ[i]+1) / MYMAX
@@ -319,12 +344,12 @@ in
 end // [mydraw_clock]
 
 (* ****** ****** *)
-
+//
 %{^
 typedef char **charptrptr ;
 %} ;
 abstype charptrptr = $extype"charptrptr"
-
+//
 (* ****** ****** *)
 
 implement

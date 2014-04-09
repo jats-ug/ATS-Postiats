@@ -368,6 +368,17 @@ cleanall:: ; $(RMF) HTML/atscntrb_libatshwxi_teaching.html
 cleanall:: ; $(RMF) SCRIPT/atscntrb_libatshwxi_teaching.bash
 
 #
+all_html:: HTML/atscntrb_kernelats.html
+HTML/atscntrb_kernelats.html: atscntrb_kernelats_atxt.exe ; ./$< > $@
+all_script:: SCRIPT/atscntrb_kernelats.bash
+SCRIPT/atscntrb_kernelats.bash: atscntrb_kernelats_atxt.exe ; ./$< > $@
+atscntrb_kernelats_atxt.dats: ATEXT/atscntrb_kernelats.atxt ;   $(CAT) $< | $(ATSDOC) --prefix __datatok --outcode $@ > /dev/null
+atscntrb_kernelats_atxt.exe: atscntrb_kernelats_atxt.dats ; $(ATSCC) $(INCLATS) $(ATSGCFLAG) -o $@ $< -latsdoc
+clean:: ; $(RMF) atscntrb_kernelats_atxt.exe
+cleanall:: ; $(RMF) HTML/atscntrb_kernelats.html
+cleanall:: ; $(RMF) SCRIPT/atscntrb_kernelats.bash
+
+#
 ######
 
 atspackaging:: srcget_home
@@ -524,19 +535,24 @@ srcget_atscntrb_libatshwxi_teaching:: SCRIPT/atscntrb_libatshwxi_teaching.bash ;
 
 ######
 
-PACKNAME=ATS2-Postiats-0.0.7
-atspacktar:: ; rm -rf $(PACKNAME)
-atspacktar:: ; cp -rf ATS-Postiats $(PACKNAME)
-atspacktar:: ; $(RMF) $(PACKNAME)/Makefile_conf
-atspacktar:: ; $(RMF) $(PACKNAME)/missing ; $(CPF) ATS-Postiats/missing $(PACKNAME)/
-atspacktar:: ; $(RMF) $(PACKNAME)/install-sh ; $(CPF) ATS-Postiats/install-sh $(PACKNAME)/
-atspacktar:: ; make -C $(PACKNAME) cleanall
-atspacktar:: ; tar -zvcf  $(PACKNAME).tgz  $(PACKNAME)/
+srcget_atscntrb:: srcget_atscntrb_kernelats
+srcget_atscntrb_kernelats:: SCRIPT/atscntrb_kernelats.bash ; bash $<
 
-CNTRBNAME=ATS2-Postiats-contrib-0.0.6
-atscntrbtar:: ; rm -rf $(CNTRBNAME)
-atscntrbtar:: ; cp -rf ATS-Postiats-contrib $(CNTRBNAME)
-atscntrbtar:: ; tar -zvcf  $(CNTRBNAME).tgz  $(CNTRBNAME)/
+######
+
+PACKNAME=ATS2-Postiats-0.0.7
+atspacktarzvcf:: ; rm -rf $(PACKNAME)
+atspacktarzvcf:: ; cp -rf ATS-Postiats $(PACKNAME)
+atspacktarzvcf:: ; $(RMF) $(PACKNAME)/Makefile_conf
+atspacktarzvcf:: ; $(RMF) $(PACKNAME)/missing ; $(CPF) ATS-Postiats/missing $(PACKNAME)/
+atspacktarzvcf:: ; $(RMF) $(PACKNAME)/install-sh ; $(CPF) ATS-Postiats/install-sh $(PACKNAME)/
+atspacktarzvcf:: ; make -C $(PACKNAME) cleanall
+atspacktarzvcf:: ; tar -zvcf  $(PACKNAME).tgz  $(PACKNAME)/
+
+CNTRBNAME=ATS2-Postiats-contrib-0.0.7
+atscntrbtarzvcf:: ; rm -rf $(CNTRBNAME)
+atscntrbtarzvcf:: ; cp -rf ATS-Postiats-contrib $(CNTRBNAME)
+atscntrbtarzvcf:: ; tar -zvcf  $(CNTRBNAME).tgz  $(CNTRBNAME)/
 
 ######
 

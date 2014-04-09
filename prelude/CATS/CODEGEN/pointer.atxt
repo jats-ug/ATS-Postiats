@@ -33,6 +33,13 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
+\#ifndef memset
+extern
+void *memset(void *bufp, int c, size_t n) ;
+\#endif // \#ifndef
+
+#atscode_separator_for_C()
+
 \#ifndef fprintf
 extern
 int fprintf (FILE *stream, const char *format, ...) ;
@@ -44,7 +51,7 @@ ATSinline()
 atstype_bool
 atspre_ptr_is_null
   (atstype_ptr p) {
-  return (p==(void*)0) ? atsbool_true : atsbool_false ;
+  return (p == (void*)0) ? atsbool_true : atsbool_false ;
 } // end of [atspre_ptr_is_null]
 \#define atspre_ptr0_is_null atspre_ptr_is_null
 \#define atspre_ptr1_is_null atspre_ptr_is_null
@@ -53,7 +60,7 @@ ATSinline()
 atstype_bool
 atspre_ptr_isnot_null
   (atstype_ptr p) {
-  return (p > (void*)0) ? atsbool_true : atsbool_false ;
+  return (p != (void*)0) ? atsbool_true : atsbool_false ;
 } // end of [atspre_ptr_isnot_null]
 \#define atspre_ptr0_isnot_null atspre_ptr_isnot_null
 \#define atspre_ptr1_isnot_null atspre_ptr_isnot_null
@@ -181,6 +188,17 @@ atspre_neq_ptr_intz
 
 \#define atspre_cptr_is_null atspre_ptr_is_null
 \#define atspre_cptr_isnot_null atspre_ptr_isnot_null
+
+#atscode_separator_for_C()
+
+ATSinline()
+atsvoid_t0ype
+atspre_ptr_nullize_tsz
+(
+  atstype_ptr p, atstype_size tsz
+) {
+  memset (p, 0, tsz) ; return /*void*/ ;
+} // end of [atspre_ptr_nullize_tsz]
 
 #atscode_separator_for_C()
 
