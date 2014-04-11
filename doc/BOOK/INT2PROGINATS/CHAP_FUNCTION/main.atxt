@@ -40,10 +40,10 @@ features in ATS, which will be presented in this book later.\
 関数はプログラミングの基盤です。
 理論上、関数を使わずループを使ってプログラムを作ることは可能です。
 けれどそのようなプログラミングスタイルは現実的ではないでしょう。
-ATSは他の言語と同様にforループやwhileループを直接実装できます。
+ATS は他の言語と同様に for ループや while ループを直接実装できます。
 けれども私としては、再帰呼出もしくはよりよい末尾再帰呼出によって、
 プログラマにループを実装してほしいと考えています。
-このプログラミングスタイルはATSのより進んだプログラミングの特徴とうまく調査できるからです。
+このプログラミングスタイルは ATS のより進んだプログラミングの特徴とうまく調和できるからです。
 そのような特徴はより先のページで紹介します。\
 
 ")
@@ -110,7 +110,7 @@ accordingly to take advantage of it, and there is no other changes needed
 ")
 #langja("
 #para("#dyncode("double") 型である式が与えられた時、
-その式を自分自身と掛け合わせれることで二乗を計算することができます。
+その式を自分自身と掛け合わせることで二乗を計算することができます。
 もしその式が複雑な式であるなら、その評価を一度きりにするためにその式に名前を付けることができます。
 例えば次のような例です:
 
@@ -129,11 +129,11 @@ let val x = 3.14 * (10.0 - 1.0 / 1.4142) in x * x end
 fn square (x: double): double = x * x
 ")
 
-#dyncode("fn") キーワードは再帰をしない関数を定義の開始します。
+#dyncode("fn") キーワードは再帰をしない関数を定義を開始します。
 そしてキーワードに続く名前は関数名です。
 先の例の場合、 #dyncode("square") 関数は #dyncode("x") という名前の引数を一つ取ります。
 この引数の型は #dyncode("double") で、返値の型も #dyncode("double") です。
-シンボル #dyncode("=") の右辺(right-hand side - RHS)の式が関数の中身です。
+シンボル #dyncode("=") の右辺 (right-hand side - RHS) の式が関数の中身です。
 この場合は #dyncode("x * x") になります。
 二乗を取るより良い方法が見つかったら、
 #dyncode("square") 関数の中身を再実装するだけで済みます。
@@ -179,8 +179,8 @@ lambda-expression is said to be alpha-equivalent to the original one.\
 val square = lam (x: double): double => x * x
 ")
 
-ここで #dyncode("=") 記号のRHSはラムダ式で、
-#dyncode("double") 型の引数を1つ取り、 #dyncode("double") 型の値を返す無名関数を表わしています。
+ここで #dyncode("=") 記号の右辺はラムダ式で、#dyncode("double")
+型の引数を1つ取り、#dyncode("double") 型の値を返す無名関数を表わしています。
 そして #dyncode("=>") 記号に続く式が関数の本体です。
 もし望むなら、関数の引数名を次のように変更することができます:
 
@@ -188,7 +188,7 @@ val square = lam (x: double): double => x * x
 val square = lam (y: double): double => y * y
 ")
 
-これは(関数の引数の)α-変換と呼ばれ、
+これは (関数の引数の) α-変換と呼ばれ、
 新しくできたラムダ式は元の式に対するα-同値と呼ばれます。\
 
 ")#comment("para")
@@ -214,11 +214,11 @@ double): double => x * x") can be assigned the function type
 #langja("
 #para("\
 
-ラムダ式は(関数)値です。
+ラムダ式は (関数の) 値です。
 2引数の関数を表わすラムダ式があるとします。
 (T1, T2) -> T の型をラムダ式に割り当てるためには、
-関数の2つの引数が型T1とT2を持つと仮定した時、
-関数の本体が型Tであるかどうか証明しなければなりません。
+関数の2つの引数が型 T1 と T2 を持つと仮定した時、
+関数の本体が型 T であるかどうか証明しなければなりません。
 適用する箇所を<emphasis>変更すると</emphasis>、
 より少ないもしくはより多い引数を取る関数を表わすラムダ式になります。
 例えば、ラムダ式 #dyncode("lam (x: double): double => x * x") は関数の型 #dyncode("(double) -> double")
@@ -244,9 +244,9 @@ a function application of fewer or more arguments is handled similarly.\
 #langja("
 #para("\
 
-expは関数の型 (T1, T2) -> T の式であると仮定します。
+exp は関数の型 (T1, T2) -> T の式であると仮定します。
 exp は名前を持つ関数やラムダ式である必要はないことに注意してください。
-式exp<subscript>1</subscript> と exp<subscript>2</subscript> に型 T1 と T2 が割り当て可能だとすると、
+式 exp<subscript>1</subscript> と exp<subscript>2</subscript> に型 T1 と T2 が割り当て可能だとすると、
 関数適用 exp(exp<subscript>1</subscript>, exp<subscript>2</subscript>) には型 T を割り当てることができます
 (この関数適用も関数呼び出しであるかもしれません)。
 より少ないもしくはより多い引数の関数適用の型付けも同様です。\
