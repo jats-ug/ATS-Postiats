@@ -1262,7 +1262,7 @@ val theOrigin = @{ x= 0.0, y= 0.0 } : point2D
 ")
 #langja("
 #para("\
-レコードそれぞれのフィールド名をプログラマによって決定できるという点を除けば、
+それぞれのフィールド名をプログラマが決定できるという点を除けば、
 レコードはタプルと良く似ています。
 同様にレコード型もタプル型と良く似ています。
 例えばレコード型 #stacode("point2D") は以下のように定義できます。
@@ -1333,8 +1333,9 @@ val theOrigin_x = theOrigin.x and theOrigin_y = theOrigin.y
 val @{ x= theOrigin_x, y= theOrigin_y } = theOrigin
 </programlisting></informalexample>
 
-この例では #dyncode("theOrigin_x") と #dyncode("theOrigin_y") の名前はそれぞれ、
-#dyncode("theOrgin") の中にある #dyncode("x") と #dyncode("y") という名前の要素に束縛されています。
+この例では #dyncode("theOrigin_x") と #dyncode("theOrigin_y")
+の名前はそれぞれ、#dyncode("theOrigin") の中にある #dyncode("x") と #dyncode("y")
+という名前の要素に束縛されています。
 もし要素全てではなく一部を選択したい場合には、次のようなパターンマッチを使うことができます。
 
 <informalexample><programlisting>
@@ -1401,8 +1402,8 @@ if (x >= 0) then x else ~x
 </programlisting></informalexample>
 
 #dyncode("if"), #dyncode("then"), #dyncode("else") は ATS のキーワードです。
-条件式では#dyncode("if") 直後の式が比較式、
-#dyncode("then") と #dyncode("else") 直後の式はそれぞれthen分岐とelse分岐と呼ばれます。
+条件式では #dyncode("if") 直後の式が比較式、#dyncode("then") と #dyncode("else")
+直後の式はそれぞれ then 分岐と else 分岐と呼ばれます。
 ")
 ")
 
@@ -1418,8 +1419,8 @@ is given the type #dyncode("int").  ")
 #langja("
 #para("\
 
-型Tを条件式に割り振るために、 #dyncode("bool") 型をその比較に割り振り、
-型Tをthen分岐とelse分岐の両方に割り振る必要があります。
+型 T を条件式に割り振るために、#dyncode("bool") 型をその比較に割り振り、
+型 T を then 分岐と else 分岐の両方に割り振る必要があります。
 例えば名前 #dyncode("x") が #dyncode("int") 型であれば、
 先の例の条件式には #dyncode("int") 型を割り振ることができます。 ")
 ")
@@ -1439,8 +1440,8 @@ we continue to evaluate the else-branch.  ")
 条件式が正しく型付けできていることを想像してみましょう。
 その条件式が評価されるとまずはじめに比較を評価して値を得ることになります。
 この値は #dyncode("true") もしくは #dyncode("false") であることが保証されています。
-値が #dyncode("true") であればthen分岐が評価されます。
-そうでなければelse分岐が評価されることになるわけです。 ")
+値が #dyncode("true") であれば then 分岐が評価されます。
+そうでなければ else 分岐が評価されることになるわけです。 ")
 ")
 
 #langeng("
@@ -1467,7 +1468,7 @@ in the truncated form, then the type must be #stacode("void").\
 #langja("
 #para("\
 
-else分岐を省略した条件式を作ることもできます。
+else 分岐を省略した条件式を作ることもできます。
 例えば次のような式を作ることができます。
 
 <informalexample><programlisting>
@@ -1480,7 +1481,7 @@ if (x >= 0) then print(x)
 if (x >= 0) then print(x) else ()
 </programlisting></informalexample>
 
-#dyncode("()") は #stacode("void") 型であるvoid値を表わすことに注意してください。
+#dyncode("()") は #stacode("void") 型である void 値を表わすことに注意してください。
 省略された形の条件式に割り当てる型は #stacode("void") でなければなりません。 \
 ")
 ")
@@ -1494,7 +1495,7 @@ if (x >= 0) then print(x) else ()
 #title("Sequence Expressions")
 ")
 #langja("
-#title("シーケンス式(逐次実行)")
+#title("シーケンス式 (逐次実行)")
 ")
 
 #langeng("
@@ -1557,10 +1558,10 @@ which is quite common in functional programming.\
 #langja("
 #para("\
 
-exp1とexp2がそれぞれ型T1とT2であり、T1は #dyncode("void") 型であったとしましょう。
+exp1 と exp2 がそれぞれ型 T1 と T2 であり、T1 は #dyncode("void") 型であったとしましょう。
 このときシーケンス式 (exp1; exp2) を作ることができ、その型は T2 になります。
-シーケンス式 (exp1; exp2) を評価すると、まずはじめにexp1をvoid値に評価し、
-さらにexp2を評価してなんらかの値を得ます。
+シーケンス式 (exp1; exp2) を評価すると、まずはじめに exp1 を void 値に評価し、
+さらに exp2 を評価してなんらかの値を得ます。
 またこの値はシーケンス式全体の値になります。
 
 より多くの式を列にする場合、最後以外の式は全て #dyncode("void") 型であるべきで、
