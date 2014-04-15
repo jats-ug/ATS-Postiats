@@ -349,7 +349,7 @@ applied to two arguments (instead of one representing a pair).\
 
 関数のアリティは関数が取る引数の数です。
 しばしばアリティが 0, 1, 2, 3 の関数はそれぞれ、nullary, unary, binary, ternary 関数と呼ばれます。
-例えば、次の関数 #dyncode("sqrsum1") はbinary関数で、2つの引数の型は #dyncode("int") です:
+例えば、次の関数 #dyncode("sqrsum1") は binary 関数で、2つの引数の型は #dyncode("int") です:
 
 #atscode("\
 fn sqrsum1 (x: int, y: int): int = x * x + y * y
@@ -373,7 +373,7 @@ fn sqrsum2
 #dyncode("sqrsum2 @(1, ~1)") と書く必要があります。
 もし単純に #dyncode("sqrsum2 (1, ~1)") と書いた場合、
 型検査器は関数のアリティが合わないというエラーを出力します。
-型検査器は #dyncode("sqrsum2") に(1つのペアではなく)2つの引数が適用されたと見なしてしまいます。\
+型検査器は #dyncode("sqrsum2") に (1つのペアではなく) 2つの引数が適用されたと見なしてしまうためです。\
 
 ")#comment("para")
 ")
@@ -395,13 +395,13 @@ function in C). This is a topic I will cover elsewhere.\
 #langja("
 #para("\
 
-(HaskellやMLのような)多くの関数型言語はunary関数のみを許しています。
+(Haskell や ML のような) 多くの関数型言語は unary 関数のみを許しています。
 これらの言語において、複数の引数を取る関数はエンコードして表現します。
-つまり、タプルを唯一の引数として取るunary関数か、
+つまり、タプルを唯一の引数として取る unary 関数か、
 カリー化された関数に連続してそれらの引数を渡すようにして実現されています。
-けれども、ATSは複数引数を持つ関数を直接サポートしています。
-ATSでも可変長引数の関数を限定的にサポートしています。
-これはつまり引数の数が不定の関数です(例えばC言語の #dyncode("printf") 関数が有名です)。
+けれども、ATS は複数引数を持つ関数を直接サポートしています。
+ATS でも可変長引数の関数を限定的にサポートしています。
+これはつまり引数の数が不定の関数です (例えばC言語の #dyncode("printf") 関数が有名です)。
 この話題は別の章で取り上げます。\
 
 ")#comment("para")
@@ -475,7 +475,7 @@ constructing (large) programs in a modular style.\
 #para("\
 
 関数のインターフェイスは、その関数に割り当てられる型を明確にします。
-binary関数 foo が型 (T1, T2) -> T3 で与えられた時、そのインターフェイスは次のように書くことができます:
+binary 関数 foo が型 (T1, T2) -> T3 で与えられた時、そのインターフェイスは次のように書くことができます:
 
 #atscode("\
 fun foo (arg1: T1, arg2: T2): T3
@@ -610,7 +610,7 @@ problem-solving that make use of this reduction strategy.
 再帰はプログラミング言語が提供しているもっとも効果的な機能だと、私は考えています。
 再帰を使うことで、再帰的な戦略で問題解決をすることができます:
 すぐに解法を見つけることが困難な問題を解決するために、
-問題を同様で単純な問題に減少させ、
+問題を同様な単純な問題に減少させ、
 さらに解法が明白になるまでその減少プロセスを繰り返します。
 ここでは
 このような減少戦略を使った問題解決の具体的な例を見てみましょう。
@@ -638,7 +638,7 @@ finding the value of #dyncode("sum1 (n-1)").
 ")
 #langja("
 #para("\
-与えられた整数をnとするとき、1からnまでの範囲の整数を全て足すことを考えましょう。
+与えられた整数を n とするとき、1 から n までの範囲の整数を全て足すことを考えましょう。
 これは次のような再帰関数 #dyncode("sum1") にたやすく実装することができます:
 
 #atscode("\
