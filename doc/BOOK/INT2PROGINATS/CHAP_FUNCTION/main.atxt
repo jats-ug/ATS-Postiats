@@ -685,7 +685,7 @@ fun sum2 (m: int, n: int): int = if m <= n then m + sum2 (m+1, n) else 0
 #dyncode("1") から #dyncode("n") の範囲の全ての整数の和を取るために、ここで
 #dyncode("sum2 (1, n)") を呼び出してみましょう。
 #dyncode("sum2 (m, n)") の減少戦略もまた単純です:
-もし#dyncode("m") が #dyncode("n") より小さいならば、
+もし #dyncode("m") が #dyncode("n") より小さいならば、
 #dyncode("sum2 (m, n)") の値をより単純な問題である #dyncode("sum2 (m+1, n)") にできます。
 #dyncode("sum2 (m+1, n)") が #dyncode("sum2 (m, n)") よりも単純な理由は、
 #dyncode("m+1") が #dyncode("m") よりも #dyncode("n") に近いことです。
@@ -719,7 +719,7 @@ truncation.\
 #langja("
 #para("\
 整数 m と n が与えられた時、m から n までの全ての整数の和を取るために、また別の戦略があります:
-それはもしmがnを超えないとすると、 m から (m+n)/2-1 までの全ての整数の和を取り、
+それは、もし m が n を超えないとすると、 m から (m+n)/2-1 までの全ての整数の和を取り、
 さらに (m+n)/2+1 から n までの全ての整数の和を取り、最後に左記2つの和と (m+n)/2 の和を取ることです。
 次の再帰関数 #dyncode("sum3") はこの戦略に忠実に実装されています:
 
@@ -776,7 +776,7 @@ evaluation of #dyncode("fib(n-1) + fib(n-2)") eventually returns
 #langja("
 #para("\
 再帰関数呼び出しの評価は、再帰でない関数呼び出しの評価と比べてもそう難しくはありません。
-#dyncode("fib") をフィボナッチ数を計算する関数として次のように定義しましょう:
+フィボナッチ数を計算する関数として #dyncode("fib") を次のように定義しましょう:
 
 #atscode("\
 fun fib (n: int): int =
@@ -785,13 +785,13 @@ fun fib (n: int): int =
 
 ENV0 環境の下で #dyncode("fib(2)") を評価することを考えてみましょう。
 #dyncode("2") が値として与えられた時、
-#dyncode("n") と #dyncode("2") を束縛してENV0をENV1に拡張し、
-そしてENV1の下で #dyncode("fib") の本体の評価を開始します;
+#dyncode("n") と #dyncode("2") を束縛して ENV0 を ENV1 に拡張し、
+そして ENV1 の下で #dyncode("fib") の本体の評価を開始します;
 明らかにこの評価は #dyncode("fib(n-1) + fib(n-2)") の評価を導きます;
-ENV1の下で #dyncode("fib(n-1)") と #dyncode("fib(n-2)") を評価してそれぞれ #dyncode("1") と #dyncode("0")
+ENV1 の下で #dyncode("fib(n-1)") と #dyncode("fib(n-2)") を評価してそれぞれ #dyncode("1") と #dyncode("0")
 が得られ、 #dyncode("fib(n-1) + fib(n-2)") の評価は結局 (#dyncode("1+0") を計算して) #dyncode("1")
 を返すことは理解しやすいでしょう;
-したがってENV0の下で #dyncode("fib(2)") を評価すると整数値 #dyncode("1") が得られます。
+したがって ENV0 の下で #dyncode("fib(2)") を評価すると整数値 #dyncode("1") が得られます。
 ")#comment("para")
 ")
 
@@ -811,15 +811,15 @@ therefore, evaluating #dyncode("fib(3)") under ENV0 returns #dyncode("2")
 ")
 #langja("
 #para("\
-さらにENV0の下で #dyncode("fib(3)") を評価してみましょう;
-#dyncode("n") と #dyncode("3") の間に束縛を作りENV0をENV2に拡張した後、
-ENV2の下で #dyncode("fib") の本体の評価を開始します;
-それからENV2の下で #dyncode("fib(n-1) + fib(n-2)") の評価に辿り着きます;
-ENV2の下で #dyncode("fib(n-1)") を評価してENV2の下で #dyncode("fib(2)") の評価を導き、結局
+さらに ENV0 の下で #dyncode("fib(3)") を評価してみましょう;
+#dyncode("n") と #dyncode("3") の間に束縛を作り ENV0 を ENV2 に拡張した後、
+ENV2 の下で #dyncode("fib") の本体の評価を開始します;
+それから ENV2 の下で #dyncode("fib(n-1) + fib(n-2)") の評価に辿り着きます;
+ENV2 の下で #dyncode("fib(n-1)") を評価して ENV2 の下で #dyncode("fib(2)") の評価を導き、結局
 #dyncode("1") を返します;
-ENV2の下で #dyncode("fib(n-2)") を評価してENV2の下で #dyncode("fib(1)") の評価を導き、結局
+ENV2 の下で #dyncode("fib(n-2)") を評価して ENV2 の下で #dyncode("fib(1)") の評価を導き、結局
 #dyncode("1") を返します;
-したがってENV0の下で #dyncode("fib(3)") を評価すると(#dyncode("1+1") の結果) #dyncode("2") が返ることになります。
+したがって ENV0 の下で #dyncode("fib(3)") を評価すると(#dyncode("1+1") の結果) #dyncode("2") が返ることになります。
 ")#comment("para")
 ")
 
@@ -914,43 +914,42 @@ returns #dyncode("142511").
 ")
 #langja("
 #para("\
-Sを正の数の有限集合としましょう。
-解決したい問題とは、与えられた整数xを、
-Sから選択した正の数の倍数の和として表現する、異なる方法の数を見つけることです。
-S中のそれぞれの数をコインの額面に見立てると、
-この問題は、与えられた値xをコインの集合の和で表わす異なる方法がいくつあるか調べることになります。
-この数を cc(S, x) で表わすと、関数ccは次の特性を持ちます:
+S を正の数の有限集合としましょう。
+解決したい問題とは、与えられた整数 x を、S から選択した正の数の倍数の和として表現する、異なる方法の数を見つけることです。
+S 中のそれぞれの数をコインの額面に見立てると、
+この問題は、与えられた値 x をコインの集合の和で表わす異なる方法がいくつあるか調べることになります。
+この数を cc(S, x) で表わすと、関数 cc は次の特性を持ちます:
 
 <itemizedlist>
 
 <listitem>
 #para("\
-どのようなSに対しても cc(S, 0) = 1
+どのような S に対しても cc(S, 0) = 1
 ")
 </listitem>
 
 <listitem>
 #para("\
-どのようなSに対しても、もし x < 0 ならば cc(S, x) = 0
+どのような S に対しても、もし x < 0 ならば cc(S, x) = 0
 ")
 </listitem>
 
 <listitem>
 #para("\
-Sが空で x > 0 ならば cc(S, x) = 0
+S が空で x > 0 ならば cc(S, x) = 0
 ")
 </listitem>
 
 <listitem>
 #para("\
-Sが数cを含むならば、S<subscript>1</subscript>がSからcを削除した集合の時
+S が数 c を含むならば、S<subscript>1</subscript> が S から c を削除した集合の時
 cc(S, x) = cc(S<subscript>1</subscript>, x) + cc(S, x-c)
 ")
 </listitem>
 
 </itemizedlist>
 
-次の実装では、Sを 1, 5, 10, 25 からなる集合に設定しています。
+次の実装では、S を 1, 5, 10, 25 からなる集合に設定しています。
 
 #atscode("\
 typedef int4 = (int, int, int, int)
@@ -978,7 +977,7 @@ end // end of [coin_change]
 ")
 
 関数 #dyncode("coin_change") の本体の中で定義されている補助関数 #dyncode("aux")
-は上記で述べたcc関数に該当します。
+は上記で述べた cc 関数に該当します。
 
 #dyncode("1000") に適用すると、関数 #dyncode("coin_change") は #dyncode("142511") を返します。
 ")#comment("para")
