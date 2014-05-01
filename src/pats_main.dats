@@ -389,8 +389,10 @@ dynload "pats_ccomp_main.dats"
 //
 extern void patsopt_PATSHOME_set () ;
 extern char *patsopt_PATSHOME_get () ;
+//
 extern void patsopt_PATSHOMERELOC_set () ;
-extern char *patsopt_PATSHOMERELOC_get () ;
+//
+extern void patsopt_ATSPKGRELOCROOT_set () ;
 //
 %} // end of [%{^]
 
@@ -421,11 +423,12 @@ fprintln! (out, "  --output-w filename (output-write into <filename>)");
 fprintln! (out, "  --output-a filename (output-append into <filename>)");
 fprintln! (out, "  -tc (for typechecking only)");
 fprintln! (out, "  --typecheck (for typechecking only)");
-fprintln! (out, "  --gline (for generating line pragma information in target code)");
 fprintln! (out, "  -dep (for generating information on file dependencices)");
 fprintln! (out, "  --depgen (for generating information on file dependencices)");
 fprintln! (out, "  -tag (for generating tagging information on syntactic entities)");
 fprintln! (out, "  --taggen (for generating tagging information on syntactic entities)");
+fprintln! (out, "  --gline (for generating line pragma information in target code)");
+fprintln! (out, "  --pkgreloc (for generating a script to help relocate packages in need)");
 fprintln! (out, "  --jsonize-2 (for output level-2 syntax in JSON format)");
 fprintln! (out, "  --constraint-export (for exporting constraints in JSON format)");
 fprintln! (out, "  --constraint-ignore (for entirely ignoring constraint-solving)");
@@ -530,8 +533,10 @@ cmdstate = @{
 , outmode= fmode
 , outchan= outchan
 //
-, depgenflag= int // dep info generation
-, taggenflag= int // tagging info generation
+, depgen= int // dep info generation
+, taggen= int // tagging info generation
+//
+, pkgreloc= int // relocating packages
 //
 , jsonizeflag= int // level-2 syntax in JSON
 //
@@ -818,8 +823,6 @@ extern
 fun do_taggen
   (state: &cmdstate, given: string, d0cs: d0eclist): void
 //
-(* ****** ****** *)
-
 implement
 do_depgen
   (state, given, d0cs) = let
@@ -828,7 +831,7 @@ do_depgen
 in
   $DEPGEN.fprint_entlst (filr, given, ents)
 end // end of [do_depgen]
-
+//
 implement
 do_taggen
   (state, given, d0cs) = let
@@ -837,7 +840,26 @@ do_taggen
 in
   $TAGGEN.fprint_entlst (filr, given, ents)
 end // end of [do_taggen]
-
+//
+(* ****** ****** *)
+//
+extern
+fun do_pkgreloc
+  (state: &cmdstate, given: string, d1cs: d1eclist): void
+//
+implement
+do_pkgreloc
+  (state, given, d1cs) = let
+//
+val itms =
+  $TRENV1.the_pkgrelocitmlst_get ()
+//
+val filr = outchan_get_filr (state.outchan)
+//
+in
+  $TRENV1.fprint_pkgrelocitmlst (filr, itms)
+end // end of [do_pkgreloc]
+//
 (* ****** ****** *)
 //
 extern
@@ -901,8 +923,11 @@ end // end of [local]
 (* ****** ****** *)
 //
 extern
+fun do_trans1
+  (state: &cmdstate, given: string, d0cs: d0eclist): d1eclist
+extern
 fun do_trans12
-  (given: string, d0cs: d0eclist): d2eclist
+  (state: &cmdstate, given: string, d0cs: d0eclist): d2eclist
 extern
 fun do_trans123
   (state: &cmdstate, given: string, d0cs: d0eclist): d3eclist
@@ -917,8 +942,8 @@ fun do_transfinal
 (* ****** ****** *)
 
 implement
-do_trans12
-  (given, d0cs) = let
+do_trans1
+  (state, given, d0cs) = let
 //
 val d1cs =
   $TRANS1.d0eclist_tr_errck (d0cs)
@@ -932,6 +957,18 @@ val (
     "The 1st translation (fixity) of [", given, "] is successfully completed!"
   ) (* end of [val] *)
 } // end of [if] // end of [val]
+//
+in
+  d1cs
+end // end of [do_trans1]
+
+(* ****** ****** *)
+
+implement
+do_trans12
+  (state, given, d0cs) = let
+//
+val d1cs = do_trans1 (state, given, d0cs)
 //
 val d2cs = $TRANS2.d1eclist_tr_errck (d1cs)
 //
@@ -953,7 +990,8 @@ implement
 do_trans123
   (state, given, d0cs) = let
 //
-val d2cs = do_trans12 (given, d0cs)
+val d2cs = do_trans12 (state, given, d0cs)
+//
 val () = $TRENV3.trans3_env_initialize ()
 val d3cs = $TRANS3.d2eclist_tr_errck (d2cs)
 //
@@ -1031,8 +1069,20 @@ in
 //
 case+ 0 of
 | _ when
+    state.pkgreloc > 0 => let
+    val d1cs =
+      do_trans1 (state, given, d0cs)
+    // end of [val]
+  in
+    do_pkgreloc (state, given, d1cs)
+  end // end of [when ...]
+| _ when
     state.jsonizeflag = 2 => let
-    val d2cs = do_trans12 (given, d0cs) in do_jsonize_2 (state, given, d2cs)
+    val d2cs =
+      do_trans12 (state, given, d0cs)
+    // end of [val]
+  in
+    do_jsonize_2 (state, given, d2cs)
   end // end of [when ...]
 | _ when
     state.typecheckflag > 0 => let
@@ -1081,9 +1131,9 @@ case+ arglst of
         val d0cs = parse_from_stdin_toplevel (stadyn)
 //
         var istrans: bool = true
-        val isdepgen = state.depgenflag > 0
+        val isdepgen = state.depgen > 0
         val () = if isdepgen then istrans := false
-        val istaggen = state.taggenflag > 0
+        val istaggen = state.taggen > 0
         val () = if istaggen then istrans := false
 //
         val given = "<STDIN>"
@@ -1134,9 +1184,9 @@ case+ arg of
         val d0cs = parse_from_givename_toplevel (stadyn, given, state.infil)
 //
         var istrans: bool = true
-        val isdepgen = state.depgenflag > 0
+        val isdepgen = state.depgen > 0
         val () = if isdepgen then istrans := false
-        val istaggen = state.taggenflag > 0
+        val istaggen = state.taggen > 0
         val () = if istaggen then istrans := false
 //
         val () = if isdepgen then do_depgen (state, given, d0cs)
@@ -1227,8 +1277,7 @@ case+ key of
 //
 | "-tc" => (state.typecheckflag := 1)
 //
-| "-dep" => (state.depgenflag := 1)
-| "-tag" => (state.taggenflag := 1)
+| "-dep" => (state.depgen := 1) | "-tag" => (state.taggen := 1)
 //
 | _ when
     is_DATS_flag (key) => let
@@ -1292,27 +1341,32 @@ case+ key of
 | "--output-w" => {
     val () = state.outmode := file_mode_w
     val () = state.waitkind := WTKoutput ()
-  }
+  } // end of [--output-w]
 | "--output-a" => {
     val () = state.outmode := file_mode_a
     val () = state.waitkind := WTKoutput ()
-  }
+  } // end of [--output-a]
 //
-| "--static" =>
-    state.waitkind := WTKinput_sta
-| "--dynamic" =>
-    state.waitkind := WTKinput_dyn
+| "--static" => {
+    val () = state.waitkind := WTKinput_sta
+  } // end of [--static]
+| "--dynamic" => {
+    val () = state.waitkind := WTKinput_dyn
+  } // end of [--dynamic]
 //
-| "--typecheck" => {
-    val () = state.typecheckflag := 1
-  } // end of [--typecheck]
+| "--typecheck" => (state.typecheckflag := 1)
 //
 | "--gline" => {
     val () = $GLOB.the_DEBUGATS_dbgline_set (1)
-  } // end of [--gline]
+  } // end of [--gline] // mostly for debugging
 //
-| "--depgen" => (state.depgenflag := 1)
-| "--taggen" => (state.taggenflag := 1)
+| "--depgen" => (state.depgen := 1)
+| "--taggen" => (state.taggen := 1)
+//
+| "--pkgreloc" => {
+    val () = state.pkgreloc := 1
+    val () = $GLOB.the_PKGRELOC_set (1)
+  } (* end of [--pkgreloc] *)
 //
 | "--jsonize-2" => (state.jsonizeflag := 2)
 //
@@ -1362,6 +1416,12 @@ val (
   extern fun set (): void = "mac#patsopt_PATSHOMERELOC_set"
 } // end of [where] // end of [val]
 //
+val (
+) = set () where
+{ 
+  extern fun set (): void = "mac#patsopt_ATSPKGRELOCROOT_set"
+} // end of [where] // end of [val]
+//
 val PATSHOME = let
   val opt = get () where
   {
@@ -1406,8 +1466,10 @@ state = @{
 , outmode= file_mode_w
 , outchan= OUTCHANref (stdout_ref)
 //
-, depgenflag= 0 // dep info generation
-, taggenflag= 0 // tagging info generation
+, depgen= 0 // dep info generation
+, taggen= 0 // tagging info generation
+//
+, pkgreloc= 0 // for package relocation
 //
 , jsonizeflag= 0 // JSONizing syntax trees
 //
@@ -1418,7 +1480,9 @@ state = @{
 , nerror= 0 // number of accumulated errors
 } : cmdstate // end of [var]
 //
-val () = process_cmdline (state, arglst)
+val () = process_ATSPKGRELOCROOT ()
+//
+val ((*void*)) = process_cmdline (state, arglst)
 //
 } // end of [main]
 

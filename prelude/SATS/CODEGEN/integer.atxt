@@ -63,6 +63,18 @@ fun g0int2int_int_lint (x: int):<> lint = "mac\#%"
 fun g0int2int_int_llint (x: int):<> llint = "mac\#%"
 fun g0int2int_int_ssize (x: int):<> ssize_t = "mac\#%"
 //
+fun g0int2int_lint_int (x: int):<> int = "mac\#%"
+fun g0int2int_lint_lint (x: int):<> lint = "mac\#%"
+fun g0int2int_lint_llint (x: int):<> llint = "mac\#%"
+fun g0int2int_lint_ssize (x: int):<> ssize_t = "mac\#%"
+//
+fun g0int2int_ssize_int (x: int):<> int = "mac\#%"
+fun g0int2int_ssize_lint (x: int):<> lint = "mac\#%"
+fun g0int2int_ssize_llint (x: int):<> llint = "mac\#%"
+fun g0int2int_ssize_ssize (x: int):<> ssize_t = "mac\#%"
+//
+fun g0int2int_sint_int (x: sint):<> int = "mac\#%"
+//
 #atscode_separator()
 //
 fun{tk:tk}
@@ -639,6 +651,8 @@ fun g0int2uint_lint_size (x: lint):<> size_t = "mac\#%"
 //
 fun g0int2uint_llint_ullint (x: llint):<> ullint = "mac\#%"
 //
+fun g0int2uint_ssize_size (x: ssize_t):<> size_t = "mac\#%"
+//
 #atscode_separator()
 
 fun{k1,k2:tk}
@@ -673,6 +687,8 @@ fun g0uint2uint_size_uint (x: size_t):<> uint = "mac\#%"
 fun g0uint2uint_size_ulint (x: size_t):<> ulint = "mac\#%"
 fun g0uint2uint_size_ullint (x: size_t):<> ullint = "mac\#%"
 fun g0uint2uint_size_size (x: size_t):<> size_t = "mac\#%"
+//
+fun g0uint2uint_usint_uint (x: usint):<> uint = "mac\#%"
 //
 #atscode_separator()
 
@@ -831,10 +847,12 @@ fun{k1,k2:tk}
 g1int2uint // i2u
   {i:nat} (x: g1int (k1, i)):<> g1uint (k2, i)
 //
-fun g1int2uint_int_uint {i:nat} (x: int i):<> uint (i) = "mac\#%"
-fun g1int2uint_int_ulint {i:nat} (x: int i):<> ulint (i) = "mac\#%"
-fun g1int2uint_int_ullint {i:nat} (x: int i):<> ullint (i) = "mac\#%"
-fun g1int2uint_int_size {i:nat} (x: int i):<> size_t (i) = "mac\#%"
+fun g1int2uint_int_uint{i:nat} (x: int i):<> uint (i) = "mac\#%"
+fun g1int2uint_int_ulint{i:nat} (x: int i):<> ulint (i) = "mac\#%"
+fun g1int2uint_int_ullint{i:nat} (x: int i):<> ullint (i) = "mac\#%"
+fun g1int2uint_int_size{i:nat} (x: int i):<> size_t (i) = "mac\#%"
+//
+fun g1int2uint_ssize_size{i:nat} (x: ssize_t(i)):<> size_t(i) = "mac\#%"
 //
 #atscode_separator()
 

@@ -38,7 +38,7 @@ gtk_widget_get_window
    c <= GtkWidget}
   {l:agz} (
   widget: !gobjref (c, l)
-) : [l2:addr] (
+) : [l2:agez] (
   minus (gobjref (c, l), gobjref (GdkWindow, l2)) | gobjref (GdkWindow, l2)
 ) = "mac#%" // endfun
   
@@ -74,11 +74,23 @@ gtk_widget_getref_allocation
    c <= GtkWidget}
   {l:agz} (
   widget: !gobjref (c, l)
-) : [l2:addr] (
+) : [l2:agez] (
   GtkAllocation @ l2
 , minus (gobjref (c, l), GtkAllocation @ l2) | ptr l2
 ) = "mac#%" // endfun
 *)
+
+(* ****** ****** *)
+
+fun
+gtk_widget_set_size_request
+  (!GtkWidget1, width: gint, height: gint): void = "mac#%"
+// end of [gtk_widget_set_size_request]
+
+fun
+gtk_widget_get_size_request
+  (!GtkWidget1, width: &gint? >> _, height: &gint? >> _): void = "mac#%"
+// end of [gtk_widget_get_size_request]
 
 (* ****** ****** *)
 

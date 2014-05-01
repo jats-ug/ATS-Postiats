@@ -1,15 +1,22 @@
 ######
 #
-# HX-2013-03: for compiling a distribution of ATS-Postiats
+# HX-2013-03:
+# for compiling a distribution of ATS-Postiats
+# KO-2014-04-09:
+# removing [-T] from [install] as the option is
+# not supported on MacOS
+# IU-2014-04-30:
+# removing the space between -m and the following mode
+# as it is not supported on freeBSD
 #
 ######
-
+#
 all: \
   config.mk \
   bin2_patsopt \
   bin_patscc \
   ccomp/atslib/lib/libatslib.a \
-
+#
 ######
 
 configure : ; /bin/bash autogen.sh
@@ -33,9 +40,14 @@ bin_patsopt: src_patsopt ; cp -f src/patsopt bin/patsopt
 #
 CCOMP=gcc
 GCFLAG=-D_ATS_GCATS
+CFLAGS=
+LDFLAGS=
 #
 src2_patsopt: ; \
-  make -j4 -C src/CBOOT CCOMP=$(CCOMP) GCFLAG=$(GCFLAG) patsopt
+make -j4 -C src/CBOOT \
+  CCOMP=$(CCOMP) GCFLAG=$(GCFLAG) \
+  CFLAGS=$(CFLAGS) LDFLAGS=$(LDFLAGS) patsopt
+#
 bin2_patsopt: src2_patsopt ; cp -f src/CBOOT/patsopt bin/patsopt
 #
 ######
@@ -74,10 +86,9 @@ PATSLIBHOME2 := $(DESTDIR)$(PATSLIBHOME)
 # (bauhaus AT arcor DOT de): It addresses the issue that
 # the [-D] option is not available for $(INSTALL) on MacOSX.
 #
-
 .PHONY: install_dirs
 .PHONY: install_files
-
+#
 install: install_files
 
 install_files: \
@@ -92,32 +103,34 @@ install_dirs: ; \
   cd $(abs_top_srcdir) && \
   $(MKDIR_P) $(PATSLIBHOME2)/bin && \
   if [ ! -d $(bindir2) ] ; then $(MKDIR_P) $(bindir2) ; fi && \
-  find ccomp share prelude libc libats contrib -type d -exec $(MKDIR_P) $(PATSLIBHOME2)/\{} \; -print
+  for x in share ccomp prelude libc libats ; do \
+    find "$$x" -type d -exec $(MKDIR_P) $(PATSLIBHOME2)/\{} \; -print; \
+  done
 
 install_files_0: install_dirs ; \
-  for d in ccomp/runtime share prelude libc libats ; do \
+  for x in share ccomp/runtime prelude libc libats ; do \
     cd $(abs_top_srcdir) && \
-    $(INSTALL) -d $(PATSLIBHOME2)/"$$d" && \
-    find "$$d" -name .git -prune -o -type l -exec cp -d \{} $(PATSLIBHOME2)/\{} \; -print && \
-    find "$$d" -name .git -prune -o -type f -exec $(INSTALL) -m 644 \{} $(PATSLIBHOME2)/\{} \; -print; \
+    $(INSTALL) -d $(PATSLIBHOME2)/"$$x" && \
+    find "$$x" -type l -exec cp -d \{} $(PATSLIBHOME2)/\{} \; -print && \
+    find "$$x" -type f -exec $(INSTALL) -m644 \{} $(PATSLIBHOME2)/\{} \; -print; \
   done
 
 install_files_1: bin/patscc ; \
-  $(INSTALL) -m 755 $< $(PATSLIBHOME2)/bin/patscc && echo $<
+  $(INSTALL) -m755 $< $(PATSLIBHOME2)/bin/patscc && echo $<
 install_files_2: bin/patsopt ; \
-  $(INSTALL) -m 755 $< $(PATSLIBHOME2)/bin/patsopt && echo $<
+  $(INSTALL) -m755 $< $(PATSLIBHOME2)/bin/patsopt && echo $<
 install_files_3: bin/patscc_env.sh ; \
-  $(INSTALL) -m 755 $< $(bindir2)/patscc && echo $<
+  $(INSTALL) -m755 $< $(bindir2)/patscc && echo $<
 install_files_4: bin/patsopt_env.sh ; \
-  $(INSTALL) -m 755 $< $(bindir2)/patsopt && echo $<
+  $(INSTALL) -m755 $< $(bindir2)/patsopt && echo $<
 
 install_files_5: ; \
-  for f in \
+  for x in \
     ccomp/atslib/lib/libatslib.a \
     ccomp/atslib/lib64/libatslib.a ; \
   do \
-    if [ -e "$$f" ] ; then \
-      $(INSTALL) -m 755 "$$f" $(PATSLIBHOME2)/"$$f" && echo "$$f"; \
+    if [ -e "$$x" ] ; then \
+      $(INSTALL) -m755 "$$x" $(PATSLIBHOME2)/"$$x" && echo "$$x"; \
     fi; \
   done
 

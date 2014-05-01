@@ -3,6 +3,27 @@
 *)
 
 (* ****** ****** *)
+
+abst@ype
+GtkWindowPosition = $extype"GtkWindowPosition"
+//
+macdef
+GTK_WIN_POS_NONE =
+$extval (GtkWindowPosition, "GTK_WIN_POS_NONE")
+macdef
+GTK_WIN_POS_CENTER =
+$extval (GtkWindowPosition, "GTK_WIN_POS_CENTER")
+macdef
+GTK_WIN_POS_MOUSE =
+$extval (GtkWindowPosition, "GTK_WIN_POS_MOUSE")
+macdef
+GTK_WIN_POS_CENTER_ALWAYS =
+$extval (GtkWindowPosition, "GTK_WIN_POS_CENTER_ALWAYS")
+macdef
+GTK_WIN_POS_CENTER_ON_PARENT =
+$extval (GtkWindowPosition, "GTK_WIN_POS_CENTER_ON_PARENT")
+//
+(* ****** ****** *)
 //
 abst@ype
 GtkWindowType = $extype"GtkWindowType"
@@ -12,6 +33,20 @@ GTK_WINDOW_TOPLEVEL =
 $extval (GtkWindowType, "GTK_WINDOW_TOPLEVEL")
 macdef
 GTK_WINDOW_POPUP = $extval (GtkWindowType, "GTK_WINDOW_POPUP")
+//
+(* ****** ****** *)
+//
+abst@ype
+GtkWrapMode = $extype"GtkWrapMode"
+//
+macdef
+GTK_WRAP_NONE = $extval (GtkWrapMode, "GTK_WRAP_NONE")
+macdef
+GTK_WRAP_CHAR = $extval (GtkWrapMode, "GTK_WRAP_CHAR")
+macdef
+GTK_WRAP_WORD = $extval (GtkWrapMode, "GTK_WRAP_WORD")
+macdef
+GTK_WRAP_WORD_CHAR = $extval (GtkWrapMode, "GTK_WRAP_WORD_CHAR")
 //
 (* ****** ****** *)
 //

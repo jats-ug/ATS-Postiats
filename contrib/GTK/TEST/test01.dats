@@ -9,8 +9,15 @@
 *)
 
 (* ****** ****** *)
+//
+#include
+"share/atspre_define.hats"
+#include
+"share/atspre_staload.hats"
+//
+(* ****** ****** *)
 
-#include "share/atspre_define.hats"
+staload UN = $UNSAFE
 
 (* ****** ****** *)
 
@@ -19,14 +26,10 @@ staload "{$GLIB}/SATS/glib-object.sats"
 
 (* ****** ****** *)
 
-staload UN = "prelude/SATS/unsafe.sats"
-
-(* ****** ****** *)
-
 %{^
-typedef char **charptrptr ;
+typedef char **charpp ;
 %} ;
-abstype charptrptr = $extype"charptrptr"
+abstype charpp = $extype"charpp"
 
 (* ****** ****** *)
 
@@ -35,7 +38,7 @@ main0 (argc, argv) =
 {
 //
 var argc: int = argc
-var argv: charptrptr = $UN.castvwtp1{charptrptr}(argv)
+var argv: charpp = $UN.castvwtp1{charpp}(argv)
 //
 val () = $extfcall (void, "gtk_init", addr@(argc), addr@(argv))
 //

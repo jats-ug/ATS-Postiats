@@ -79,6 +79,16 @@ castfn
 gstring_of_string (string): gstring
 overload gstring with gstring_of_string
 //
+fun gstrptr_free (x: gstrptr0): void = "mac#%"
+//
+(* ****** ****** *)
+//
+symintr gdouble
+//
+castfn
+gdouble_of_double (double): gdouble
+overload gdouble with gdouble_of_double
+//
 (* ****** ****** *)
 
 (* end of [mybasis.sats] *)

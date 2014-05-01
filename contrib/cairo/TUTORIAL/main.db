@@ -12,7 +12,7 @@
 <!ENTITY chap_drawrectcirc SYSTEM "chap_drawrectcirc_atxt.db">
 <!ENTITY chap_drawtext SYSTEM "chap_drawtext_atxt.db">
 ]>
-<book id="atscairo-tutorial" lang="en">
+<book id="ats2cairo-tutorial" lang="en">
 &bookinfo;
 
 <!--

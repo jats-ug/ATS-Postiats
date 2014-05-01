@@ -77,6 +77,10 @@ vtypedef gstrptr1 = $GLIB.gstrptr1
 
 (* ****** ****** *)
 
+typedef gdouble = $GLIB.gdouble
+
+(* ****** ****** *)
+
 stadef GObject: cls = $GLIBOBJ.GObject
 stadef GInitiallyUnowned: cls = $GLIBOBJ.GInitiallyUnowned
 stadef GInterface: cls = $GLIBOBJ.GInterface
@@ -111,6 +115,8 @@ classdec GtkObject : GInitiallyUnowned
             classdec GtkMessageDialog_cls : GtkDialog_cls
           // end of [GtkDialog]
         // end of [GtkWindow]
+        classdec GtkViewport_cls : GtkBin_cls
+        classdec GtkScrolledWindow_cls : GtkBin_cls
       // end of [GTKBin]
       classdec GtkBox_cls : GtkContainer_cls
         classdec GtkBottonBox_cls : GtkBox_cls
@@ -128,6 +134,7 @@ classdec GtkObject : GInitiallyUnowned
         // end of [GtkHBox]
       // end of [GtkBox]
       classdec GtkTable_cls : GtkContainer_cls
+      classdec GtkTextView_cls : GtkContainer_cls
     // end of [GTKContainer]
     classdec GtkSeparator_cls : GtkWidget_cls
       classdec GtkHSeparator_cls : GtkSeparator_cls
@@ -138,8 +145,20 @@ classdec GtkObject : GInitiallyUnowned
       classdec GtkCurve_cls : GtkDrawingArea_cls
     // end of [GtkDrawingArea]
   // end of [GtkWidget]
+  classdec GtkAdjustment_cls : GtkObject
 // end of [GtkObject]
 
+(* ****** ****** *)
+//
+classdec GtkTextBuffer_cls : GObject
+classdec GtkTextTag_cls : GObject
+classdec GtkTextTagTable_cls : GObject
+classdec GtkTextMark_cls : GObject
+//
+typedef
+GtkTextIter = // HX: it is completely opaque
+$extype_struct"GtkTextIter" of { GtkTextIter_rest=undefined_t0ype }
+//
 (* ****** ****** *)
 
 #include "./gtk/gtkenums.sats"
@@ -176,6 +195,11 @@ classdec GtkObject : GInitiallyUnowned
 
 (* ****** ****** *)
 
+#include "./gtk/gtkviewport.sats"
+#include "./gtk/gtkscrolledwindow.sats"
+
+(* ****** ****** *)
+
 #include "./gtk/gtkbox.sats"
 #include "./gtk/gtkhbox.sats"
 #include "./gtk/gtkvbox.sats"
@@ -193,6 +217,25 @@ classdec GtkObject : GInitiallyUnowned
 (* ****** ****** *)
 
 #include "./gtk/gtkdrawingarea.sats"
+
+(* ****** ****** *)
+
+#include "./gtk/gtktextview.sats"
+
+(* ****** ****** *)
+
+#include "./gtk/gtktextbuffer.sats"
+#include "./gtk/gtktexttag.sats"
+#include "./gtk/gtktexttagtable.sats"
+#include "./gtk/gtktextmark.sats"
+
+(* ****** ****** *)
+
+#include "./gtk/gtktextiter.sats"
+
+(* ****** ****** *)
+
+#include "./gtk/gtkadjustment.sats"
 
 (* ****** ****** *)
 
