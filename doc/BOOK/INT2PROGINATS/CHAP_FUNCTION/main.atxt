@@ -2322,7 +2322,7 @@ loops forever if it is applied to a function that does not have a root.
 ")
 #langja("
 #para("\
-高階関数は別の関数を引数として取るような関数です。
+高階関数とは別の関数を引数として取るような関数です。
 例えば、次に定義する関数 #dyncode("rtfind") は高階関数の例です:
 
 #atscode("\
