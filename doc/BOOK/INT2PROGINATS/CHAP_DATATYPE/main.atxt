@@ -27,7 +27,7 @@ The feature of datatypes in ATS in largely taken from ML.
 ")
 #langja("
 #para("\
-ATSにおけるデータ型の機能はMLの影響を強く受けています。
+ATS におけるデータ型の機能は ML の影響を強く受けています。
 ")
 ")
 
