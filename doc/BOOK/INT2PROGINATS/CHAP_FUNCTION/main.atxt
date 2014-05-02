@@ -2022,7 +2022,7 @@ id="envless-functions-and-function-closures">
 #title("Envless Functions and Closure-Functions")
 ")
 #langja("
-#title("環境の無い (envless) 関数とクロージャ関数")
+#title("無環境関数とクロージャ関数")
 ")
 
 #langeng("
@@ -2037,8 +2037,8 @@ out what it means.\
 #langja("
 #para("\
 
-<emphasis>envless</emphasis> という単語は一般的な単語ではなく、
-私は environmentless (環境の無い) の略記として使いますが、
+<emphasis>無環境 (envless)</emphasis> という単語は一般的な単語ではなく、
+私は \"環境の無い (environmentless)\" の略記として使いますが、
 その意味をあなたは問題なく想像できるでしょう。\
 
 ")
@@ -2065,15 +2065,15 @@ functional languages such as ML and Haskell is a closure-function.\
 #langja("
 #para("\
 
-envless 関数は、この関数の呼び出しを実行するオブジェクトコードが配置されているコードセグメントを指し示すポインタによって表現されます。
-C言語において、全ての関数は envless です。
+無環境関数は、この関数の呼び出しを実行するオブジェクトコードが配置されているコードセグメントを指し示すポインタによって表現されます。
+C言語において、全ての関数は無環境です。
 クロージャ関数もまたポインタで表現されますが、
 そのポインタはヒープ中の(実行時に)割り当てられたタプルがある場所を指し示しています。
-通常、このタプルの1つ目の要素は envless 関数を表わすポインタで、残りの要素は束縛群を表わしています。
+通常、このタプルの1つ目の要素は無環境関数を表わすポインタで、残りの要素は束縛群を表わしています。
 そのようなタプルはしばしばクロージャ関数もしくは単純にクロージャと呼ばれ、
-環境とペアになった envless 関数であると考えることができます。
+環境とペアになった無環境関数であると考えることができます。
 クロージャ関数の環境が空であっても問題ありませんが、
-これは envless 関数のクロージャ関数と同じではありません。
+これは無環境関数のクロージャ関数と同じではありません。
 ML や Haskell のような関数型言語の全ての関数はクロージャ関数です。\
 
 ")#comment("para")
@@ -2130,7 +2130,7 @@ end // end of [sum]
 
 内側の関数 #dyncode("loop") は特別な構文 #dyncode(":&lt;cloref1&gt;") で示されるクロージャ関数です。
 また #dyncode("loop") に割り当てられた型は #dyncode("(int, int) -&lt;cloref1&gt; int") です。
-それゆえにenvless関数とクージャ関数は型レベルで見分けることができます。\
+それゆえ無環境関数とクロージャ関数は型レベルで見分けることができます。\
 
 ")#comment("para")
 ")
@@ -2172,12 +2172,10 @@ actual creation of closures at run-time.\
 #langja("
 #para("\
 
-もし構文 #dyncode(":&lt;cloref1&gt;") を単独のコロン記号 #dyncode(":") に置き換えると、
-コードは型検査を通りますが、 #dyncode("loop") をC言語のトップレベル関数にコンパイルできないことを示す、
-警告もしくはエラーを引き起こす可能性があります。
-この警告/エラーの理由は、トップレベルでもなく #dyncode("loop") 関数自身の引数でもない値 #dyncode("n") を
-#dyncode("loop") の本体が含んでいることにあります。
-#dyncode("n") を元の関数への追加の引数として #dyncode("loop") をenvless関数 にするのは簡単です:
+もし構文 #dyncode(":&lt;cloref1&gt;") を単独なコロン記号 #dyncode(":") に置き換えたとしてもコードは型検査を通りますが、#dyncode("loop") をC言語のトップレベル関数にコンパイルできないことを示す警告もしくはエラーを引き起こす可能性があります。
+この警告/エラーの理由は、トップレベルでもなく #dyncode("loop") 関数自身の引数でもない値 #dyncode("n") が
+#dyncode("loop") の本体に含まれていることにあります。
+#dyncode("n") を元の関数への追加の引数として #dyncode("loop") を無環境関数にするのは簡単です:
 
 #atscode("\
 fun sum
@@ -2194,7 +2192,7 @@ end // end of [sum]
 ")
 
 実際のコンパイルの中では、
-1番目の #dyncode("sum") と #dyncode("loop") の実装はおおよそ2番目の実装に変換され、
+#dyncode("sum") と #dyncode("loop") の最初の実装はおおよそ2番目の実装に変換され、
 実行時に実際のクロージャが作られるわけでは#emphasis("ありません")。\
 
 ")#comment("para")
@@ -2239,8 +2237,9 @@ the body of the envless function in #dyncode("plus1"), which is
 
 関数が直接適用されない時でも、しばしばクロージャを作る必要があります。
 例えば、関数呼び出しの返値もまた関数であるかもしれません。
-次のコードで、定義された関数 #dyncode("addx") は与えられた整数 #dyncode("x") に適用した別の関数を返します。
-この返値の関数は、いつも整数 integer #dyncode("x") と自分への引数の和を取るクロージャ関数です:
+次のコードで定義された関数 #dyncode("addx") は与えられた整数 #dyncode("x") に適用した別の関数を返します。
+そしてこの返される関数はクロージャ関数で、
+常に自分の引数に整数 #dyncode("x") を加算します:
 
 
 #atscode("\
@@ -2251,14 +2250,14 @@ val plus2 = addx (2) // [plus2] is of the type int -<cloref1> int
 ")
 
 #dyncode("plus1(0)") と #dyncode("plus2(0)") がそれぞれ #dyncode("1") と #dyncode("2") を返すのは自明でしょう。
-#dyncode("plus1") の名前が与えられたクロージャ関数はenvless関数と
+#dyncode("plus1") の名前が与えられたクロージャ関数は無環境関数と
 #dyncode("x") を #dyncode("1") に束縛した環境から構成されています。
 #dyncode("env") と #dyncode("env.x") が環境とその環境で #dyncode("x") に束縛された値を参照する時、
-このenvless関数は本質的に仮構文で #dyncode("lam (env, y) => env.x + y") と表現できます。
+この無環境関数は仮構文を使って本質的に #dyncode("lam (env, y) => env.x + y") と表現できます。
 #dyncode("plus1(0)") を評価すると、
 はじめに #dyncode("env") と #dyncode("y") をそれぞれ #dyncode("plus1") 内の環境と引数 #dyncode("0")
 に束縛します。
-それから、 #dyncode("env.x + y") である #dyncode("plus1") 内のenvless関数の本体の評価を開始します。
+それから、 #dyncode("env.x + y") である #dyncode("plus1") 内の無環境関数の本体の評価を開始します。
 この評価によって期待通り値 #dyncode("1") が生成されることは明確です。\
 
 ")#comment("para")
@@ -2470,11 +2469,11 @@ fun sqrmodsum (n: int, d: int): int =
 // end of [sqrmodsum]
 ")
 
-envless関数とクロージャ関数の差異に慣れていない人にとって、
+無環境関数とクロージャ関数の差異に慣れていない人にとって、
 この一般化が実際には動かないことは少し意外かもしれません。
-その単純な理由は #dyncode("ifold") は二番目の引数にenvless関数が渡されることを期待していますが、
+その単純な理由は #dyncode("ifold") は二番目の引数に無環境関数が渡されることを期待していますが、
 #dyncode("sqrmodsum") の本体で #dyncode("ifold") に渡される関数は #dyncode("d")
-を使っているため明らかにenvlessではないことです。
+を使っているため明らかに無環境ではないことです。
 この問題に対処するために、次のような #dyncode("ifold") の変形を実装し、
 それからその変形にもとづいて #dyncode("sqrmodsum") を実装することができます:
 
