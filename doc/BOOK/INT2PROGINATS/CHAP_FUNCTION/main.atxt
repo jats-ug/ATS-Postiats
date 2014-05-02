@@ -2338,8 +2338,8 @@ in
 end // end of [rtfind]
 ")
 
-与えられた整数から整数への関数が与えられた時、
-#dyncode("rtfind") は関数の根である最初の自然数を探します。
+整数から整数への関数が与えられた時、
+#dyncode("rtfind") は関数の根となるような最初の自然数を探します。
 例えば、 #dyncode("rtfind") を多項式の関数 #dyncode("lam x => x * x - x + 110") に呼び出すと
 #dyncode("11") が返ります。
 もし根を持たない関数に適用されると、 #dyncode("rtfind") は無限ループすることに注意してください。
@@ -2431,8 +2431,8 @@ this interesting programming feature elsewhere.\
 ")
 #langja("
 #para("\
-高階関数はコードの再利用を非常に促進します。ここではその単純な例を示そうと思います。
-次に定義する関数 #dyncode("sum") と #dyncode("prod") は1から与えられた自然数までの和と積をそれぞれ計算します:
+高階関数はコードの再利用を促進します。ここではその単純な例を示そうと思います。
+次に定義する関数 #dyncode("sum") と #dyncode("prod") は 1 から与えられた自然数までの和と積をそれぞれ計算します:
 
 #atscode("\
 fun sum (n: int): int = if n > 0 then sum (n-1) + n else 0
@@ -2453,14 +2453,14 @@ fun sum (n: int): int = ifold (n, lam (res, x) => res + x, 0)
 fun prod (n: int): int = ifold (n, lam (res, x) => res * x, 1)
 ")
 
-もし1から与えられた自然数nまでの範囲の整数の二条の和を計算するのであれば、
-#dyncode("ifold") にもとづいた関数を次のようにたやすく定義できます:
+もし 1 から与えられた自然数 n までの範囲の整数の二乗の和を計算するのであれば、
+#dyncode("ifold") を使って次のようにたやすく定義できます:
 
 #atscode("\
 fun sqrsum (n: int): int = ifold (n, lam (res, x) => res + x * x, 0)
 ")
 
-1からnまでの整数の中で与えられた数dの倍数を選んで二乗の和を計算するために、
+1 から n までの整数の中で与えられた数 d の倍数を選んで二乗の和を計算するために、
 #dyncode("sqrsum") を一般化して次の関数 #dyncode("sqrmodsum") を作ることを考えましょう:
 
 #atscode("\
@@ -2472,8 +2472,8 @@ fun sqrmodsum (n: int, d: int): int =
 無環境関数とクロージャ関数の差異に慣れていない人にとって、
 この一般化が実際には動かないことは少し意外かもしれません。
 その単純な理由は #dyncode("ifold") は二番目の引数に無環境関数が渡されることを期待していますが、
-#dyncode("sqrmodsum") の本体で #dyncode("ifold") に渡される関数は #dyncode("d")
-を使っているため明らかに無環境ではないことです。
+#dyncode("sqrmodsum") の本体で #dyncode("ifold") に渡す関数は #dyncode("d")
+を使っているため明らかに無環境ではないためです。
 この問題に対処するために、次のような #dyncode("ifold") の変形を実装し、
 それからその変形にもとづいて #dyncode("sqrmodsum") を実装することができます:
 
@@ -2494,11 +2494,11 @@ fun sqrmodsum (n: int, d: int): int =
 #dyncode("sqrmodsum") が呼び出されると、クロージャ関数をヒープの中に生成してから
 #dyncode("ifold2") に渡さなければなりません;
 このクロージャ関数は関数が返った後はもはや使いません。
-そのメモリはガベージコレクション(GC)が回収するまで解放されません。
-そのためGCが無効な場合 #dyncode("sqrmodsum") のような関数呼び出しは、
+そのメモリはガベージコレクション (GC) が回収するまで解放されません。
+そのため GC が無効な場合 #dyncode("sqrmodsum") のような関数呼び出しは、
 たやすくメモリリークを引き起こしてしいまいます。
 幸運にも、明示的にプログラマが解放することで、
-GCがなくともメモリリークを引き起こさない線形クロージャ関数もATSは備えています。
+GC がなくともメモリリークを引き起こさない線形クロージャ関数も ATS は備えています。
 この興味深いプログラミングの機能は別の章で紹介します。\
 
 ")#comment("para")
@@ -2515,7 +2515,7 @@ even more effective in facilitating code reuse.\
 #langja("
 #para("\
 
-より多くのATSの機能を紹介すれば、高階関数はコードの再利用の促進により効果的になります。\
+より多くのATSの機能が導入されれば、高階関数はより効果的にコードの再利用ができるようになるでしょう。\
 
 ")#comment("para")
 ")
@@ -2590,8 +2590,8 @@ of its argument.\
 #para("\
 
 与えられた要素が配列に保存されているか検査するために、
-しばしば順序付けられた配列に対して二分探索を行ないます。
-また整数に対して増加や減少する関数の逆関数を作るのに使うこともでききます。
+しばしば順序付けられた配列に対して二分探索を行なうことがあります。
+また整数に対して増加や減少する関数の逆関数を作るのに使うこともできます。
 次のコードで定義している関数 #dyncode("bsearch_fun") は、
 i が lb から i0 までの範囲では f(i) <= x0 を維持し、
 i が i0+1 から ub までの範囲では x0 < f(i) を維持するような整数 i0 を返します:
@@ -2618,8 +2618,8 @@ fun bsearch_fun
 ")
 
 例として、次の関数 #dyncode("isqrt") は #dyncode("bsearch_fun") にもとづいて定義されていて、
-与えられた自然数の平方根を整数、
-つまりその二乗が与えられた自然数以下であるような最も大きい整数を返します:
+与えられた自然数の整数平方根、
+つまり二乗が与えられた自然数以下であるような最も大きい整数を返します:
 
 #atscode("\
 //
@@ -2649,6 +2649,7 @@ the entire code in this section plus some additional code for testing.
 この章で紹介したコード全体と追加のテストコードは
 #mycodelink("CHAP_FUNCTION/bsearch.dats", "オンライン")
 から入手できます。
+(訳注: このコードを atscc でコンパイルする際には -DATS_MEMALLOC_LIBC オプションが必要です。)
 ")
 ")
 
@@ -2723,9 +2724,9 @@ typedef I (a:t@ype) = a -<cloref1> a
 ")
 
 型 T が与えられた時、
-I(T) は与えられた入力としての型Tの値を出力としての型Tの値へ写像するクロージャ関数です。
+I(T) は与えられた入力としての型 T の値を出力としての型 T の値へ写像するクロージャ関数です。
 型 I(T) の関数 f が与えられた時、
-単に与えられた引数にfを2度適用するような別の関数を作ることができます。
+単に与えられた引数に f を2度適用するような別の関数を作ることができます。
 次の関数テンプレート #dyncode("twice") は左記に説明した関数を正確に構成しています:
 
 #atscode("\
@@ -2805,6 +2806,7 @@ the entire code in this section plus some additional code for testing.
 この章のコード全体とテストのための追加コードは
 #mycodelink("CHAP_FUNCTION/twice.dats", "オンライン")
 から入手できます。
+(訳注: このコードを atscc でコンパイルする際には -DATS_MEMALLOC_LIBC オプションが必要です。)
 ")
 ")
 
