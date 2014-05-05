@@ -820,7 +820,7 @@ covered so far.\
 #para("\
 
 Please find the entire code in this section plus some additional
-code for testing #mycodelink("CHAP_POLYMORPH/listfun.dats", "on-line").\
+code for testing #mycodelink("CHAP_POLYMORPH/listfuns.dats", "on-line").\
 
 ")
 ")
@@ -1032,7 +1032,7 @@ Mapping: #dyncode("list0_map")
 
 Given a list xs of the type #stacode("list0(T1)") for some type T1 and a
 closure function f of the type T1 -&lt;cloref1&gt; T2 for some type T2,
-#dyncode("list0_map(xs)") returns a list ys of the type #stacode("list0(T2)"):
+#dyncode("list0_map(xs, f)") returns a list ys of the type #stacode("list0(T2)"):
 
 #atscode("\
 fun

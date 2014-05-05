@@ -545,19 +545,22 @@ in
 end // end of [i0mpdec_tr]
 
 (* ****** ****** *)
-
+//
+fun
+the_PKGRELOC_set_decl
+  (d0c0: d0ecl): void =
+  $GLOB.the_PKGRELOC_set_decl ($UN.cast{ptr}(d0c0))
+//
 fun
 the_PKGRELOC_set_decl_if
   (d0c0: d0ecl): void = () where
 {
 //
 val srcloc = $GLOB.the_PKGRELOC_get ()
-val () =
-if srcloc > 0
-  then $GLOB.the_PKGRELOC_set_decl ($UN.cast{ptr}(d0c0))
-// end of [if]
+val () = if srcloc > 0 then the_PKGRELOC_set_decl (d0c0)
+//
 } (* end of [the_PKGRELOC_set_decl_if] *)
-
+//
 (* ****** ****** *)
 
 extern
@@ -574,11 +577,11 @@ i0nclude_tr
 val loc0 = d0c0.d0ecl_loc
 //
 val () = the_PKGRELOC_set_decl_if (d0c0)
-val filopt = $FIL.filenameopt_make_relative (given)
+val opt = $FIL.filenameopt_make_relative (given)
 //
 val fil =
 (
-case+ filopt of
+case+ opt of
 | ~Some_vt (fil) => fil
 | ~None_vt ((*void*)) => let
     val srcloc = 
@@ -768,11 +771,11 @@ val loc0 = d0c0.d0ecl_loc
 val () = ldflag := 1 // HX: for ATS_STALOADFLAG
 //
 val () = the_PKGRELOC_set_decl_if (d0c0)
-val filopt = $FIL.filenameopt_make_relative (given)
+val opt = $FIL.filenameopt_make_relative (given)
 //
 val fil =
 (
-case+ filopt of
+case+ opt of
 | ~Some_vt (fil) => fil
 | ~None_vt ((*void*)) => let
     val srcloc =
@@ -780,7 +783,7 @@ case+ filopt of
     val () =
     if srcloc = 0 then {
       val () = prerr_error1_loc (loc0)
-      val () = prerrln! (": the file [", given, "] is not available for static loading.")
+      val () = prerrln! (": the file [", given, "] is not available for staloading.")
       val () = the_trans1errlst_add (T1E_s0taload_tr (d0c0))
       val () = $ERR.abort ((*void*))
     } (* end of [if] *) // end of [val]
@@ -829,37 +832,80 @@ end // end of [local]
 (* ****** ****** *)
 
 extern
-fun  d0ynload_tr
+fun r0equire_tr
+  (d0c0: d0ecl, given: string): filename
+// end of [r0equire_tr]
+extern
+fun r0equire_tr_if
+  (d0c0: d0ecl, given: string): filename
+// end of [r0equire_tr_if]
+
+implement
+r0equire_tr
+  (d0c0, given) = let
+//
+val srcloc = $GLOB.the_PKGRELOC_get ()
+//
+in
+//
+if srcloc > 0
+  then r0equire_tr_if (d0c0, given) else $FIL.filename_dummy
+//
+end // end of [r0equire_tr]
+
+implement
+r0equire_tr_if
+  (d0c0, given) = let
+//
+val loc0 = d0c0.d0ecl_loc
+//
+val () = the_PKGRELOC_set_decl (d0c0)
+val opt = $FIL.filenameopt_make_relative (given)
+//
+in
+//
+case+ opt of
+| ~Some_vt (fil) => fil | ~None_vt ((*void*)) => $FIL.filename_dummy
+//
+end // end of [r0equire_tr_if]
+
+(* ****** ****** *)
+
+extern
+fun d0ynload_tr
   (d0c0: d0ecl, given: string): filename
 // end of [d0ynload_tr]
 
 implement
 d0ynload_tr
-  (d0c0, given) = fil where
-{
+  (d0c0, given) = let
 //
 val loc0 = d0c0.d0ecl_loc
-val filopt = $FIL.filenameopt_make_relative (given)
-val fil =
-(
-case+ filopt of
+val () = the_PKGRELOC_set_decl_if (d0c0)
+//
+val opt = $FIL.filenameopt_make_relative (given)
+//
+in
+//
+case+ opt of
 | ~Some_vt (fil) => fil
 | ~None_vt ((*void*)) => let
-    val (
-    ) = prerr_error1_loc (loc0)
-    val (
-    ) = prerrln! (": the file [", given, "] is not available for dynamic loading")
-    val (
-    ) = the_trans1errlst_add (T1E_d0ynload_tr (d0c0))
+    val srcloc =
+      $GLOB.the_PKGRELOC_get ()
+    val () =
+    if srcloc = 0 then {
+      val () = prerr_error1_loc (loc0)
+      val () = prerrln! (": the file [", given, "] is not available for dynloading")
+      val () = the_trans1errlst_add (T1E_d0ynload_tr (d0c0))
+    } (* end of [if] *) // end of [val]
 (*
     val () = $ERR.abort ((*void*)) // HX: it is still meaningful to continue
 *)
   in
     $FIL.filename_dummy
   end // end of [None_vt]
-) : filename // end of [val]
 //
-} // end of [d0ynload_tr]
+end // end of [d0ynload_tr]
 
 (* ****** ****** *)
 
@@ -1128,6 +1174,13 @@ case+ d0c0.d0ecl_node of
   in
     d1ecl_staloadloc (loc0, pfil, nspace, d1cs)
   end // end of [D0Cstaloadloc]
+//
+| D0Crequire
+    (pfil, given) => let
+    val cfil =
+      r0equire_tr (d0c0, given) in d1ecl_none (loc0)
+    // end of [val]
+  end // end of [D0Crequire]
 //
 | D0Cdynload
     (pfil, given) => let

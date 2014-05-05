@@ -446,10 +446,11 @@ HX: VERSION-0.0.4 released in the November of 2013
 HX: VERSION-0.0.5 released on January 15, 2014
 HX: VERSION-0.0.6 released on February 16, 2014
 HX: VERSION-0.0.7 released on March 30, 2014
+HX: VERSION-0.0.8 released on Sunday, May 4, 2014
 *)
 #define PATS_MAJOR_VERSION 0
 #define PATS_MINOR_VERSION 0
-#define PATS_MICRO_VERSION 8
+#define PATS_MICRO_VERSION 9
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -953,7 +954,7 @@ val () = $TRANS1.trans1_finalize ()
 val (
 ) = if isdebug() then
 {
-  val () = println! (
+  val () = prerrln! (
     "The 1st translation (fixity) of [", given, "] is successfully completed!"
   ) (* end of [val] *)
 } // end of [if] // end of [val]
@@ -975,7 +976,7 @@ val d2cs = $TRANS2.d1eclist_tr_errck (d1cs)
 val (
 ) = if isdebug() then
 {
-  val () = println! (
+  val () = prerrln! (
     "The 2nd translation (binding) of [", given, "] is successfully completed!"
   ) (* end of [val] *)
 } // end of [if] // end of [val]
@@ -1024,7 +1025,7 @@ val () =
 val (
 ) = if isdebug() then
 {
-  val () = println! (
+  val () = prerrln! (
     "The 3rd translation (type-checking) of [", given, "] is successfully completed!"
   ) (* end of [val] *)
 } // end of [if] // end of [val]
@@ -1051,7 +1052,7 @@ val () = fprint_hideclist (stdout_ref, hids)
 val (
 ) = if isdebug() then
 {
-  val () = println! (
+  val () = prerrln! (
     "The 4th translation (type/proof-erasing) of [", given, "] is successfully completed!"
   ) (* end of [val] *)
 } // end of [if] // end of [val]
@@ -1400,7 +1401,7 @@ main (
 ) = () where {
 //
 val () =
-println! ("Hello from ATS2(ATS/Postiats)!")
+prerrln! ("Hello from ATS2(ATS/Postiats)!")
 (*
 val ((*void*)) = patsopt_version (stdout_ref)
 *)

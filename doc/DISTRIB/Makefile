@@ -315,6 +315,17 @@ cleanall:: ; $(RMF) HTML/atscntrb_hiredis.html
 cleanall:: ; $(RMF) SCRIPT/atscntrb_hiredis.bash
 
 #
+all_html:: HTML/atscntrb_openssl.html
+HTML/atscntrb_openssl.html: atscntrb_openssl_atxt.exe ; ./$< > $@
+all_script:: SCRIPT/atscntrb_openssl.bash
+SCRIPT/atscntrb_openssl.bash: atscntrb_openssl_atxt.exe ; ./$< > $@
+atscntrb_openssl_atxt.dats: ATEXT/atscntrb_openssl.atxt ;   $(CAT) $< | $(ATSDOC) --prefix __datatok --outcode $@ > /dev/null
+atscntrb_openssl_atxt.exe: atscntrb_openssl_atxt.dats ; $(ATSCC) $(INCLATS) $(ATSGCFLAG) -o $@ $< -latsdoc
+clean:: ; $(RMF) atscntrb_openssl_atxt.exe
+cleanall:: ; $(RMF) HTML/atscntrb_openssl.html
+cleanall:: ; $(RMF) SCRIPT/atscntrb_openssl.bash
+
+#
 all_html:: HTML/atscntrb_JNI.html
 HTML/atscntrb_JNI.html: atscntrb_JNI_atxt.exe ; ./$< > $@
 all_script:: SCRIPT/atscntrb_JNI.bash
@@ -516,6 +527,11 @@ srcget_atscntrb_hiredis:: SCRIPT/atscntrb_hiredis.bash ; bash $<
 
 ######
 
+srcget_atscntrb:: srcget_atscntrb_openssl
+srcget_atscntrb_openssl:: SCRIPT/atscntrb_openssl.bash ; bash $<
+
+######
+
 srcget_atscntrb:: srcget_atscntrb_JNI
 srcget_atscntrb_JNI:: SCRIPT/atscntrb_JNI.bash ; bash $<
 
@@ -540,7 +556,7 @@ srcget_atscntrb_kernelats:: SCRIPT/atscntrb_kernelats.bash ; bash $<
 
 ######
 
-PACKNAME=ATS2-Postiats-0.0.7
+PACKNAME=ATS2-Postiats-0.0.8
 atspacktarzvcf:: ; rm -rf $(PACKNAME)
 atspacktarzvcf:: ; cp -rf ATS-Postiats $(PACKNAME)
 atspacktarzvcf:: ; $(RMF) $(PACKNAME)/Makefile_conf
@@ -549,7 +565,9 @@ atspacktarzvcf:: ; $(RMF) $(PACKNAME)/install-sh ; $(CPF) ATS-Postiats/install-s
 atspacktarzvcf:: ; make -C $(PACKNAME) cleanall
 atspacktarzvcf:: ; tar -zvcf  $(PACKNAME).tgz  $(PACKNAME)/
 
-CNTRBNAME=ATS2-Postiats-contrib-0.0.7
+######
+
+CNTRBNAME=ATS2-Postiats-contrib-0.0.8
 atscntrbtarzvcf:: ; rm -rf $(CNTRBNAME)
 atscntrbtarzvcf:: ; cp -rf ATS-Postiats-contrib $(CNTRBNAME)
 atscntrbtarzvcf:: ; tar -zvcf  $(CNTRBNAME).tgz  $(CNTRBNAME)/
