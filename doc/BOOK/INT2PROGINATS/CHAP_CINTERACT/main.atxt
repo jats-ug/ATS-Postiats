@@ -895,7 +895,7 @@ C言語になじみのあるプログラマにとって、
 #dyncode("cast") 関数は与えられた値の型を指定した型でキャストします。
 この関数もまた本質的に安全ではありません。
 #myatscodelink("prelude/SATS/pointer.sats", "pointer.sats")
-で宣言されている #dyncode("ptr0_succ") テンプレート関数は型安全です。
+で宣言されている #dyncode("ptr0_succ") 関数テンプレートは型安全です。
 型Tが与えられた時、pよりも型Tのサイズだけ後ろのポインタを返します。
 
 ")

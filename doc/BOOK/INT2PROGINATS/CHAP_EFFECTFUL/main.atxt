@@ -17,7 +17,7 @@ id="effecftul_programming_features">
 #title("Effectful Programming Features")
 ")
 #langja("
-#title("効果(effect)を持つプログラミングの機能")
+#title("効果 (effect) を持つプログラミングの機能")
 ")
 
 #langeng("
@@ -64,18 +64,17 @@ The expression #dyncode("loop") is said to contain non-termination effect.\
 #langja("
 #para("\
 
-効果を持つプログラミングの機能を使うことで実行時に効果(effect)を生成することができます。
+効果 (effect) を持つプログラミングの機能を使うことで実行時に効果を生成することができます。
 ところで効果とは一体何でしょうか？
 その答はいくぶん込み入っていて、評価モデルに依存しています。
 この本では様々な種類の効果を徐々に説明します。
-並行ではなく順番に評価がなされるようなプログラムを作る場合、
-評価に関してある式とその値が見分けがつかない時、その式は効果を持ちません。
+並行ではなく順番に評価がなされるようなプログラムを作る場合、評価に関してある式とその値が見分けがつかない時、その式は効果を持ちません。
 例えば、値 #dyncode("3") と見分けがつかないので、式 #dyncode("1+2") は効果を持ちません。
 効果を持たない式は純粋であるとも言えます。
 他方、効果を持つ式はいかなる値とも区別ができます。
 例えば、式 #dyncode('print("Hello")') は効果を持ちます。
 というのもその評価の結果、観測可能な振舞をひきおこすので、式はいかなる値とも見分けがつくからです。
-この例では #dyncode('print("Hello")') はI/Oに対するある効果を持つと言えます。
+この例では #dyncode('print("Hello")') は I/O に対するある効果を持つと言えます。
 もし式の評価が終了しない場合、その式もまた効果を持ちます。
 例えば、次のような #dyncode("loop") 関数を定義してみましょう:
 
@@ -91,7 +90,7 @@ let val _ = [] in print ("Terminated") end
 
 この文脈の空欄 #dyncode("[]") を #dyncode("loop()") で置き換えると、式の評価は完了しません。
 空欄 #dyncode("[]") をなんらかの値に置き換えると、その評価は文字列 \"Terminated\" を印字するでしょう。
-式 #dyncode("loop") はある非低姿勢の効果を持つを言えます。\
+式 #dyncode("loop") はある非停止性の効果を持つを言えます。\
 
 ")#comment("para")
 ")#comment("langja")
@@ -108,7 +107,7 @@ common use in practical programming.\
 #langja("
 #para("\
 
-この章では、例外コントロールフローと永続化メモリ記憶、シンプルなI/Oに関連するプログラミングの機能を説明します。
+この章では、例外コントロールフローと永続化メモリ記憶、シンプルな I/O に関連するプログラミングの機能を説明します。
 これらは実際のプログラミングで一般的に使われるものです。\
 
 ")
@@ -155,8 +154,7 @@ to address issues that are not related to errors.\
 #para("\
 
 例外機構は、プログラムの評価中に発生した特殊な状態を通知するための効果的な方法です。
-しばしばそのような特殊な状態はエラーを指しますが、
-エラーに関連しない事柄を指す例外を使うこともあります。\
+しばしばそのような特殊な状態はエラーを指しますが、エラーに関連しない事柄を指す例外を使うこともあります。\
 
 ")
 ")
@@ -198,8 +196,8 @@ is solely for raising exceptions.\
 #langja("
 #para("\
 
-ATSでは #stacode("exn") 型があらかじめ定義されています。
-#stacode("exn") は、新しいコンストラクタによって宣言する拡張datatypeであると思うかもしれません。
+ATS では #stacode("exn") 型があらかじめ定義されています。
+#stacode("exn") は、新しいコンストラクタによって宣言された拡張データ型であると思うかもしれません。
 例えば次のように2つの例外コンストラクタを宣言します:
 
 #atscode("\
@@ -207,12 +205,11 @@ exception FatalError0 of ()
 exception FatalError1 of (string)
 ")
 
-#dyncode("FatalError0") コンストラクタは引数を取らず、
-#dyncode("FatalError1") コンストラクタは引数を一つ取ります。
-例外の値は #stacode("exn") 型の値で、
-例外コンストラクタを適切な引数に適用することで作られます。
-例えば、 #dyncode("FatalError0()") と #dyncode('FatalError1("division-by-zero")')
-は2つとも例外の値です(もしくは単に例外と呼ぶこともあります)。
+#dyncode("FatalError0") コンストラクタは引数を取らず、#dyncode("FatalError1")
+コンストラクタは引数を1つ取ります。
+例外の値は #stacode("exn") 型の値で、例外コンストラクタを適切な引数に適用することで作られます。
+例えば #dyncode("FatalError0()") と #dyncode('FatalError1("division-by-zero")')
+は2つとも例外の値です (もしくは単に例外と呼ぶこともあります)。
 次のプログラムでは、整数の割り算を関数として実装しています:
 
 #atscode("\
@@ -222,8 +219,9 @@ fun divexn (x: int, y: int): int =
 // end of [divexn]
 ")
 
-関数呼び出し #dyncode("divexn(1, 0)") が評価されると、例外 #dyncode("DivisionByZero()") が発生します。
-ATSにおける #dyncode("$raise") キーワードは例外を発生させます。\
+関数呼び出し #dyncode("divexn(1, 0)") が評価されると、例外 #dyncode("DivisionByZero()")
+が発生します。
+ATS における #dyncode("$raise") キーワードは例外を発生させます。\
 
 ")#comment("para")
 ")#comment("langja")
@@ -242,10 +240,9 @@ a value, and this justifies that a raise-expression can be given any type.\
 #langja("
 #para("\
 
-なんらかの式expが与えられとき (#dyncode("$raise") exp) はraise式です。
-式expは値を返しますが、
-(#dyncode("$raise") exp) を評価すると当然、例外が発生してしまいます。
-したがって、raise式は評価されると値を返しません。つまりraise式はいかなる型も取りうるのです。\
+なんらかの式 exp が与えられとき (#dyncode("$raise") exp) は raise 式です。
+式 exp は値を返しますが、(#dyncode("$raise") exp) を評価すると当然、例外が発生してしまいます。
+したがって、raise 式は評価されると値を返しません。つまり raise 式はいかなる型も取りうるのです。\
 
 ")#comment("para")
 ")
@@ -274,17 +271,17 @@ to as an exception-handler.\
 #para("\
 
 発生した例外は捕捉することができます。
-もし例外が捕捉されない場合、発生した例外はプログラムの評価を実行開始した地点で停止させます。
-ATSでは、try式(もしくはtry-with式)は
+もし例外が捕捉されない場合、発生した例外はプログラムの評価を実行開始した地点で終了させます。
+ATS では、try 式 (もしくは try-with 式) は
 (#dyncode("try") exp #dyncode("with") clseq) のように作られます。
-この式では #dyncode("try") キーワード、expは任意の式、 #dyncode("with")
-もキーワード、そしてclseqはマッチング節の列です。
-try式を評価すると、最初にexpが評価されます。
-もしexpの評価が値を返したら、その値がtry式の値となります。
-もしexpの評価が例外を発生させたら、clseqに列挙されたマッチング節のガードに対してその例外をマッチさせます。
+この式では #dyncode("try") キーワード、exp は任意の式、#dyncode("with")
+もキーワード、そして clseq はマッチング節の列です。
+try 式を評価すると、最初に exp が評価されます。
+もし exp の評価が値を返したら、その値が try 式の値となります。
+もし exp の評価が例外を発生させたら、clseq に列挙されたマッチング節のガードに対してその例外をマッチさせます。
 もしマッチすれば、発生した例外は捕捉され、マッチしたガード最初の節の中身から評価が続行します。
 もしマッチしなかったら、発生した例外は捕捉されません。
-try式ではしばしばwith部は例外ハンドラと呼ばれます。\
+try 式ではしばしば with 部は例外ハンドラと呼ばれます。\
 
 ")
 ")
@@ -434,8 +431,7 @@ end // end of [listprod3]
 
 <listitem>
 #para("\
-与えられたリスト中に整数0があった場合、
-その他の整数値によらずリスト中の整数の積は0である。
+与えられたリスト中に整数 0 があった場合、その他の整数値によらずリスト中の整数の積は 0 である。
 ")
 </listitem>
 
@@ -448,10 +444,10 @@ end // end of [listprod3]
 この呼び出しの評価は結局のところ #dyncode("1*(2*(3*(listprod([0,4,5,6]))))") の評価を導きます。
 それから #dyncode("1*(2*(3*0))") が得られ、 #dyncode("1*(2*0)") が、さらに #dyncode("1*0")
 が、そして最終的に #dyncode("0") が得られます。
-けれども、リスト中に整数0を見つけたら、即座に0を返すように評価したいと思うでしょう。
+けれども、リスト中に整数 0 を見つけたら、即座に 0 を返すように評価したいと思うでしょう。
 このような評価は #dyncode("listprod3") 関数であれば実現できます。
-#dyncode("listprod3") を #dyncode("[1, 2, 3, 0, 4, 5, 6]") に呼び出した場合、
-最終的に次の式を評価することになります:
+#dyncode("listprod3") を #dyncode("[1, 2, 3, 0, 4, 5, 6]")
+に呼び出した場合、最終的に次の式を評価することになります:
 
 #atscode("\
 try 1*(2*(3*(aux([0,4,5,6])))) with ~ZERO() => 0
@@ -462,9 +458,10 @@ try 1*(2*(3*(aux([0,4,5,6])))) with ~ZERO() => 0
 #dyncode("with") キーワードに続くマッチング節のパターンガードは #dyncode("~ZERO()")
 であることに注意してください。
 別の章でチルダシンボル #dyncode("~") が必要になる理由を説明します。
-ここでは、 #dyncode("exn") は線形型で、例外の値は線形値であり、
-その値は消費されるか再度raiseしなければならないということだけ覚えておいてください。
-チルダシンボル #dyncode("~") は、 #dyncode("~") に続くパターンにマッチした値が消費されることを示しています。
+ここでは、#dyncode("exn") は線形型で、例外の値は線形値であり、その値は消費されるか再度 raise
+しなければならないということだけ覚えておいてください。
+チルダシンボル #dyncode("~") は、 #dyncode("~")
+に続くパターンにマッチした値が消費されることを示しています。
 つまり値を保持しているメモリは解放されるということです。\
 
 ")
@@ -497,7 +494,7 @@ id="example_testing_for_braun_trees">
 #title("Example: Testing for Braun Trees")
 ")
 #langja("
-#title("例: ブラウンツリー(Braun Trees)の判定")
+#title("例: ブラウンツリーの判定")
 ")
 
 #langeng("
@@ -532,27 +529,26 @@ straightforward to prove that Braun trees are balanced.\
 #langja("
 #para("\
 
-ブラウンツリー(Braun Trees)は、次のような再帰的な定義によって導かれる特殊なバイナリツリーです:
+ブラウンツリー (Braun Trees) は、次のような再帰的な定義によって導かれる特殊な二分木です:
 
 <itemizedlist>
 
 <listitem>
 #para("\
-空のバイナリツリーがあるとき、そのツリーはブラウンツリーです。
+空の二分木があるとき、そのツリーはブラウンツリーです。
 ")
 </listitem>
 
 <listitem>
 #para("\
-バイナリツリーの2つの子がブラウンツリーで、
-なおかつ左の子のサイズから右の個のサイズを引いたとき0もしくは1が得られるなら、
-そのバイナリツリーはブラウンツリーです。
+二分木の2つの子がブラウンツリーで、なおかつ左の子のサイズから右の子のサイズを引いたとき
+0 もしくは 1 が得られるなら、その二分木はブラウンツリーです。
 ")
 </listitem>
 
 </itemizedlist>
 
-自然数nが与えられた時、サイズnのブラウンツリーは唯一一つ存在します。
+自然数 n が与えられた時、サイズ n のブラウンツリーは唯一1つだけ存在します。
 ブラウンツリーが平衡であることは自明でしょう。\
 
 ")
@@ -608,7 +604,7 @@ time-complexity of the function #dyncode("brauntest0") is O(n(log(n))).\
 #langja("
 #para("\
 
-次のようなバイナリツリーを表わす多相datatypeを宣言します:
+次のような二分木を表わす多相データ型を宣言します:
 
 #atscode("\
 datatype tree (a:t@ype) =
@@ -617,7 +613,7 @@ datatype tree (a:t@ype) =
 // end of [tree] // end of [datatype]
 ")
 
-次に宣言する関数 #dyncode("brauntest0") は、与えられたバイナリツリーがブラウンツリーかどうか判定します:
+次に宣言する関数 #dyncode("brauntest0") は、与えられた二分木がブラウンツリーかどうか判定します:
 
 #atscode("\
 fun{
@@ -645,8 +641,7 @@ case+ t of
 ")
 
 #dyncode("brauntest0") の実装はブラウンツリーの定義に厳密に従っています。
-サイズnのバイナリツリーを判定すると、
-関数 #dyncode("size") の時間的計算量は O(n) であり、
+サイズ n の二分木を判定すると、関数 #dyncode("size") の時間的計算量は O(n) であり、
 関数 #dyncode("brauntest0") の時間的計算量は O(n(log(n))) です。\
 
 ")#comment("para")
@@ -705,7 +700,7 @@ as that of #dyncode("aux"), which is O(n).\
 #para("\
 
 次のプログラムで定義している #dyncode("brauntest1")
-関数もまた与えられたバイナリツリーがブラウンツリーか判定しています:
+関数もまた与えられた二分木がブラウンツリーか判定しています:
 
 #atscode("\
 fun{
@@ -735,15 +730,13 @@ in
 end // end of [brauntest1]
 ")
 
-子ツリーの内1つでもブラウンツリーでなければ、そのバイナリツリーはブラウンツリーでないことは明確です。
-補助関数 #dyncode("aux") は、ツリーがブラウンツリーである場合にはバイナリツリーのサイズを返し、
-そうでない場合には例外を発生させるために定義されています。
-#dyncode("brauntest1") の中身にあるtry式の評価が開始すると、
-まずはじめにバイナリツリーに対して #dyncode("aux") を呼び出します。
-もしこの呼び出しの評価が返ればtはブラウンツリーであるので、
-try式の値としてブール値 #dyncode("true") が返ります。
-そうでなければ、
-#dyncode("Negative()") 例外が発生して捕捉され、try式の値としてブール値 #dyncode("false") が返ります。
+子ツリーの内1つでもブラウンツリーでなければ、その二分木はブラウンツリーでないことは明確です。
+補助関数 #dyncode("aux") は、ツリーがブラウンツリーである場合には二分木のサイズを返し、そうでない場合には例外を発生させるために定義されています。
+#dyncode("brauntest1") の中身にある try 式の評価が開始すると、まずはじめに二分木に対して #dyncode("aux") を呼び出します。
+もしこの呼び出しの評価が返れば t はブラウンツリーであるので、try 式の値としてブール値
+#dyncode("true") が返ります。
+そうでなければ、#dyncode("Negative()") 例外が発生して捕捉され、try 式の値としてブール値
+#dyncode("false") が返ります。
 #dyncode("brauntest1") と #dyncode("aux") の時間的計算量はどちらも O(n) です。\
 
 ")
@@ -780,8 +773,8 @@ Therefore, making use of exceptions in this style should be avoided.
 
 #dyncode("brauntest1") の実装における例外機構の使い方は妥当なものです。
 なぜなら例外が発生するポイントから例外が捕捉されるポイントまでの範囲に多くの関数呼び出しがあるからです。
-もしこの範囲が短かい場合(例えばたった1つの関数しか呼び出さないなど)、
-おそらくプログラマは例外機構を使うべきか吟味すべきでしょう。
+もしこの範囲が短かい場合
+(例えばたった1つの関数しか呼び出さないなど)、おそらくプログラマは例外機構を使うべきか吟味すべきでしょう。
 例えば、次の例における例外の使い方は興味深いものですが、実際には役に立ちません：
 
 #atscode('\

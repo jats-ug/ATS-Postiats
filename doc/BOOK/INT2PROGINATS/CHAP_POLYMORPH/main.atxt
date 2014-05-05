@@ -808,11 +808,10 @@ covered so far.\
 #langja("
 #para("\
 
-関数型プログラミングでは、リストはどこででも使用されます。
-一般に使われるリストに対する関数テンプレートを次に実装します。
-これらのテンプレートは全て、ATSのいくつかのライブラリで利用できることに注意すべきです。
-これらは線形データ型のようなこれまで紹介してないプログラミングの機能を使って、
-より効果的な方法で実装されていることがあります。\
+関数型プログラミングでは、リストはどこででも使われます。
+ここでは一般に使われるリストに対する関数テンプレートを実装します。
+これらのテンプレートは全て、ATS のライブラリで利用できることに注意すべきです。
+それらは線形データ型のようなこれまで紹介してないプログラミングの機能を使って、より効果的な方法で実装されていることがあります。\
 
 ")
 ")
@@ -830,7 +829,9 @@ code for testing #mycodelink("CHAP_POLYMORPH/listfun.dats", "on-line").\
 
 この章のコード全体と追加のテストコードは
 #mycodelink("CHAP_POLYMORPH/listfuns.dats", "オンライン")
-から入手できます。\
+から入手できます。
+(訳注: このコードを atscc でコンパイルする際には -DATS_MEMALLOC_LIBC オプションが必要です。
+さらにATSコンパイラ本体だけではなく、ATS2-Postiats-contrib のインストールも必要です。)\
 
 ")
 ")
@@ -878,8 +879,8 @@ tail-recursive.\
 #langja("
 #para("\
 
-型 T と型 #stacode("list0(T)") の2つのリスト xs と ys が与えられた時、
-#dyncode("list0_append(xs, ys)") は xs と ys を連結した1つのリストを返します:
+型 T と型 #stacode("list0(T)") の2つのリスト xs と ys
+が与えられた時、#dyncode("list0_append(xs, ys)") は xs と ys を連結した1つのリストを返します:
 
 #atscode("\
 fun{
@@ -947,8 +948,7 @@ tail-recursive.\
 #langja("
 #para("\
 
-型 T と型 #dyncode("list0(T)") の2つのリスト xs と ys が与えられた時、
-#dyncode("list0_reverse_append(xs, ys)") は xs と ys の逆順を連結したリストを返します:
+型 T と型 #dyncode("list0(T)") の2つのリスト xs と ys が与えられた時、#dyncode("list0_reverse_append(xs, ys)") は xs と ys の逆順を連結したリストを返します:
 
 #atscode("\
 fun{
@@ -1002,7 +1002,7 @@ list0_reverse
 #langja("
 #para("\
 
-リスト xs が与えられた時、 #dyncode("list0_reverse(xs)") は xs の逆順を返します:
+リスト xs が与えられた時、#dyncode("list0_reverse(xs)") は xs の逆順を返します:
 
 #atscode("\
 fun{a:t@ype}
@@ -1059,9 +1059,8 @@ of #dyncode("list0_map") is not tail-recursive.\
 #langja("
 #para("\
 
-型 T1 、型 T2、型 T1 -&lt;cloref1&gt; T2 のクロージャ関数 f 、型 #stacode("list0(T1)") のリスト xs
-が与えられた時、
-#dyncode("list0_map(xs)") は #stacode("list0(T2)") 型のリスト ys を返します:
+型 T1、型 T2、型 T1 -&lt;cloref1&gt; T2 のクロージャ関数 f、型 #stacode("list0(T1)") のリスト
+xs が与えられた時、#dyncode("list0_map(xs, f)") は #stacode("list0(T2)") 型のリスト ys を返します:
 
 #atscode("\
 fun
@@ -1079,9 +1078,8 @@ case+ xs of
 ) (* end of [list0_map] *)
 ")
 
-ys の長さは xsの長さに等しく、
-ys 中のそれぞれの要素 y は xs 中の関連する要素をxとしたとき f(x) に等しくなります。
-明らかに、 #dyncode("list0_map") のこの実装は末尾再帰ではありません。\
+ys の長さは xs の長さに等しく、ys 中のそれぞれの要素 y は xs 中の関連する要素をxとしたとき f(x) に等しくなります。
+明らかに #dyncode("list0_map") のこの実装は末尾再帰ではありません。\
 
 ")#comment("para")
 ")
@@ -1095,7 +1093,7 @@ ys 中のそれぞれの要素 y は xs 中の関連する要素をxとしたと
 #title("Left-Folding: #dyncode("list0_foldleft")")
 ")
 #langja("
-#title("左fold: #dyncode("list0_foldleft")")
+#title("左 fold: #dyncode("list0_foldleft")")
 ")
 
 #langeng("
@@ -1127,8 +1125,7 @@ list0_foldleft
 #langja("
 #para('\
 
-xs, ini, f が与えられた時、
-#dyncode("list0_foldleft(ini, xs, f)") は式 f(... f(f(ini, xs[0]), xs[1]) ..., xs[n-1]) の値を計算します。
+xs, ini, f が与えられた時、#dyncode("list0_foldleft(ini, xs, f)") は式 f(... f(f(ini, xs[0]), xs[1]) ..., xs[n-1]) の値を計算します。
 このとき n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
 次の #dyncode("list0_foldleft") の実装は末尾再帰です:
 
@@ -1160,7 +1157,7 @@ list0_foldleft
 #title("Right-Folding: #dyncode("list0_foldright")")
 ")
 #langja("
-#title("右fold: #dyncode("list0_foldright")")
+#title("右 fold: #dyncode("list0_foldright")")
 ")
 
 #langeng("
@@ -1192,9 +1189,8 @@ list0_foldright
 #langja("
 #para('\
 
-xs, res, f が与えられた時、
-#dyncode("list0_foldright(xs, res, f)") は式 f(xs[0], f(xs[1], f(... f(xs[n-1], res) ...))) の値を計算します。
-このとき、 n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
+xs, res, f が与えられた時、#dyncode("list0_foldright(xs, res, f)") は式 f(xs[0], f(xs[1], f(... f(xs[n-1], res) ...))) の値を計算します。
+このとき n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
 次の #dyncode("list0_foldright") 実装は末尾再帰ではありません:
 
 #atscode('\
@@ -1225,7 +1221,7 @@ list0_foldright
 #title("Zipping: #dyncode("list0_zip")")
 ")
 #langja("
-#title("zip関数: #dyncode("list0_zip")")
+#title("zip 関数: #dyncode("list0_zip")")
 ")
 
 #langeng("
@@ -1268,8 +1264,9 @@ elements in xs and ys, respectively.  Clearly, this implementation of
 #langja("
 #para("\
 
-型 T1 と T2、型 #stacode("list0(T1)") と #stacode("list0(T2)") の2つのリスト xs と ys がそれぞれ与えられた時、
-#dyncode("list0_zip(xs, ys)") は型 #stacode("list0 @(T1, T2)") のリスト zs を返します:
+型 T1 と T2、型 #stacode("list0(T1)") と #stacode("list0(T2)") の2つのリスト xs と ys
+がそれぞれ与えられた時、#dyncode("list0_zip(xs, ys)") は型 #stacode("list0 @(T1, T2)")
+のリスト zs を返します:
 
 #atscode("\
 fun{
@@ -1293,8 +1290,8 @@ case+ (xs, ys) of
 end // end of [list0_zip]
 ")
 
-zs の長さは xs と ys の長さの小さい方で、
-zs のそれぞれの要素 z は x と y をそれぞれ xs と ys の対応する要素としたときの @(x, y) に等しくなります。
+zs の長さは xs と ys の長さの小さい方になり、zs のそれぞれの要素 z は x と y をそれぞれ xs と ys
+の対応する要素としたときの @(x, y) に等しくなります。
 明らかに、この #dyncode("list0_zip") の実装は末尾再帰ではありません。\
 
 ")#comment("para")
@@ -1310,7 +1307,7 @@ Zipping with: #dyncode("list0_zipwith")
 ")
 #langja("
 #title("
-zip with関数: #dyncode("list0_zipwith")
+zip with 関数: #dyncode("list0_zipwith")
 ")
 ")
 
@@ -1358,9 +1355,10 @@ reason.\
 #langja("
 #para("\
 
-型 T1, T2, T3 と、型 (T1, T2) -&lt;cloref1&gt; T3 のクロージャ関数 f と、
-それぞれ #stacode("list0(T1)") と #stacode("list0(T2)")  型の2つのリスト xs と ys が与えられた時、
-#dyncode("list0_zipwith(xs, ys, f)") は #stacode("list0(T3)") 型のリスト zs を返します:
+型 T1, T2, T3 と、型 (T1, T2) -&lt;cloref1&gt; T3 のクロージャ関数 f
+と、#stacode("list0(T1)") と #stacode("list0(T2)")  型の2つのリスト xs と ys
+がそれぞれ与えられた時、#dyncode("list0_zipwith(xs, ys, f)") は #stacode("list0(T3)")
+型のリスト zs を返します:
 
 #atscode("\
 fun
@@ -1383,11 +1381,12 @@ case+ (xs, ys) of
 ) (* end of [list0_zipwith] *)
 ")
 
-zs の長さは xs と ys の長さの小さい方で、
-zs のそれぞれの要素 z は x と y をそれぞれ xs と ys の対応する要素としたときの f(x, y) に等しくなります。
+zs の長さは xs と ys の長さの小さい方になり、zs のそれぞれの要素 z は x と y をそれぞれ
+xs と ys の対応する要素としたときの f(x, y) に等しくなります。
 明らかに、この #dyncode("list0_zipwith") の実装は末尾再帰ではありません。
-3番目の引数 #dyncode("f") を #dyncode("lam (x, y) => @(x, y)") で置き換えれば、
-#dyncode("list0_zipwith") は #dyncode("list0_zip") とまったく同じ振る舞いをすることに注意してください。
+3番目の引数 #dyncode("f") を #dyncode("lam (x, y) => @(x, y)")
+で置き換えれば、#dyncode("list0_zipwith") は #dyncode("list0_zip")
+とまったく同じ振る舞いをすることに注意してください。
 この関数テンプレートは #dyncode("list0_map2") という名前も持っています。\
 
 ")#comment("para")
@@ -1423,7 +1422,7 @@ implementation of mergesort on lists.
 
 マージソートは最悪計算量 O(n log n) の単純なソートアルゴリズムです。
 2つの等しい要素がソートした後でも同じ配置であるという意味で安定です。
-次にリストに対するマージソートの典型的な関数型スタイルの実装を示します。
+ここではリストに対するマージソートの典型的な関数型スタイルの実装を示します。
 
 ")
 ")
@@ -1471,7 +1470,7 @@ with #dyncode("::").
 cons0 (0, cons0 (1, 2 :: 3 :: 4 :: nil0 ()))
 ")
 
-もちろん実際には、 #dyncode("cons0") と #dyncode("::") を混ぜる意味はありません。
+もちろん実際には、#dyncode("cons0") と #dyncode("::") を混ぜる意味はありません。
 
 ')#comment("para")
 ")
@@ -1550,7 +1549,7 @@ a:t@ype
 ")
 
 例えば、与えられた2つのリストが (1, 3, 4, 8) と (2, 5, 6, 7, 9) だと考えてみましょう。
-#dyncode("merge") の第3引数である比較関数は整数の標準的な less-than-or-equal-to 関数です。
+#dyncode("merge") の第3引数である比較関数は整数の小なりイコール (less-than-or-equal-to) 関数です。
 すると #dyncode("merge") はリスト (1, 2, 3, 4, 5, 6, 7, 8, 9) を返します。
 構文 #dyncode("\lte") はほぼ #dyncode("lte") と同じ意味をしていますが、バックスラッシュ記号
 (#dyncode("\\\\")) を前に付けるとは中置設定になります。
@@ -1679,9 +1678,9 @@ function in ATS that makes use of linear types.  ")
 関数テンプレート #dyncode("merge") は末尾再帰ではないことに注意してください。
 #dyncode("merge") 本体の自分自身の呼び出しが末尾呼出ではありません。
 これは実際の使用において大きな問題です:
-上記のマージソートの実装がとても長い(例えば1,000,000以上の要素を含む)リストのソートに対して呼び出されたら、
-スタックオーバーフローが引き起こされることは疑う余地がありません。
-後の章で、ATSの線形型を使って #dyncode("merge") 関数の末尾再帰的実装を紹介します。
+上記のマージソートの実装がとても長いリスト (例えば1,000,000以上の要素を含む)
+のソートに対して呼び出されたら、スタックオーバーフローが引き起こされることは疑う余地がありません。
+後の章で、ATS の線形型を使って #dyncode("merge") 関数の末尾再帰的実装を紹介します。
 ")
 ")
 
