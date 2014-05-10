@@ -60,12 +60,12 @@ typedef mode_t = $STAT.mode_t
 //
 (* ****** ****** *)
 
-staload "{$LIBCURL}/SATS/curl.sats"
+staload "./libcurl/SATS/curl.sats"
 
 (* ****** ****** *)
 
-staload "{$JSONC}/SATS/json.sats"
-staload _(*anon*) = "{$JSONC}/DATS/json.dats"
+staload "./json-c/SATS/json.sats"
+staload _(*anon*) = "./json-c/DATS/json.dats"
 
 (* ****** ****** *)
 
@@ -230,8 +230,14 @@ $extfcall
 ) (* end of [val] *)
 val ((*void*)) = if (err != CURLE_OK) then nerr := nerr + 1
 //
-val err = curl_easy_perform (curl)
-val ((*void*)) = if (err != CURLE_OK) then nerr := nerr + 1
+val err =
+  curl_easy_perform (curl)
+val err = CURLerror2code (err)
+val ((*void*)) =
+if (err != CURLE_OK) then
+  fprintln! (stderr_ref, "ERROR: curl_easy_perform(): failed: ", curl_easy_strerror(err))
+val ((*void*)) =
+  if (err != CURLE_OK) then nerr := nerr + 1
 //
 val ((*void*)) = if knd = 0 then fileref_close (out)
 //
@@ -300,7 +306,8 @@ pkgreloc_fileref
 //
 val cs =
   fileref_get_file_string (inp)
-val itms = json_tokener_parse_list ($UN.strptr2string(cs))
+val itms =
+  json_tokener_parse_list ($UN.strptr2string(cs))
 val ((*void*)) = strptr_free (cs)
 //
 val nitm = auxlst (itms, 0)
@@ -350,7 +357,8 @@ if i < argc
 // end of [if]
 )
 //
-val err = curl_global_init(0L)
+val err =
+  curl_global_init(CURL_GLOBAL_DEFAULT)
 val ((*void*)) = assertloc (err = CURLE_OK)
 //
 val ((*void*)) = loop (argv, 1, nfil)
@@ -362,4 +370,4 @@ val ((*void*)) = curl_global_cleanup ((*void*))
 
 (* ****** ****** *)
 
-(* end of [atspkgreloc.dats] *)
+(* end of [atspkgreloc_curl.dats] *)

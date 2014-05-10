@@ -179,6 +179,16 @@ CHMOD=chmod
 
 ######
 
+SUBDIRS_CODE := $(wildcard CODE/*/)
+
+regress:: ; \
+  set -e; \
+  for i in $(SUBDIRS_CODE); do \
+    $(MAKE) -C $$i $@; \
+  done
+
+######
+
 upload:: upload_html
 
 upload_pdf:: ; \

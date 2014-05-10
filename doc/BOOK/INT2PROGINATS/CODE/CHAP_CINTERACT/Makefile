@@ -19,58 +19,61 @@ ATSCCFLAGS=-O2
 
 ######
 
-all:: misc
-all:: fact
-all:: factext
-all:: extfcall
-all:: strcmp
-all:: ArrayCopyFromList
-all:: StaticAllocList
-
-######
-
 distclean:: cleanall
 
 ######
 
+all:: misc
 misc: misc_dats.c; \
-  $(PATSCC) -DATS_MEMALLOC_LIBC $(ATSCCFAGS) -o $@ $<
+$(PATSCC) -DATS_MEMALLOC_LIBC $(ATSCCFLAGS) -o $@ $<
+regress:: misc; ./misc
 cleanall:: ; $(RMF) misc
 
 ######
 
-fact: fact_dats.c fact2.c ; $(PATSCC) $(ATSCCFAGS) -o $@ $^
+all:: fact
+fact: fact_dats.c fact2.c ; $(PATSCC) $(ATSCCFLAGS) -o $@ $^
+regress:: fact; ./fact
 cleanall:: ; $(RMF) fact
 
 ######
 
-factext: factext_dats.c ; $(PATSCC) $(ATSCCFAGS) -o $@ $^
+all:: factext
+factext: factext_dats.c ; $(PATSCC) $(ATSCCFLAGS) -o $@ $^
+regress:: factext; ./factext
 cleanall:: ; $(RMF) factext
 
 ######
 
-extfcall: extfcall_dats.c ; $(PATSCC) $(ATSCCFAGS) -o $@ $^
+all:: extfcall
+extfcall: extfcall_dats.c ; $(PATSCC) $(ATSCCFLAGS) -o $@ $^
+regress:: extfcall; ./extfcall
 cleanall:: ; $(RMF) extfcall
 
 ######
 
-strcmp: strcmp_dats.c ; $(PATSCC) $(ATSCCFAGS) -o $@ $^
+all:: strcmp
+strcmp: strcmp_dats.c ; $(PATSCC) $(ATSCCFLAGS) -o $@ $^
+regress:: strcmp; ./strcmp
 cleanall:: ; $(RMF) strcmp
 
 ######
 
-ArrayCopyFromList: ArrayCopyFromList_dats.c ; $(PATSCC) $(ATSCCFAGS) -o $@ $^
+all:: ArrayCopyFromList
+ArrayCopyFromList: ArrayCopyFromList_dats.c ; $(PATSCC) $(ATSCCFLAGS) -o $@ $^
+regress:: ArrayCopyFromList; ./ArrayCopyFromList
 cleanall:: ; $(RMF) ArrayCopyFromList
 
 ######
 
-StaticAllocList: StaticAllocList_dats.c ; $(PATSCC) $(ATSCCFAGS) -o $@ $^
+all:: StaticAllocList
+StaticAllocList: StaticAllocList_dats.c ; $(PATSCC) $(ATSCCFLAGS) -o $@ $^
+regress:: StaticAllocList; ./StaticAllocList
 cleanall:: ; $(RMF) StaticAllocList
 
 ######
 
-%_dats.c: %.dats
-	$(PATSCC) -DATS_MEMALLOC_LIBC $(ATSCCFLAGS) -ccats $< || touch $@
+%_dats.c: %.dats; $(PATSCC) -DATS_MEMALLOC_LIBC $(ATSCCFLAGS) -ccats $< || touch $@
 
 ######
 
@@ -78,10 +81,11 @@ RMF=rm -f
 
 ######
 
-clean:
-	$(RMF) *~
-	$(RMF) *_?ats.o
-	$(RMF) *_?ats.c
+clean:: ; $(RMF) *~
+clean:: ; $(RMF) *_?ats.o
+clean:: ; $(RMF) *_?ats.c
+
+######
 
 cleanall:: clean
 

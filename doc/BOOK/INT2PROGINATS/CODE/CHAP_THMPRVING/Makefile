@@ -15,18 +15,22 @@ ATSCCFLAGS=
 ######
 
 all:: misc
-all:: tree
-all:: brauntree
+misc: misc.dats; $(PATSCC) $(ATSCCFLAGS) -o $@ $<
+regress:: misc; ./misc
+cleanall:: ; $(RMF) misc
 
 ######
 
-misc: misc.dats; $(PATSCC) $(ATSCCFLAGS) -o $@ $<
-cleanall:: ; $(RMF) misc
-
+all:: tree
 tree: tree.dats; $(PATSCC) $(ATSCCFLAGS) -o $@ $<
+regress:: tree; ./tree
 cleanall:: ; $(RMF) tree
 
+######
+
+all:: brauntree
 brauntree: brauntree.dats; $(PATSCC) $(ATSCCFLAGS) -o $@ $<
+regress:: brauntree; ./$<
 cleanall:: ; $(RMF) brauntree
 
 ######

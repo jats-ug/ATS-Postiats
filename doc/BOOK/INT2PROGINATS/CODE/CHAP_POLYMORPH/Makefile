@@ -23,21 +23,29 @@ ATSCCFLAGS=-D_GNU_SOURCE -DATS_MEMALLOC_LIBC
 ######
 
 all:: misc
+all:: listfuns
+all:: mergesort
 
 ######
 
 misc: misc_dats.c ; \
   $(PATSCC) $(ATSCCFLAGS) $(INCLUDES) $(CCFLAGS) -o $@ $< || echo $@ ": ERROR!!!"
+regress:: misc; ./misc
+cleanall:: ; $(RMF) misc
 
 ######
 
 listfuns: listfuns_dats.c ; \
   $(PATSCC) $(ATSCCFLAGS) $(INCLUDES) $(CCFLAGS) -o $@ $< || echo $@ ": ERROR!!!"
+regress:: listfuns; ./listfuns
+cleanall:: ; $(RMF) listfuns
 
 ######
 
 mergesort: mergesort_dats.c ; \
   $(PATSCC) $(ATSCCFLAGS) $(INCLUDES) $(CCFLAGS) -o $@ $< || echo $@ ": ERROR!!!"
+regress:: mergesort; ./mergesort
+cleanall:: ; $(RMF) mergesort
 
 ######
 
@@ -46,16 +54,16 @@ mergesort: mergesort_dats.c ; \
 ######
 
 RMF=rm -f
+RMRF=rm -rf
 
 ######
 
 clean:: ; $(RMF) *~
 clean:: ; $(RMF) *_?ats.c
 
+######
+
 cleanall:: clean
-cleanall:: ; $(RMF) misc
-cleanall:: ; $(RMF) listfuns
-cleanall:: ; $(RMF) mergesort
 
 ######
 

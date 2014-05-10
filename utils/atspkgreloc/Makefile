@@ -19,21 +19,33 @@ PATSOPT=$(PATSHOMEQ)/bin/patsopt
 PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib
 
 ######
-
+#
 CFLAGS :=
+#
 CFLAGS += $(shell pkg-config --cflags json-c)
-
+CFLAGS += $(shell pkg-config --cflags libcurl)
+#
+######
+#
+LDFLAGS :=
+#
+LDFLAGS += $(shell pkg-config --libs json-c)
+LDFLAGS += $(shell pkg-config --libs libcurl)
+#
 ######
 
-LDFLAGS :=
-LDFLAGS += -lcurl
-LDFLAGS += $(shell pkg-config --libs json-c)
-LDFLAGS += -L$(PATSLIB) -latslib
+all:: atspkgreloc_curl
+all:: atspkgreloc_wget
 
 ######
 
 atspkgreloc_curl: atspkgreloc_curl.dats ; \
-  $(PATSCC) -I$(PATSHOMERELOC)/contrib -DATS_MEMALLOC_LIBC $(CFLAGS) -O2 -o $@ $< $(LDFLAGS)
+  $(PATSCC) -I . -DATS_MEMALLOC_LIBC $(CFLAGS) -O2 -o $@ $< $(LDFLAGS)
+
+######
+
+atspkgreloc_wget: atspkgreloc_wget.dats ; \
+  $(PATSCC) -I . -DATS_MEMALLOC_LIBC $(CFLAGS) -O2 -o $@ $< $(LDFLAGS)
 
 ######
 
@@ -49,6 +61,7 @@ clean:: ; $(RMF) *_?ats.c
 
 cleanall:: clean
 cleanall:: ; $(RMF) atspkgreloc_curl
+cleanall:: ; $(RMF) atspkgreloc_wget
 
 ######
 
