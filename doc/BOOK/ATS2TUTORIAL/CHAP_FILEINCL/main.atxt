@@ -16,7 +16,7 @@ Time of Generation: #timestamp()\
 #title("File Inclusion inside ATS Code")
 ")
 #langja("
-#title("ATS コード中へのファイルのインクード")
+#title("ATS コード中へのファイルのインクルード")
 ")
 
 #langeng("
