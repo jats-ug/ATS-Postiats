@@ -1430,9 +1430,13 @@ fun jsonize_s2Var (s2V: s2Var): jsonval
 fun jsonize_s2varlst (s2vs: s2varlst): jsonval
 //
 fun jsonize_d2con (d2c: d2con): jsonval
+fun jsonize_d2con_long (d2c: d2con): jsonval
 //
 fun jsonize0_s2exp (s2e: s2exp): jsonval // w/o hnfizing
 fun jsonize1_s2exp (s2e: s2exp): jsonval // with hnfizing
+//
+fun jsonize0_s2explst (s2es: s2explst): jsonval // w/o hnfizing
+fun jsonize1_s2explst (s2es: s2explst): jsonval // with hnfizing
 //
 fun jsonize_s2exp (flag: int, s2e: s2exp): jsonval
 fun jsonize_s2explst (flag: int, s2es: s2explst): jsonval

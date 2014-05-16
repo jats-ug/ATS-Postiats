@@ -44,6 +44,7 @@ bin/patscc
 bin/patsopt
 bin/pats2xhtml
 bin/atspkgreloc_curl
+bin/atspkgreloc_wget
 
 #
 # boostrapping
