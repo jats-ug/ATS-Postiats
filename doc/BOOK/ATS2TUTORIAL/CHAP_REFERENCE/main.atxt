@@ -13,8 +13,15 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="reference"
->#title("References")
+>
+#langeng("
+#title("References")
+")
+#langja("
+#title("参照")
+")
 
+#langeng("
 #para("\
 
 A reference is essentially a heap-allocated array of size 1. It is
@@ -23,7 +30,18 @@ of a reference cannot be freed manually. Instead, it can only be (safely)
 reclaimed through garbage collection (GC).
 
 ")
+")
+#langja("
+#para("\
 
+参照とは本質的にヒープに確保されたサイズ 1 の配列です。
+手動で解放できない参照の内容を保管するために確保されたメモリであるという意味で、参照は永続的です。
+その代わりに、参照はガベージコレクション (GC) を通じてのみ (安全に) 回収されます。
+
+")
+")
+
+#langeng("
 #para("\
 
 Given a viewtype VT, the type for references to values of viewtype VT is
@@ -38,7 +56,27 @@ The interfaces for various functions on references can be found in
 #myatscodelink("prelude/SATS/reference.sats", "prelude/SATS/reference.sats").\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+viewtype VT が与えられたとき、viewtype VT
+の値への参照の型は #stacode("ref")(VT) です。
+利便性のために、ATS では型コンストラクタ #stacode("ref") は抽象として宣言されます。
+けれども、次のような定義は可能です:
+
+#atscode('\
+typedef ref (a:vt@ype) = [l:addr] (vbox (a @ l) | ptr l)
+')
+
+参照に対する様々な関数インターフェイスを
+#myatscodelink("prelude/SATS/reference.sats", "prelude/SATS/reference.sats")
+で見つけることができます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 For creating a reference, the function template #dyncode("ref_make_elt") of
 the following interface can be called:
@@ -53,7 +91,24 @@ that the so-called #stacode("wrt")-effect may occur when
 #dyncode("ref_make_elt") is called.
 
 ")
+")
+#langja("
+#para("\
+参照を生成するために、次のインターフェイスを持つ関数テンプレート #dyncode("ref_make_elt") を呼び出すことができます:
 
+#atscode('\
+fun{a:vt@ype} ref_make_elt (x: a):<!wrt> ref a
+')
+
+#dyncode("ref_make_elt") に対して略記 #dyncode("ref") を使うこともできます。
+#dyncode("ref_make_elt") が呼び出されるといわゆる
+#stacode("wrt")-効果 が発生する可能性があることを、記号 #stacode("!wrt")
+が示すことに注意してください。
+
+")
+")
+
+#langeng("
 #para("\
 
 For reading writing through a reference, the function templates
@@ -73,7 +128,33 @@ ref-effect may occur when #dyncode("ref_get_elt") is evaluated. Similarly,
 can be written as #dyncode("!r") and #dyncode("!r := v"), respectively.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+参照を通した読み書きのために、
+関数テンプレート #dyncode("ref_get_elt") と #dyncode("ref_set_elt")
+を使うことができます。
+これらにはそれぞれ次のインターフェイスが割り当てられています:
+
+#atscode('\
+fun{a:t@ype} ref_get_elt (r: ref a):<!ref> a
+fun{a:t@ype} ref_set_elt (r: ref a, x: a):<!refwrt> void
+')
+
+#dyncode("ref_get_elt") が評価されるといわゆる ref-効果
+が発生する可能性があることを、記号 #stacode("!ref") が示すことに注意してください。
+同様に、#dyncode("ref_set_elt") が評価されると ref-効果 と
+wrt-効果の両方が起きる可能性があることを、#stacode("!refwrt") は意味しています。
+
+参照 #dyncode("r") と値 #dyncode("v") が与えられたとき、#dyncode("ref_get_elt(r)")
+と #dyncode("ref_set_elt(r, v)") はそれぞれ #dyncode("!r") と #dyncode("!r := v")
+のように書くことができます。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 A reference is typically employed to record some form of persistent state.
@@ -112,7 +193,49 @@ before. Note that the use of #keycode("$extfcall") is for making a direct
 call to the function #dyncode("snprintf") in C.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+典型的に、参照は永続化状態を記録するのに使われます。
+例えば、次のコードはそのような例です:
+
+#atscode_extract('\
+local
+//
+\#define BUFSZ 128
+//
+val count = ref<int> (0)
+//
+in (* in of [local] *)
+
+fun genNewName
+  (prfx: string): string = let
+  val n = !count
+  val () = !count := n + 1
+  var res = @[byte][BUFSZ]((*void*))
+  val err =
+  $extfcall (
+    int, "snprintf", addr@res, BUFSZ, "%s%i", prfx, n
+  ) (* end of [$extfcall] *)
+in
+  strptr2string(string0_copy($UNSAFE.cast{string}(addr@res)))
+end // end of [genNewName]
+
+end // end of [local]
+')
+
+関数 #dyncode("genNewName") は新しい名前を生成するために呼び出されます。
+参照 #dyncode("count") の内容物である整数は #dyncode("genNewName")
+が呼び出される度に更新されるので、#dyncode("genNewName")
+が返すそれぞれの名前は以前生成されたものとは異なることが保証されます。
+C言語の関数 #dyncode("snprintf") を直接呼び出すために、#keycode("$extfcall")
+が使用されていることに注意してください。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 #emphasis("Misuse of References")
@@ -164,14 +287,76 @@ end // end of [fact]
 ')
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#emphasis("参照の誤用")
+参照は誤用されることが実際にあります。
+次のプログラムは、命令型プログラミングを既に学んだ関数型プログラミングの初学者がしばしば書いてしまうものです:
+
+#atscode_extract('\
+fun fact
+  (n: int): int = let
+  val res = ref<int> (1)
+  fun loop (n: int):<cloref1> void =
+    if n > 0 then !res := n * !res else ()
+  val () = loop (n)
+in
+  !res
+end // end of [fact]
+')
+
+関数 #dyncode("fact") は次のC言語コードを少々直訳したスタイルで書かれています:
+
+#atscode('\
+int fact (int n) {
+  int res = 1 ;
+  while (n > 0) res = n * res ;
+  return res ;
+}
+')
+
+ATS における #dyncode("fact") の実装では、#dyncode("res")
+はヒープに確保された参照で、#dyncode("fact")
+呼び出しが返った後には (GC によって回収されるのを待つ) ゴミになります。
+一方、#dyncode("fact") のC言語実装における値 #dyncode("res") はスタックに確保
+(もしくはレジスタにマップされることさえあり得ます)
+され、#dyncode("fact") 呼び出しが返った後にゴミは生成されません。
+このC実装を ATS に適切に翻訳すると、次のような参照を使わない実装になるでしょう:
+
+#atscode_extract('\
+fun fact
+  (n: int): int = let
+  fun loop (n: int, res: int): int =
+    if n > 0 then loop (n, n * res) else res
+  // end of [loop]
+in
+  loop (n, 1)
+end // end of [fact]
+')
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Unless strong justification can be given, making extensive use of
 (dynamically created) references is often a sure sign of poor coding style.
 
 ")#comment("para")
+")
 
+#langja("
+#para("\
+
+強い正当な理由なしに (動的に生成される) 参照を広範囲にわたる使用することは、しばしば悪いコーディングスタイルの兆しです。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 #emphasis("Statically Allocated References")
@@ -197,13 +382,49 @@ concepts in ATS: the former is a linear variable while the latter is a
 non-linear reference.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#emphasis("静的に確保された参照")
+#dyncode("ref_make_elt") を呼び出して参照を生成すると、動的なメモリ確保が必要になります。
+もしこれが望ましくなかたったり容認できなかったりするなら、
+次のように参照の生成に静的なメモリ確保を使うことができます:
+
+#atscode_extract('\
+var myvar: int = 0
+val myref = ref_make_viewptr (view@(myvar) | addr@(myvar))
+')
+
+関数 #dyncode("ref_make_viewptr") はポインタとそのポインタに関連した at-view
+の証明を取り、その証明を消費した後の参照を返します。
+#dyncode("ref_make_viewptr") はキャスト関数なので、実行時のオーバーヘッドはありません。
+上記のコードでは、#dyncode("myvar") は静的に確保されていて、その at-view 証明が
+#dyncode("ref_make_viewptr") によって消費された後ではもはや有効ではありません。
+C言語では #dyncode("myvar") と #dyncode("myref") の両方とも単に同じポインタですが、ATS
+ではそれらは本質的に異なる概念の具象であることは興味深いでしょう:
+前者は線形の値であり、後者は非線形の参照なのです。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_reference.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコードの全体は
+#mycodelink("chap_reference.dats", "on-line")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"reference"-->
 
