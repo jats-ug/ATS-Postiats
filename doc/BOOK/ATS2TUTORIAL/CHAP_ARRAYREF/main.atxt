@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_ARRAYREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="arrayref">
+#langeng("
 #title("Persistent Arrays")
+")
+#langja("
+#title("永続化配列")
+")
 
+#langeng("
 #para("\
 
 A persistent array of size n is just n heap-allocated cells (or references)
@@ -23,7 +29,19 @@ array cannot be freed manually. Instead, it can only be safely reclaimed
 through garbage collection (GC).\
 
 ")
+")
+#langja("
+#para("\
 
+サイズ n の永続化配列は、単に1行の中のヒープに確保された
+n 個のセル (もしくは参照) です。
+この配列に対して確保されたメモリは手動で解放できないという意味で永続的です。
+その代わりに、ガベージコレクション (GC) を通じて安全に回収されます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Given a viewtype VT, the type for persistent arrays containing N values of
@@ -35,7 +53,21 @@ the SATS file
 which is automatically loaded by #command("atsopt").
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+viewtype VT が与えられたとき、viewtype VT の値 N を含む永続化配列の型は #stacode("arrayref(VT, N)") です。
+ATS での配列はC言語のものと同じで、それらにはサイズ情報が付属しないことに注意してください。
+永続化配列に関する様々な関数インターフェイスが SATS ファイル
+#myatscodelink("prelude/SATS/arrayref.sats", "prelude/SATS/arrayref.sats")
+に見つけることができます。
+このファイルは #command("atsopt") によって自動的に読み込まれます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 There are various functions for array creation. For instance, the following
@@ -61,7 +93,35 @@ given length in which each cell is initialized with the corresponding
 element in the given list.\
 
 ")
+")
+#langja("
+#para("\
 
+配列を生成する様々な関数があります。
+例えば、次の2つは一般的に使用されます:
+
+#atscode("\
+fun{a:t@ype}
+arrayref_make_elt
+  {n:nat} (asz: size_t n, elt: a):<!wrt> arrayref (a, n)
+// end of [arrayref_make_elt]
+
+fun{a:t@ype}
+arrayref_make_listlen
+  {n:int} (xs: list (a, n), n: int n):<!wrt> arrayref (a, n)
+// end of [arrayref_make_listlen]
+")
+
+サイズと要素に適用されると、#dyncode("arrayref_make_elt")
+は与えられた要素でそれぞれのセルを初期化した与えられたサイズの配列を返します。
+リストとそのリストの長さに適用されると、#dyncode("arrayref_make_listlen")
+は与えられた長さに等しいサイズの配列を返します。
+このとき配列のそれぞれのセルは与えられたリストの対応する要素で初期化されます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 For reading from and writing to an array, the function templates
@@ -84,7 +144,33 @@ Given an array #dyncode("A"), an index #dyncode("i") and a value
 and #dyncode("A[i] := v"), respectively.\
 
 ")
+")
+#langja("
+#para("\
 
+配列を読み書きするために、関数テンプレート #dyncode("arrayref_get_at")
+と #dyncode("arrayref_set_at") を使うことができます。
+それぞれ次のようなインターフェイスが割り当てられています:
+
+#atscode('\
+fun{a:t@ype}
+arrayref_get_at
+  {n:int} (A: arrayref (a, n), i: sizeLt (n)):<!ref> a
+
+fun{a:t@ype}
+arrayref_set_at
+  {n:int} (A: arrayref (a, n), i: sizeLt (n), x: a):<!ref> void
+')
+
+配列 #dyncode("A"), インデックス #dyncode("i"), 値 #dyncode("v")
+が与えられたとき、#dyncode("arrayref_get_at(A, i)") と
+#dyncode("arrayref_set_at(A, i, v)") はそれぞれ
+#dyncode("A[i]") と #dyncode("A[i] := v") のように書くことができます。\
+
+")
+")
+
+#langeng("
 #para("
 
 As an example, the following function template reverses the content of a
@@ -118,7 +204,43 @@ end // end of [arrayref_reverse]
 ')
 
 ")
+")
+#langja("
+#para("
 
+例として、次の関数テンプレートは与えられた配列の内容を逆順にします:\
+
+#atscode_extract('\
+fun{a:t@ype}
+arrayref_reverse{n:nat}
+(
+  A: arrayref (a, n), n: size_t (n)
+) : void = let
+//
+fun loop
+  {i: nat | i <= n} .<n-i>.
+(
+  A: arrayref (a, n), n: size_t n, i: size_t i
+) : void = let
+  val n2 = half (n)
+in
+  if i < n2 then let
+    val tmp = A[i]
+    val ni = pred(n)-i
+  in
+    A[i] := A[ni]; A[ni] := tmp; loop (A, n, succ(i))
+  end else () // end of [if]
+end // end of [loop]
+//
+in
+  loop (A, n, (i2sz)0)
+end // end of [arrayref_reverse]
+')
+
+")
+")
+
+#langeng("
 #para("\
 
 If the test #dyncode("i < n2") is changed to #dyncode("i <= n2"), a type-error
@@ -129,7 +251,21 @@ case where an array of size 0 is involved, a bug like this, if not detected
 early, can be buried so scarily deep!\
 
 ")
+")
+#langja("
+#para("\
 
+もし判定 #dyncode("i < n2") を #dyncode("i <= n2") に変更すると、型エラーが発生します。
+なぜでしょうか？
+その理由は、#dyncode("n") と #dyncode("i")
+が両方ともゼロに等しい場合に、#dyncode("A[n-1-i]")
+が配列の添字指定の範囲外になるからです。
+サイズがゼロの配列に遭遇することなく、もし早期に発見していなかったら、このようなバグはゾッとするほど奥深くに埋め込まれてしまうかもしれません!\
+
+")
+")
+
+#langeng("
 #para("\
 
 The careful reader may have already noticed that the sort #dyncode("t@ype")
@@ -143,6 +279,21 @@ implementation, the template parameter is given the sort #dyncode("vt@ype")
 so that an array containing linear values, that is, values of some linear
 type can be handled:\
 
+")
+")
+#langja("
+#para("\
+
+懸命な読者は、種 #dyncode("t@ype") がテンプレートパラメータ #dyncode("a")
+に割り当てられていることに、既に気がついているかもしれません。
+別の言い方をすると、#dyncode("arrayref_reverse")
+の上記の実装は、与えられた配列内の値が線形型であるような場合を扱うことができません。
+種 #dyncode("t@ype") を選択している理由は、#dyncode("arrayref_get_at") と
+#dyncode("arrayref_set_at") の両方が非線形型の値を含む配列にのみ適用できるからです。
+次の実装では、テンプレートパラメータには種 #dyncode("vt@ype")
+が与えられているので、線形型の値を含む配列を扱うことができます:\
+
+")
 ")
 
 #atscode_extract('\
@@ -169,6 +320,7 @@ in
 end // end of [arrayref_reverse]
 ')
 
+#langeng("
 #para('
 
 The interface for the function template #dyncode("arrayref_interchange") is
@@ -186,7 +338,28 @@ of #dyncode("arrayref_get_at") and #dyncode("arrayref_set_at") (unless some
 form of type-unsafe code is empolyed).\
 
 ')
+")
+#langja("
+#para('
 
+関数テンプレート #dyncode("arrayref_interchange") のインターフェイスは以下のようになります:
+
+#atscode('\
+fun{a:vt@ype}
+arrayref_interchange{n:int}
+  (A: arrayref (a, n), i: sizeLt n, j: sizeLt n):<!ref> void
+// end of [arrayref_interchange]
+')
+
+#dyncode("arrayref_get_at") と #dyncode("arrayref_set_at")
+の観点では、#dyncode("arrayref_interchange") は
+(型安全でないコードを使わずに)
+実装できないことに注意してください。\
+
+')
+")
+
+#langeng("
 #para('\
 
 There are various functions available for traversing an array from left to
@@ -227,13 +400,64 @@ is the type for the elements stored in A and p0 is the starting address of
 A.
 
 ')
+")
+#langja("
+#para('\
 
+配列を左から右に、もしくは右から左に走査するのに役に立つ様々な関数があります。
+また、次の2つの関数は配列を左から右に走査するために使うことができます:
+
+#atscode('\
+//
+fun{a:t0p}
+arrayref_head{n:pos} (A: arrayref (a, n)): (a) // A[0]
+fun{a:t0p}
+arrayref_tail{n:pos} (A: arrayref (a, n)): arrayref (a, n-1)
+//
+overload .head with arrayref_head
+overload .tail with arrayref_tail
+')
+
+例として、配列に対する左 fold 関数は次のように実装できます:
+
+#atscode_extract('
+fun{a,b:t@ype}
+arrayref_foldleft{n:int}
+(
+  f: (a, b) -> a, x: a, A: arrayref (b, n), n: size_t(n)
+) : a =
+(
+if n > 0
+  then arrayref_foldleft<a,b> (f, f (x, A.head), A.tail, pred(n))
+  else x
+// end of [if]
+) (* end of [arrayref_foldleft] *)
+')
+
+期待される通り、#dyncode("A.head") と #dyncode("A.tail") はそれぞれ
+#dyncode("A[0]") と #dyncode('ptr_succ&lt;T&gt;(p0)') に変換されます。
+このとき T は A に保管されている要素の型で、p0 は A の開始アドレスです。
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_arrayref.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコードの全体は
+#mycodelink("chap_arrayref.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"arrayref"-->
 

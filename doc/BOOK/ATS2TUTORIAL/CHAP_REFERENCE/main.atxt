@@ -420,7 +420,7 @@ code used in this chapter.\
 #para("\
 
 この章で紹介したコードの全体は
-#mycodelink("chap_reference.dats", "on-line")
+#mycodelink("chap_reference.dats", "オンライン")
 から入手できます。\
 
 ")#comment("para")
