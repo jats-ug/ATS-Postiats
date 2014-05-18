@@ -13,18 +13,33 @@ by [atsdoc] from [CHAP_EXCEPTION/main.atxt].\n\
 Time of Generation: #timestamp()\
 ")
 <chapter
-id="exceptions"
->#title("Exceptions")
+id="exceptions">
+#langeng("
+#title("Exceptions")
+")
+#langja("
+#title("例外")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para("
 
 While exceptions can be very useful in practice, it is also very common to
 see code that misuses exceptions.
 
 ")
+")
+#langja("
+#para("
 
+例外は実用上とても有用ですが、例外を誤用したコードがよく見られることでも知られています。
+
+")
+")
+
+#langeng("
 #para("\
 
 Generally speaking, there are exceptions that are meant to be raised but
@@ -41,7 +56,24 @@ following presentation, I will soley focus on exceptions that are meant to
 be raised and then captured.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+一般的に言うと、プログラムの実行を中断終了させるために捕捉されないことを意図した例外と、プログラム実行の流れを変えるために
+(しばしばローカルで宣言した) 捕捉されることを意図した例外があります。
+例えば、例外 #dyncode("ArraySubscriptExn")
+は実行時に配列の範囲外を添字指定したことを検出すると発生します。
+この例外が発生すると、通常
+#dyncode("ArraySubscriptExn") は捕捉されることを意図していません。
+プログラマが #dyncode("ArraySubscriptExn")
+例外を捕捉するコードを書くことを妨げるものはなにもありませんが、そのコードが非常に複雑になってしまう懸念があります。
+次に、発生した後に捕捉されることを意図した例外について説明しようと思います。
+
+")#comment("para")
+")
+
+#langeng("
 #para('\
 
 Let us now take a look at the following code that implements a function
@@ -140,7 +172,105 @@ is raised and the point where the raised exception is captured should span
 multiple call frames. If not, then the use of exception may be questionable.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+リストの中から与えられた述語を満たす一番右の要素を見つける関数を実装している次のコードを見てみましょう:
+
+#atscode('\
+extern
+fun{a:t@ype}
+list_find_rightmost
+  (List (a), (a) -<cloref1> bool): Option_vt (a)
+//
+implement{a}
+list_find_rightmost
+  (xs, pred) = let
+//
+fun aux
+(
+  xs: List(a)
+) : Option_vt (a) =
+  case+ xs of
+  | nil () => None_vt ()
+  | cons (x, xs) => let
+      val res = aux (xs)
+    in
+      case+ res of
+      | Some_vt _ => res
+      | ~None_vt () =>
+          if pred (x) then Some_vt (x) else None_vt ()
+        // end of [None]
+    end (* end of [cons] *)
+//
+in
+  aux (xs)
+end // end of [list_find_rightmost]
+')
+
+#dyncode("list_find_rightmost") が長さ (なんらかの自然数) N のリスト xs
+と述語 pred に対して呼び出されたとしましょう。
+この呼び出しの評価は内部関数 #dyncode("aux") の呼び出しを引き起こし、
+さらに N 回の #dyncode("aux") の再帰呼び出しに変化します。
+xs の最後の要素だけが述語 pred を満たすと仮定しましょう。
+すると pref を満たす一番右の要素が見つかっているのに、まだ N-1 個の
+#dyncode("aux") 呼び出しフレームがコールスタックに残っています。
+見つかった要素を大元の #dyncode("list_find_rightmost")
+呼び出しへ戻す前に、これらのフレームを#emphasis("一つずつ")ほどいてやらねばなりません。
+次の例外を使った実装 #dyncode("list_find_rightmost") ではこの非効率な形を取り除いています:
+
+#atscode('
+implement{a}
+list_find_rightmost
+  (xs, pred) = let
+//
+exception Found of (a)
+//
+fun aux
+(
+  xs: List(a)
+) : void =
+  case+ xs of
+  | nil () => ()
+  | cons (x, xs) => let
+      val () = aux (xs)
+    in
+      if pred (x) then $raise Found(x) else ()
+    end (* end of [cons] *)
+//
+in
+//
+try let
+  val () = aux (xs)
+in
+  None_vt ()
+end with
+  | ~Found(x) => Some_vt (x)
+//
+end // end of [list_find_rightmost]
+')
+
+try-with 式が評価されると、キーワード #keycode("with")
+に続く節 (しばしば例外ハンドラと呼ばれます)
+を評価するのに必要なコールスタックの部分へのラベルが生成されます。
+それからこのラベルは指定されたグローバルスタックにプッシュされます。
+例外が発生すると、例外ハンドラによって発生した例外が捕捉されるまで
+(つまり例外を表わす値が例外ハンドラのパターンガードにマッチするまで)
+、一つずつグローバルスタック内のそのラベル群が試されます。
+もし捕捉されなかった場合は現在のプログラムの評価は中断終了します。
+上記の例外を使った実装 #dyncode("list_find_rightmost") では、再帰呼出
+#dyncode("aux") で見つかった要素を運搬するために例外を発生させています。
+コールスタックにある (#dyncode("aux") への再帰呼出である)
+中間の呼び出しフレームを全て迂回して、1回のジャンプでこの要素を大元の
+#dyncode("list_find_rightmost") に返すことができるのです。
+一般に、例外が発生するポイントとその例外を捕捉するポイントの範囲は複数のコールフレームに及んでいるべきです。
+そうでなければ、例外の使用すべきか疑わしいかもしれません。
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 The implementation of the run-time support for exceptions in ATS makes use
@@ -152,13 +282,36 @@ compile the C code generated from ATS source, one can pass the flag
 is properly included.
 
 ")
+")
+#langja("
+#para("\
 
+例外を実行時にサポートする ATS の実装は
+#filename("alloca.h") で宣言されている #dyncode("alloca") 関数と
+#filename("setjmp.h") で宣言されている #dyncode("setjmp") と #dyncode("longjmp") 関数を使っています。
+ATS ソースコードから生成されたC言語ソースコードをコンパイルするのに #command("gcc") もしくは #command("clang") を使う場合、
+#filename("alloca.h") ヘッダファイルが確実にインクルードするために -D_GNU_SOURCE フラグを渡すことができます。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_exception.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコードの全体は
+#mycodelink("chap_exception.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"exceptions"-->
 
