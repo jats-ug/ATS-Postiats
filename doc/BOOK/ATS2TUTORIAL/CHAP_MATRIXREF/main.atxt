@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_MATRIXREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="matrixref">
+#langeng("
 #title("Persistent Matrices")
+")
+#langja("
+#title("永続化行列")
+")
 
+#langeng("
 #para("\
 
 A persistent matrix of dimension m by n is just a persistent array of size
@@ -23,7 +29,18 @@ other words, element (i, j) in a matrix of dimension m by n is element
 i*n+j in the underlying array that represents the matrix.
 
 ")
+")
+#langja("
+#para("\
 
+次元 m, n の永続化行列は、単にサイズが m*n の永続化配列です。
+C言語と同様に、ATS における行列表現は列優先 (row-major) です。
+別の言い方をすると、次元 m, n の行列内の要素 (i, j) は、その行列を表現する配列内の要素 i*n+j です。
+
+")
+")
+
+#langeng("
 #para("\
 
 Given a viewtype VT and two integers M and N, the type
@@ -36,7 +53,22 @@ functions on persistent matrices can be found in the SATS file
 #command("atsopt").
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+viewtype VT と2つの整数 M と N が与えられたとき、
+型 #stacode("matrixref(VT, M, N)") は viewtype VT の要素を含む次元 M, N の永続化行列を表わします。
+matrixref 値にどのような次元情報も付随しません。
+永続化行列に関する様々な関数のインターフェイスを SATS ファイル
+#myatscodelink("prelude/SATS/matrixref.sats", "prelude/SATS/matrixref.sats")
+に見つけることができます。
+これは #command("atsopt") によって自動的に読み込まれます。
+
+")#comment("para")
+")
+
+#langeng("
 #para('\
 
 The following function is commonly used to create a matrixref-value:
@@ -53,7 +85,26 @@ Given two sizes m and n plus an element x0,
 in which each cell is initialized with the element x0.\
 
 ')
+")
+#langja("
+#para('\
 
+次の関数は matrixref 値を生成するのに一般的に使用されます:
+
+#atscode('\
+fun{a:t0p}
+matrixref_make_elt{m,n:int}
+  (m: size_t m, n: size_t n, x0: a):<!wrt> matrixref (a, m, n)
+// end of [matrixref_make_elt]
+')
+
+2つのサイズ m, n と要素 x0 が与えられたとき、#dyncode("matrixref_make_elt")
+はそれぞれのセルが要素 x0 で初期化された次元 m, n の行列を返します。\
+
+')
+")
+
+#langeng("
 #para('\
 
 Also, the following cast function can be called to turn an array into
@@ -67,7 +118,23 @@ arrayref2matrixref
 ')
 
 ')
+")
+#langja("
+#para('\
 
+また、次のキャスト関数が呼び出されると、配列を行列に変化させます:
+
+#atscode('\
+castfn
+arrayref2matrixref
+  {a:vt0p}{m,n:nat} (A: arrayref (a, m*n)):<> matrixref (a, m, n)
+// end of [arrayref2matrixref]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 For accessing and updating the content of a matrix-cell, the following
@@ -97,7 +164,38 @@ matrix-cell in order to access it; the column dimension of the matrix
 needs to be supplied as well.
 
 ')
+")
+#langja("
+#para('\
 
+行列セルの内容物にアクセスしたり更新するために、次の2つの関数
+#dyncode("matrixref_get_at") と #dyncode("matrixref_set_at") を呼び出すことができます:
+
+#atscode('\
+//
+fun{a:t0p}
+matrixref_get_at
+  {m,n:int}
+(
+  A: matrixref (a, m, n), i: sizeLt(m), n: size_t(n), j: sizeLt(n)
+) :<!ref> (a) // end of [matrixref_get_at]
+//
+fun{a:t0p}
+matrixref_set_at
+  {m,n:int}
+(
+  A: matrixref (INV(a), m, n), i: sizeLt (m), n: size_t n, j: sizeLt (n), x: a
+) :<!refwrt> void // end of [matrixref_set_at]
+//
+')
+
+アクセスするためには単に行列セルの座標を指定するだけでは十分ではないことに注意してください;
+その行列の行の次元も同様に指定する必要があります。
+
+')
+")
+
+#langeng("
 #para('\
 
 In the following presentation, I give an implementation of a function that
@@ -149,13 +247,77 @@ end // end of [matrixref_transpose]
 ')
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+次は、与えられた正方行列を転置行列にする関数の実装です:
+
+#atscode('\
+//
+extern
+fun{a:t0p}
+matrixref_transpose
+  {n:nat}
+(
+  M: matrixref (a, n, n), n: size_t (n)
+) : void // end of [matrixref_transpose]
+//
+implement{a}
+matrixref_transpose
+  {n} (M, n) = let
+//
+macdef
+mget (i, j) =
+  matrixref_get_at (M, ,(i), n, ,(j))
+macdef
+mset (i, j, x) =
+  matrixref_set_at (M, ,(i), n, ,(j), ,(x))
+//
+fun loop
+  {i,j:nat |
+   i < j; j <= n
+  } .<n-i,n-j>. 
+(
+  i: size_t (i), j: size_t (j)
+) : void =
+  if j < n then let
+    val x = mget(i, j)
+    val () = mset(i, j, mget(j, i))
+    val () = mset(j, i, x)
+  in
+    loop (i, j+1)
+  end else let
+    val i1 = succ (i)
+  in
+    if i1 < n then loop (i1, succ(i1)) else ()
+  end // end of [if]
+//
+in
+  if n > 0 then loop (i2sz(0), i2sz(1)) else ()
+end // end of [matrixref_transpose]
+')
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_matrixref.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体は
+#mycodelink("chap_matrixref.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"matrixref"-->
 
