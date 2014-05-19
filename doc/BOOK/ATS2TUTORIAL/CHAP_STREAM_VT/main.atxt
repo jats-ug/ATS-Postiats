@@ -14,8 +14,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="linear-stream-based-lazy-evaluation">
+#langeng("
 #title("Linear Stream-Based Lazy Evaluation")
+")
+#langja("
+#title("線形遅延ストリーム")
+")
 
+#langeng("
 #para('\
 
 In ATS, there is also support for lazy evaluation based on linear
@@ -23,7 +29,17 @@ streams. As far as I can tell, linear stream-based lazy evaluation is
 currently a unique language feature of ATS.
 
 ')
+")
+#langja("
+#para('\
 
+ATS では、線形ストリームに基づいた遅延評価もサポートされています。
+私が知る範囲では、線形遅延ストリームは現在のところ ATS 言語独自の機能です。
+
+')
+")
+
+#langeng("
 #para('\
 
 In practice, it is most likely that (non-linear) stream-based lazy
@@ -35,7 +51,22 @@ representing streams is eliminated as such values can be explicitly freed
 in a safe manner.\
 
 ')
+")
+#langja("
+#para('\
 
+実際には、
+
+(非線形の) 遅延ストリームにはたいがいガベージコレクション (GC) のサポートが必要になります。
+一般的には GC
+の挙動を予測することはとても困難なため、より強い正確さが必要とされる場面において遅延評価は適切でないかもしれません。
+線形遅延ストリームを用いると、ストリームを表現する値を回収する GC が不要になります。
+そのような値は安全な作法で明示的に解放できるのです。\
+
+')
+")
+
+#langeng("
 #para('\
 
 There is a special language construct #dyncode("$ldelay") for delaying or
@@ -49,7 +80,24 @@ is suspended; the second expression is the one whose evaluation results in
 all the linear values contained in the first expression being freed.
 
 ')
+")
+#langja("
+#para('\
 
+特殊コンストラクタ #dyncode("$ldelay") は
+(線形サンク (linear thunk) を作ることによって)
+式の評価を遅延もしくは中断します。
+また、特殊関数のペア #dyncode("lazy_vt_force") と #dyncode("lazy_vt_free")
+はそれぞれ (線形サンクによって表わされる)
+中断された評価の再開と解放を行ないます。
+#dyncode("delay") と異なり、#dyncode("$ldelay") は線形遅延ストリームを作るために2つの式に適用されます;
+1つ目の式はその評価を中断させるため;
+2つ目の式を評価すると1つ目の式が含む全ての線形値を解放します。
+
+')
+")
+
+#langeng("
 #para('\
 
 The abstract type constructor #stacode("lazy_vt") of the sort
@@ -62,7 +110,22 @@ calling #dyncode("lazy_vt_free") on #dyncode("$ldelay(exp1, exp2)")
 initiates the evaluation of exp2 (to free linear values contained in exp1).
 
 ')
+")
+#langja("
+#para('\
 
+種 #stacode("(vt@ype) => vtype") の抽象型コンストラクタ #stacode("lazy_vt") は、viewtype
+に適応されると (ボックス化された) viewtype を形作ります。
+型 T の式 exp1 と型 #stacode("void") の式 exp2 が与えられたとき、値
+#dyncode("$ldelay(exp1, exp2)") は型 #stacode("lazy_vt(T)") です;
+#dyncode("$ldelay(exp1, exp2)") に対して #dyncode("lazy_vt_force") を呼び出すと中断されていた exp1 の評価が再開されます;
+#dyncode("$ldelay(exp1, exp2)") に対して #dyncode("lazy_vt_free") を呼び出すと
+(exp1 に含まれる線形値を解放するために) exp2 の評価が開始されます。
+
+')
+")
+
+#langeng("
 #para('\
 
 The interface for the
@@ -76,7 +139,23 @@ Note that the special prefix operator #keycode("!") in ATS is overloaded
 with #dyncode("lazy_vt_force").\
 
 ')
+")
+#langja("
+#para('\
 
+関数テンプレート #dyncode("lazy_vt_force") は次のようなインターフェイスを持ちます:
+
+#atscode('\
+fun{a:vt@ype} lazy_vt_force (lazyval: lazy_vt(a)): (a)
+')
+
+ATS における特殊な前置演算子 #keycode("!") は
+#dyncode("lazy_vt_force") でオーバーロードされていることに注意してください。\
+
+')
+")
+
+#langeng("
 #para('\
 
 The interface for the
@@ -90,7 +169,23 @@ Note that the special prefix operator #keycode("~") in ATS is overloaded
 with #dyncode("lazy_vt_free").\
 
 ')
+")
+#langja("
+#para('\
 
+関数 #dyncode("lazy_vt_free") は次のようなインターフェイスを持ちます:
+
+#atscode('\
+fun lazy_vt_free {a:vt@ype} (lazyval: lazy_vt(a)): void
+')
+
+ATS における特殊な前置演算子 #keycode("~") は #dyncode("lazy_vt_free")
+でオーバーロードされていることに注意してください。\
+
+')
+")
+
+#langeng("
 #para("\
 
 In #myatscodelink("prelude/SATS/stream_vt.sats", "prelude/SATS/stream_vt.sats"),
@@ -110,7 +205,32 @@ Also, a number of common functions on linear streams are declared in
 implemented in #myatscodelink("prelude/DATS/stream_vt.dats", "prelude/DATS/stream_vt.dats").
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#myatscodelink("prelude/SATS/stream_vt.sats", "prelude/SATS/stream_vt.sats")
+にて、線形遅延ストリームを表現する次の viewtype
+#stacode("stream_vt_con") と #stacode("stream_vt")
+が相互再帰的に宣言されています:
+
+#atscode("\
+datavtype
+stream_vt_con (a:vt@ype+) =
+  | stream_vt_nil of ((*void*)) | stream_vt_cons of (a, stream_vt(a))
+where stream_vt (a:vt@ype) = lazy_vt (stream_vt_con(a))
+")
+
+また、線形ストリームに関する多数の一般的な関数が
+#myatscodelink("prelude/SATS/stream_vt.sats", "prelude/SATS/stream_vt.sats")
+で宣言され、
+#myatscodelink("prelude/DATS/stream_vt.dats", "prelude/DATS/stream_vt.dats")
+で実装されています。
+
+")#comment("para")
+")
+
+#langeng("
 #para('\
 
 The following code gives an implementation of the sieve
@@ -150,7 +270,49 @@ val thePrimes = sieve(from(2))
 ')
 
 ')
+")
+#langja("
+#para('\
 
+次のコードは、全ての素数が線形ストリームとしてコンストラクトされるエラトステネスの篩
+(Sieve of Eratosthenes) を実装しています:
+
+#atscode('\
+//
+fun
+from (n: int): stream_vt (int) =
+  $ldelay (stream_vt_cons (n, from (n+1)))
+//
+fun sieve
+(
+  ns: stream_vt(int)
+) : stream_vt(int) = $ldelay
+(
+let
+//
+// [val-] means no warning message from the compiler
+//
+  val ns_con = !ns
+  val-@stream_vt_cons(n, ns1) = ns_con
+  val n = n
+  val ns1_ = ns1
+  val ((*void*)) = ns1 := sieve (stream_vt_filter_cloptr<int> (ns1_, lam x => x mod n > 0))
+  prval ((*void*)) = fold@(ns_con)
+in
+  ns_con
+end // end of [let]
+,
+~ns // [ns] is freed
+) (* end of [$ldelay] *) // end of [sieve]
+//
+val thePrimes = sieve(from(2))
+//
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 The function template #dyncode("stream_vt_filter_cloptr") is given
@@ -169,7 +331,28 @@ satisfying the predicate pred.  Note that both xs and pred are consumed by
 the call to #dyncode("stream_vt_filter_cloptr").
 
 ')
+")
+#langja("
+#para('\
 
+関数テンプレート #dyncode("stream_vt_filter_cloptr") は次のインターフェイスを持ちます:
+
+#atscode('\
+fun{a:t0p}
+stream_vt_filter_cloptr
+  (xs: stream_vt (a), pred: (&a) -<cloptr> bool): stream_vt (a)
+// end of [stream_vt_filter_cloptr]
+')
+
+ストリーム xs と述語 pred が与えられたとき、#dyncode("stream_vt_filter_cloptr")
+は述語 pred を満すようなストリーム xs 内の全ての要素から成る別のストリームを返します。
+xs と pred は両方とも #dyncode("stream_vt_filter_cloptr")
+呼び出しによって消費されることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("chap_stream_vt.dats", "on-line") the entirety of
@@ -178,6 +361,19 @@ the code used in this chapter. One can readily use a tool like
 implementation given above leaks no memory.
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体は
+#mycodelink("chap_stream_vt.dats", "オンライン")
+から入手できます。
+上記の実装がメモリリークをしていないことを確認するために
+<ulink url="http://www.valgrind.org">valgrind</ulink>
+のようなツールを使うこともたやすいでしょう。
+
+')#comment("para")
+")
 
 </chapter><!--"linear-stream-based-lazy-evaluation"-->
 
