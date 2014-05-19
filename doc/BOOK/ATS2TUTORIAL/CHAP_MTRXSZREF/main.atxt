@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_MTRXSZREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="mtrxszref">
+#langeng("
 #title("Persistent Matrices-with-size")
+")
+#langja("
+#title("サイズを伴う永続化行列")
+")
 
+#langeng("
 #para("\
 
 I use the name #emphasis("matrix-with-size") to refer to a persistant
@@ -28,7 +34,25 @@ functions on persistent matrices-with-size can be found in
 #myatscodelink("prelude/SATS/matrixref.sats", "prelude/SATS/matrixref.sats").
 
 ")
+")
+#langja("
+#para("\
 
+次元情報 (つまり列の数や行の数)
+が付属した永続化行列を #emphasis("サイズを伴う行列 (matrix-with-size)") と呼びます。
+viewtype VT が与えられたとき、viewtype VT の要素を M 列と N
+行含むサイズを伴う行列の型は #stacode("mtrxszref(VT, M, N)") です。
+本質的に、この型の値は3つの型
+#stacode("arrayref(VT, N)"), #stacode("size_t(M)"), #stacode("size_t(N)")
+を構成要素とするボックス化レコードです。
+サイズを伴う永続化行列に関する様々な関数のインターフェイスを
+#myatscodelink("prelude/SATS/matrixref.sats", "prelude/SATS/matrixref.sats")
+に見つけることができます。
+
+")
+")
+
+#langeng("
 #para('\
 
 The following function is commonly used to create a matrix-with-size:
@@ -44,7 +68,25 @@ returns a matrix-with-size of the dimension m by n in which each matrix-cell
 is initialized with the given element x0.\
 
 ')
+")
+#langja("
+#para('\
 
+次の関数はサイズを伴う行列を生成するのに一般的に使用されます:
+
+#atscode('\
+fun{a:t0p}
+mtrxszref_make_elt (m: size_t, n: size_t, x0: a): mtrxref (a)
+// end of [mtrxszref_make_elt]
+')
+
+2つのサイズ m, n と要素 x0 が与えられたとき、
+#dyncode("mtrxszref_make_elt") はそれぞれの行列セルが与えられた要素 x0 で初期化された次元 m, n のサイズを伴う行列を返します。\
+
+')
+")
+
+#langeng("
 #para('\
 
 For accessing and updating the content of a matrix-cell, the following
@@ -67,7 +109,31 @@ called, and the exception #dyncode("MatrixSubscriptExn") is raised in case
 of out-of-bounds matrix access is detected.
 
 ')
+")
+#langja("
+#para('\
 
+行列セルの内容物にアクセスしたり更新したりするために、
+次の2つの関数 #dyncode("mtrxszref_get_at") と #dyncode("mtrxszref_set_at") を使うことができます:
+
+#atscode('\
+fun{a:t0p}
+mtrxszref_get_at (M: mtrxszref(a), i: size_t, j: size_t): (a)
+fun{a:t0p}
+mtrxszref_set_at (M: mtrxszref(a), i: size_t, j: size_t, x: a): void
+')
+
+サイズを伴う行列 M と2つのインデックス i, j と値 v
+が与えられたとき、#dyncode("mtrxszref_get_at(M, i, j)") と #dyncode("mtrxszref_set_at(M, i, j, v)")
+はそれぞれ #dyncode("M[i,j]") と #dyncode("M[i,j] := v") のように書くことができます。
+#dyncode("mtrxszref_get_at") もしくは #dyncode("mtrxszref_set_at")
+が呼び出されると実行時に行列の範囲検査が行なわれ、行列の範囲外アクセスを検出すると例外
+#dyncode("MatrixSubscriptExn") が発生することに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 As a simple example, the following code implements a functiont that
@@ -107,7 +173,49 @@ end // end of [mtrxszref_transpose]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+簡単な例として、次のコードは与えられたサイズを伴う行列の中身の転置行列を取る関数を実装しています:
+
+#atscode('\
+//
+extern
+fun{a:t0p}
+mtrxszref_transpose (M: mtrxszref (a)): void
+//
+implement{a}
+mtrxszref_transpose (M) = let
+//
+val n = M.nrow
+val ((*void*)) = assertloc (M.nrow = M.ncol)
+//
+fun loop
+(
+  i: size_t, j: size_t
+) : void =
+  if j < n then let
+    val x = M[i,j]
+    val () = M[j,i] := M[i,j]
+    val () = M[i,j] := x
+  in
+    loop (i, succ(j))
+  end else let
+    val i1 = succ (i)
+  in
+    if i1 < n then loop (i1, succ(i1)) else ()
+  end // end of [if]
+//
+in
+  if n > 0 then loop (i2sz(0), i2sz(1)) else ()
+end // end of [mtrxszref_transpose]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Like arrays-with-size, matrices-with-size are easier to program with than
@@ -118,13 +226,34 @@ reasonable to start out with matrices-with-size and then replace them with
 matrices when there are clear benefits from doing so.\
 
 ')
+")
+#langja("
+#para('\
 
+サイズを伴う配列と同様に、サイズを伴う行列は依存型行列よりも簡単にプログラミングできます。
+けれども、後者はコンパイル時にエラーを効果的に検出することができず、実行時のコード実行で検出します。
+ATS でプログラミングする際、サイズを伴う行列からはじめて、その恩恵が明確になった後で行列に置き換えるのは妥当でしょう。\
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_mtrxszref.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコードの全体は
+#mycodelink("chap_mtrxszref.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"mtrxszref"-->
 
