@@ -14,8 +14,15 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="Tail-Recursion"
->#title("Tail-Recursion")
+>
+#langeng("
+#title("Tail-Recursion")
+")
+#langja("
+#title("末尾再帰")
+")
 
+#langeng("
 #para('\
 
 Please see <ulink
@@ -24,6 +31,17 @@ article</ulink> for a detailed explanation on tail-recursion and the
 support in ATS for turning tail-recursive calls into local jumps.\
 
 ')
+")
+#langja("
+#para('\
+
+末尾再帰の詳細な説明と、ATS が末尾再帰呼び出しをローカルジャンプに変換することについて
+<ulink
+url="http://www.ats-lang.org/EXAMPLE/EFFECTIVATS/loop-as-tailrec/main.html">この記事</ulink>
+を読んでください。\
+
+')
+")
 
 </chapter><!--"tail-recursion"-->
 
