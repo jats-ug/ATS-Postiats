@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_ARRSZREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="arrszref">
+#langeng("
 #title("Persistent Arrays-with-size")
+")
+#langja("
+#title("サイズを伴う永続化配列")
+")
 
+#langeng("
 #para('\
 
 I use the name #emphasis("array-with-size") to refer to a persistant
@@ -27,7 +33,23 @@ arrays-with-size can be found in
 #myatscodelink("prelude/SATS/arrayref.sats", "prelude/SATS/arrayref.sats").
 
 ')
+")
+#langja("
+#para('\
 
+サイズ情報が付属した永続化配列を #emphasis("サイズを伴う配列 (array-with-size)") と呼びます。
+viewtype VT が与えられたとき、viewtype VT の N
+個の値を含むサイズを伴う配列の型は #stacode("arrszref(VT, N)") です。
+本質的に、この型の値は型 #stacode("arrayref(VT, N)") と #stacode("size_t(N)")
+の2つを構成要素とするボッスク化ペアです。
+サイズを伴う永続化配列に対する様々な関数のインターフェイスを
+#myatscodelink("prelude/SATS/arrayref.sats", "prelude/SATS/arrayref.sats")
+に見つけることができます。
+
+')
+")
+
+#langeng("
 #para('\
 
 For creating an array-with-size, the following functions
@@ -55,7 +77,36 @@ Note that #dyncode("arrszref") is overloaded with
 #dyncode("arrszref_make_arrpsz").
 
 ')
+")
+#langja("
+#para('\
 
+次の関数 #dyncode("arrszref_make_arrpsz") と #dyncode("arrszref_make_arrayref")
+を呼び出すことで、サイズを伴う配列を生成することができます:
+
+#atscode('\
+fun{}
+arrszref_make_arrpsz
+  {a:vt0p}{n:int} (arrpsz (INV(a), n)): arrszref(a)
+fun{}
+arrszref_make_arrayref
+  {a:vt0p}{n:int} (arrayref (a, n), size_t(n)): arrszref(a)
+// end of [arrszref_make_arrayref]
+')
+
+例として、次のコードは全ての10進数の数字を含むような、サイズを伴う配列を生成しています:
+
+#atscode('\
+val DIGITS = (arrszref)$arrpsz{int}(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+')
+
+#dyncode("arrszref") は #dyncode("arrszref_make_arrpsz")
+によって多重定義されていることに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 For reading from and writing to an array-with-size, the function templates
@@ -78,7 +129,35 @@ called, and the exception #dyncode("ArraySubscriptExn") is raised in case
 of out-of-bounds array access is detected.
 
 ')
+")
+#langja("
+#para('\
 
+サイズを伴う配列を読み書きするために、関数テンプレート
+#dyncode("arrszref_get_at") と #dyncode("arrszref_set_at")
+をそれぞれ使うことができます。
+これらの関数テンプレートには次のインターフェイスが割り当てられています:
+
+#atscode('\
+fun{a:t@ype}
+arrszref_get_at (A: arrszref (a), i: size_t): (a)
+fun{a:t@ype}
+arrszref_set_at (A: arrszref (a), i: size_t, x: a): void
+')
+
+サイズを伴う配列 A, インデックス i, 値 v
+が与えられたとき、#dyncode("arrszref_get_at(A, i)") と
+#dyncode("arrszref_set_at(A, i, v)") はそれぞれ
+#dyncode("A[i]") と #dyncode("A[i] := v")
+のように書くことができます。
+#dyncode("arrszref_get_at") もしくは #dyncode("arrszref_set_at")
+が呼び出されると実行時に配列の範囲検査が行なわれ、配列の添字指定の範囲外アクセスを検出すると例外
+#dyncode("ArraySubscriptExn") が発生することに注意してください。
+
+')
+")
+
+#langeng("
 #para('\
 
 As a simple example, the following code implements a functiont that
@@ -111,7 +190,42 @@ end // end of [arrszref_reverse]
 ')
 
 ')
+")
+#langja("
+#para('\
 
+簡単な例として、次のコードは与えられたサイズを伴う配列の中身を逆順にする関数を実装しています:
+
+#atscode('\
+fun{a:t@ype}
+arrszref_reverse
+(
+  A: arrszref (a)
+) : void = let
+//
+val n = A.size
+val n2 = half (n)
+//
+fun loop
+  (i: size_t): void = let
+in
+  if i < n2 then let
+    val tmp = A[i]
+    val ni = pred(n)-i
+  in
+    A[i] := A[ni]; A[ni] := tmp; loop (succ(i))
+  end else () // end of [if]
+end // end of [loop]
+//
+in
+  loop (i2sz(0))
+end // end of [arrszref_reverse]
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 Arrays-with-size can be a good choice over arrays in a prototype
@@ -122,13 +236,34 @@ programming in ATS, I often start out with arrays-with-size and then
 replace them with arrays when I can see clear benefits from doing so.\
 
 ')
+")
+#langja("
+#para('\
 
+配列を用いたプログラミングが要求される実装のプロトタイピングに、サイズを伴う配列はうってつけです。
+また、依存型にまだ精通していないプログラマにとって、配列よりもサイズを伴う配列の方が明らかに簡単に使えるでしょう。
+ATS におけるプログラミングでは、私はサイズを伴う配列からはじめて、それからその恩恵が明確になってから配列で置き換えることがしばしばあります。\
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_arrszref.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体は
+#mycodelink("chap_arrszref.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"arrszref"-->
 
