@@ -75,4 +75,27 @@ end // end of [local]
 
 (* ****** ****** *)
 
+fun ignoretxt (x: atext): atext = atext_nil ()
+fun ignorestr (x: string): atext = atext_nil ()
+
+(* ****** ****** *)
+
+(*
+macdef
+langeng (x) = atext_strsub ,(x)
+*)
+macdef langeng (x) = ignorestr ,(x)
+(*
+macdef
+langchin (x) = atext_strsub ,(x)
+*)
+macdef langchin (x) = ignorestr ,(x)
+macdef
+langja (x) = atext_strsub ,(x)
+(*
+macdef langja (x) = ignorestr ,(x)
+*)
+
+(* ****** ****** *)
+
 (* end of [myfundef.hats] *)
