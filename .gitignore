@@ -360,5 +360,8 @@ doc/BOOK/*/build_ja
 doc/BOOK/*/HTML_EUC
 doc/BOOK/*/HTML_UTF8
 doc/BOOK/*/TEMP
+doc/EXAMPLE/*/*/main.html
+doc/EXAMPLE/*/*/main_atxt.dats
+doc/EXAMPLE/*/*/main_atxt.txt
 
 ###### end of [.gitignore] ######
