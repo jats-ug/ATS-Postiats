@@ -15,15 +15,32 @@ Time of Generation: #timestamp()\
 <chapter
 id="stream-based-lazy-evaluation"
 xreflabel="stream-based lazy evaluation"
->#title("Stream-Based Lazy Evaluation")
+>
+#langeng("
+#title("Stream-Based Lazy Evaluation")
+")
+#langja("
+#title("遅延ストリーム")
+")
 
+#langeng("
 #para('\
 
 While the core of ATS is based on call-by-value evaluation, there is also
 direct support in ATS for lazy (that is, call-by-need) evaluation.
 
 ')
+")
+#langja("
+#para('\
 
+ATS のコアは値渡し (call-by-value) 評価に基づいていますが、ATS
+は遅延評価 (call-by-need) も直接サポートしています。
+
+')
+")
+
+#langeng("
 #para('\
 
 There is a special language construct #dyncode("$delay") for delaying or
@@ -48,7 +65,35 @@ with lazy-evaluation. Note that the special prefix operator #keycode("!")
 in ATS is overloaded with #dyncode("lazy_force").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+(サンク (thunk) を作ることによって)
+式の評価を遅延もしくは中断するための特殊な言語コンストラクタ #dyncode("$delay") があります。
+また、(サンクによって表わされる)
+中断された評価を再開するための特殊な関数 #dyncode("lazy_force") があります。
+種 #stacode("(t@ype) => type") の抽象型コンストラクタ #stacode("lazy")
+は型に適用されると (ボックス化された) 型を形作ります。
+型 T の式 exp が与えられたとき、型 #stacode("lazy(T)") の値 #dyncode("$delay(exp)")
+は exp の中断された評価を表わしています。
+なんらかの型 T について型 #stacode("lazy(T)") の値 V が与えられたとき、
+V に対する #dyncode("lazy_force") 呼び出しは V によって表現される中断された評価を再開します。
+もしその呼び出しあ返ったなら、その返値は型 T になります。
+関数テンプレート #dyncode("lazy_force") のインターフェイスは次のように与えられます:
+
+#atscode('\
+fun{a:t@ype} lazy_force (lazyval: lazy(a)):<!laz> a
+')
+
+このとき記号 #stacode("!laz") は遅延評価 (lazy-evaluation) に関連する効果を表わします。
+ATS における特殊な前置演算子 #keycode("!") は
+#dyncode("lazy_force") の多重定義であることに注意してください。
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 In #myatscodelink("prelude/SATS/stream.sats", "prelude/SATS/stream.sats"),
@@ -67,7 +112,29 @@ Also, a number of common functions on streams are declared in
 implemented in #myatscodelink("prelude/DATS/stream.dats", "prelude/DATS/stream.dats").
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#myatscodelink("prelude/SATS/stream.sats", "prelude/SATS/stream.sats")
+では、遅延ストリームを表現するために次の型
+#stacode("stream_con") と #stacode("stream") が相互再帰的に宣言されています:
+
+#atscode("\
+datatype
+stream_con (a:t@ype+) =
+  | stream_nil of ((*void*)) | stream_cons of (a, stream(a))
+where stream (a:t@ype) = lazy (stream_con(a))
+")
+
+また、ストリームに関する多数の一般的な関数が
+#myatscodelink("prelude/SATS/stream.sats", "prelude/SATS/stream.sats") で宣言され
+#myatscodelink("prelude/DATS/stream.dats", "prelude/DATS/stream.dats") で実装されています。
+
+")#comment("para")
+")
+
+#langeng("
 #para('\
 
 The following code gives a standard implementation of the sieve of
@@ -103,7 +170,43 @@ stream thus generated consists of all the prime numbers ordered
 ascendingly.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+次のコードはエラトステネスの篩 (Sieve of Eratosthenes) の一般的な実装です:
+
+#atscode('\
+//
+fun
+from (n: int): stream (int) =
+  $delay (stream_cons (n, from (n+1)))
+//
+fun sieve
+(
+  ns: stream(int)
+) :<!laz> stream(int) = $delay let
+//
+// [val-] means no warning message from the compiler
+//
+  val-stream_cons(n, ns) = !ns
+in
+  stream_cons (n, sieve (stream_filter_cloref<int> (ns, lam x => x mod n > 0)))
+end // end of [$delay let] // end of [sieve]
+//
+val thePrimes = sieve(from(2))
+//
+')
+
+2からはじまる整数列から成るストリームがコンストラクトされます;
+ストリームの最初の要素が保持され、その要素の倍数がストリームの残り (tail) から削除されます;
+それからストリームの残り (tail) に対してこの処理が再帰的に繰り返されます。
+明確に、このように生成された最終的なストリームは昇順に並んだ全ての素数から成ります。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 The function template #dyncode("stream_filter_cloref") is of the following
@@ -121,7 +224,26 @@ generates another stream consisting of all the elements in the given stream
 that satisfy the given predicate.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+関数テンプレート #dyncode("stream_filter_cloref") は次のようなインターフェイスを持ちます:
+
+#atscode("\
+fun{a:t@ype}
+stream_filter_cloref
+  (xs: stream(a), pred: a -<cloref> bool):<!laz> stream(a)
+// end of [stream_filter_cloref]
+")
+
+ストリームと述語が与えられたとき、#dyncode("stream_filter_cloref")
+は与えられた述語を満すような、与えられたストリーム内の要素群全てから成る別のストリームを生成します。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Let us see another example of lazy evaluation.  The follow code
@@ -163,7 +285,50 @@ element n in xs), if exists, equals f(xs1[n], xs2[n]), where n ranges over
 natural numbers.
 
 ')
+")
+#langja("
+#para('\
 
+遅延評価の別の例を見てみましょう。
+次のコードは、フィボナッチ数列を計算する興味深いアプローチを示しています:
+
+#atscode('\
+//
+val _0_ = $UNSAFE.cast{int64}(0)
+val _1_ = $UNSAFE.cast{int64}(1)
+//
+val // the following values are defined mutually recursively
+rec theFibs_0
+  : stream(int64) = $delay (stream_cons(_0_, theFibs_1)) // fib0, fib1, ...
+and theFibs_1
+  : stream(int64) = $delay (stream_cons(_1_, theFibs_2)) // fib1, fib2, ...
+and theFibs_2
+  : stream(int64) = // fib2, fib3, fib4, ...
+(
+  stream_map2_fun<int64,int64><int64> (theFibs_0, theFibs_1, lam (x, y) => x + y)
+) (* end of [val/and/and] *)
+//
+')
+
+関数テンプレート #dyncode("stream_map2_fun") には次のインターフェイスが割り当てられています:
+
+#atscode("\
+fun{
+a1,a2:t0p}{b:t0p
+} stream_map2_cloref
+(
+  xs1: stream (a1), xs2: stream (a2), f: (a1, a2) -<fun> b
+) :<!laz> stream (b) // end of [stream_map2_cloref]
+")
+
+2つのストリーム xs1, xs2 と引数が2つの関数 f が与えられたとき、
+#dyncode("stream_map2_fun") は n が自然数の範囲において
+xs[n] が f(xs1[n], xs2[n]) と等しいようなストリーム xs を作ります。
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us see yet another example of lazy evaluation.
@@ -215,7 +380,59 @@ represents the union of the two given streams such that any elements in the
 second stream that also occurs in the first stream are dropped.
 
 ')
+")
+#langja("
+#para('\
 
+さらに別の遅延評価の例を見てみましょう。
+ハミング数 (Hamming number) は素因数として 2, 3, 5 のみを持つ自然数です。
+次のコードは、全てのハミング数から成るストリームを生成する率直な方法を示しています:
+
+#atscode('\
+//
+val
+compare_int_int =
+  lam (x1: int, x2: int): int =<fun> compare(x1, x2)
+//
+macdef
+merge2 (xs1, xs2) =
+  stream_mergeq_fun<int> (,(xs1), ,(xs2), compare_int_int)
+//
+val
+rec theHamming
+  : stream(int) = $delay
+(
+  stream_cons (1, merge2 (merge2 (theHamming2, theHamming3), theHamming5))
+) (* end of [val] *)
+
+and theHamming2
+  : stream(int) = stream_map_fun<int><int> (theHamming, lam x => 2 * x)
+and theHamming3
+  : stream(int) = stream_map_fun<int><int> (theHamming, lam x => 3 * x)
+and theHamming5
+  : stream(int) = stream_map_fun<int><int> (theHamming, lam x => 5 * x)
+//
+')
+
+関数テンプレート #dyncode("stream_mergeq_fun") は次のインターフェイスを持ちます:
+
+#atscode('\
+fun{a:t0p}
+stream_mergeq_fun
+(
+  xs1: stream (a), xs2: stream (a), (a, a) -<fun> int
+) :<!laz> stream (a) // end of [stream_mergeq_fun]
+')
+
+2つのストリームと、その2つのストリームがある順序によって昇順に整列されたような (関数によって表現された)
+順序が与えられたとき、#dyncode("stream_mergeq_fun")
+は与えられた2つのストリームの合併を表わす、昇順に整列したストリームを返します。
+つまり2番目のストリーム内のどのような要素も、1番目のストリーム内にも在るのであれば捨てられます。
+
+')
+")
+
+#langeng("
 #para('\
 
 With stream-based lazy evaluation, an illusion of infinite data can be
@@ -224,7 +441,19 @@ automatic support for memoization, enabling a programming style that can
 often be both elegant and intriguing.
 
 ')
+")
+#langja("
+#para('\
 
+遅延ストリームを用いると、無限なデータの錯覚をたやすく作り出すことができます。
+この錯覚は、メモ化 (memoization)
+に対して単純なプログラミングインターフェイスと自動化サポートによって産み出され、
+しばしば優雅さと魅力を両立したプログラミングスタイルを可能にします。
+
+')
+")
+
+#langeng("
 #para('\
 
 In general, it is difficult to estimate the time-complexity and
@@ -233,13 +462,35 @@ a serious weakness. With linear stream-based lazy evalution, this weakness
 can essentially be removed.
 
 ')
+")
+#langja("
+#para('\
 
+一般的に、遅延評価に基づいたプログラムの時間的計算量 (time-complexity)
+と空間的計算量 (space-complexity) を見積ることは困難です。
+これは深刻な弱点です。
+線形遅延ストリームを用いることで、この弱点を本質的に克服することができます。
+
+')
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_stream.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体は
+#mycodelink("chap_stream.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"stream-based-lazy-evaluation"-->
 
