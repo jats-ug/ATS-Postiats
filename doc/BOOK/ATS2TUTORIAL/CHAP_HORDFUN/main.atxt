@@ -13,10 +13,16 @@ by [atsdoc] from [CHAP_HORDFUN/main.atxt].\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="hordfun">
+#langeng("
 #title("Higher-Order Functions")
+")
+#langja("
+#title("高階関数")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para("
 A higher-order function is one that takes another function as its argument.
 
@@ -26,6 +32,17 @@ Let us use BT to range over base types such as #stacode("int"),
 inductive definition:
 
 ")#comment("para")
+")
+#langja("
+#para("
+高階関数は、その引数に他の関数を取る関数です。
+
+#stacode("int"), #stacode("bool"), #stacode("char"), #stacode("double"), #stacode("string")
+のような基本型の範囲を表わすために BT を使ってみましょう。
+単純な型 T は次の帰納的定義に従って形作られます:
+
+")#comment("para")
+")
 
 %{
 //
@@ -40,6 +57,7 @@ in
 end // end of [itemizedlist]
 %}
 
+#langeng("
 #ignore("\
 #listitem[item1]("\
 #para("BT is a simple type.")
@@ -54,12 +72,39 @@ T#sub("0"), T#sub("1"), ... T#sub("n") are simple types.
 ")#comment("listitem")
 ")\
 #itemizedlist{item1, item2}
+")
+#langja("
+#ignore("\
+#listitem[item1]("\
+#para("BT は単純な型です。")
+")
+")\
+#ignore("\
+#listitem[item2]("\
+#para("\
+T#sub("0"), T#sub("1"), ... T#sub("n")
+が単純な型であれば、(T#sub("1"), ..., T#sub("n")) -&gt; T#sub("0")
+も単純な型です。
+")
+")#comment("listitem")
+")\
+#itemizedlist{item1, item2}
+")
 
+#langeng("
 #para("\
 
 Let #emphasis("order") be a function from simply types to natural numbers
 defined as follows:
 
+")
+")
+#langja("
+#para("\
+
+#emphasis("order") を次のように定義された、単純な型から自然数への関数だとします:
+
+")
 ")
 
 #ignore("\
@@ -79,6 +124,7 @@ defined as follows:
 ")\
 #itemizedlist{item1, item2}
 
+#langeng("
 #para("\
 
 Given a function f of some simple type T, let us say that f is a
@@ -90,7 +136,20 @@ is 1st-order, and a function of the type int -&gt; (int -&gt; int) is also
 functions are 2nd-order.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+単純な型 T の関数 f が与えられた時、#emphasis("order")(T) = #emphasis("n")
+なら f は #emphasis("n") 階関数であると呼ぶことにします。
+例えば、型 (int, int) -&gt; int の関数は1階関数であり、型 int -&gt; (int -&gt; int) の関数もまた1階関数です。
+さらに型 ((int -&gt; int), int) -&gt; int の関数は2階関数になります。
+実際には、ほとんどの関数は1階関数で、ほとんどの高階関数は2階関数になります。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As an example, let us implement as follows a 2nd-order function
@@ -120,7 +179,39 @@ The function #dyncode("find_root") computes the values of f at 0, 1, -1, 2,
 f(n) = 0.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+例として次のように、引数として整数から整数への関数 f を取り、f
+の根を探すような2階関数 #dyncode("find_root") を実装してみましょう:
+
+#atscode_extract("\
+fn find_root
+(
+  f: int -<cloref1> int
+) : int = let
+//
+fun loop
+(
+  f: int -<cloref1> int, n: int
+) : int =
+  if f (n) = 0 then n else (
+    if n <= 0 then loop (f, ~n + 1) else loop (f, ~n)
+  ) // end of [else] // end of [if]
+in
+  loop (f, 0)
+end // end of [find_root]
+")
+
+関数 #dyncode("find_root") は f を 0, 1, -1, 2, -2, など
+に適用した値を計算し、この数列の中で f(n) = 0
+を満すような最初の整数 n を見つけます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 As another example, let us implement as follows the famous Newton-Raphson's
@@ -166,7 +257,55 @@ fn cbrt (c: double): double =
 ")
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+もう一つの例として、関数の根を見つけるために、次のように有名なニュートン・ラフソン法
+(Newton-Raphson's method) を実装してみましょう:
+
+#atscode_extract("\
+typedef
+fdouble = double -<cloref1> double
+//
+macdef epsilon = 1E-6 (* precision *)
+//
+// [f1] is the derivative of [f]
+//
+fun
+newton_raphson
+(
+  f: fdouble, f1: fdouble, x0: double
+) : double = let
+  fun loop (
+    f: fdouble, f1: fdouble, x0: double
+  ) : double = let
+    val y0 = f x0
+  in
+    if abs (y0 / x0) < epsilon then x0 else
+      let val y1 = f1 x0 in loop (f, f1, x0 - y0 / y1) end
+    // end of [if]
+  end // end of [loop]
+in
+  loop (f, f1, x0)
+end // end of [newton_raphson]
+")
+
+#dyncode("newton_raphson") を使うと、平方根関数と立方根関数が次のようにたやすく実装できます:
+
+#atscode_extract("\
+// square root function
+fn sqrt (c: double): double =
+  newton_raphson (lam x => x * x - c, lam x => 2.0 * x, 1.0)
+// cubic root function
+fn cbrt (c: double): double =
+  newton_raphson (lam x => x * x * x - c, lam x => 3.0 * x * x, 1.0)
+")
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Higher-order functions can be of great use in supporting a form of code
@@ -181,14 +320,41 @@ unavailable or simply disallowed). The details on linear closures are to be
 given elsewhere.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+高階関数は、共通した柔軟なコードの共有をサポートするためによく使われます。
+関数引数はガベージコレクション (GC)
+を通して回収されるヒープに確保されたクロージャとしてしばしば表現されるため、GC
+を無効化した状態で高階関数は使われることは稀です。
+ATS では、安全な作法で明示的に解放できる線形クロージャによって、GC
+不在の環境における高階関数をサポートすることができます。
+(GC が利用できないか単純に無効化された)
+システムプログラミングにおいて広範囲に高階関数を使うことができるのです。
+線形クロージャの詳細については別の機会に紹介します。
+
+")#comment("para")
+")
 
 
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_hordfun.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体は
+#mycodelink("chap_hordfun.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"hordfun"-->
 
