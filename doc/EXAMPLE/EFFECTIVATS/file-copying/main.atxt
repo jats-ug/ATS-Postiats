@@ -8,24 +8,14 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-#langeng("
 <title>EFFECTIVATS-file-copying</title>
-")
-#langja("
-<title>EFFECTIVATS: ファイルコピー</title>
-")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
-#langeng("
 Effective ATS: Copying Files
-")
-#langja("
-Effective ATS: ファイルコピー
-")
 </h1>
 
 While the task of copying files is conceptually simple, it can still be
