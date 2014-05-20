@@ -361,6 +361,7 @@ doc/BOOK/*/HTML_EUC
 doc/BOOK/*/HTML_UTF8
 doc/BOOK/*/TEMP
 doc/EXAMPLE/*/*/main.html
+doc/EXAMPLE/*/*/main.ja.html
 doc/EXAMPLE/*/*/main_atxt.dats
 doc/EXAMPLE/*/*/main_atxt.txt
 
