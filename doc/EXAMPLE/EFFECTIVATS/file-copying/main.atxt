@@ -28,36 +28,18 @@ Effective ATS: ファイルコピー
 ")
 </h1>
 
-#langeng("
 While the task of copying files is conceptually simple, it can still be
 quite interesting to implement it in ATS.
-")
-#langja("
-ファイルコピーは概念的には単純ですが、にもかかわらず ATS
-で実装するのは実際興味深いかもしれません。
-")
 
 <h2>
-#langeng("
 Attempt One
-")
-#langja("
-最初の試み
-")
 </h2>
 
-#langeng("
 In order to copy the content of one file into another, we need a means to
 refer to the involved files. In Linux, the notion of file descriptor serves
 precisely this purpose. Although we know that a file descriptor is
 represented as an integer, it seems appropriate to make it abstract as is
 done in the following declaration:
-")
-#langja("
-1つのファイルの内容物を別のファイルにコピーするために、関連するファイル群を参照する手段が必要になります。
-Linux では、ファイルディスクリプタの概念がこの目的のために役立ちます。
-私達はファイルディスクリプタが整数で表現されることを知っていますが、次のような宣言でそれを抽象化するのは適切でしょう:
-")
 
 <pre
 class="patsyntax">
@@ -65,16 +47,9 @@ class="patsyntax">
 abst@ype fildes = int
 ")</pre>
 
-#langeng("
 Often it is a good practice to give a name to an abstract type that is
 less likely to cause collision and then introduce a short alias for the name.
 For instance, the following declarations demonstrate such a practice:
-")
-#langja("
-抽象型に衝突を引き起こしそうにない名前をつけるのはしばしば良い習慣です。
-そしてその名前に短かい別名を導入するのです。
-例えば、次の宣言はそのような習慣を示しています:
-")
 
 <pre
 class="patsyntax">
@@ -83,15 +58,9 @@ abst@ype fildes_t0ype = int
 stadef fildes: t@ype = fildes_t0ype
 ")</pre>
 
-#langeng("
 My naming convention uses the special identifier [t0ype] to indicate
 a type of the sort t@ype, that is, a type of unknown size. Note that
 the stadef-declaration can also be replaced with the following one:
-")
-#langja("
-私の命名規約では、種 t@ype の型、すなわちサイズが不明な型を表わすのに特殊な識別子 [t0ype] を使います。
-stadef 宣言は次のようにも置き換え可能であることに注意してください:
-")
 
 <pre
 class="patsyntax">
@@ -99,13 +68,8 @@ class="patsyntax">
 typedef fildes = fildes_t0ype
 ")</pre>
 
-#langeng("
 Now let us name the file-copying function [fcopy1] and give it
 the following interface:
-")
-#langja("
-さて、ファイルコピー関数を [fcopy1] と名付けて、次のインターフェイスを与えましょう:
-")
 
 <pre
 class="patsyntax">
@@ -113,26 +77,14 @@ class="patsyntax">
 fun fcopy1 (src: fildes, dst: fildes): void
 ")</pre>
 
-#langeng("
 How should we implement [fcopy1]? For the moment, let us try to answer this
 question in a somewhat abstract manner.
-")
-#langja("
-[fcopy1] をどのように実装すべきでしょうか？
-差し当たり、幾分抽象的な作法でこの問に答えることにしましょう。
-")
 
 <p>
 
-#langeng("
 Clearly, we should be able to read chars from [src] and also write chars
 into [dst]. So let us assume that the following two functions are available
 for use:
-")
-#langja("
-明確に、[src] から文字を読み出し、[dst] へ文字を書き込めるべきです。
-そこで、次の2つの関数が使えると仮定しましょう:
-")
 
 <pre
 class="patsyntax">
