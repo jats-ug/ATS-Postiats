@@ -1,21 +1,28 @@
-PUBLISH_PATH    = $(HOME)/doc/jats-ug.github.io/doc/ATS2/EXAMPLE/EFFECTIVATS
-CHAP_ATXT_FILES = $(glob */*.atxt)
-CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES))
-CHAP_DIRS       = $(dirname $(CHAP_ATXT_FILES))
+PUBLISH_PATH      = $(HOME)/doc/jats-ug.github.io/doc/ATS2/EXAMPLE/EFFECTIVATS
+CHAP_ATXT_FILES   = $(glob */*.atxt)
+CHAP_HTML_FILES   = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES))
+CHAP_JAHTML_FILES = $(replacesuffixes .html, .ja.html, $(CHAP_HTML_FILES))
+CHAP_DIRS         = $(dirname $(CHAP_ATXT_FILES))
+OPT_UPDATEPO      = $(mapprefix -m, $(CHAP_HTML_FILES))
 
-.PHONY: all clean publish
+.PHONY: all clean publish updatepo
 .DEFAULT: all
-all: $(CHAP_HTML_FILES)
+all: $(CHAP_JAHTML_FILES)
 
 .SUBDIRS: $(CHAP_DIRS)
 	%.html: %.atxt
 		make $@
+	%.ja.html: %.html
+		po4a-translate -k 0 -M utf8 -f text -m $< -p ../po/ja.po -l $@
+
+updatepo: all
+	po4a-updatepo -M utf8 -f text $(OPT_UPDATEPO) -p po/ja.po
 
 publish: all
 	rm -rf $(PUBLISH_PATH)
 	mkdir -p $(PUBLISH_PATH)
 	cd $(PUBLISH_PATH) && mkdir -p $(CHAP_DIRS)
-	foreach(i, $(CHAP_HTML_FILES))
+	foreach(i, $(CHAP_JAHTML_FILES))
 		cp $(i) $(PUBLISH_PATH)/$(i)
 
 clean:
