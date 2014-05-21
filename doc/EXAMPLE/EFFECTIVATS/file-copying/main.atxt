@@ -130,7 +130,7 @@ into [dst]. So let us assume that the following two functions are available
 for use:
 ")
 #langja("
-明確に、[src] から文字を読み出し、[dst] へ文字を書き込めるべきです。
+[src] から文字を読み出し、[dst] へ文字を書き込めるべきであることは明確です。
 そこで、次の2つの関数が使えると仮定しましょう:
 ")
 
@@ -141,11 +141,19 @@ fun readch (src: fildes): char
 fun writech (src: fildes, c: char): void
 ")</pre>
 
+#langeng("
 There is yet one more thing: We should be able to tell whether we have
 finished reading all the chars from a given file. One simple way to do
 this is to require that [readch] return a special value to indicate the
 end of a file being reached. For this purpose, we modify the interface
 of [readch] as follows:
+")
+#langja("
+またもう一つあります:
+与えられたファイルから全ての文字を読み終わったかどうか分からなければなりません。
+簡単な方法は、[readch] がファイルの最後に達したことを示す特別な値を返すようにすることです。
+この目的のために、[readch] のインターフェイスを次のように修正します:
+")
 
 <pre
 class="patsyntax">
@@ -153,9 +161,16 @@ class="patsyntax">
 fun readch (src: fildes): int
 ")</pre>
 
+#langeng("
 We use natural numbers, that is, non-negative integers for valid chars and
 a negative integer (e.g., -1) for the special value (indicating that the
 end of [src] is reached). We can now readily implement [fcopy1] as follows:
+")
+#langja("
+非負の整数は有効な文字を、負の整数 (例えば -1) は
+([src] の最後に達したことを示す) 特別な値とします。
+これで [fcopy1] を次のようにたやすく実装することができます:
+")
 
 <pre
 class="patsyntax">
@@ -172,14 +187,24 @@ if c >= 0 then
 end (* end of [fcopy1] *)
 ")</pre>
 
+#langeng("
 At this point, the obviously question is: How can functions [readch] and
 [writech] be implemented? They can be implemented based on the system calls
 [read] and [write]. Please find a completed running implementation of
 file-copying based on [fcopy1] in fcopy1.dats, where [readch] and [writech]
 are implemented in C directly.
+")
+#langja("
+ここで当然次のような疑問がわくでしょう:
+関数 [readch] と [writech] はどうすれば実装できるでしょうか？
+それらはシステムコール [read] と [write] に基づいて実装できます。
+[fcopy1] に基づいたファイルコピーの実行可能な実装は fcopy1.dats から入手できます。
+このとき [readch] と [writech] はC言語で直接実装されています。
+")
 
 <p>
 
+#langeng("
 Of course, there is a lot of criticism that can be laid upon the above
 implementation of file-copying. For instance, it is terribly inefficient;
 it does not support any error-handling at all; etc. I will attempt to
@@ -189,8 +214,23 @@ functions [readch] and [writech], which adds a layer to shield system calls
 [read] and [write] from being used directly. This is a programming style I
 would recommend highly and repeatedly. What seems really unfortunate to me
 is that popular books on systems programming
-(e.g. <a href="http://www.apuebook.com/">APUE</a>) often do very little, if
-at all, to advocate this very useful programming style!
+(e.g.
+#ahref("http://www.apuebook.com/", "APUE")
+) often do very little, if at all, to advocate this very useful programming style!
+")
+#langja("
+当然ですが、
+Of course, there is a lot of criticism that can be laid upon the above implementation of file-copying.
+For instance, it is terribly inefficient;
+it does not support any error-handling at all; etc.
+I will attempt to address these issues in the following presentation.
+However, one thing that is extremely positive about this implementation is the introduction of functions [readch] and [writech], which adds a layer to shield system calls [read] and [write] from being used directly.
+This is a programming style I would recommend highly and repeatedly.
+What seems really unfortunate to me is that popular books on systems programming
+(e.g.
+#ahref("http://www.apuebook.com/", "APUE")
+) often do very little, if at all, to advocate this very useful programming style!
+")
 
 <h2>
 Attempt Two
