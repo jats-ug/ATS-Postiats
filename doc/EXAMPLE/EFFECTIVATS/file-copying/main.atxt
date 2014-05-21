@@ -219,23 +219,29 @@ is that popular books on systems programming
 ) often do very little, if at all, to advocate this very useful programming style!
 ")
 #langja("
-当然ですが、
-Of course, there is a lot of criticism that can be laid upon the above implementation of file-copying.
-For instance, it is terribly inefficient;
-it does not support any error-handling at all; etc.
-I will attempt to address these issues in the following presentation.
-However, one thing that is extremely positive about this implementation is the introduction of functions [readch] and [writech], which adds a layer to shield system calls [read] and [write] from being used directly.
-This is a programming style I would recommend highly and repeatedly.
-What seems really unfortunate to me is that popular books on systems programming
-(e.g.
+もちろん、上記のファイルコピー実装には多くの批判があるでしょう。
+例えば、エラー処理のようなものを全くサポートしないため、ほとんど役に立ちません。
+これらの課題については次の試みで解決しようと思います。
+けれども、この実装において建設的だったのは関数 [readch] と [writech] を導入したことです。
+これらの関数はシステムコール [read] と [write] を直接使うことを防ぐレイヤーになっています。
+このプログラミングスタイルを私は何度も繰り返し強く提言してきました。
+私にとって非常に残念なことですが、たとえシステムプログラミングに関する著名な本
+(例:
 #ahref("http://www.apuebook.com/", "APUE")
-) often do very little, if at all, to advocate this very useful programming style!
+)
+がこの有用なプログラミングスタイルを推奨していなかったとしてもです!
 ")
 
 <h2>
+#langeng("
 Attempt Two
+")
+#langja("
+2番目の試み
+")
 </h2>
 
+#langeng("
 Obviously, [fcopy1] is very inefficient for copying files as it calls
 [read] and [write] each time to read and write only one char, respectively.
 If multiple chars are to be read at once, then a buffer (that is, some
@@ -245,6 +251,14 @@ allocated, I will focus on a solution that can also cope with dynamically
 allocated buffers.
 
 Let us first introduce an abstract type for buffers:
+")
+#langja("
+[fcopy1] は [read] と [write] をそれぞれいちいち1文字ずつ読み書きするファイルコピーであるために、全く役に立たないことは明確です。
+もし一度に複数文字読み出すのあれば、それらを保管するためのバッファ (つまりなんらかのメモリ) が必要になります。
+そのようなバッファを静的に確保する場合のみを使うことはとても簡単なので、動的に確保されたバッファも扱えるような解決策にに集中することにします。
+
+はじめにバッファを表わす抽象型を導入しましょう:
+")
 
 <pre
 class="patsyntax">
