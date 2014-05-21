@@ -98,4 +98,35 @@ macdef langja (x) = ignorestr ,(x)
 
 (* ****** ****** *)
 
+local
+//
+val LT = "<"
+val LTSLASH = "</"
+val GT = ">"
+val HREF = " href=\""
+val QUOT = "\""
+//
+in
+//
+fun ahreftagging (
+  u: string, x: string
+) : atext = let
+  val _tag  = "a"
+  val _href = atext_appstr3 (HREF, u, QUOT)
+  val _opn' = atext_appstr2 (LT, _tag)
+  val _clo  = atext_appstr3 (LTSLASH, _tag, GT)
+  val _opn  = atext_apptxt3 (_opn', _href, atext_strsub(GT))
+in
+  atext_apptxt3 (_opn, atext_strsub(x), _clo)
+end // end of [ahreftagging]
+//
+end // end of [local]
+
+(* ****** ****** *)
+
+macdef
+ahref (u, x) = ahreftagging (,(u), ,(x))
+
+(* ****** ****** *)
+
 (* end of [myfundef.hats] *)
