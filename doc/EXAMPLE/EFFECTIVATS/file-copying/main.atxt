@@ -267,9 +267,15 @@ absvtype buffer_vtype = ptr
 vtypedef buffer = buffer_vtype
 ")</pre>
 
+#langeng("
 Actually, [buffer_vtype] is introduced as a viewtype, that is, a linear
 type, and the following functions are for creating and destroying a buffer,
 respectively:
+")
+#langja("
+[buffer_vtype] が viewtype、つまり線形型として導入されています。
+そして次はそれぞれバッファを生成/削除するための関数です:
+")
 
 <pre
 class="patsyntax">
@@ -278,8 +284,14 @@ fun buffer_create (m: size_t): buffer
 fun buffer_destroy (buf: buffer): void
 ")</pre>
 
+#langeng("
 As we also need to test whether a buffer contains any data or not, let us
 introduce the following function for this purpose:
+")
+#langja("
+また、バッファがデータを含むか否か検査する必要があります。
+この目的のために次の関数を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -287,9 +299,15 @@ class="patsyntax">
 fun buffer_isnot_empty (buf: !buffer): bool
 ")</pre>
 
+#langeng("
 In addition, let us use the names [readbuf] and [writebuf] for functions
 reading and writing multiple chars, respectively, and assign to them the
 following types:
+")
+#langja("
+さらに、[readbuf] と [writebuf]
+をそれぞれ複数文字を読み書きする関数として作り、それらに次の型を割り当てましょう:
+")
 
 <pre
 class="patsyntax">
@@ -298,9 +316,15 @@ fun readbuf (src: fildes, buf: !buffer): void
 fun writebuf (dst: fildes, buf: !buffer): void
 ")</pre>
 
+#langeng("
 Let [fcopy2] be given the same interface as [fcopy1].  The following code
 gives a straightforward implementation of [fcopy2] based on [readbuf] and
 [writebuf]:
+")
+#langja("
+[fcopy2] には [fcopy1] と同じインターフェイスを与えることにしましょう。
+次のコードは [readbuf] と [writebuf] を用いた [fcopy2] の率直な実装です:
+")
 
 <pre
 class="patsyntax">
@@ -331,26 +355,47 @@ in
 end (* end of [fcopy2] *)
 ")</pre>
 
+#langeng("
 Note that [BUFSZ] is a compile-time integer constant and [i2sz] is a
 cast-function for casting an integer of the type [int] to one of the type
 [size_t].  Please find the code of a completed running implementation of
 file-copying based on [fcopy2] in fcopy2.dats, where [readbuf] and
 [writebuf] are implemented in C directly.
+")
+#langja("
+[BUFSZ] はコンパイル時定数の整数、[i2sz] は型 [int] の整数から [size_t]
+の値へのキャスト関数であることに注意してください。
+[fcopy2] を用いたファイルコピーの実行可能な実装は fcopy2.dats から入手できます。
+このとき [readbuf] と [writebuf] はC言語で直接実装されています。
+")
 
 <h2>
-Attempt Three
+3番目の試み
 </h2>
 
+#langeng("
 While the inefficiency of [fcopy1] is addressed in the implementation of
 [fcopy2], the absence of error-handling is not. I now give another
 implementation of file-copying and address the issue of error-handling in
 this implementation.
+")
+#langja("
+[fcopy1] の非能率は [fcopy2] の実装で解決されましたが、エラー処理がありません。
+この試みでは、ファイルコピーに別の実装を与えることで、エラー処理の問題を解決します。
+")
 
 <p>
 
+#langeng("
 Clearly, a call to [read] or [write] can fail due to a variety of reasons.
 If such a failure occurs, we should probably stop file-copying and report
 an error. Let us introduce another file-copying function [fcopy3] as follows:
+")
+#langja("
+[read] もしくは [write] の呼び出しは様々な要因で失敗する可能性があることは明白です。
+もしそのような失敗が起きたら、おそらくファイルコピーを停止してエラー報告をすべきでしょう。
+次のような別のファイルコピー関数 [fcopy3] を導入してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -358,12 +403,21 @@ class="patsyntax">
 fun fcopy3 (src: fildes, dst: fildes, nerr: &int): void
 ")</pre>
 
+#langeng("
 The third argument [nerr] of [fcopy3] is a call-by-reference integer. In
 other words, what is passed as the third argument of [fcopy3] is the
 address of a left-value. If an error caused by [read] or [write] occurs
 during file-copying, then the value of the integer stored in [nerr] should
 be increased. To achieve this, we can modify the types of [readbuf] and
 [writebuf] as follows:
+")
+#langja("
+[fcopy3] の3番目の引数 [nerr] は参照渡し (call-by-reference) の整数です。
+別の言い方をすると、[fcopy3] の 3番目の引数として渡されるのは、左辺値のアドレスです。
+もしファイルコピーの最中に [read] もしくは [write]
+に起因するエラーが発生したら、[nerr] に保管されている整数値を増やすべきです。
+これを実現するために、[readbuf] と [writebuf] の方を次のように変更します:
+")
 
 <pre
 class="patsyntax">
@@ -372,11 +426,19 @@ fun readbuf (src: fildes, buf: !buffer, nerr: &int): void
 fun writebuf (dst: fildes, buf: !buffer, nerr: &int): void
 ")</pre>
 
+#langeng("
 The function [readbuf] calls [read]; if this call reports an error, then
 [readbuf] should increase the value of the integer stored in its third
 argument. The function [writebuf] does the same with [write].  The
 following code gives an implementation of [fcopy3] similar to that of
 [fcopy2]:
+")
+#langja("
+関数 [readbuf] が [read] を呼び出すと;
+もしこの呼び出しがエラーを報告したら、[readbuf] はその3番目の引数に保管されている整数値を増やします。
+関数 [writebuf] も [write] について同じ動作をします。
+次のコードは [fcopy2] と同じように [fcopy3] を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -409,14 +471,32 @@ in
 end (* end of [fcopy3] *)
 ")</pre>
 
+#langeng("
 Note that the loop function exits whenever an error due to [read] or
 [write] is reported.  Please find the code of a completed running
 implementation of file-copying based on [fcopy3] in fcopy3.dats, where
 [readbuf] and [writebuf] are implemented in C directly.
+")
+#langja("
+[read] もしくは [write] に起因するエラーが報告されると
+loop 関数が終了することに注意してください。
+[fcopy3] を用いたファイルコピーの実行可能な実装は fcopy3.dats から入手できます。
+このとき [readbuf] と [writebuf] はC言語で直接実装されています。
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
