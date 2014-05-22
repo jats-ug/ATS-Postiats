@@ -8,26 +8,48 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<title>EFFECTIVATS-mergesort</title>
+<title>EFFECTIVATS: マージソート</title>
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Mergesort
+")
+#langja("
+Effective ATS: マージソート
+")
 </h1>
 
+#langeng("
 In this article, I would like to use mergesort as a concrete example to
 demonstrate a natural style of refinement-based programming.
+")
+#langja("
+この記事では、改良に基づく (refinement-based)
+プログラミングスタイルを示す具体的な例としてマージソートを作ってみようと思います。
+")
 
 <h2>
+#langeng("
 What is Mergesort?
+")
+#langja("
+マージソートとは何ですか？
+")
 </h2>
 
+#langeng("
 Let me answer this question by giving a specification-like implementation
 of mergesort. Suppose that we have a type [myseq] declared as follows for
 the data that [mergesort] is to be called on:
+")
+#langja("
+マージソートに仕様的な実装を与えることで、この疑問に答えさせてください。
+[mergesort] が呼び出されるデータを表わす型 [myseq] が次のように宣言されていると仮定します:
+")
 
 <pre
 class="patsyntax">
@@ -35,7 +57,12 @@ class="patsyntax">
 abstype myseq
 ")</pre>
 
+#langeng("
 Naturally, we assign the following interface to [mergesort]:
+")
+#langja("
+[mergesort] に次のインターフェイスを割り当てるのは自然です:
+")
 
 <pre
 class="patsyntax">
@@ -43,7 +70,12 @@ class="patsyntax">
 fun mergesort (xs: myseq): myseq
 ")</pre>
 
+#langeng("
 A straightforward implementation of [mergesort] can be given as follows:
+")
+#langja("
+[mergesort] の素直な実装は次のようになるでしょう:
+")
 
 <pre
 class="patsyntax">
@@ -62,9 +94,15 @@ in
 end // end of [mergesort]
 ")</pre>
 
+#langeng("
 where the function
 [myseq_length], [myseq_split] and [myseq_merge]
 are assigned the following types:
+")
+#langja("
+このとき、関数 [myseq_length], [myseq_split], [myseq_merge]
+には次の型が割り当てられています:
+")
 
 <pre
 class="patsyntax">
@@ -74,34 +112,72 @@ fun myseq_split (xs: myseq): (myseq, myseq)
 fun myseq_merge (xs1: myseq, xs2: myseq): myseq
 ")</pre>
 
+#langeng("
 and their functionalities are briefly explained below:
+")
+#langja("
+これらの機能は次のように要約できます:
+")
 
+#langeng("
 <ul>
 <li> [myseq_length] returns the length of a given myseq-value.
 <li> [myseq_split] splits a given myseq-value into two myseq-values.
 <li> [myseq_merge] merges two given sorted myseq-values into one sorted myseq-value.
 </ul>
+")
+#langja("
+<ul>
+<li> [myseq_length] は与えられた myseq 値の長さを返します。
+<li> [myseq_split] は与えられた myseq 値を2つの myseq 値に分割します。
+<li> [myseq_merge] は与えられた2つのソート済み myseq 値を1つのソート済み myseq 値にマージします。
+</ul>
+")
 
+#langeng("
 Even for someone who is unfamiliar with the syntax of ATS, it is probably
 fair to say that the above specification-like implementation of [mergesort] is
 often preferrable to a description of mergesort in English or other natural
 langauges.
+")
+#langja("
+ATS の構文に不慣れな読者を考えても、おそらく上記の [mergesort]
+の仕様的な実装は英語や他の自然言語でマージソートを表現するより好ましいと主張できるでしょう。
+")
 
 <h2>
+#langeng("
 Specifying with Dependent Types
+")
+#langja("
+依存型を使った仕様記述
+")
 </h2>
 
+#langeng("
 As the given implementation of mergesort is recursive, there must be a
 reason why we expect that the implemented function [mergesort] is
 terminating. Inevitably, we need to talk about the length of a myseq-value
 if we argue for [mergesort] being terminating, where the length of a
 myseq-value refers to the number of items contained in the sequence
 represented by the myseq-value.
+")
+#langja("
+マージソートの実装が再帰的なら、実装された関数 [mergesort] の終了を予想できる理由が必要です。
+[mergesort] の終了について議論するなら、必然的に myseq 値の長さについて考えなければなりません。
+この myseq 値の長さとは、その myseq 値が表現する数列に含まれる要素の数になります。
+")
 
 <p>
 
+#langeng("
 In ATS, we can refine [myseq] as follows by making it a type constructor
 carrying one integer parameter:
+")
+#langja("
+ATS では、次のように [myseq]
+を作る型コンストラクタに整数パラメータを1つ渡して、型を改良することができます:
+")
 
 <pre
 class="patsyntax">
@@ -109,10 +185,16 @@ class="patsyntax">
 abstype myseq(n:int)
 ")</pre>
 
+#langeng("
 Given a static integer N, [myseq(N)] is for myseq-values of length N.
 The type assigned to [mergesort] can be refined as follows to capture
 the invariant that a given myseq-value and its sorted version have the
 same length:
+")
+#langja("
+静的な整数 N が与えられたとき、[myseq(N)] は長さ N の myseq 値 を表わします。
+The type assigned to [mergesort] can be refined as follows to capture the invariant that a given myseq-value and its sorted version have the same length:
+")
 
 <pre
 class="patsyntax">
