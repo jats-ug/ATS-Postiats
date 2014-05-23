@@ -193,7 +193,8 @@ same length:
 ")
 #langja("
 静的な整数 N が与えられたとき、[myseq(N)] は長さ N の myseq 値 を表わします。
-The type assigned to [mergesort] can be refined as follows to capture the invariant that a given myseq-value and its sorted version have the same length:
+与えられた myseq 値とそのソート済みの値は同じ長さを持つという不変条件を捕捉するために、[mergesort]
+に割り当てられた型を次のように改良できます:
 ")
 
 <pre
@@ -202,8 +203,14 @@ class="patsyntax">
 fun mergesort{n:nat} (xs: myseq(n)): myseq(n)
 ")</pre>
 
+#langeng("
 As for the functions [myseq_length], [myseq_split]
 and [myseq_merge], they can be assigned the following more informative types:
+")
+#langja("
+関数 [myseq_length], [myseq_split], [myseq_merge]
+には、次のようなより豊富な情報を含んだ型を割り当てることができます:
+")
 
 <pre
 class="patsyntax">
@@ -218,14 +225,26 @@ fun myseq_merge{n1,n2:nat} (xs1: myseq(n1), xs2: myseq(n2)): myseq(n1+n2)
 //
 ")</pre>
 
+#langeng("
 Note that the type assigned to [myseq_split] implies that this function can
 only be applied to a given myseq-value containing at least 2 items and the
 two myseq-values it returns are strictly shorter than the given myseq-value.
+")
+#langja("
+[myseq_split] に割り当てられた型は、この関数が少なくとも2個以上の要素を含む myseq
+値のみに適用することができ、それが返す2つの myseq 値は与えられた myseq
+値よりも厳密に小さくなることを意味していることに注意してください。
+")
 
 <p>
 
+#langeng("
 The above implementation of [mergesort] can be slightly modified into the
 following version:
+")
+#langja("
+上記の [mergesort] の実装は次のバージョンのように若干修正できます:
+")
 
 <pre
 class="patsyntax">
@@ -252,13 +271,25 @@ in
 end // end of [mergesort]
 ")</pre>
 
+#langeng("
 Note that [sort] is verified to be terminating based on the termination
 metric &lt;n&gt; (supplied by the programmer).
+")
+#langja("
+[sort] は (プログラマによって与えられた)
+停止性メトリクス (termination metric) &lt;n&gt;
+に基づいて停止することが証明されていることに注意してください。
+")
 
 <p>
 
+#langeng("
 When trying to implement [myseq_split], we should be able to quickly
 realize that the following interface is much more suitable for it:
+")
+#langja("
+[myseq_split] を実装するなら、次のインターフェイスが適切であるとすぐに気が付くでしょう:
+")
 
 <pre
 class="patsyntax">
@@ -267,10 +298,18 @@ fun myseq_split{n:int | n >= 2}
   (xs: myseq(n), n: int n): (myseq(n/2), myseq(n-n/2))
 ")</pre>
 
+#langeng("
 The interface states that [myseq_split] returns a pair of myseq-values of
 length n/2 and n-n/2 when applied to a myseq-value of length n and an
 integer of value n. The implementation of [mergesort] can now be slightly
 modified as follows:
+")
+#langja("
+このインターフェイスは、[myseq_split]
+が長さ n の myseq 値と値 n の整数に適用されると、長さ n/2 と n-n/2 の
+myseq 値のペアを返すことを提示しています。
+これで [mergesort] の実装は次のように若干修正できます:
+")
 
 <pre
 class="patsyntax">
@@ -297,16 +336,32 @@ in
 end // end of [mergesort]
 ")</pre>
 
+#langeng("
 We now have a specification-like implementation of mergesort that
 typechecks, which can be thought of as some form of blueprint intended for
 implementing mergesort on concrete types such as lists and arrays.
+")
+#langja("
+これで型検査できるマージソートの仕様的な実装が手に入りました。
+この実装は、リストや配列のような具体的な型のマージソートを実装するための青写真として考えることができます。
+")
 
 <h2>
+#langeng("
 Mergesort on Lists
+")
+#langja("
+リストのマージソート
+")
 </h2>
 
+#langeng("
 As can be expected, the interface for mergesort on lists is given as
 follows:
+")
+#langja("
+予想されることですが、リストに対するマージソートのインターフェイスは次のように与えられます:
+")
 
 <pre
 class="patsyntax">
@@ -315,10 +370,17 @@ fun{a:t0p}
 mergesort{n:nat} (xs: list (a, n)): list (a, n)
 ")</pre>
 
+#langeng("
 This interface indicates that [mergesort] is a function template
 parameterized over the type of the elements in a list given as its
 argument. Let us now focus on [myseq_merge], which is given the
 following interface:
+")
+#langja("
+このインターフェイスは、[mergesort]
+がその引数として与えられたリスト中の要素の型をパラメータ化した関数テンプレートであることを示しています。
+ここでは [myseq_merge] に注目しましょう。この関数には次のようなインターフェイスを割り当てられます:
+")
 
 <pre
 class="patsyntax">
@@ -330,7 +392,12 @@ myseq_merge
 // end of [myseq_merge]
 ")</pre>
 
+#langeng("
 Following is a straightforward implementation of [myseq_merge] on lists:
+")
+#langja("
+次のように、リストに対する [myseq_merge] は素直に実装できます:
+")
 
 <pre
 class="patsyntax">
@@ -360,28 +427,56 @@ case+ xs10 of
 end // end of [myseq_merge]
 ")</pre>
 
+#langeng("
 Note that [gcompare_val] is a generic function template for comparing
 values.
+")
+#langja("
+[gcompare_val] は値を比較する総称関数テンプレートであることに注意してください。
+")
 
 <p>
 
+#langeng("
 Please find the entirety of the implementation of mergesort on lists plus
 some testing code in mergesort_list.dats.
+")
+#langja("
+リストのマージソートの実装全体と追加のテストコードは mergesort_list.dats から入手できます。
+")
 
 <h2>
+#langeng("
 Mergesort on Arrays
+")
+#langja("
+配列のマージソート
+")
 </h2>
 
+#langeng("
 The abstract specification-like implementation of [mergesort] given above
 is of so-called functional style. While it is not well-suited for
 implementing mergesort on arrays (of imperative style), I would still like
 to give it a try so as to make a point.
+")
+#langja("
+上記での [mergesort] の抽象的な仕様的実装はいわゆる関数型スタイルです。
+先の実装は (命令型スタイルの) 配列に対するマージソートを実装するのに適合しません。
+そこで、この主張のために試しにやってみましょう。
+")
 
 <p>
 
+#langeng("
 First, as an array in ATS is of C-style, there is no size information
 attached to the array. So the interface for [mergesort] needs to be
 modified as follows:
+")
+#langja("
+まずはじめに、ATS における配列はC言語スタイルなので、その配列にはサイズ情報が付属していません。
+そこで、[mergesort] のインターフェイスを次のように修正する必要があります:
+")
 
 <pre
 class="patsyntax">
@@ -390,12 +485,23 @@ fun{a:t0p}
 mergesort{n:nat} (xs: arrayref(a, n), n: int n): arrayref(a, n)
 ")</pre>
 
+#langeng("
 This interface means that [mergesort] takes both an array and the size of
 the array as its two arguments.
+")
+#langja("
+このインターフェイスは、[mergesort]
+がその2つの引数として配列とその配列のサイズの両方を取ることを意味しています。
+")
 
 <p>
 
+#langeng("
 Following is the interface for [myseq_merge] on arrays:
+")
+#langja("
+配列に対する [myseq_merge] のインターフェイスを次に示します:
+")
 
 <pre
 class="patsyntax">
@@ -408,22 +514,41 @@ myseq_merge
 ) : arrayref(a, n1+n2) // end of [myseq_merge]
 ")</pre>
 
+#langeng("
 There is extensive use of unsafe programming features in my implementation
 of [myseq_merge] on arrays. Writing code this way is primarily for the
 purpose of saving some time as the given implementation of mergesort on
 arrays is not meant for practical use; it is only meant to make a point
 that the specification-like implementation of [mergesort] given above can
 indeed be adapted to handle arrays.
+")
+#langja("
+配列に対する [myseq_merge]
+の私の実装では、安全でないプログラミングの機能が広範囲に使われています。
+この方法でコードを書いたのは主に時間を節約することが目的で、配列に対するマージソートのこの実装が実用に向いているわけではありません;
+上記で与えられた [mergesort] の仕様的な実装は配列を扱う場合にも適したものである、ということを主張したかったのです。
+")
 
 <p>
 
+#langeng("
 Please find the entirety of the implementation of mergesort on arrays plus
 some testing code in mergesort_array.dats.
+")
+#langja("
+配列のマージソートの実装全体と追加のテストコードは mergesort_array.dats から入手できます。
+")
 
 <h2>
+#langeng("
 Refinement-based Programming
+")
+#langja("
+改良に基づくプログラミング
+")
 </h2>
 
+#langeng("
 While it may seem a bit too pedantic to implement a simple algorithm
 like mergesort in the way presented above, I do hope that this style of
 refinement-based programming should be obviously appealing to anyone
@@ -434,10 +559,29 @@ the ability to make effective use of abstraction in controlling programming
 complexity is the most important characteristic of a top programmer, and
 the type system of ATS can greatly help one acquire this ability.
 Have fun!
+")
+#langja("
+上記で示した方法でマージソートのような単純なアルゴリズムを実装するのは、少し杓子定規に思えます。
+しかし、この改良に基づくプログラミングスタイルは、ある程度複雑なプログラムを書くなら誰にでも魅力的に思えることを私は期待しています。
+ATS によってサポートされた抽象型を使うこの作法は、特に改良に基づくプログラミングを最大限に促進する指針で設計されています。
+私の考えでは、抽象を効果的に使ってプログラミングの複雑さをコントールする能力は、上級プログラマの最も重要な特性です。
+そして ATS の型システムはこのような能力を習得するのを大いに助けてくれるのです。
+楽しんでください!
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
