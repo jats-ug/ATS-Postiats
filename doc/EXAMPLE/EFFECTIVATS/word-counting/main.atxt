@@ -86,15 +86,28 @@ ATS には、単純にそれらをテンプレートに変えることで状態�
 ")
 
 <h2>
+#langeng("
 What kind of output is expected?
+")
+#langja("
+どんな出力が予想されますか？
+")
 </h2>
 
+#langeng("
 Let us say that we want to output all of the encountered words in an order
 such that a word appears ahead of another one if there are more occurrences
 of the former than the latter. This means that we need to build an
 associative map that associates each word with the number of the
 occurrences of this word. So we introduce the following abstract type
 [wcmap_type] for such a map and [wcmap] as a shorthand for [wcmap_type]:
+")
+#langja("
+単語が出現した頻度の高い順番で、出現した全ての単語を出力したいとしましょう。
+これは、それぞれの単語とその単語の発生頻度を結びつけるマップを構築する必要があることを意味しています。
+そこで、そのようなマップのために次の抽象型 [wcmap_type] と
+[wcmap_type] の略記として [wcmap] を導入します:
+")
 
 <pre
 class="patsyntax">
@@ -103,13 +116,25 @@ abstype wcmap_type = ptr
 typedef wcmap = wcmap_type
 ")</pre>
 
+#langeng("
 Note that [wcmap_type] is a boxed type, that is, the size of this type is
 that of a pointer (of the type [ptr]).
+")
+#langja("
+[wcmap_type] がボックス化型で、つまりこの型のサイズはポインタの (型 [ptr] の)
+サイズになることに注意してください。
+")
 
 <p>
 
+#langeng("
 How should a map of the type [wcmap] be created? We introduce a function
 for creating an empty map:
+")
+#langja("
+型 [wcmap] のマップはどうやって生成すべきでしょうか？
+空のマップを作るために次の関数を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -117,8 +142,14 @@ class="patsyntax">
 fun wcmap_create (): wcmap
 ")</pre>
 
+#langeng("
 If a word is encountered, we need to increase its number of occurrences by
 1. This is done by the following function:
+")
+#langja("
+もし単語が出現したら、その発生回数を 1 増やす必要があります。
+これは次の関数で行ないます:
+")
 
 <pre
 class="patsyntax">
@@ -126,8 +157,13 @@ class="patsyntax">
 fun wcmap_incby1 (map: wcmap, w: string): void
 ")</pre>
 
+#langeng("
 As we also need to sort words according to their numbers of occurrences, we
 introduce a function for sequentializing a [wcmap]:
+")
+#langja("
+またそれらの出現回数に従って単語をソートする必要があるので、[wcmap] を羅列する関数を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -135,18 +171,36 @@ class="patsyntax">
 fun wcmap_listize (map: wcmap): list0 @(string, int)
 ")</pre>
 
+#langeng("
 In libats, which is a part of ATS library, there are many implementations
 of maps. For someone familiar with data structures, it should be clear that
 a good fit for [wcmap] is a hashtable-based map implementation. Of course,
 a map implementation based on some form of balanced-tree (e.g. AVL-tree)
 should work as well. My own experiment showed that the former was about 2-3
 times faster than the latter.
+")
+#langja("
+ATS ライブラリの一部である libats には、多くのマップ実装があります。
+データ構造に精通していれば、[wcmap] に最適な構造は hashtable-based map 実装であることは明確でしょう。
+もちろん、平衡木 (例: AVL-tree) に基づいたマップ実装も同じく有効でしょう。
+私自身の実験では、前者は後者よりも 2-3 倍程度高速でした。
+")
 
 <h2>
+#langeng("
 Implementing WordCounting
+")
+#langja("
+WordCounting を実装する
+")
 </h2>
 
+#langeng("
 Let us declare the main function for counting words as follows:
+")
+#langja("
+次のように、単語を数えるためのメイン関数を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -154,9 +208,16 @@ class="patsyntax">
 fun WordCounting (): wcmap
 ")</pre>
 
+#langeng("
 So by calling [WordCounting], we generate a [wcmap] that maps each
 encountered word to its number of occurrences. An implementation of
 [WordCounting] is given as follows:
+")
+#langja("
+これで [WordCounting] を呼び出すことによって、出現したそれぞれの単語からその出現回数へのマップである
+[wcmap] を生成できます。
+[WordCounting] は次のように実装できます:
+")
 
 <pre
 class="patsyntax">
@@ -184,13 +245,20 @@ in
 end // end of [WordCounting]
 ")</pre>
 
+#langeng("
 Essentially, what the inner function [loop] does is to enumerate a word by
 calling [word_get] and then increase the count of the word by one; [loop]
 terminates when [word_get] returns a null pointer (which makes
 [stropt_is_some] to return false).
+")
+#langja("
+本質的に、内部関数 [loop] は [word_get] を呼び出して単語を数えて、それから単語の出現回数を 1 増加させています;
+[word_get] が ([stropt_is_some] が false を返すような) NULL ポインタを返すと [loop] は終了します。
+")
 
 <p>
 
+#langeng("
 I hope that the reader can truly appreciate the top-down style of
 programming presented above, which makes effective use of abstract types in
 ATS.  My own observation says that most programmers employ a bottom-up
@@ -202,13 +270,35 @@ she chooses. However, when dealing with larger and more complex problems, one
 can easily lose focus with a bottom-up approach, writing code that is only
 to be abandoned later. To some extent, writing a program is like telling a
 story: The story can hardly be coherent if the storyteller is out of focus.
+")
+#langja("
+上記に示した ATS
+の抽象型を効果的に使ったトップダウンのプログラミングスタイルを、読者が正確に評価できることを、私は期待しています。
+私個人の所見では、多くのプログラマはボトムアップスタイルのプログラミングを実用上使っています。
+単語を数える問題が与えられたとき、彼等は [wcmap] (とそれに関連した関数群)
+もしくは [word_get] のような関数を実装することに注目しようとします。
+単語を数えるような単純な問題なら、有能なプログラマは彼らが選んだどんなアプローチを用いても、おそらく扱えるでしょう。
+けれども、より大きなより複雑な問題を取り扱う時、使われえないコードを書くボトムアップアプローチを用いた彼らは簡単に焦点を失ないうるのです。
+ある意味では、プログラムを書くことは物語を語ることと似ています:
+もし語り部の焦点がはずれると、物語が一貫性を得るのは難しくなります。
+")
 
 <h2>
+#langeng("
 How should [word_get] be implemented?
+")
+#langja("
+どうやって [word_get] を実装すべきですか？
+")
 </h2>
 
+#langeng("
 One way to implement [word_get] is to first assume that we have a function
 [char_get] of the following type:
+")
+#langja("
+[word_get] を実装する一つの方法は、次の型を持つ関数 [char_get] をはじめに仮定することです:
+")
 
 <pre
 class="patsyntax">
@@ -216,13 +306,24 @@ class="patsyntax">
 fun char_get (): int
 ")</pre>
 
+#langeng("
 If [char_get] returns a non-negative integer, then the integer is the ASCII
 encoding of a character; otherwise, it is the indication that no more
 character is available.
+")
+#langja("
+もし [char_get] が非負の整数を返したら、その整数は ASCII 文字です;
+そうでなければ、それ以上文字がないことを示しています。
+")
 
 <p>
 
+#langeng("
 A possible implementation of [word_get] based on [char_get] is given as follows:
+")
+#langja("
+[char_get] に基づいた [word_get] のありうる実装は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -271,21 +372,44 @@ case+ cs of
 end // end of [word_get]
 ")</pre>
 
+#langeng("
 Note that [loop] is called to skip non-alphabetical chars while [loop2] is
 called to accumulate alphabetical chars. The keyword [fnx] (in place of
 [fun]) means that [loop] and [loop2] are compiled jointly so that the
 tail-recursive calls in their bodies can all be turned into direct local
 jumps.  The function [string_make_rlist] creates a string consisting of the
 sequence of chars in the reverse of a given list. For instance, if the list
-consists of 'a', 'b' and 'c', then the created string is "cba".
+consists of 'a', 'b' and 'c', then the created string is \"cba\".
+")
+#langja("
+[loop2] はアルファベット文字を集めるために呼び出され、[loop]
+は非アルファベット文字をスキップするために呼び出されることに注意してください。
+([fun] が置かれるべき場所にある) キーワード [fnx] は、[loop] と [loop2]
+が一緒にコンパイルされ、それら本体の末尾再帰呼出がローカルジャンプに変換できることを意味しています。
+関数 [string_make_rlist] は与えられたリストの逆順の文字の並びから成る文字列を生成します。
+例えば、'a', 'b', 'c' から成るリストなら、生成される文字列は \"cba\" です。
+")
 
 <h2>
+#langeng("
 How should [wcmap] be implemented?
+")
+#langja("
+どうやって [wcmap] を実装すべきですか？
+")
 </h2>
 
+#langeng("
 The following code gives a straightforward hashtable-based implementation
 of [wcmap]. Some details on various hashtable-functions can be found
-<a href="http://www.ats-lang.org/LIBRARY/libats/ML/hashtbl.html">on-line</a>.
+#ahref("http://www.ats-lang.org/LIBRARY/libats/ML/hashtbl.html", "on-line").
+")
+#langja("
+次のコードは [wcmap] の素直な hashtable-based 実装です。
+様々な hashtable 関数の詳細を
+#ahref("http://www.ats-lang.org/LIBRARY/libats/ML/hashtblref.html", "オンライン")
+で見つけることができます。
+")
 
 <pre
 class="patsyntax">
@@ -327,14 +451,25 @@ wcmap_listize (map) = $HT.hashtbl_takeout_all (map)
 end // end of [local]
 ')</pre>
 
+#langeng("
 A complete running program containing the entirety of the above presented
 code can be found in the file wordcnt.dats, and there is also a Makefile
 for compiling it.
+")
+#langja("
+上記で示したコード全体を含む実行可能なプログラムは、ファイル wordcnt.dats から入手できます。
+またそこには Makefile もあります。
+")
 
 <p>
 
-Following is a list of the 100 most frequently used words in the novel "Moby Dick"
+#langeng("
+Following is a list of the 100 most frequently used words in the novel \"Moby Dick\"
 by Herman Melville:
+")
+#langja("
+次のリストは、ハーマン・メルヴィルの小説「白鯨」の中で使われている単語の内、使用頻度の高い 100 個を抜き出したものです:
+")
 
 <pre>
 the	->	14515
@@ -439,19 +574,39 @@ most	->	285
 seemed	->	283
 </pre>
 
+#langeng("
 Unsurprisingly, <u>whale</u> is the most frequently used noun in this
 novel, and the second one and third one are <u>ship</u> and <u>sea</u>,
 respectively.
+")
+#langja("
+当然ですが、<u>whale</u>
+はこの小説で最もよく使われた名詞で、さらに2番目と3番目はそれぞれ
+<u>ship</u> と <u>sea</u> です。
+")
 
 <h2>
+#langeng("
 Turning stateful functions into stateless templates
+")
+#langja("
+状態のある関数を状態のないテンプレートに変換する
+")
 </h2>
 
+#langeng("
 In the above implementation, the function [char_get] is stateful, that is,
 it posseses an internal state. If two threads call [char_get] around the
 same time, then a race-condition may happen. In ATS, we can eliminate a
 stateful function by turning it into a template. For instance, we can
 declare [char_get] as follows:
+")
+#langja("
+上記の実装では、関数 [char_get] は状態を持っています。
+もし2つのスレッドが同時に [char_get] を呼び出したら、競合状態が発生するかもしれません。
+ATS では、テンプレートに変換することで、状態のある関数を取り除くことができます。
+例えば、[char_get] を次のように宣言できます:
+")
 
 <pre
 class="patsyntax">
@@ -459,9 +614,15 @@ class="patsyntax">
 fun{} char_get (): int
 ")</pre>
 
+#langeng("
 Also, functions that call [char_get] directly or indirectly need to be
 declared as templates. This means that we need to turn [word_get] and
 [WordCounting] into templates as well:
+")
+#langja("
+また、[char_get] を直接もしくは間接的に呼び出す関数は、テンプレートとして宣言される必要があります。
+これは [word_get] と [WordCounting] も同様にテンプレートに変換する必要があることを意味しています:
+")
 
 <pre
 class="patsyntax">
@@ -470,8 +631,13 @@ fun{} word_get (): stropt
 fun{} WordCounting (): wcmap
 ")</pre>
 
+#langeng("
 Now let us declare a function
 [WordCounting_fileref] as follows:
+")
+#langja("
+ここで、次のような関数 [WordCounting_fileref] を宣言してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -479,8 +645,14 @@ class="patsyntax">
 fun WordCounting_fileref (inp: FILEref): wcmap
 ")</pre>
 
+#langeng("
 which is just variant of [WordCounting] that reads all the words from a
 given file handle. Then [WordCounting_fileref] can be implemented as follows:
+")
+#langja("
+この関数は、与えられたファイルハンドルから全ての単語を読み出すような [WordCounting] の単なる変形です。
+すると [WordCounting_fileref] は次のように実装できます:
+")
 
 <pre
 class="patsyntax">
@@ -505,12 +677,22 @@ end // end of [WordCounting_fileref]
 end // end of [local]
 ')</pre>
 
+#langeng("
 It is now safe for two threads to simultaneously call
 [WordCounting_fileref] on distinct file handles.
 
 A complete running program containing the above implementation of
 [WordCounting_fileref] can be found in the file wordcnt2.dats, and there is
 also a Makefile for compiling it.
+")
+#langja("
+It is now safe for two threads to simultaneously call
+[WordCounting_fileref] on distinct file handles.
+
+A complete running program containing the above implementation of
+[WordCounting_fileref] can be found in the file wordcnt2.dats, and there is
+also a Makefile for compiling it.
+")
 
 <p>
 
