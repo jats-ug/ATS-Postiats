@@ -8,16 +8,27 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-stack-array</title>
+")
+#langja("
+<title>EFFECTIVATS: 配列を用いたスタック実装</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: An Array-Based Stack Implementation
+")
+#langja("
+Effective ATS: 配列を用いたスタック実装
+")
 </h1>
 
+#langeng("
 ATS advocates a programming paradigm referred to as <em>Programming with
 Theorem-Proving</em> (PwTP) in which programs and proofs are syntactically
 intertwined.  As proof construction can be highly expensive in terms of
@@ -27,6 +38,13 @@ programmer who wants not just only to be able to code in ATS but also to do
 it productively. In this article, I would like to present a simple
 array-based stack implementation in which one can find certain typical uses
 of unsafe programming features in ATS.
+")
+#langja("
+ATS advocates a programming paradigm referred to as <em>Programming with Theorem-Proving</em> (PwTP) in which programs and proofs are syntactically intertwined.
+As proof construction can be highly expensive in terms of both effort and time,
+making proper use of unsafe programming features (so as to avoid explicit proof construction) is often a necessary skill for a programmer who wants not just only to be able to code in ATS but also to do it productively.
+In this article, I would like to present a simple array-based stack implementation in which one can find certain typical uses of unsafe programming features in ATS.
+")
 
 <h2>
 API for Array-Based Stacks
@@ -329,7 +347,17 @@ written in the postfix-notation is coded.
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
