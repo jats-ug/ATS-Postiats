@@ -384,20 +384,29 @@ be enough to convince one that [fib] and [fib2] are equivalent, that is,
 they return the same result when applied to a given integer.
 ")
 #langja("
-It is evident that the inner funtion [loop] in the body of [fib2] is tail-recursive.
-Suppose we want to evaluate fib2(100), which generates a call of the form loop(0, 0, 1),
-which then generates a call of the form loop(1, 1, 1), which then generates a call of the form loop(2, 1, 2), etc.
-If loop(i, f0, f1) is among this sequence of calls, then f0 is Fibonacci number i and f1 is Fibonacci number i+1.
-This implies that the value returned by the last call in this sequence is Fibonacci number 100 (as i reaches 100 at that point).
-This argument, though informal, should probably be enough to convince one that [fib] and [fib2] are equivalent,
-that is, they return the same result when applied to a given integer.
+[fib2] の本体の内部関数 [loop] が末尾再帰であることは明らかです。
+fib2(100) の評価を想像してみましょう。
+この評価は loop(0, 0, 1) 呼び出しを生成し、その後 loop(1, 1, 1)
+呼び出しを、さらにその後 loop(2, 1, 2) 呼び出しを、などと続きます。
+もしこの呼び出し列を loop(i, f0, f1) とすれば、f0 は i
+番目のフィボナッチ数、f1 は i+1 番目のフィボナッチ数になります。
+これは、この列の最後の呼び出しの返値が 100 番目のフィボナッチ数
+(i が 100 に到達した地点) になることを意味しています。
+この引数は、[fib] と [fib2] は等価であることを納得させるに十分な情報でしょう。
+つまり与えられた整数に適用した時、それらは同じ結果を返すのです。
 ")
 
 <p>
 
+#langeng("
 The very idea behind translating [fib] into [fib2] lies in the simple
 observation that only the two previously computed Fibonacci numbers need to
 be kept in order to compute Fibonacci number n for every n >= 2.
+")
+#langja("
+[fib] を [fib2] に変換する背後にあるアイデアは、n >=2 の n
+番目のフィボナッチ数を計算するために2つ前に計算されたフィボナッチ数のみを保持する必要がある、という単純な観察によっています。
+")
 
 <h4>
 #langeng("
@@ -408,9 +417,15 @@ Example 3
 ")
 </h4>
 
+#langeng("
 The next example we see involves list-processing.
 The following code implements the standard concatenation of two given
 lists:
+")
+#langja("
+次の例はリスト処理を含んでいます。
+次のコードは、与えられた2つのリストの一般的な連結を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -430,6 +445,7 @@ case+ xs of
 ) // end of [list_append]
 ")</pre>
 
+#langeng("
 The type assigned to [list_append] means that the function returns a list
 of length m+n when applied to two lists xs and ys of length m and n,
 respectively.  Note that this is so-called functional list concatenation as
@@ -438,9 +454,18 @@ tail-recursive as the recursive call in its body is not a tail-call. If the
 first argument of a call to [list_append] is long (e.g., containing 1M
 elements), then it is very likely that an execution of this call overflows
 the call stack and thus causes a crash.
+")
+#langja("
+[list_append] に割り当てられた型は、この関数が長さがそれぞれ m と n の2つのリスト xs と ys に適用されると、長さ m+n のリストを返すことを意味しています。
+これが入力のリストを修正しない、いわゆる関数的なリストの連結であることに注意してください。
+[list_append] 内の再帰呼出が末尾呼出でないので、この関数は末尾再帰ではないことは明確です。
+もし [list_append] 呼び出しの最初の引数が長い (例: 100万要素を含むなど)
+場合には、この呼び出し実行がコールスタックを溢れさせてクラッシュを引き起こす可能性が高くなります。
+")
 
 <p>
 
+#langeng("
 In order to translate [list_append] into a tail-recursive implementation,
 we need some knowledge about list construction. There are essentially two
 steps involved in evaluating list_cons(x, xs); certain memory needs to be
@@ -448,6 +473,15 @@ first allocated for storing a list node; then this node is initialized with
 x and xs. In ATS, it is allowed to formally separate these two steps, and
 this separation is key to obtaining a proper tail-recursive implementation
 of list concatenation as is shown in the following code:
+")
+#langja("
+[list_append] を末尾再帰実装にするためには、リストの結合に関するいくつかの知識が必要です。
+list_cons(x, xs) の評価は本質的に2つのステップです;
+はじめにリストノードを格納するために必要なメモリを確保し;
+それからこのノードを x と xs で初期化します。
+ATS では、これら2つのステップは形式的に分離することができます。
+この分離は、次のコードで示すような、リスト連結の適切な末尾再帰実装を得るための鍵になります:
+")
 
 <pre
 class="patsyntax">
@@ -489,27 +523,54 @@ in
 end // end of [list_append2]
 ")</pre>
 
+#langeng("
 Given xs, ys, and res, what the inner function [loop] does is to put the
 concatenation of xs and ys into res.  In the body of [loop], we see that
 the expression fold@(res) follows the recursive call to [loop].  However,
 this call is considered a tail-call as fold@(res) is solely used for the
 purpose of typechecking and erased afterwards.  Therefore, [loop] is a
 tail-recursive function.
+")
+#langja("
+xs, ys, res が与えられたとき、内部関数 [loop] は res の中に xs と ys の連結を配置します。
+[loop] の本体では、式 fold@(res) が末尾呼出 [loop] よりも後ろにあるように見えます。
+けれども、型検査の目的で fold@(res) は単に使われて型検査後では削除されてしまうため、この呼び出しは末尾呼出であると考えられます。
+したがって [loop] は末尾再帰関数です。
+")
 
 <p>
 
+#langeng("
 By the way, the style of recursion employed in the implementation of [loop]
 is often dubbed <em>tail-recursion modulo allocation</em>, which commonly
 appears in untyped or weakly-typed languages (e.g., LISP and C) but rarely
 in a typed language (due to the great difficulty in properly typing it).
+")
+#langja("
+ところで、この [loop]  の実装に見られる再帰のスタイルはしばしば
+<em>末尾再帰を法とするアロケーション (tail-recursion modulo allocation)</em> と呼ばれます。
+これは一般に弱い型の言語 (例: LISP や C言語) 見られますが、(適切に型を付けることが非常に困難なため)
+型付き言語ではあまり見られません。
+")
 
 <h2>
+#langeng("
 Mutually tail-recursive functions
+")
+#langja("
+相互末尾再帰関数
+")
 </h2>
 
+#langeng("
 Sometimes, we need to combine functions together in order to turn mutually
 tail-recursive calls into local jumps. For instance, in the following code,
 [isevn] and [isodd] are defined mutually recursively:
+")
+#langja("
+ときには、相互再帰呼出をローカルジャンプに変化させるために、関数を組み合わせる必要があります。
+例えば、次のコードでは [isevn] と [isodd] は相互再帰的に定義されています:
+")
 
 <pre
 class="patsyntax">
@@ -520,18 +581,34 @@ and isodd (n: int): bool =
   if n > 0 then isevn (n-1) else false
 ")</pre>
 
+#langeng("
 The call to [isodd] in the body of [isevn] and the call to [isevn] in the
 body of [isadd] are both tail-calls. As they are also mutually recursive
 calls, they are referred to as mutually tail-recursive calls.
+")
+#langja("
+[isevn] 本体の [isodd] 呼び出しと [isadd] 本体の [isevn] 呼び出しは両方とも末尾呼出です。
+これらはまた相互末尾呼出なので、これらは相互末尾再帰呼出と呼ばれます。
+")
 
 <p>
 
+#langeng("
 When compiling this implementation of [isevn] and [isadd], the ATS compiler
 (ATS/Postiats) handles [isevn] and [isodd] separately and thus
 is <em>unable</em> to turn the call to [isodd] ([isevn]) in the body of
 [isevn] ([isodd]) into a local jump. In order to indicate to the compiler
 that these two functions need to be combined for compilation, the keyword
 [fun] should be replaced with another keyword [fnx]:
+")
+#langja("
+[isevn] と [isadd] のこの実装をコンパイルすると、
+ATS コンパイラ (ATS/Postiats) は [isevn] と [isodd] を別々に扱います。
+したがって、[isevn] ([isodd]) 本体内の [isodd] ([isevn])
+呼び出しをローカルジャンプに変換<em>できません</em>。
+2つの関数を混合してコンパイルする必要があることをコンパイラに指示するために、キーワード
+[fun] を別のキーワード [fnx] で置き換えなければなりません:
+")
 
 <pre
 class="patsyntax">
@@ -542,6 +619,7 @@ and isodd (n: int): bool =
   if n > 0 then isevn (n-1) else false
 ")</pre>
 
+#langeng("
 When compiling the above code, the ATS compiler puts inside the body of
 [isevn] a copy of the body of [isodd] so that mutually tail-recursive calls
 in the bodies of these two functions can be translated into local jumps.
@@ -549,10 +627,27 @@ Also, please note that only the first of a sequence of mutually defined
 functions following the keyword [fnx] is available for subsequent use. In
 the above case, only the function [isevn] is available for subsequent use
 whereas the function [isodd] is not.
+")
+#langja("
+上記のコードをコンパイルすると、ATS コンパイラは [isodd] 本体のコピーを [isevn] 本体内に埋め込みます。
+これで、これら2つの関数の本体内の相互末尾再帰呼出はローカルジャンプに変換できるようになります。
+また、キーワード [fnx] に続いて相互的に定義された関数列の最初の関数だけ、後のコードで使用できることに注意してください。
+上記の場合、関数 [isevn] は後に使用することができますが、関数 [isodd] はそうではありません。
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
