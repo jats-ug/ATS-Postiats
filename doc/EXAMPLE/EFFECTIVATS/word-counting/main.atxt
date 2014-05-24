@@ -8,26 +8,53 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-word-counting</title>
+")
+#langja("
+<title>EFFECTIVATS: 単語を数える</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Word Counting
+")
+#langja("
+Effective ATS: 単語を数える
+")
 </h1>
 
+#langeng("
 I would like to present in this article a program that counts the number of
 occurrences of each word in a given file. The focus of the presentation is
 on the process that finally leads to the construction of the program.
+")
+#langja("
+この記事では、与えられたファイル中の単語の数を数えるプログラムを紹介したいと思います。
+この説明では最終的にそのプログラムに辿り着く過程に注目します。
+")
 
 <h2>
+#langeng("
 What kind of input is expected?
+")
+#langja("
+どんな入力が予想されますか？
+")
 </h2>
 
+#langeng("
 Basically, the input is a stream of words. So let us assume that we have
 a function [word_get] of the following type:
+")
+#langja("
+基本的に、入力は単語のストリームです。
+そこで、次のような型の関数 [word_get] があると仮定してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -35,6 +62,7 @@ class="patsyntax">
 fun word_get (): stropt
 ")</pre>
 
+#langeng("
 Note that [stropt] is the type for an optional string, which is either a
 valid string or a null pointer. If [word_get] returns a null pointer, then
 it indicates that the end of a given stream (of words) is reached. Clearly,
@@ -45,6 +73,17 @@ infamous for its treachery of statefulness, and everyone bitten by it
 should know this all too well. In ATS, there is a convenient approach to
 removing stateful functions by simply turing them into templates.  For the
 moment, let us focus on getting a running implementation.
+")
+#langja("
+[stropt] は、有効な文字列もしくは NULL ポインタであるような optional 文字列型であることに注意してください。
+もし [word_get] が NULL ポインタを返したなら、それは与えられた (単語の) ストリーム終端に逹っしたことを示しています。
+これは [word_get] が状態を持つ関数であること意味しています。
+一般的に、状態を持つ関数を使うことは貧弱なプログラミングスタイルであると考えられています。
+例えば、libc の関数 [strtok] は状態がないと間違われるために悪名高いものです。
+そしてその被害を受けた誰もが真実を知るのです。
+ATS には、単純にそれらをテンプレートに変えることで状態を持つ関数を削除できる便利なアプローチがあります。
+差し当り、動く実装を作ることに集中しましょう。
+")
 
 <h2>
 What kind of output is expected?
