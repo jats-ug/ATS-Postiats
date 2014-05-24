@@ -8,38 +8,76 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-loop-as-tailrec</title>
+")
+#langja("
+<title>EFFECTIVATS: 末尾再帰関数としてのループ</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Loops as Tail-Recursive Functions
+")
+#langja("
+Effective ATS: 末尾再帰関数としてのループ
+")
 </h1>
 
+#langeng("
 Although language constructs are available in ATS to support direct
 construction of for-loops and while-loops, it is strongly recommended that
 loops be implemented as tail-recursive functions (a.k.a. iterative
 functions). A primary advantage of doing so is that this style of loop
 implementation can be readily combined with theorem-proving as is supported
 in ATS, thus facilitating program verification involving loops.
+")
+#langja("
+ATS では for ループと while ループを直接コンストラクトできますが、ループは末尾再帰関数
+(別名: 反復関数 (iterative functions))
+として実装されることが強く推奨されています。
+そのように実装する主要な利点は、このスタイルのループ実装が ATS によてサポートされている定理証明とたやすく混ぜ合わせられることです。
+そのためループを含むプログラムの検証が容易になります。
+")
 
 <p>
 
+#langeng("
 Please see tailrec.dats for the entirety of the code given in the
 followng presentation.
+")
+#langja("
+以降で示すコードの全体は tailrec.dats から入手できます。
+")
 
 <h2>
+#langeng("
 What is tail-recursion?
+")
+#langja("
+末尾再帰とは何ですか？
+")
 </h2>
 
+#langeng("
 Suppose that [foo] and [bar] are two functions and there is a call to [bar]
 in the body of [foo]. This call is a tail-call if what it returns is also
 the return value of [foo]. In other words, a function call in the body of
 some calling function is a tail-call if the return value of the call is
 also the return value of the calling function. For instance, the call to
 [bar] is a tail-call in the following code but the call to [baz] is not:
+")
+#langja("
+[foo] と [bar] が2つの関数で、[foo] の本体から [bar] を呼び出していると仮定します。
+この呼び出しのリターンが [foo] の返値にもなるなら、この呼び出しは末尾呼出です。
+別の言い方をすると、呼び出しの返値が呼び出した関数の返値になるとき、そのような呼び出しをしている関数本体のその関数呼出は末尾呼出です。
+例えば、次のコードにおける [bar] の呼び出しは末尾呼出ですが、[baz]
+の呼び出しはそうではありません:
+")
 
 <pre
 class="patsyntax">
@@ -48,18 +86,33 @@ fun foo (x: int): int =
   if x > 0 then bar(x) else baz(x)+1
 ")</pre>
 
+#langeng("
 By the way, even if baz(x)+1 is changed into baz(x)+0, the call to
 [baz] is still not considered a tail-call unless baz(x)+0 can somehow be
 translated into baz(x).
+")
+#langja("
+ところで、たとえ baz(x)+1 を baz(x)+0 に変えたとしても、baz(x)+0 をなんとかして
+baz(x) に翻訳することなしに、[baz] の呼び出しはまだ末尾呼出とは見なせません。
+")
 
 <p>
 
+#langeng("
 If the calling function calls itself in a tail-call, then this tail-call is
 often referred to as a tail-recursive call. A function is tail-recursive if
 every recursive call in its body is a tail-call. Note that a tail-recursive
 function is also referred to as an iterative function in the literature.
 In the following example, the outside call to [f91] is tail-recursive but
 the inside one is not:
+")
+#langja("
+もし末尾呼出で呼び出す関数が自分自身を呼び出しているなら、この末尾呼出はしばしば末尾再帰呼出と呼ばれます。
+関数本体内のあらゆる再帰呼出が末尾呼出であれば、その関数は末尾再帰です。
+末尾再帰関数は反復関数と呼ばれることもあることに注意してください。
+次の例では、
+外側の [f91] 呼び出しは末尾再帰ですが、内側の呼び出しはそうではありません:
+")
 
 <pre
 class="patsyntax">
@@ -68,12 +121,23 @@ fun f91 (x: int): int =
   if x >= 101 then x-10 else f91(f91(x+11))
 ")</pre>
 
+#langeng("
 By definition, [f91] is not a tail-recursive function.
+")
+#langja("
+定義から、[f91] は末尾再帰関数ではありません。
+")
 
 <h2>
+#langeng("
 Why is tail-recursion desirable?
+")
+#langja("
+なぜ末尾再帰が望ましいのですか？
+")
 </h2>
 
+#langeng("
 Each tail-recursive function can be readily implemented as a loop.  Assume
 that a call stack is employed to implement function calls, which is by far
 the most common implementation strategy in practice.  Then calling a
@@ -83,11 +147,26 @@ programming), tail-recursion is often the only form of recursion that is
 legally allowed.  In short, tail-recursion is desirable because it can be
 implemented in a much more efficient manner, both time-wise and
 memory-wise, when compared with general recursion.
+")
+#langja("
+それぞれの末尾再帰関数はたやすくループによって実装できます。
+関数呼出の実装に、実際非常に一般的な実装方式である、コールスタックが用いられていると仮定しましょう。
+すると、末尾再帰関数の呼び出しには一定量のスタック空間のみが必要になります。
+スタック空間がおびただしく制限された状況下 (例: 低レイヤーな組み込みプログラミング)
+では、末尾呼出はしばしば唯一許されうる再帰です。
+手短に言えば、一般的な再帰と比較して、時間的にも空間的にもより効率的な作法で実装できるために、末尾再帰は望ましいのです。
+")
 
 <h2>
+#langeng("
 Translating recursion into tail-recursion
+")
+#langja("
+再帰を末尾再帰に変換する
+")
 </h2>
 
+#langeng("
 Given the advantage of tail-recursion, it is natural to encounter the need
 for turning a recursive (but not tail-recursive) function into an
 equivalent one that is also tail-recursive. While there is a systematic
@@ -95,13 +174,31 @@ approach to translating recursion into tail-recursion (CPS-translation),
 this approach is in general not what one wants to use if one's focus is on
 efficiency. Instead, one mostly relies on ad hoc methods or tricks to
 handle each individual case.
+")
+#langja("
+末尾再帰に利点があるのであれば、末尾再帰でない再帰関数から等価な末尾再帰への変換が当然必要になります。
+再帰を末尾再帰に変換する体系立てられたアプローチ (CPS 変換)
+がありますが、効率に注目するとこのアプローチは一般的に使えるものではありません。
+その代わりに、主にそれぞれ個々の場合を扱うアドホックは手法やトリックに頼ることになります。
+")
 
 <h4>
+#langeng("
 Example 1
+")
+#langja("
+例 1
+")
 </h4>
+#langeng("
 Let us now take a look at a concrete example. The following code implements
 a function [tally] that sums up all the integers between 1 and a given
 number n, inclusive:
+")
+#langja("
+ここで具体的な例を見てみましょう。
+次のコードでは、1 から与えられた数字 n までの全ての整数の和を計算する関数 [tally] を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -110,8 +207,14 @@ fun tally (n: int): int =
   if n > 0 then n + tally (n-1) else 0
 ")</pre>
 
+#langeng("
 Clearly, [tally] is not tail-recursive. If we translate this implementation
 of [tally] into C, we essentially obtain the following code:
+")
+#langja("
+[tally] が末尾再帰でないことは明確です。
+もしこの [tally] の実装をC言語に変換すると、本質的に次のようなコードが得られるはずです:
+")
 
 <pre>
 int tally (int n)
@@ -120,8 +223,13 @@ int tally (int n)
 }
 </pre>
 
+#langeng("
 This implementation of [tally] in C is a bit unusual as a standard one is
 expected to be based on a for-loop:
+")
+#langja("
+C言語における [tally] のこの実装は少し独特で、一般的な実装は for ループに基づくものになるはずです:
+")
 
 <pre>
 int tally2 (int n)
@@ -133,15 +241,27 @@ int tally2 (int n)
 }
 </pre>
 
+#langeng("
 It should be pointed out that the equivalence between [tally] and [tally2]
 relies on the fact that integer addition is <em>associative</em>. If
 addition is replaced with subtraction, which is not associative, then these
 two implementations are no longer equivalent.
+")
+#langja("
+整数の加算の <em>結合法則</em> を使えば、[tally] と [tally2] が等価であることは指摘するべきでしょう。
+もし加算を減算で置換すると、それは結合法則を満たしません。
+そのため2つの実装はもはや等価ではなくなってしまいます。
+")
 
 <p>
 
+#langeng("
 A straightforward translation of the above implementation of [tally2] in C
 into ATS yields the following code:
+")
+#langja("
+C言語における [tally2] の上記の実装は、容易に次のような ATS コードに変換できます:
+")
 
 <pre
 class="patsyntax">
@@ -158,33 +278,66 @@ in
 end // end of [tally2]
 ")</pre>
 
+#langeng("
 Please note that the inner function [loop] is tail-recursive. The
 compiler of ATS (ATS/Postiats) essentially compiles [loop] into
 some code in C that is equivalent to the for-loop mentioned above.
+")
+#langja("
+内部関数 [loop] が末尾再帰であることに注意してください。
+ATS (ATS/Postiats) コンパイラは、[loop] を上記で示した for ループ相当のC言語コードに本質的にコンパイルします。
+")
 
 <p>
 
+#langeng("
 In general, the process of translating a recursive function into a
 tail-recursive one hinges on finding an efficient way to encode the stack
 generated during the execution of the function. For instance, suppose we
 call [tally] on 100; this call generates a recursive call on 99, and then
 a recursive call on 98, and so on; when [tally] is called on 50, the call
 stack essentially represents the following evaluation context:
+")
+#langja("
+一般的に、再帰関数を末尾再帰関数に変換は、その関数を実行中に生成されるスタックをエンコードする効率の良い方法を見つけられるかで決まります。
+例えば、[tally] を 100 に対して呼び出したと仮定しましょう;
+この呼び出しは 99 に対する再帰呼出を生成し、そして 98 に対する再帰呼出、などと続きます;
+[tally] を 50 に対して呼び出した時、そのコールスタックは本質的に次のような評価コンテキストを表わします:
+")
 
 <pre>
 100 + (99 + (98 + (... + (51 + []) ...)))
 </pre>
 
+#langeng("
 where the symbol [] is to be replaced with the return value of tally(50).
 As integer addition is associative, we can use the sum (100+99+98+...+51)
 to represent this evaluation context. This is precisely the idea behind the
 implementation of the inner function [loop] in the body of [tally2].
+")
+#langja("
+このとき記号 [] は tally(50) の返値で置き換えられます。
+整数の加算は結合法則を満たすので、この評価コンテキストを表現するのに和
+(100+99+98+...+51) を使うことができます。
+これは [tally2] の本体内に内部関数 [loop] を実装する際のアイデアそのままです。
+")
 
 <h4>
+#langeng("
 Example 2
+")
+#langja("
+例 2
+")
 </h4>
+#langeng("
 Let us take a look at another example. The following code implements
 a function named [fib] for computing Fibonacci numbers:
+")
+#langja("
+別の例を見てみましょう。
+次のコードは、フィボナッチ数列を計算する [fib] という名前の関数を実装しています:
+1")
 
 <pre
 class="patsyntax">
@@ -193,9 +346,15 @@ fun fib (n: int): int =
   if n >= 2 then fib(n-1) + fib(n-2) else n
 ")</pre>
 
+#langeng("
 Clearly, neither of the two recursive calls in the body of [fib] is
 tail-recursive. Another function named [fib2] is presented as follows for
 computing Fibonacci numbers:
+")
+#langja("
+[fib] 本体内の2つの再帰呼出のどちらも末尾再帰でないことは明白です。
+フィボナッチ数列を計算する別の関数 [fib2] を次に示します:
+")
 
 <pre
 class="patsyntax">
@@ -212,6 +371,7 @@ in
 end // end of [fib2]
 ")</pre>
 
+#langeng("
 It is evident that the inner funtion [loop] in the body of [fib2] is
 tail-recursive. Suppose we want to evaluate fib2(100), which generates a
 call of the form loop(0, 0, 1), which then generates a call of the form
@@ -222,6 +382,16 @@ returned by the last call in this sequence is Fibonacci number 100 (as i
 reaches 100 at that point). This argument, though informal, should probably
 be enough to convince one that [fib] and [fib2] are equivalent, that is,
 they return the same result when applied to a given integer.
+")
+#langja("
+It is evident that the inner funtion [loop] in the body of [fib2] is tail-recursive.
+Suppose we want to evaluate fib2(100), which generates a call of the form loop(0, 0, 1),
+which then generates a call of the form loop(1, 1, 1), which then generates a call of the form loop(2, 1, 2), etc.
+If loop(i, f0, f1) is among this sequence of calls, then f0 is Fibonacci number i and f1 is Fibonacci number i+1.
+This implies that the value returned by the last call in this sequence is Fibonacci number 100 (as i reaches 100 at that point).
+This argument, though informal, should probably be enough to convince one that [fib] and [fib2] are equivalent,
+that is, they return the same result when applied to a given integer.
+")
 
 <p>
 
@@ -230,7 +400,12 @@ observation that only the two previously computed Fibonacci numbers need to
 be kept in order to compute Fibonacci number n for every n >= 2.
 
 <h4>
+#langeng("
 Example 3
+")
+#langja("
+例 3
+")
 </h4>
 
 The next example we see involves list-processing.
