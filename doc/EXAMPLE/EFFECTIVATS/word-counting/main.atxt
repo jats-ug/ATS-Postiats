@@ -686,41 +686,80 @@ A complete running program containing the above implementation of
 also a Makefile for compiling it.
 ")
 #langja("
-It is now safe for two threads to simultaneously call
-[WordCounting_fileref] on distinct file handles.
+これで別々のファイルハンドルについて、2つのスレッドが同時に [WordCounting_fileref] を呼び出しても安全です。
 
-A complete running program containing the above implementation of
-[WordCounting_fileref] can be found in the file wordcnt2.dats, and there is
-also a Makefile for compiling it.
+上記の [WordCounting_fileref] の実装を含む実行可能なプログラムは、ファイル
+wordcnt2.dats から入手できます。
+またそこには Makefile もあります。
 ")
 
 <p>
 
+#langeng("
 The template system of ATS is an advanced programming feature that can
 greatly facilitate code organization and reuse. I will gradually present
 more progromming examples to illustrate effective use of templates in
 practice.
+")
+#langja("
+ATS のテンプレートシステムは、コードの組織化と再利用を容易にできる高度なプログラミングの機能です。
+実際に使われるテンプレートを解説するために、より多くのプログラミング例を徐々に紹介します。
+")
 
 <h2>
+#langeng("
 A memory-clean implemenation of word-counting
+")
+#langja("
+単語を数えるメモリクリーンな実装
+")
 </h2>
 
+#langeng("
 A program is considered a memory-clean implementation if all the
 dynamically allocated memory is freed immediately before the termination of
 the program. For instance, if you
-use <a href="http://valgrind.org">valgrind</a> to monitor an execution of
+use
+#ahref("http://valgrind.org", "valgrind")
+to monitor an execution of
 this program, then the gathered statics should indicate that no leak is
 ever possible.
+")
+#langja("
+もし全ての動的に確保されたメモリがプログラムが終了する前に直ちに解放されるなら、そのプログラムはメモリクリーン
+(memory-clean) な実装であると考えられます。
+例えば、もしあなたが
+#ahref("http://valgrind.org", "valgrind")
+を使ってこのプログラムの実行を測定したなら、
+その測定結果はいかなるリークも発生する可能性がないことを示すでしょう。
+")
 
 <p>
 
+#langeng("
 By making use of linear types, I modified the program in wordcnt.dats to
 make it a memory-clean implementation. Please see wordcnt_vt.dats for the
 entirety of the modified version. Also, there is a Makefile for compiling it.
+")
+#langja("
+線形型を使うことで、プログラム wordcnt.dats を修正してメモリクリーンな実装にすることができました。
+修正されたバージョンの全体は wordcnt_vt.dats から入手できます。
+またそこには Makefile もあります。
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
