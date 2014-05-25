@@ -8,26 +8,55 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-IPC-redis</title>
+")
+#langja("
+<title>EFFECTIVATS: Redis を用いたプロセス間通信</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Inter-Process Communication based on Redis
+")
+#langja("
+Effective ATS: Redis を用いたプロセス間通信
+")
 </h1>
 
+#langeng("
 In this article, I present a straightforward example of inter-process
-communication based on the NOSQL <a href="http://redis.io">redis</a>.  The
+communication based on the NOSQL
+#ahref("http://redis.io", "redis").  The
 primary purpose of this example is to show a concrete case where redis
 functions are directly called inside ATS code.
+")
+#langja("
+この記事では、NOSQL
+#ahref("http://redis.io", "redis")
+を用いたプロセス間通信の素直な例を紹介します。
+この例の主な目的は redis の関数を ATS コードの中から直接呼び出す具体例を示すことです。
+")
 
 <h2>
+#langeng("
 Message Channels
+")
+#langja("
+メッセージチャネル
+")
 </h2>
 
+#langeng("
 Let us first introduce a type [msgchan] for message channels:
+")
+#langja("
+はじめにメッセージチャネルを表わす型 [msgchan] を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -36,7 +65,12 @@ abstype msgchan_type = ptr
 typedef msgchan = msgchan_type
 ')</pre>
 
+#langeng("
 The following function is for creating a message channel:
+")
+#langja("
+次の関数はメッセージチャネルを生成します:
+")
 
 <pre
 class="patsyntax">
@@ -44,14 +78,24 @@ class="patsyntax">
 fun msgchan_create (name: string): msgchan
 ')</pre>
 
+#langeng("
 In the actual implementation, a message channel is just a key referring to
 a queue in redis, and the function [msgchan_create] computes such a key based on
 a given name.
+")
+#langja("
+実際の実装ではメッセージチャネルは redis のキューを参照する単なるキーで、関数 [msgchan_create] は与えられた名前に基づいたキーを算出します。
+")
 
 <p>
 
+#langeng("
 In order to insert a message into a given message channel, the
 following function [msgchan_insert] can be called:
+")
+#langja("
+与えられたメッセージチャネルにメッセージを挿入するために、次の関数 [msgchan_insert] を使うことができます:
+")
 
 <pre
 class="patsyntax">
@@ -60,13 +104,23 @@ fun msgchan_insert
   (chan: msgchan, msg: string, nerr: &int >> _) : void
 ')</pre>
 
+#langeng("
 The third argument of [msgchan_insert] is call-by-reference, and its value
 is increased to indicate a failed attempt to insert a message.
+")
+#langja("
+[msgchan_insert] の3番目の引数は参照渡しで、メッセージの挿入に失敗するとその値を増やします。
+")
 
 <p>
 
+#langeng("
 In order to take out a message for a given message channel, the
 following function [msgchan_takeout] can be called:
+")
+#langja("
+与えられたメッセージチャネルからメッセージを取り出すために、次の関数 [msgchan_takeout] を使うことができます:
+")
 
 <pre
 class="patsyntax">
@@ -74,36 +128,69 @@ class="patsyntax">
 fun msgchan_takeout (chan: msgchan, nerr: &int >> _): stropt
 ')</pre>
 
+#langeng("
 The second argument of [msgchan_takeout] is call-by-reference, and its
 value is increased to indicate a failed attempt to take out a message. What
 [msgchan_takeout] returns is an optional string, which is either a regular
 string or a null pointer. In case a null pointer is returned, it is also an
 indication of failure of some sort.  Note that a call to [msgchan_takeout]
 on a given channel is blocked if the channel is currently empty.
+")
+#langja("
+[msgchan_takeout] の2番目の引数は参照渡しで、メッセージの取り出しに失敗するとその値を増やします。
+[msgchan_takeout] は、通常の文字列か NULL ポインタどちらかを取る optional 文字列を返します。
+NULL ポインタが返された場合もまた、なんらかの種類の失敗を示しています。
+与えられたチャネルがその時点で空だったら、そのチャネルに対する [msgchan_takeout] 呼び出しはブロックすることに注意してください。
+")
 
 <p>
 
+#langeng("
 If calling [msgchan_insert] or [msgchan_takeout] on a channel results in a
 failure, then the redis connection associated with the channel should be
 re-established before a second attempt is made.
+")
+#langja("
+もしチャネルに対して [msgchan_insert] もしくは [msgchan_takeout] を呼び出した結果が失敗だったら、
+2回目の試みの前にそのチャネルに関連した redis 接続を再確立させなければなりません。
+")
 
 <h2>
+#langeng("
 Redis Connection
+")
+#langja("
+Redis 接続
+")
 </h2>
 
+#langeng("
 To set up a redis connection means to create a value of the type
 [redisContext(l)], where l refers to the memory location at which the value
 is stored.  Let us use the name redisContext-value to refer to such a
 value.  In case a redis connection cannot be set up successfully, the type
 [redisContext(null)] is assigned to the created redisContext-value, which
 is just a null pointer.
+")
+#langja("
+redis 接続を構成するというのは、値がメモリ位置 l に保管されているとき、型 [redisContext(l)] の値を生成することを意味しています。
+そのような値を参照する redisContext 値を使ってみましょう。
+redis 接続を正常に構成できなかった場合、生成された単なる NULL ポインタであるような redisContext 値に型 [redisContext(null)] が割り当てられます。
+")
 
 <p>
 
+#langeng("
 Once a redis connection is established, the redisContext-value associated
 with this connection is stored in a reference (that is, an array of size 1).
 The following function can be called to obtain the stored redisContext-value
 (for temporary use):
+")
+#langja("
+いったん redis 接続が構成されると、この接続に関連する redisContext 値は
+(サイズ 1 であるような) 参照に保存されます。
+次の関数は、(一時的な使用を目的として) 保管された redisContext 値を得ることができます:
+")
 
 <pre
 class="patsyntax">
@@ -111,7 +198,12 @@ class="patsyntax">
 fun the_redisContext_vtget (): [l:addr] vttakeout0 (redisContext(l))
 ')</pre>
 
+#langeng("
 where [vttakeout0] is defined as follows:
+")
+#langja("
+このとき [vttakeout0] は次のように定義されています:
+")
 
 <pre
 class="patsyntax">
@@ -120,7 +212,12 @@ vtypedef
 vttakeout0 (a:vt@ype) = (a -<lin,prf> void | a) // borrowed linear value
 ')</pre>
 
+#langeng("
 The following code depicts a typical calling sequence:
+")
+#langja("
+次のコードは典型的な呼び出しシーケンスを表わしています:
+")
 
 <pre
 class="patsyntax">
@@ -134,17 +231,33 @@ prval () = fpf (ctx) // returning the borrowed context
 //
 ')</pre>
 
+#langeng("
 where [the_redisContext_vtget] is called to obtain a redisContext-value and
 a proof function for returning this value, and the proof function is then
 called on the redisContext-value to return it (in the sense of theorem-proving)
 after its being used.
+")
+#langja("
+このとき [the_redisContext_vtget] は redisContext 値とこの値を解放するための証明関数を得るために呼び出されています。
+そして redisContext 値を使い終わったら、それを解放するためにその証明関数を呼び出します。
+")
 
 <h2>
+#langeng("
 Testing
+")
+#langja("
+テスト
+")
 </h2>
 
+#langeng("
 The ATS code implementing message channels can be found
 in the following files:
+")
+#langja("
+メッセージチャネルを実装している ATS コードは次のファイルから入手できます:
+")
 
 <pre>
 msgchan.sats
@@ -152,33 +265,66 @@ msgchan.dats
 redisContextSetup.dats
 </pre>
 
+#langeng("
 In the file [test_up.dats], some testing code is available
 for uploading the content of a file into a message channel.
+")
+#langja("
+ファイル [test_up.dats] は、ファイルの内容物をメッセージチャネルにアップロードするテストコードです。
+")
 
 <p>
 
+#langeng("
 In the file [test_dn.dats], some testing code is available
 for downloading the content of a message channel into a file.
+")
+#langja("
+ファイル [test_dn.dats] は、メッセージチャネルの内容物をファイルにダウンロードするテストコードです。
+")
 
 <p>
 
+#langeng("
 There is also a Makefile available for compiling the ATS source code into
 excutables [test_up] and [test_dn] for testing. Assume the availability of
 a redis server running on the default port 6379 at the IP address 127.0.0.1.
 By executing the following command-line:
+")
+#langja("
+ATS ソースコードを [test_up] と [test_dn] にコンパイルするための Makefile があります。
+IP アドレス 127.0.0.1 のポート 6379 で redis サーバが利用できることを仮定しています。
+次のコマンドで実行すると:
+")
 
 <pre>
 cat msgchan.sats | ./test_up & ./test_dn
 </pre>
 
+#langeng("
 one should be able to see the content of the file [msgchan.sats] being
 output to the console in a line-by-line fashion, where a short pause (of 3
 seconds at most) is introduced between the appearance of two consecutive
 lines.
+")
+#langja("
+ファイル [msgchan.sats] の中身が逐次的にコンソールに表示されるのが見えるはずです。
+このとき、連続した2行を表示する間に (せいぜい3秒程度の) 短い休止が入ります。
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
