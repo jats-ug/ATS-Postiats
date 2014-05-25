@@ -383,9 +383,15 @@ atslib_stkarray_set_ptrcur
 } // end of [atslib_stkarray_set_ptrcur]
 </pre>
 
+#langeng("
 The C-names for [stkarray_get_ptrcur] and [stkarray_set_ptrcur] are
 chosen to be [atslib_stkarray_get_ptrcur] and [atslib_stkarray_set_ptrcur],
 respectively.
+")
+#langja("
+[stkarray_get_ptrcur] と [stkarray_set_ptrcur] を表わすC言語の名前は、それぞれ
+[atslib_stkarray_get_ptrcur] と [atslib_stkarray_set_ptrcur] が選ばれます。
+")
 
 <p>
 
