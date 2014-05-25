@@ -8,14 +8,24 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-Producer-Consumer</title>
+")
+#langja("
+<title>EFFECTIVATS: リーダー/ライター問題</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Readers-and-Writers
+")
+#langja("
+Effective ATS: リーダー/ライター問題
+")
 </h1>
 
 In general, ATS shines much more brightly in contexts where dynamic testing
@@ -389,7 +399,17 @@ features.
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
