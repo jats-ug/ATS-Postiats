@@ -8,25 +8,48 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-DiningPhil</title>
+")
+#langja("
+<title>EFFECTIVATS: 食事する哲学者の問題</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Dining Philosophers
+")
+#langja("
+Effective ATS: 食事する哲学者の問題
+")
 </h1>
 
+#langeng("
 The three most distinguished features of ATS are dependent types, linear
 types, and localizable templates. In this article, I present an
 implementation of the famous problem of 5-Dining-Philosophers by Dijkstra
 that makes simple but convincing use of linear types.
+")
+#langja("
+3つの最も際だった ATS の機能は、依存型、線形型、ローカライズ可能なテンプレートです。
+この記事では、ダイクストラによる有名な問題である5人の食事する哲学者の問題の実装を紹介しようと思います。
+この問題は単純ですが、線形型を使う説得力のある例です。
+")
 
 <h2>
+#langeng("
 Description of the Problem 
+")
+#langja("
+この問題についての解説
+")
 </h2>
 
+#langeng("
 There are five philosophers sitting around a table and there are also 5
 forks placed on the table such that each fork is located between the left
 hand of a philosopher and the right hand of another philosopher. Each
@@ -35,12 +58,33 @@ order to dine, a philosopher needs to first acquire two forks: one located
 on his left-hand side and the other on his right-hand side. After
 finishing dining, a philosopher puts the two acquired forks onto the table:
 one on his left-hand side and the other on his right-hand side.
+")
+#langja("
+5人の哲学者がテーブルの周りに座っています。
+また5つのフォークが、それぞれのフォークが哲学者の左手と別の哲学者の右手の間に配置されるよう、テーブルの上に置かれています。
+それぞれの哲学者は次の行動を繰り返します:
+考えることと食事をすることです。
+食事をするためには、哲学者はまず2つのフォークを獲得する必要があります:
+1つは彼の左手にもう1つは彼の右手に持ちます。
+食事が終わると、哲学者は獲得した2つのフォークをテーブルの上に置きます:
+1つは彼の左手側にもう1つは彼の右手側に。
+")
 
 <h2>
+#langeng("
 A Linear Type for Resources
+")
+#langja("
+リソースを表わす線形型
+")
 </h2>
 
+#langeng("
 First, let us introduce a type definition as follows:
+")
+#langja("
+はじめに、次のような型定義を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -48,13 +92,24 @@ class="patsyntax">
 typedef phil = int
 ")</pre>
 
+#langeng("
 The sole purpose of using [phil] instead of [int] as the type for
 philosophers is to make the presented code easier to follow.
+")
+#langja("
+哲学者を表わす型として [int] の代わりに [phil] を使う唯一の目的は、後続のコードをより簡単に表現するためです。
+")
 
 <p>
 
+#langeng("
 The forks mentioned in the description of the problem refer to shared
 resources. Let us next introduce a linear abstract type for the forks:
+")
+#langja("
+この問題で描写されているフォークは共有リソースです。
+次にフォークを表わす線形抽象型を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -62,17 +117,28 @@ class="patsyntax">
 absvt@ype fork = int
 ")</pre>
 
-
+#langeng("
 This declaration means that [fork] is an abstract viewtype (that is, a
 linear abstract type) whose size equals the size of [int].  Please note
 that the information on [fork] and [int] being of the same size is not
 available until after typechecking when abstract types are replaced with
 concrete types.
+")
+#langja("
+この宣言は [fork] はサイズが [int] のサイズに等しいような抽象 viewtype
+(つまり線形抽象型) であることを意味しています。
+[fork] と [int] が同じサイズであるという情報は、型検査が終わって抽象型が具象型で置き換えられるまでは有効ではないことに注意してください。
+")
 
 <p>
 
+#langeng("
 For a philosopher to acquire and release
 his left fork, the following functions can be called:
+")
+#langja("
+哲学者が彼の左のフォークを獲得/解放するために、次の関数を呼び出すことができます:
+")
 
 <pre
 class="patsyntax">
@@ -81,8 +147,13 @@ fun phil_acquire_lfork (n: phil): fork
 fun phil_release_lfork (n: phil, f: fork): void
 ")</pre>
 
+#langeng("
 For a philosopher to acquire and release his right fork, the following
 functions can be called:
+")
+#langja("
+哲学者が彼の右のフォークを獲得/解放するために、次の関数を呼び出すことができます:
+")
 
 <pre
 class="patsyntax">
@@ -91,18 +162,35 @@ fun phil_acquire_rfork (n: phil): fork
 fun phil_release_rfork (n: phil, f: fork): void
 ")</pre>
 
+#langeng("
 As forks are shared resources, these functions for acquiring and releasing
 forks should in general involve some sort of locking mechanism. If a fork
 is acquired, then it should be released after its use. By assigning a
 linear type to forks, we can rely on the type system of ATS to keep track
 of forks, ensuring their being handled properly.
+")
+#langja("
+フォークは共有リソースなので、フォークの獲得/解放を表わすこれらの関数は一般になんらかのロックメカニズムを必要とします。
+フォークが獲得されたら、それを使った後には解放されるべきです。
+フォークに線形型を割り当てることで、フォークの経過を追いかけてそれらが適切に扱われていることを保証するために、ATS の型システムを信頼することができます。
+")
 
 <h2>
+#langeng("
 Philosopher Implemented as a Loop 
+")
+#langja("
+ループとして実装された哲学者
+")
 </h2>
 
+#langeng("
 According to the description of the problem, we implement a loop as follows
 to simulate a philosopher:
+")
+#langja("
+この問題の説明に従って、哲学者をシミュレートする次のようなループを実装してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -118,8 +206,13 @@ in
 end // end of [phil_loop]
 ")</pre>
 
+#langeng("
 The function [phil_think], which requires no resources, can be implemented
 as follows:
+")
+#langja("
+リソースが不要な関数 [phil_think] は次のように実装できます:
+")
 
 <pre
 class="patsyntax">
@@ -133,8 +226,13 @@ phil_think (n) =
 )
 ")</pre>
 
+#langeng("
 The function [phil_dine], which involves acquiring and releasing resources,
 can be implemented as follows:
+")
+#langja("
+リソースの獲得と解放を必要とする関数 [phil_dine] は次のように実装できます:
+")
 
 <pre
 class="patsyntax">
@@ -158,17 +256,31 @@ in
 end // end of [phil_dine]
 ")</pre>
 
+#langeng("
 Note that both [lf] and [rf] are assigned the linear type [fork], making
 them linear values. As every linear value must be consumed in some way or
 returned, removing the call to [phil_release_lfork] (or
 [phil_release_rfork]) causes a type-error that can be readily detected
 during typechecking. This is a great advantage of assigning linear types to
 values representing resources.
+")
+#langja("
+[lf] と [rf] 両方には線形型 [fork] が割り当てられているので、それらは線形値であることに注意してください。
+あらゆる線形値はなんらかの方法で消費もしくは返されなればならないので、呼び出し [phil_release_lfork] (もしくは [phil_release_rfork])
+を削除すると型検査でたやすく検出可能な型エラーを引き起こします。
+これはリソースを表現する値に線形型を割り当てる大きな利点です。
+")
 
 <h2>
+#langeng("
 Summary of the Remaining Implementation
+")
+#langja("
+残りの実装について
+")
 </h2>
 
+#langeng("
 If we run [phil_loop] on 5 threads, then we can employ 5 mutexes to protect
 5 forks (one for each). We can also employ one mutex to protect 5 forks and
 then introduce some conditional variables to avoid busy-waiting. Instead,
@@ -180,27 +292,69 @@ random length to avoid complete busy-waiting. This style of implementation
 is chosen primarily for the purpose of a demo. The interested reader is
 encouraged to give a thread-based implementation that employs mutexes and
 possibly conditional variables.
+")
+#langja("
+もし [phil_loop] を5つのスレッドで動作させるなら、5つのフォークを保護するために
+(それぞれ1つずつ) 5つの mutex を用いることができます。
+また5つのフォークを保護するために1つの mutex を使うこともでき、するとビジーウェイトを回避するためにいくつかの条件変数を導入することになります。
+代わりに、ここでの実装は [phil_loop] を (システムコール [fork] によって生成された)
+5つのプロセスの上で動作させています。
+そしてそれらのプロセスで共有している5つのフォークを格納するメモリを確保するために [mmap] を呼び出します。
+フォークを保護するためにファイルシステム下層を用いたロックを生成し、ビジーウェイトを回避するためにランダムな長さのスリープを挿入しています。
+この実装のスタイルは主にデモを目的として選択されています。
+興味のある読者には、mutex とおそらく条件変数を用いてスレッドに基づいた実装を作ってみることをおすすめします。
+")
 
 <h2>
+#langeng("
 Testing
+")
+#langja("
+テスト
+")
 </h2>
 
+#langeng("
 Note that each philosopher in the given implementation picks first his left
 fork and then his right fork. In the case where everyone of them holds a
 fork on his left hand, a deadlock occurs. A simple way to avoid such a
 deadlock is to have a philosopher (among the 5) who picks first his right
 fork and then his left fork.
+")
+#langja("
+与えられた実装でのそれぞれの哲学者は、はじめに左のフォークを次に右のフォークを取ることに注意してください。
+彼ら全員が左手にフォークを持った場合、デッドロックが発生します。
+このようなデッドロックを回避する単純な方法は、(5人の中で)
+1人の哲学者がまず右のフォークを次に左のフォークを取ることです。
+")
 
 <p>
 
+#langeng("
 The problem of 5-Dining-Philosphers was precisely introduced to study
 deadlocks and deadlock avoidance. If one tests the given implementation, he
 or she should likely to see a deadlock occurring in a few minutes. Please
 use the command [kill] to remove all of the deadlocked processes.
+")
+#langja("
+5人の食事する哲学者の問題は、デッドロックとデッドロックの回避に対する学習の導入になりました。
+与えられた実装を実行すると、数分の内にデッドロックが発生するのを目にするでしょう。
+デッドロックしたプロセスを全て削除するために、どうか [kill] コマンドを使ってください。
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
