@@ -40,17 +40,30 @@ array-based stack implementation in which one can find certain typical uses
 of unsafe programming features in ATS.
 ")
 #langja("
-ATS advocates a programming paradigm referred to as <em>Programming with Theorem-Proving</em> (PwTP) in which programs and proofs are syntactically intertwined.
-As proof construction can be highly expensive in terms of both effort and time,
-making proper use of unsafe programming features (so as to avoid explicit proof construction) is often a necessary skill for a programmer who wants not just only to be able to code in ATS but also to do it productively.
-In this article, I would like to present a simple array-based stack implementation in which one can find certain typical uses of unsafe programming features in ATS.
+ATS はプログラムと証明を構文的に結び付ける
+<em>定理証明によるプログラミング - Programming with Theorem-Proving</em> (PwTP)
+と呼ばれるプログラミングパラダイムを支持しています。
+証明の構築は努力と時間双方の観点から高価になりえるので、(事細かな証明の構築を回避するために)
+安全でないプログラミングの機能を適切に利用することは
+ATS を使ってただ単にではなく生産的にコードを書きたいプログラマにとってしばしば必要な技能です。
+この記事では、ATS の安全でないプログラミングの機能の典型的な使用方法を理解するために、配列を用いた単純なスタックの実装を紹介しようとしようと思います。
 ")
 
 <h2>
+#langeng("
 API for Array-Based Stacks
+")
+#langja("
+配列を用いたスタックの API
+")
 </h2>
 
+#langeng("
 As usual, let us first introduce an abstract type for array-based stacks:
+")
+#langja("
+いつものように、はじめに配列を用いたスタックを表わす抽象型を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -59,7 +72,12 @@ absvtype
 stkarray_vtype (a:vt@ype+, m:int, n:int) = ptr
 ")</pre>
 
+#langeng("
 We then introduce some shorthands as follows:
+")
+#langja("
+それから次のようにいくつか短縮名を導入します:
+")
 
 <pre
 class="patsyntax">
@@ -69,12 +87,22 @@ vtypedef
 stkarray (a:vt0p) = [m,n:int] stkarray_vtype (a, m, n)
 ")</pre>
 
+#langeng("
 Given a type T, an integer M and another integer N, the type [stkarray(T,
 M, N)] is for an array-based stack such that (1) the elements stored in the
 stack are of type T, (2) the capacity of the stack is M, and (3) the
 current size of the stack is N.  Clearly, M >= N and N >= 0 holds, and this
 property is encoded into the type of the following proof function
 [lemma_stkarray_param]:
+")
+#langja("
+型 T と整数 M, N が与えられたとき、型 [stkarray(T, M, N)] は次のような配列を用いたスタックを表わします;
+(1) スタックに格納された要素が型 T であり、
+(2) スタックの容量が M であり、
+(3) 現在のスタックのサイズが N である。
+M >= N と N >= 0 が維持されていて、この特性は次の証明関数 [lemma_stkarray_param]
+の型にエンコードされていることは明確です:
+")
   
 <pre
 class="patsyntax">
@@ -88,8 +116,13 @@ lemma_stkarray_param
 
 <p>
 
+#langeng("
 As always, functions are needed for creating and destroying (linear)
 stkarray-values:
+")
+#langja("
+いつものように、(線形の) stkarray 値を生成/破棄するために関数が必要になります:
+")
 
 <pre
 class="patsyntax">
@@ -104,14 +137,26 @@ stkarray_free{a:vt0p}{m:int} (stkarray (a, m, 0)):<!wrt> void
 //
 ")</pre>
 
+#langeng("
 Given a size M, [stkarray_make_cap] creates an empty stack of capacity M.
 As linear elements stored in a stack are leaked after the stack is freed,
 the type of [stkarray_free] indicates that the function can only be applied
 to a stack containing no elements.
+")
+#langja("
+サイズ M が与えられたとき、[stkarray_make_cap] は容量 M の空スタックを生成します。
+スタックが解放された後にスタック内の線形な要素がリークしてしまうので、[stkarray_free]
+の型は要素を持たないスタックにのみこの関数を適用できることを示しています。
+")
 
 <p>
 
+#langeng("
 For inserting an element, we have the following function:
+")
+#langja("
+要素を挿入するために、次の関数を作ります:
+")
 
 <pre
 class="patsyntax">
@@ -124,14 +169,26 @@ stkarray_insert
 ) :<!wrt> void // endfun
 ")</pre>
 
+#langeng("
 Note that [stkarray_insert] can only be called on a stack if its current
 size is strictly less than its capacity. The type of [stkarray_insert]
 states that the size of a stack argument is increased by 1 after an
 element is inserted into it.
+")
+#langja("
+スタックの現在サイズがその容量よりも厳密に小さいときのみ、[stkarray_insert]
+をスタックに対して呼び出すことができることに注意してください。
+[stkarray_insert] の型は、1つ要素を挿入した後ではスタック引数のサイズが 1 増えることを示しています。
+")
 
 <p>
 
+#langeng("
 For taking out an element, we have the following function:
+")
+#langja("
+要素を取り出すために、次の関数を作ります:
+")
 
 <pre
 class="patsyntax">
@@ -143,16 +200,32 @@ stkarray_takeout
 // end of [stkarray_takeout]
 ")</pre>
 
+#langeng("
 Note that [stkarray_takeout] can only be called on a stack if its current
 size is positive. The type of [stkarray_takeout] states that the size of a
 stack is decreased by 1 after an element is taken out of it.
+")
+#langja("
+[stkarray_takeout] はスタックの現在サイズが正の場合のみ呼び出すことができることに注意してください。
+[stkarray_takeout] の型は、要素がスタックから取り出された後ではスタックのサイズが 1 減少することを示しています。
+")
 
 <h2>
+#langeng("
 Implementation of Array-Based Stacks
+")
+#langja("
+配列を用いたスタックの実装
+")
 </h2>
 
+#langeng("
 We can use the following 3-pointer struct in C to reprensent an array-based
 stack:
+")
+#langja("
+次のようなC言語の3つのポインタを持つ構造体を使うことで、配列を用いたスタックを表現することができます:
+")
 
 <pre>
 typedef
@@ -163,15 +236,27 @@ struct {
 } atslib_stkarray_struct ;
 </pre>
 
+#langeng("
 The pointers [stkarray_beg] and [stkarray_end] point to the beginning and
 end of the base array while the pointer [stkarray_cur] points the top of
 the current stack. Note that the beginning of the base array is the bottom
 of the represented stack.
+")
+#langja("
+ポインタ [stkarray_beg] と [stkarray_end] は元になる配列の開始位置と終了位置を指しています。
+ポインタ [stkarray_cur] は現在のスタックの一番上を指しています。
+元になる配列の開始位置が表現されるスタックの底であることに注意してください。
+")
 
 <p>
 
+#langeng("
 Let us introduce the folllowing two functions for getting and setting
 the pointer [stkarray_cur]:
+")
+#langja("
+ポインタ [stkarray_cur] にアクセスするために次の2つの関数を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -184,9 +269,15 @@ stkarray_set_ptrcur{a:vt0p}
   {m,n:int} (stk: !stkarray (INV(a), m, n), ptr):<!wrt> void = "mac\#atslib_stkarray_set_ptrcur"
 ')</pre>
 
+#langeng("
 As can be expected, these two functions are to be implemented in C
 directly. The following implementation of [stkarray_insert] makes use of
 these two functions as well as an unsafe function of the name [ptr0_set]:
+")
+#langja("
+予想できることですが、これら2つの関数はC言語で直接実装されています。
+[stkarray_insert] の次の実装は、これら2つの関数および安全でない関数 [ptr0_set] を使用します:
+")
 
 <pre
 class="patsyntax">
@@ -210,6 +301,7 @@ in
 end // end of [stkarray_insert]
 ")</pre>
 
+#langeng("
 Note that [ptr0_set] writes a value (its 2nd argument) to a given memory
 location (its 1st argument) without requiring a proof (of some at-view)
 associated with the location. In other words, [ptr0_set] performs a memory
@@ -218,15 +310,30 @@ function [__assert] is introduced so as to make it possible for the
 implementation to pass typechecking. The keyword [praxi] means that the
 introduced proof function should be treated as an assertion and no
 implementation for it is expected.
+")
+#langja("
+[ptr0_set] は、メモリ位置に関連した (at-view の) 証明なしに、(第2引数の) 値を (第1引数の) 
+与えらえたメモリ位置に書き込むことに注意してください。
+別の言い方をすると、[ptr0_set] はC言語が行なうのと正確に同じ方法で、メモリ更新を実行します。
+また型検査を通る実装を可能にするために、証明関数 [__assert]
+が導入されていることに注意してください。
+キーワード [praxi] は導入された証明関数を表明取り扱われるべきで、要求された実装を持たないことを意味しています。
+")
 
 <p>
 
+#langeng("
 The following implementation of [stkarray_takeout] makes use of [ptr0_get],
 which reads through a given pointer without requiring a proof (of some
 at-view) associated with the location. Also, just like in the
 implementation of [stkarray_insert], a proof function is asserted for the
 sole purpose of making the implementation of [stkarray_takeout] pass
 typechecking.
+")
+#langja("
+[stkarray_takeout] の次の実装は、メモリ位置に関連した (at-view の) 証明なしに与えられたポインタから読み出す、[ptr0_get] を使用しています。
+また [stkarray_insert] の実装と同じく、型検査を通る [stkarray_takeout] の実装を作るために、証明関数は表明として扱われています。
+")
 
 <pre
 class="patsyntax">
@@ -250,8 +357,13 @@ extern praxi __assert (!stkarray (a, m, n) >> stkarray (a, m, n-1)): void
 } // end of [stkarray_takeout]
 ")</pre>
 
+#langeng("
 The C code implementing [stkarray_get_ptrcur] and [stkarray_set_ptrcur] is
 given below:
+")
+#langja("
+[stkarray_get_ptrcur] と [stkarray_set_ptrcur] を実装するC言語コードは次のようになります:
+")
 
 <pre>
 ATSinline()
@@ -277,20 +389,42 @@ respectively.
 
 <p>
 
+#langeng("
 For more on array-based stack implementation, please see:
-<a href="http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/SATS/stkarray.sats">stkarray.sats</a>
+#ahref("http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/SATS/stkarray.sats", "stkarray.sats")
 ,
-<a href="http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/DATS/stkarray.dats">stkarray.dats</a>
+#ahref("http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/DATS/stkarray.dats", "stkarray.dats")
 , and
-<a href="http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/CATS/stkarray.cats">stkarray.cats</a>.
+#ahref("http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/CATS/stkarray.cats", "stkarray.cats")
+")
+#langja("
+配列を用いたスタック実装についての詳細は
+#ahref("https://github.com/githwxi/ATS-Postiats/blob/master/libats/SATS/stkarray.sats", "stkarray.sats")
+,
+#ahref("https://github.com/githwxi/ATS-Postiats/blob/master/libats/DATS/stkarray.dats", "stkarray.dats")
+,
+#ahref("https://github.com/githwxi/ATS-Postiats/blob/master/libats/CATS/stkarray.cats", "stkarray.cats")
+から入手できます。
+")
 
 <h2>
+#langeng("
 Some Stack-Functions of Convenience 
+")
+#langja("
+便利なスタックに関する関数をいくつか
+")
 </h2>
 
+#langeng("
 If a caller attempts to insert an element into a stack that happens to be
 full, we may require that the element be returned to the caller. The
 following function [stkarray_insert_opt] does this precisely:
+")
+#langja("
+If a caller attempts to insert an element into a stack that happens to be full, we may require that the element be returned to the caller.
+The following function [stkarray_insert_opt] does this precisely:
+")
 
 <pre
 class="patsyntax">
