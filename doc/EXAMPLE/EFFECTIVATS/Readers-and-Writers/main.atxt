@@ -28,27 +28,52 @@ Effective ATS: リーダー/ライター問題
 ")
 </h1>
 
+#langeng("
 In general, ATS shines much more brightly in contexts where dynamic testing
 becomes more difficult to perform and/or control.  In this article, I
 present in ATS an implementation of the classical Readers-and-Writers
 problem in concurrent programming.
+")
+#langja("
+一般に、動的なテストが難しい文脈において、ATS はより異彩を放っています。
+この記事では、並行プログラミングにおける古典的なリーダー/ライター問題の ATS における実装を紹介します。
+")
 
 <h2>
+#langeng("
 Description of the Problem 
+")
+#langja("
+この問題についての解説
+")
 </h2>
 
+#langeng("
 The Readers-and-Writers problem models access to a database.  In order for
 a process to read from the database, the process must be granted a
 read-access. In order for it to write to the database, it must be granted a
 write-access.  It is not allowed for a read-access and a write-access to be
 granted at the same time.  While multiple read-accesses can be granted
 simultaneously, only one write-access can be granted at a time.
+")
+#langja("
+リーダー/ライター問題はデータベースへのアクセスをモデルにしています。
+プロセスがデータベースからの読み出しをするためには、そのプロセスは読み出しアクセスが許可されなければなりません。
+プロセスがデーバベースへの書き込みをするためには、そのプロセスは書き込みアクセスが許可されなければなりません。
+読み出しアクセスと書き込みアクセスを同時に許可することはできません。
+複数の読み出しアクセスを同時に許可することはできますが、書き込みアクセスは一度に1つだけしか許可できません。
+")
 
 <h2>
-Interface for Database Access
+データベースアクセスを表わすインターフェイス
 </h2>
 
+#langeng("
 Following is an abstract interface for accessing database:
+")
+#langja("
+次のコードはデータベースにアクセスするための抽象インターフェイスです:
+")
 
 <pre
 class="patsyntax">
@@ -64,17 +89,33 @@ fun DBwrite (pf: !DBwrite_v | db: DB): void
 //
 ')</pre>
 
+#langeng("
 For calling [DBread] to
 read from a database, a proof of the (abstract) view [DBread_v] is needed.
 For calling [DBwrite] to
 write to a database, a proof of the (abstract) view [DBwrite_v] is needed.
+")
+#langja("
+[DBread] を呼び出してデータベースから読み出すためには、(抽象) view [DBread_v] の証明が必要です。
+[DBwrite] を呼び出してデータベースに書き込むためには、(抽象) view [DBwrite_v] の証明が必要です。
+")
 
 <h2>
+#langeng("
 Databases-with-state
+")
+#langja("
+状態付きデータベース
+")
 </h2>
 
+#langeng("
 Let us introduce a linear abstract type [DBshell] for a database
 with some linear state:
+")
+#langja("
+なんらかの線形状態を共なうデータベースを表わすために、線形抽象型 [DBshell] を導入しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -87,10 +128,17 @@ vtypedef DBshell = [r,w:int] DBshell (r, w)
 //
 ')</pre>
 
+#langeng("
 Given integer r and w, a value of the type [DBshell(r, w)] is referred
 to as a database-with-state in which the associated database is currently
 granting r read-accesses and w write-accesses. The following two proof functions
 mention explicitly some constraints on parameters r and w:
+")
+#langja("
+整数 r と w が与えられたとき型 [DBshell(r, w)] の値は、現時点で r 個の読み出しアクセスと w
+個の書き込みアクセスを許可しているデータベースを内包した、状態付きデータベース (database-with-state) 見なせます。
+次の2つの証明関数は、パラメータ r と w に対するいくつかの強制を示しています:
+")
 
 <pre
 class="patsyntax">
@@ -105,14 +153,25 @@ lemma_DBshell_param2
 //
 ')</pre>
 
+#langeng("
 Given a type [DBshell(r, w)], the proof function [lemma_DBshell_param]
 states that r is a natural number and w is between 0 and 1, inclusive;
 the proof function [lemma_DBshell_param2] states that w must equal 0 if
 r is positive. 
+")
+#langja("
+型 [DBshell(r, w)] が与えられたとき、証明関数 [lemma_DBshell_param] は r は自然数で w は 0 か 1 であることを示しています;
+証明関数 [lemma_DBshell_param2] は、もし r が正の数であれば w は 0 でなければならないことを示しています。
+")
 
 <p>
 
+#langeng("
 Some functions on databases-with-state are listed as follows:
+")
+#langja("
+状態付きデータベースに関するいくつかの関数を次に列挙します:
+")
 
 <pre
 class="patsyntax">
@@ -125,17 +184,34 @@ fun DBshell_nwrite {r,w:int} (x: !DBshell (r, w)): int (w)
 //
 ')</pre>
 
+#langeng("
 Clearly, [DBshell_dbget] is meant to return the database associated with a
 given database-with-state. As for [DBshell_nread] and [DBshell_nwrite],
 they can be called on a database-with-state of type [DBshell(r, w)] to
 obtain the values of r and w, respectively.
+")
+#langja("
+[DBshell_dbget] が、与えられた状態付きデータベースに関連したデータベースを返す意図を持っていることは明確です。
+[DBshell_nread] と [DBshell_nwrite] に関しては、それぞれ r と w
+の値を獲得するために、型 [DBshell(r, w)] の状態付きデータベースに対して呼び出すことができます。
+")
 
 <h2>
+#langeng("
 Encoding the Policy for Database Access
+")
+#langja("
+データベースアクセスのポリシーをエンコーディングする
+")
 </h2>
 
+#langeng("
 The policy for database access is formally encoded in the types
 of the following declared function:
+")
+#langja("
+データベースアクセスのポリシーは次に宣言された関数の型に形式的にエンコードされています:
+")
 
 <pre
 class="patsyntax">
@@ -153,6 +229,7 @@ fun DBshell_release_write
 //
 ')</pre>
 
+#langeng("
 A proof of the view [DBread_v] is needed for reading from a database.  In
 order to obtain it, [DBshell_acquire_read] needs to be called on a
 database-with-state that is currently granting no write-access.  Similarly,
@@ -160,15 +237,34 @@ a proof of the view [DBwrite_v] is needed for writing to a database.  In
 order to obtain it, [DBshell_acquire_write] needs to be called on a
 database-with-state that is currently granting neither read-access nor
 write-access.
+")
+#langja("
+データベースから読み出すためには view [DBread_v] の証明が必要です。
+それを得るためには、現時点で書き込みアクセスを許可していない状態付きデータベースに対して
+[DBshell_acquire_read] を呼び出す必要があります。
+同様に、データベースへ書き込むためには view [DBwrite_v] の証明が必要です。
+それを得るためには、現時点で読み出しアクセスも書き込みアクセスも許可していない状態付きデータベースに対して
+[DBshell_acquire_write] を呼び出す必要があります。
+")
 
 <h2>
+#langeng("
 Shared Databases-with-state
+")
+#langja("
+共有された状態付きデータベース
+")
 </h2>
 
-
+#langeng("
 A shared database-with-state essentially wraps a protection mechanism
 around a database-with-state. Let
 introduce a non-linear abstract type [SDBshell] for shared databases-with-state:
+")
+#langja("
+共有された状態付きデータベースは、本質的に保護メカニズムで状態付きデータベースを包んだものです。
+共有された状態付きデータベースを表わす非線形の抽象型 [SDBshell] を導入してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -176,9 +272,15 @@ class="patsyntax">
 abstype SDBshell = ptr
 ')</pre>
 
+#langeng("
 As can be expected, there is a mutex for protecting the database-with-state
 inside a shared database-with-state.  The following two functions can be called
 to acquire/release the protected database-with-state:
+")
+#langja("
+予想できることですが、共有された状態付きデータベース内の状態付きデータベースを保護するために mutex を使います。
+次の2つの関数は、保護された状態付きデータベースを獲得/解放をするために呼び出されます:
+")
 
 <pre
 class="patsyntax">
@@ -187,7 +289,12 @@ fun SDBshell_acquire (sx: SDBshell): DBshell
 fun SDBshell_release (sx: SDBshell, x: DBshell): void
 ')</pre>
 
+#langeng("
 Let us now see an implementation of the following declared functions:
+")
+#langja("
+ここで次に宣言された関数の実装を見てみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -201,15 +308,29 @@ fun SDBshell_release_write (pf: DBwrite_v | sx: SDBshell): void
 //
 ')</pre>
 
+#langeng("
 which can be called to safely support database access in concurrent
 programming (without causing race conditions).
+")
+#langja("
+これらは並行プログラミングにおいて
+(競合状態を引き起こさずに)
+データベースアクセスを安全にサポートするために呼び出されます。
+")
 
 <p>
 
+#langeng("
 There is a conditional variable (CV) inside a shared database-with-state.
 The following function [SDBshell_wait_read] can be called by a process to
 wait on the CV if it wants to read but the database is currently granting a
 write-access to another process:
+")
+#langja("
+共有された状態付きデータベース内には条件変数もあります。
+もしプロセスが読み出そうとした時にそのデータベースが別のプロセスに書き込みアクセスを許可していたなら、次の関数
+[SDBshell_wait_read] がその条件変数を待ち合わせるプロセスによって呼び出されます:
+")
 
 <pre
 class="patsyntax">
@@ -224,10 +345,16 @@ fun SDBshell_wait_read
 //
 ')</pre>
 
+#langeng("
 Similarly,
 the following function [SDBshell_wait_write] can be called by a process to
 wait on the CV if it wants to write but the database is currently granting a
 read-access or write-access to another process:
+")
+#langja("
+同様に、もしプロセスが書き込もうとした時にそのデータベースが別のプロセスに読み出しアクセスか書き込みアクセスを許可していたなら、次の関数
+[SDBshell_wait_write] がその条件変数を待ち合わせるプロセスによって呼び出されます:
+")
 
 <pre
 class="patsyntax">
@@ -240,8 +367,13 @@ fun SDBshell_wait_write
 ) : void // end of [SDBshell_wait_write]
 ')</pre>
 
+#langeng("
 In order to wake up a process waiting on the conditional variable, the
 following function [SDBshell_signal] can be called:
+")
+#langja("
+条件変数を待ち合わせているプロセスを起こすために、次の関数 [SDBshell_signal] を使うことができます:
+")
 
 <pre
 class="patsyntax">
@@ -251,8 +383,13 @@ extern fun SDBshell_signal (sx: SDBshell): void
 //
 ')</pre>
 
+#langeng("
 Furthermore, two auxiliary functions are declared as follows to facilitate
 the implementation of [SDBshell_acquire_read] and [SDBshell_acquire_write]:
+")
+#langja("
+さらに、[SDBshell_acquire_read] と [SDBshell_acquire_write] の実装を容易にするために、次のように2つの補助関数を宣言します:
+")
 
 <pre
 class="patsyntax">
@@ -265,7 +402,12 @@ fun SDBshell_acquire_write2
   (sx: SDBshell, x: !DBshell >> _): (DBwrite_v | void)
 ')</pre>
 
+#langeng("
 The following code implements [SDBshell_acquire_read]:
+")
+#langja("
+次のコードは [SDBshell_acquire_read] を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -299,7 +441,12 @@ if w = 0
 end // end of [SDBshell_acquire_read2]
 ')</pre>
 
+#langeng("
 The following code implements [SDBshell_release_read]:
+")
+#langja("
+次のコードは [SDBshell_release_read] を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -319,7 +466,12 @@ SDBshell_release_read
 }
 ')</pre>
 
+#langeng("
 The following code implements [SDBshell_acquire_write]:
+")
+#langja("
+次のコードは [SDBshell_acquire_write] を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -366,7 +518,12 @@ if r = 0
 end // end of [SDBshell_acquire_write2]
 ')</pre>
 
+#langeng("
 The following code implements [SDBshell_release_write]:
+")
+#langja("
+次のコードは [SDBshell_release_write] を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -383,19 +540,35 @@ SDBshell_release_write
 ')</pre>
 
 <h2>
+#langeng("
 Summary of the Remaining Implementation
+")
+#langja("
+残りの実装について
+")
 </h2>
 
+#langeng("
 Please find the entirety of the code in the following files:
+")
+#langja("
+この記事のコード全体は次のファイルから入手できます:
+")
 
 <pre>
 DB_read_write.sats
 DB_read_write.dats
 </pre>
 
+#langeng("
 Instead of being coded in C directly, the rest of my implementation is also
 written in ATS but it makes pervasive use of some unsafe programming
 features.
+")
+#langja("
+C言語を直接使ってコーディングする代わりに、私の実装の残りを ATS で書くことも可能です。
+しかし安全でないプログラミングの機能を広範囲に使うことになるでしょう。
+")
 
 <hr size="2">
 
