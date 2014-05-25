@@ -39,9 +39,15 @@ convincing use of linear types.
 ")
 
 <h2>
+#langeng("
 The Original Problem 
+")
+#langja("
+元の問題
+")
 </h2>
 
+#langeng("
 There are five philosophers sitting around a table and there are also 5
 forks placed on the table such that each fork is located between the left
 hand of a philosopher and the right hand of another philosopher. Each
@@ -50,26 +56,64 @@ order to dine, a philosopher needs to first acquire two forks: one located
 on his left-hand side and the other on his right-hand side. After
 finishing dining, a philosopher puts the two acquired forks onto the table:
 one on his left-hand side and the other on his right-hand side.
+")
+#langja("
+5人の哲学者がテーブルの周りに座っています。
+また5つのフォークが、それぞれのフォークが哲学者の左手と別の哲学者の右手の間に配置されるよう、テーブルの上に置かれています。
+それぞれの哲学者は次の行動を繰り返します:
+考えることと食事をすることです。
+食事をするためには、哲学者はまず2つのフォークを獲得する必要があります:
+1つは彼の左手にもう1つは彼の右手に持ちます。
+食事が終わると、哲学者は獲得した2つのフォークをテーブルの上に置きます:
+1つは彼の左手側にもう1つは彼の右手側に。
+")
 
 <h2>
+#langeng("
 A Variant of the Original Problem 
+")
+#langja("
+元の問題に対する変形
+")
 </h2>
 
+#langeng("
 The following twist is added to the original version:
+")
+#langja("
+元の問題に次のようなひねりを加えます:
+")
 
 <p>
 
-After a fork is used, it becomes a "dirty" fork and needs to be put in a
+#langeng("
+After a fork is used, it becomes a \"dirty\" fork and needs to be put in a
 tray for dirty forks. There is a cleaner who cleans dirty forks and then
 puts them back on the table.
+")
+#langja("
+フォークを使い終わったら、それは \"汚れた\" フォークになり、汚れたフォークはトレイに置かなればなりません。
+汚れたフォークを洗って、それらをテーブルに戻す掃除人がいます。
+")
 
 <h2>
+#langeng("
 Channels for Communication
+")
+#langja("
+連絡するためのチャネル
+")
 </h2>
 
+#langeng("
 A channel is just a shared queue of fixed capacity. The following two
 functions are for inserting an element into and taking an element out of a
 given channel:
+")
+#langja("
+チャネルは単なる容量固定の共有キューです。
+次の2つの関数は与えられたチャネルに対して要素を挿入し、要素を取り出します:
+")
 
 <pre
 class="patsyntax">
@@ -78,17 +122,35 @@ fun{a:vt0p} channel_insert (channel (a), a): void
 fun{a:vt0p} channel_takeout (chan: channel (a)): (a) 
 ")</pre>
 
+#langeng("
 If [channel_insert] is called on a channel that is full, then the caller is
 blocked until an element is taken out of the channel.  If [channel_takeout]
 is called on a channel that is empty, then the caller is blocked until an
 element is inserted into the channel.
+")
+#langja("
+もし [channel_insert] が満杯のチャネルに呼び出されたら、要素がチャネルから取り出されるまで呼び出し元はブロックします。
+もし [channel_takeout] が空のチャネルに呼び出されたら、要素がチャネルに挿入されるまで呼び出し元はブロックします。
+")
 
 <h2>
+#langeng("
 A Channel for Each Fork
+")
+#langja("
+それぞれのフォークを表わすチャネル
+")
 </h2>
 
+#langeng("
 Forks are resources given a linear type. Each fork is initially stored in a
 channel, which can be obtained by calling the following function:
+")
+#langja("
+フォークは線形型が与えられたリソースです。
+それぞれのフォークは、はじめにチャネルに保管されます。
+このチャネルは次の関数を呼び出すことで得られます:
+")
 
 <pre
 class="patsyntax">
@@ -96,20 +158,40 @@ class="patsyntax">
 fun fork_changet (n: nphil): channel(fork)
 ")</pre>
 
+#langeng("
 where the type [nphil] is defined to be [natLt(5)] (for natural numbers
 less than 5). The channels for storing forks are chosen to be of capacity
 2. The reason that channels of capacity 2 are chosen to store at most one
 element (in each of them) is to guarantee that these channels can never be
 full (so that there is no attempt made to send signals to awake callers
 supposedly being blocked due to channels being full).
+")
+#langja("
+このとき型 [nphil] は [natLt(5)] となるように (5未満の自然数となるように) 定義されています。
+フォークを保管するチャネルは容量が 2 になるように設定されています。
+(それぞれの中に) 大抵1つの要素を保管するチャネルの容量を 2 に設定する理由は、それらのチャネルが決して満杯にならないよう
+(満杯になったチャネルによってブロックしてしまったと思われる呼び出し元を起こすためにシグナルを送る必要がないように)
+保証するためです。
+")
 
 
 <h2>
+#langeng("
 A Channel for the Fork Tray
+")
+#langja("
+フォークトレイを表わすチャネル
+")
 </h2>
 
-A tray for storing "dirty" forks is also a channel, which can be obtained
+#langeng("
+A tray for storing \"dirty\" forks is also a channel, which can be obtained
 by calling the following function:
+")
+#langja("
+\"汚れた\" フォークを保管するトレイもまたチャネルです。
+このチャネルは次の関数を呼び出すことで得られます:
+")
 
 <pre
 class="patsyntax">
@@ -117,14 +199,30 @@ class="patsyntax">
 fun forktray_changet ((*void*)): channel(fork)
 ")</pre>
 
+#langeng("
 The capacity chosen for the channel is 6 (instead of 5) so that it can
 never become full (as there are only 5 forks in total).
+")
+#langja("
+チャネルが決して満杯にならないように、このチャネルの容量は (5の代わりに) 6 を設定します
+(全部で5つのフォークしかありません)。
+")
 
 <h2>
+#langeng("
 Philosopher Loop
+")
+#langja("
+哲学者のループ
+")
 </h2>
 
+#langeng("
 Each philosopher is implemented as a loop:
+")
+#langja("
+それぞれの哲学者は次のようなループで実装されます:
+")
 
 <pre
 class="patsyntax">
@@ -159,13 +257,28 @@ in
 end // end of [phil_loop]
 ')</pre>
 
+#langeng("
 It should be straighforward to follow the code for [phil_loop].
+")
+#langja("
+[phil_loop] のコードを追うのは容易でしょう。
+")
 
 <h2>
+#langeng("
 Fork Cleaner Loop
+")
+#langja("
+フォーク掃除人のループ
+")
 </h2>
 
+#langeng("
 A cleaner is implemented as a loop:
+")
+#langja("
+掃除人は次のループで実装されます:
+")
 
 <pre
 class="patsyntax">
@@ -184,9 +297,15 @@ in
 end // end of [cleaner_loop]
 ')</pre>
 
+#langeng("
 The function [cleaner_return] first finds out the number of a given fork
 and then uses the number to locate the channel for storing the fork. Its
 actual implementation is given as follows:
+")
+#langja("
+関数 [cleaner_return] はまず与えられたフォークの番号を調べて、それからその番号を使ってそのフォークを保管するためのチャネルを見つけます。
+その実際の実装は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -200,13 +319,28 @@ cleaner_return (f) =
 }
 ')</pre>
 
+#langeng("
 It should now be straighforward to follow the code for [cleaner_loop].
+")
+#langja("
+これで [cleaner_loop] のコードを追うのは容易でしょう。
+")
 
 <h2>
+#langeng("
 Testing
+")
+#langja("
+テスト
+")
 </h2>
 
+#langeng("
 The entire code of this implementation is stored in the following files:
+")
+#langja("
+この実装のコード全体は次のファイルにあります:
+")
 
 <pre>
 DiningPhil2.sats
@@ -215,9 +349,15 @@ DiningPhil2_fork.dats
 DiningPhil2_thread.dats
 </pre>
 
+#langeng("
 There is also a Makefile available for compiling the ATS source code into
 an excutable for testing. One should be able to encounter a deadlock after
 running the simulation for a while.
+")
+#langja("
+ATS ソースコードをコンパイルして実行コードにする Makefile もあります。
+しばらくシミュレーションを実行するとデッドロックが発生するはずです。
+")
 
 <hr size="2">
 
