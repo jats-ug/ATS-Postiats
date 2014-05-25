@@ -391,19 +391,19 @@ respectively.
 
 #langeng("
 For more on array-based stack implementation, please see:
-#ahref("http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/SATS/stkarray.sats", "stkarray.sats")
+#ahref("http://www.ats-lang.org/LIBRARY/libats/SATS/stkarray.sats", "stkarray.sats")
 ,
-#ahref("http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/DATS/stkarray.dats", "stkarray.dats")
+#ahref("http://www.ats-lang.org/LIBRARY/libats/DATS/stkarray.dats", "stkarray.dats")
 , and
-#ahref("http://sourceforge.net/p/ats2-lang/code/ci/master/tree/libats/CATS/stkarray.cats", "stkarray.cats")
+#ahref("http://www.ats-lang.org/LIBRARY/libats/CATS/stkarray.cats", "stkarray.cats").
 ")
 #langja("
 配列を用いたスタック実装についての詳細は
-#ahref("https://github.com/githwxi/ATS-Postiats/blob/master/libats/SATS/stkarray.sats", "stkarray.sats")
+#ahref("http://www.ats-lang.org/LIBRARY/libats/SATS/stkarray.sats", "stkarray.sats")
 ,
-#ahref("https://github.com/githwxi/ATS-Postiats/blob/master/libats/DATS/stkarray.dats", "stkarray.dats")
+#ahref("http://www.ats-lang.org/LIBRARY/libats/DATS/stkarray.dats", "stkarray.dats")
 ,
-#ahref("https://github.com/githwxi/ATS-Postiats/blob/master/libats/CATS/stkarray.cats", "stkarray.cats")
+#ahref("http://www.ats-lang.org/LIBRARY/libats/CATS/stkarray.cats", "stkarray.cats")
 から入手できます。
 ")
 

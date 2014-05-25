@@ -128,11 +128,11 @@ that of a pointer (of the type [ptr]).
 <p>
 
 #langeng("
-How should a map of the type [wcmap] be created? We introduce a function
+How should a value of the type [wcmap] be created? We introduce a function
 for creating an empty map:
 ")
 #langja("
-型 [wcmap] のマップはどうやって生成すべきでしょうか？
+型 [wcmap] の値はどうやって生成すべきでしょうか？
 空のマップを作るために次の関数を導入しましょう:
 ")
 
@@ -159,10 +159,10 @@ fun wcmap_incby1 (map: wcmap, w: string): void
 
 #langeng("
 As we also need to sort words according to their numbers of occurrences, we
-introduce a function for sequentializing a [wcmap]:
+introduce a function for sequentializing a wcmap-value:
 ")
 #langja("
-またそれらの出現回数に従って単語をソートする必要があるので、[wcmap] を羅列する関数を導入しましょう:
+またそれらの出現回数に従って単語をソートする必要があるので、[wcmap] 値を羅列する関数を導入しましょう:
 ")
 
 <pre
@@ -209,9 +209,9 @@ fun WordCounting (): wcmap
 ")</pre>
 
 #langeng("
-So by calling [WordCounting], we generate a [wcmap] that maps each
-encountered word to its number of occurrences. An implementation of
-[WordCounting] is given as follows:
+So by calling [WordCounting], we generate a map of the type [wcmap] that
+maps each encountered word to its (current) number of occurrences. An
+implementation of [WordCounting] is given as follows:
 ")
 #langja("
 これで [WordCounting] を呼び出すことによって、出現したそれぞれの単語からその出現回数へのマップである
@@ -376,10 +376,10 @@ end // end of [word_get]
 Note that [loop] is called to skip non-alphabetical chars while [loop2] is
 called to accumulate alphabetical chars. The keyword [fnx] (in place of
 [fun]) means that [loop] and [loop2] are compiled jointly so that the
-tail-recursive calls in their bodies can all be turned into direct local
-jumps.  The function [string_make_rlist] creates a string consisting of the
-sequence of chars in the reverse of a given list. For instance, if the list
-consists of 'a', 'b' and 'c', then the created string is \"cba\".
+mutually tail-recursive calls in their bodies can all be turned into direct
+local jumps.  The function [string_make_rlist] creates a string consisting
+of the sequence of chars in the reverse of a given list. For instance, if
+the list consists of 'a', 'b' and 'c', then the created string is \"cba\".
 ")
 #langja("
 [loop2] はアルファベット文字を集めるために呼び出され、[loop]
@@ -402,7 +402,7 @@ How should [wcmap] be implemented?
 #langeng("
 The following code gives a straightforward hashtable-based implementation
 of [wcmap]. Some details on various hashtable-functions can be found
-#ahref("http://www.ats-lang.org/LIBRARY/libats/ML/hashtbl.html", "on-line").
+#ahref("http://www.ats-lang.org/LIBRARY/libats/ML/hashtblref.html", "on-line").
 ")
 #langja("
 次のコードは [wcmap] の素直な hashtable-based 実装です。

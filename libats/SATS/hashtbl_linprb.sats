@@ -6,7 +6,7 @@
 
 (*
 ** ATS/Postiats - Unleashing the Potential of Types!
-** Copyright (C) 2011-2013 Hongwei Xi, ATS Trustful Software, Inc.
+** Copyright (C) 2011-2014 Hongwei Xi, ATS Trustful Software, Inc.
 ** All rights reserved
 **
 ** ATS is free software;  you can  redistribute it and/or modify it under
@@ -26,33 +26,44 @@
 *)
 
 (* ****** ****** *)
+
+(*
+**
+** A hashtable implementation based on linear probing
+**
+** Contributed by Hongwei Xi (hwxi AT cs DOT bu DOT edu)
+** Time: March, 2010
+**
+*)
+
+(* ****** ****** *)
 //
-// Author: Hongwei Xi
-// Authoremail: gmhwxiATgmailDOTcom
-// Start Time: May, 2014
+// HX-2014-05:
+// ported to ATS/Postitats from ATS/Anairiats
 //
 (* ****** ****** *)
 
-#include "./pats_params.hats"
+#define
+ATS_PACKNAME "ATSLIB.libats.hashtbl_linprb"
+#define
+ATS_STALOADFLAG 0 // no static loading at run-time
 
 (* ****** ****** *)
 
-#if
-C3NSTRINTKND="intknd" #then
-//
-#include "./pats_intinf_int.dats"
-//
-#elif
-C3NSTRINTKND="gmpknd" #then
-//
-#include "./pats_intinf_gmp.dats"
-//
-#else
-//
-#error ("ERROR: pats_intinf: [C3NSTRINTKND] is undefined!\n")
-//
-#endif // end of [#if]
+#include "./SHARE/hashtbl.hats"
 
 (* ****** ****** *)
+//
+// HX-2014-05:
+// these functions are special for hashtbl_linprb
+//
+fun{
+key,itm:vt0p
+} hashtbl_linprb_keyitm_nullize (&(key,itm)? >> _): void
+fun{
+key,itm:vt0p
+} hashtbl_linprb_keyitm_is_null (kx: &(key, itm)): bool
+//
+(* ****** ****** *)
 
-(* end of [pats_intinf.dats] *)
+(* end of [hashtbl_linprb.sats] *)

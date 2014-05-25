@@ -40,19 +40,19 @@
 #if
 C3NSTRINTKND="intknd" #then
 //
-#include "./pats_intinf_int.dats"
+#include "./pats_lintprgm_myint_int.dats"
 //
 #elif
 C3NSTRINTKND="gmpknd" #then
 //
-#include "./pats_intinf_gmp.dats"
+#include "./pats_lintprgm_myint_gmp.dats"
 //
 #else
 //
-#error ("ERROR: pats_intinf: [C3NSTRINTKND] is undefined!\n")
+#error ("ERROR: pats_lintprgm_myint: [C3NSTRINTKND] is undefined!\n")
 //
 #endif // end of [#if]
 
 (* ****** ****** *)
 
-(* end of [pats_intinf.dats] *)
+(* end of [pats_lintprgm_myint.dats] *)
