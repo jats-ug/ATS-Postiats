@@ -657,13 +657,23 @@ Safe Programming with Shared Resources
 ")
 </h2>
 
+#langeng("
 In the rest of the article, I would like to outline a general approach
 to safe programming with shared resources that can be seen as a generalization
 of the implementation of the producer-consumer problem presented above.
+")
+#langja("
+この記事の残りでは、上記で説明した生産者/消費者問題を一般化したような、共有リソースを共なう安全なプログラミングに対する一般的なアプローチの要点を説明しようと思います。
+")
 
 <p>
 
+#langeng("
 Suppose we have a linear type [Resource] for values that we want to share:
+")
+#langja("
+共有しようとしている値のために線形型 [Resource] を想像してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -671,9 +681,14 @@ class="patsyntax">
 absvtype Resource
 ')</pre>
 
+#langeng("
 Let us introduce a (non-linear) type [SharedResource] for values that are
 formed by wrapping some kind of protection mechnism around linear values of
 the type [Resource]:
+")
+#langja("
+なんらかの保護メカニズムで型 [Resource] の線形値を包んで作られる値のために (非線形な) 型 [SharedResource] を導入してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -681,7 +696,12 @@ class="patsyntax">
 abstype SharedResource
 ')</pre>
 
+#langeng("
 The function that does the wrapping can be given the following type:
+")
+#langja("
+その包む行為をする関数は次のような型になるでしょう:
+")
 
 <pre
 class="patsyntax">
@@ -689,9 +709,15 @@ class="patsyntax">
 fun SharedResource_create (R: Resource): SharedResource
 ')</pre>
 
+#langeng("
 The linear resource inside a shared resource is protected by a lock,
 and the following two functions are for taking out the linear resource
 and returning it back:
+")
+#langja("
+共有リソースの中にある線形なリソースはロックによって保護されています。
+そして次の2つは線形リソースを取り出す関数と、それを戻す関数です:
+")
 
 <pre
 class="patsyntax">
@@ -700,8 +726,13 @@ fun SharedResource_acquire (SR: SharedResource): Resource
 fun SharedResource_release (SR: SharedResource, R: Resource): void
 ')</pre>
 
+#langeng("
 Let us now assume that we have the following function for processing
 a linear resource:
+")
+#langja("
+ここで、線形リソースを処理する次の関数があると仮定してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -709,13 +740,24 @@ class="patsyntax">
 fun Resource_process (R: !Resource >> _): bool
 ')</pre>
 
+#langeng("
 If a call to [Resource_process] returns true, then the resource has been
 processed properly. Otherwise, it is an indication that the state of the
 resource needs to be changed before it is suitable for processing.
+")
+#langja("
+[Resource_process] 呼び出しが true を返したら、そのリソースは適切に処理されています。
+そうでなければ、処理する前にそのリソースの状態を変更する必要があることを示していることになります。
+")
 
 <p>
 
+#langeng("
 What we want to implement is the following function:
+")
+#langja("
+私達が実装したいのは次の関数です:
+")
 
 <pre
 class="patsyntax">
@@ -723,12 +765,23 @@ class="patsyntax">
 fun SharedResource_process (SR: SharedResource): void
 ')</pre>
 
+#langeng("
 When called on a shared resource, [SharedResource_process] tries to process
 the linear resource inside it by calling [Resource_process].
+")
+#langja("
+共有リソースに対して呼び出されると、[SharedResource_process] は [Resource_process]
+を呼び出して、その内にある線形リソースを処理しようと試みます。
+")
 
 <p>
 
+#langeng("
 An implementation of [SharedResource_process] is sketched as follows:
+")
+#langja("
+[SharedResource_process] の実装は次のような概略になります:
+")
 
 <pre
 class="patsyntax">
@@ -770,15 +823,27 @@ if ans
 end // end of [SharedResource_process2]
 ')</pre>
 
+#langeng("
 A call to [SharedResource_wait] puts the caller on the waiting-list
 of some conditional variable to avoid busy-waiting. Whenever the condition
 needed for [Resource_process] to do proper processing is met, a signal should
 be sent to the conditional variable (by another caller).
+")
+#langja("
+[SharedResource_wait] 呼び出しは、ビジーウェイトを回避するなんらかの条件変数の待ち行列にその呼び出し元を置きます。
+処理を行なう [Resource_process] に必要な条件が満たされた時はいつでも、その条件変数に
+(別の呼び出し元によって) シグナルを送らねければなりません。
+")
 
 <p>
 
+#langeng("
 Please find in the file SharedResource.dats the entirety of the code
 presented in this section.
+")
+#langja("
+この記事で示したコードの全体はファイル SharedResource.dats から入手できます。
+")
 
 <hr size="2">
 
