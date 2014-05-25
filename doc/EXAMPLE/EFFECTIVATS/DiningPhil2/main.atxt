@@ -8,19 +8,35 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-DiningPhil2</title>
+")
+#langja("
+<title>EFFECTIVATS: 食事する哲学者の問題 その2</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Dining Philosophers
+")
+#langja("
+Effective ATS: 食事する哲学者の問題 その2
+")
 </h1>
 
+#langeng("
 In this article, I present an implementation of a slight variant of the
 famous problem of 5-Dining-Philosophers by Dijkstra that makes simple but
 convincing use of linear types.
+")
+#langja("
+この記事では、ダイクストラによる有名な問題のわずかな変形の実装を紹介します。
+この問題は単純ですが、線形型を使う説得力のある例です。 
+")
 
 <h2>
 The Original Problem 
@@ -205,7 +221,17 @@ running the simulation for a while.
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
