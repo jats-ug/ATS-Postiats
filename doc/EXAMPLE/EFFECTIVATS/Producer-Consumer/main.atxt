@@ -8,16 +8,27 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-Producer-Consumer</title>
+")
+#langja("
+<title>EFFECTIVATS: 生産者/消費者問題</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS: Producer-Consumer
+")
+#langja("
+Effective ATS: 生産者/消費者問題
+")
 </h1>
 
+#langeng("
 The Producer-Consumer problem is a classical one in concurrent programming.
 In this article, I present an implementation of this problem that makes
 highly effective use of dependent types and linear types.  Due to great
@@ -27,23 +38,53 @@ than in sequential programming.  While the style of programming I employ
 here may take time for one to master, the great advantages it brings can be
 readily appreciated. In general, ATS shines much more brightly in contexts
 where dynamic testing becomes more difficult to perform and/or control.
+")
+#langja("
+生産者/消費者問題は並行プログラミングにおける古典的な問題です。
+この記事では、依存型と線形型を効果的に使った、この問題に対する実装を紹介しようと思います。
+並行プログラムをデバッグすることがとてつもなく困難なため、バグの検出と修正を静的な検査に頼ることは、逐次実行プログラミングよりも並行プログラミングにおいてさらに重要になります。
+ここで紹介するプログラミングのスタイルは習得するのに時間がかかるかもしれませんが、その大きな利点はすぐに評価できるでしょう。
+一般的に、動的なテストが難しい文脈において、ATS はより異彩を放っています。
+")
 
 <h2>
+#langeng("
 Description of the Problem 
+")
+#langja("
+この問題についての解説
+")
 </h2>
 
+#langeng("
 Given a buffer of finite capacity, there are multiple producers who insert
 items into the buffer and also multiple consumers who take out items from
 the buffer. If a producer wants to insert an item but the buffer is full,
 the producer is blocked until the buffer becomes not full. If a consumer
 wants to take out an item but the buffer is empty, then the consumer is
 blocked until the buffer is not empty.
+")
+#langja("
+有限容量のバッファが与えられたとき、そのバッファに要素を挿入する複数の生産者と、そのバッファから要素を取り出す複数の消費者がいます。
+もし生産者が要素を挿入しようとしたけれどバッファが満杯であったなら、バッファが満杯でなくなるまでその生産者はブロックします。
+もし消費者が要素を取り出そうとしたけれどバッファが空であったなら、バッファが空でなくなるまでその消費者はブロックします。
+")
 
 <h2>
+#langeng("
 Interface for Linear Buffer
+")
+#langja("
+線形バッファのインターフェイス
+")
 </h2>
 
+#langeng("
 Let us first declare as follows a linear abstract type for buffers:
+")
+#langja("
+はじめに次のようにバッファを表わす線形抽象型を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -59,10 +100,18 @@ buffer (a:vt0p, m:int, n:int) = buffer_vtype (a, m, n)
 //
 ')</pre>
 
+#langeng("
 Given a type T and two integers M and N, the type [buffer(T, M, N)] is for
 a buffer of capacity M in which N elements of the type T are stored.  The
 following lemma can be used to establish the property that M >= N and N >=
 0 (for the purpose of constraint-solving):
+")
+#langja("
+型 T と2つの整数 M, N が与えられたとき、型 [buffer(T, M, N)]
+は型 T の要素が N 個保存された容量 M のバッファを表わします。
+次の補題 (lemma) は (制約解決を目的として) M >= N かつ N >= 0
+という特性を成立させるために使うことができます:
+")
 
 <pre
 class="patsyntax">
@@ -72,8 +121,13 @@ lemma_buffer_param{a:vt0p}
   {m,n:int}(!buffer (INV(a), m, n)): [m >= n; n >= 0] void
 ')</pre>
 
+#langeng("
 The function [buffer_make_nil] can be called to create a linear buffer of a
 given capacity that contains no elements:
+")
+#langja("
+関数 [buffer_make_nil] は要素を含まない与えられた容量の線形バッファを生成することができます:
+")
 
 <pre
 class="patsyntax">
@@ -82,8 +136,13 @@ fun{a:vt0p}
 buffer_make_nil{m:pos} (cap: int m): buffer (a, m, 0)
 ')</pre>
 
+#langeng("
 The functions [buffer_isnil] and [buffer_isful] can be called to test
 whether a given buffer is empty and full, respectively:
+")
+#langja("
+関数 [buffer_isnil] と [buffer_isful] は与えられたバッファがそれぞれ空なのか、満杯なのかを判定できます:
+")
 
 <pre
 class="patsyntax">
@@ -94,8 +153,13 @@ fun buffer_isful{a:vt0p}
   {m,n:int} (!buffer (INV(a), m, n)): bool (m==n)
 ')</pre>
 
+#langeng("
 The function [buffer_insert] is for inserting an element into
 a buffer that is not full:
+")
+#langja("
+関数 [buffer_insert] は満杯でないバッファに要素を挿入します:
+")
 
 <pre
 class="patsyntax">
@@ -107,8 +171,13 @@ buffer_insert{m,n:int | n < m}
 ) : void // end of [buffer_insert]
 ')</pre>
 
+#langeng("
 The function [buffer_insert] is for taking out an element from
 a buffer that is not empty:
+")
+#langja("
+関数 [buffer_takeout] は空でないバッファから要素を取り出します:
+")
 
 <pre
 class="patsyntax">
@@ -119,18 +188,36 @@ buffer_takeout{m,n:int | n > 0}
 ')</pre>
 
 <h2>
+#langeng("
 Interface for Shared Buffer
+")
+#langja("
+共有バッファのインターフェイス
+")
 </h2>
 
+#langeng("
 In terms of implementation, a shared buffer wraps a protection mechanism
 around a linear buffer that consists of a mutex and two conditional
 variables. The mutex is for protecting the linear buffer and the
 conditional variables are introduced to avoid busy-waiting. I will present
 more details on the protection mechanism later.
+")
+#langja("
+実装の観点から、共有バッファは保護メカニズムで線形バッファを包みます。
+このメカニズムは1つの mutex と2つの条件変数から成り立っています。
+この mutex は線形バッファを保護するために、この条件変数はビジーウェイトを回避するために導入されています。
+この保護メカニズムについて後でより詳細に説明します。
+")
 
 <p>
 
+#langeng("
 Let us now introduce an abstract type for shared buffers:
+")
+#langja("
+ここで、共有バッファを表わす抽象型を導入してみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -143,16 +230,31 @@ typedef sbuffer (a:vt0p) = sbuffer_type (a)
 //
 ')</pre>
 
+#langeng("
 Please note that [sbuffer] is a non-linear type. This means that a shared
 buffer cannot be freed explicitly after its creation. It is also possible
 to make [sbuffer] a reference-counted linear type so that a shared buffer
 can be freed. The interested reader is encouraged to give this alternative
 design a try, which should only lead to slightly more involved implementation.
+")
+#langja("
+[sbuffer] は非線形の型であることに注意してください。
+これは、共有バッファは生成された後では明示的に解放することができないことを意味しています。
+共有バッファを解放できるように、参照カウントの線形型で [sbuffer] を作ることも可能です。
+興味のある読者にはこの別設計に挑戦してみることをおすすめします。
+これはわずかに複雑な実装になるはずです。
+")
 
 <p>
 
+#langeng("
 Given a linear buffer, [sbuffer_make_buffer] turns it into a shared buffer
 (by wrapping a protection mechanism around it):
+")
+#langja("
+線形バッファが与えられたとき、[sbuffer_make_buffer] は
+(保護メカニズムで包むことで) それを共有バッファに変えます:
+")
 
 <pre
 class="patsyntax">
@@ -161,8 +263,13 @@ fun{a:vt0p}
 sbuffer_make_buffer (buffer(a)): sbuffer (a)
 ')</pre>
 
+#langeng("
 The function [sbuffer_insert] inserts an element into
 a shared buffer:
+")
+#langja("
+関数 [sbuffer_insert] は共有バッファへ要素を挿入にします:
+")
 
 <pre
 class="patsyntax">
@@ -171,13 +278,23 @@ fun{a:vt0p}
 sbuffer_insert (sbuffer(a), x: a): void // called by producer
 ')</pre>
 
+#langeng("
 Note that a call to [sbuffer_insert] may be blocked due to the linear
 buffer inside the shared buffer being full.
+")
+#langja("
+[sbuffer_insert] 呼び出しは、共有バッファ中の線形バッファが満杯であるためにブロックする可能性があることに注意してください。
+")
 
 <p>
 
+#langeng("
 The function [sbuffer_takeout] takes out an element from
 a shared buffer:
+")
+#langja("
+関数 [sbuffer_takeout] は共有バッファから要素を取り出します:
+")
 
 <pre
 class="patsyntax">
@@ -186,19 +303,39 @@ fun{a:vt0p}
 sbuffer_takeout (sbuf: sbuffer(a)): (a) // called by consumer
 ')</pre>
 
+#langeng("
 Note that a call to [sbuffer_takeout] may be blocked due to the linear
 buffer inside the shared buffer being empty.
+")
+#langja("
+[sbuffer_takeout] 呼び出しは、共有バッファ中の線形バッファが空であるためにブロックする可能性があることに注意してください。
+")
 
 <h2>
+#langeng("
 Implementation of Shared Buffer
+")
+#langja("
+共有バッファの実装
+")
 </h2>
 
+#langeng("
 The linear buffer inside a shared buffer is protected by a mutex.
+")
+#langja("
+共有バッファ中の線形バッファは mutex によって保護されています。
+")
 
 <p>
 
+#langeng("
 The function [sbuffer_acquire] is for acquiring the linear buffer inside a
 given shared buffer:
+")
+#langja("
+関数 [sbuffer_acquire] は与えられた共有バッファ中の線形バッファを獲得します:
+")
 
 <pre
 class="patsyntax">
@@ -206,8 +343,15 @@ class="patsyntax">
 fun sbuffer_acquire{a:vt0p} (sbuf: sbuffer(a)): buffer (a)
 ')</pre>
 
+#langeng("
 The function [sbuffer_release] is for releasing a linear buffer (to the
 same shared buffer from which the linear buffer was previously acquired):
+")
+#langja("
+関数 [sbuffer_release] は
+(線形バッファを獲得したときと同じ共有バッファに)
+線形バッファを手放します:
+")
 
 <pre
 class="patsyntax">
@@ -215,8 +359,12 @@ class="patsyntax">
 fun sbuffer_release{a:vt0p} (sbuf: sbuffer(a), buf: buffer(a)): void
 ')</pre>
 
-
+#langeng("
 Let us now declare two functions as follows:
+")
+#langja("
+ここで、次のような2つの関数を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -227,22 +375,39 @@ fun{a:vt0p}
 sbuffer_takeout2 (sbf: sbuffer(a), buf: !buffer (INV(a)) >> _): (a)
 ')</pre>
 
+#langeng("
 A call to the function [sbuffer_insert2] tries to insert an element into a
 given linear buffer. In the case where the linear buffer is full, the
 caller is blocked to wait on some conditional variable until it is notified
 that the linear buffer is no longer full.
+")
+#langja("
+関数 [sbuffer_insert2] を呼び出すと、与えられた線形バッファに要素を挿入しようと試みます。
+線形バッファが満杯であった場合、線形バッファが満杯でなくなるまで条件変数を待ち合わせるために呼び出し元はブロックします。
+")
 
 <p>
 
+#langeng("
 A call to the function [sbuffer_takeout2] tries to take out an element from
 a given linear buffer. In the case where the linear buffer is empty, the
 caller is blocked to wait on some conditional variable until it is notified
 that the linear buffer is no longer empty.
+")
+#langja("
+関数 [sbuffer_takeout2] を呼び出すと、与えられた線形バッファから要素を取り出そうと試みます。
+線形バッファが空であった場合、線形バッファが空でなくなるまで条件変数を待ち合わせるために呼び出し元はブロックします。
+")
 
 <p>
 
+#langeng("
 It is straightforward to implement [sbuffer_insert] and [sbuffer_takeout]
 based on [sbuffer_insert2] and [sbuffer_takeout2], respectively:
+")
+#langja("
+[sbuffer_insert] と [sbuffer_takeout] はそれぞれ [sbuffer_insert2] と [sbuffer_takeout2] を用いて素直に実装できます:
+")
 
 <pre
 class="patsyntax">
@@ -264,11 +429,19 @@ sbuffer_takeout (sbuf) = x where
 }
 ')</pre>
 
+#langeng("
 There are two conditional variables (CVs) inside a shared buffer.  One of
 them is for handling the condition of the linear buffer (inside the shared
 buffer) being empty, and the other CV is for handling the condition of the
 linear buffer being full. The following functions are implemented directly
 based on these two conditional variables:
+")
+#langja("
+共有バッファの中には2つの条件変数があります。
+それらの1つは (共有バッファ中の) 線形バッファが空である条件を扱うためのものです。
+もう1つは線形バッファが満杯である条件を扱うためのものです。
+次の関数群はこれら2つの条件変数を直接用いて実装されています:
+")
 
 <pre
 class="patsyntax">
@@ -286,6 +459,7 @@ fun sbuffer_signal_isful{a:vt0p}{m,n:int} (sbuf: sbuffer(a)): void
 //
 ')</pre>
 
+#langeng("
 The type assigned to the function [sbuffer_wait_isnil] means that its
 caller must have possession of a linear buffer when calling it and the
 caller should still have possession of the linear buffer, which may be
@@ -293,19 +467,40 @@ empty, when the call returns. The reason for the linear buffer being still
 empty at the moment when a call to [sbuffer_wait_isnil] returns is
 that other callers (consumers) may have gained access to the linear buffer
 earlier.
+")
+#langja("
+関数 [sbuffer_wait_isnil] に割り当てられた型は、呼び出す時に呼び出し元が線形バッファの所有者でなければならないこと、呼び出しが返る時にやはりその呼び出し元が空の可能性がある線形バッファの所有者でなければならないこと、を意味しています。
+[sbuffer_wait_isnil] 呼び出しが返る時にも線形バッファを所有すべき理由は、
+他の呼び出し元 (消費者) がより早くその線形バッファへのアクセス権を獲得してしまう可能性があるためです。
+")
 
 <p>
 
+#langeng("
 The type assigned to the function [sbuffer_wait_isful] can be
 explained similarly.
+")
+#langja("
+関数 [sbuffer_wait_isful] に割り当てられた型も同様に説明できます。
+")
 
 <p>
 
 <h4>
+#langeng("
 Implementing [sbuffer_insert2]
+")
+#langja("
+[sbuffer_insert2] を実装する
+")
 </h4>
 
+#langeng("
 An implementation of [sbuffer_insert2] is given as follows:
+")
+#langja("
+[sbuffer_insert2] の実装は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -339,13 +534,25 @@ if isful
 end // end of [sbuffer_insert2]
 ')</pre>
 
+#langeng("
 The code should be self-explaining. Please note that inserting an element
 into an empty buffer requires a signal to be sent to the CV handling the
 condition of buffer being empty. If this is not done, then a deadlock may
 occur as the consumers waiting on the CV can never be awakened.
+")
+#langja("
+このコードは自明でしょう。
+空のバッファに要素を挿入するには、バッファが空である条件を扱う条件変数にシグナルを送る必要があることに注意してください。
+もしこれを行なわないと、決して起こされない条件変数をを待ち合わせる消費者によってデッドロックが発生する可能性があります。
+")
 
 <h4>
+#langeng("
 Implementing [sbuffer_takeout2]
+")
+#langja("
+[sbuffer_takeout2] を実装する
+")
 </h4>
 
 <pre
@@ -378,19 +585,39 @@ if isnil
 end // end of [sbuffer_takeout2]
 ')</pre>
 
+#langeng("
 The code should be self-explaining. Please note that taking out an element
 from a full buffer requires a signal to be sent to the CV handling the
 condition of buffer being full. If this is not done, then a deadlock may
 occur as the producers waiting on the CV can never be awakened.
+")
+#langja("
+このコードも自明でしょう。
+満杯のバッファから要素を取り出すには、バッファが満杯である条件を扱う条件変数にシグナルを送る必要があることに注意してください。
+もしこれを行なわないと、決して起こされない条件変数をを待ち合わせる生産者によってデッドロックが発生する可能性があります。
+")
 
 <h4>
+#langeng("
 Summary of the Remaining Implementation
+")
+#langja("
+残りの実装について
+")
 </h4>
 
+#langeng("
 The remaining implementation of the producer-consumer problem can be
 readily done in C (based on pthread support for mutexes and conditional
 variables). For instance, [sbuffer] can be represented as a pointer to
 a value of the following struct type:
+")
+#langja("
+生産者/消費者問題の残りの実装は
+(pthread がサポートしている mutex と条件変数を用いて)
+C言語によってすぐに作ることができます。
+例えば、[sbuffer] は次の構造体型の値へのポインタとして表現できます:
+")
 
 <pre>
 struct
@@ -402,6 +629,7 @@ struct
 }
 </pre>
 
+#langeng("
 Instead of being coded in C directly, the rest of my implementation is also
 written in ATS but it makes pervasive use of some unsafe programming
 features. Please find the entirety of the code in the files sbuffer.sats
@@ -410,9 +638,23 @@ highly confident about its correctness. A primary reason for programming in
 ATS is that one can make effective use of types in ATS so as to convince
 oneself that his or her code should perform as expected. I feel that I have
 done it in this case.
+")
+#langja("
+直接C言語でコーディングする代わりに、私の実装の残りを ATS
+で書くこともできますが、安全でないプログラミングの機能を全面的に使うことになります。
+このコードの全体はファイル sbuffer.sats と sbuffer.dats から入手できます。
+実装の正確さに自信があるので、私の実装にはテストコードがありません。
+ATS でプログラミングをする主要な理由は、意図通りにコードが実行されるのか自分を納得させるために ATS の型を効果的に使えることです。
+今回の場合はそれができたと感じています。
+")
 
 <h2>
+#langeng("
 Safe Programming with Shared Resources
+")
+#langja("
+共有リソースを共なう安全なプログラミング
+")
 </h2>
 
 In the rest of the article, I would like to outline a general approach
@@ -540,7 +782,17 @@ presented in this section.
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+")
+#langja("
+この記事は
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+によって書かれ、
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+によって翻訳されています。
+")
 
 </body>
 </html>
