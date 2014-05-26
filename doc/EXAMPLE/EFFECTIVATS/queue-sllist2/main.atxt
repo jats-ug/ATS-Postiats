@@ -41,10 +41,20 @@ guaranteed to be amortized O(1)-time operations.
 ")
 
 <h2>
+#langeng("
 A Simple Interface for Queues
+")
+#langja("
+キューに対する簡単なインターフェイス
+")
 </h2>
 
+#langeng("
 Let us first declare as follows a linear abstract type for queues:
+")
+#langja("
+はじめに次のようなキューを表わす線形抽象型を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -53,6 +63,7 @@ absvtype queue_vtype (a:viewt@ype, n:int) = ptr
 vtypedef queue (a:vt0p, n:int) = queue_vtype (a, n)
 ")</pre>
 
+#langeng("
 The full name of the declared abstract type is [queue_vtype] and it is
 given an alias [queue]. Given a type T, which may be linear, and an integer
 N, the type [queue(T, N)] is for queues containing N elements of type T.
@@ -60,6 +71,14 @@ N, the type [queue(T, N)] is for queues containing N elements of type T.
 Obviously, N should be a natural number if there is ever a queue of the
 type [queue(T, N)]. This is captured by the type of the following function
 (or more precisely, proof-function):
+")
+#langja("
+宣言された抽象型のフルネームは [queue_vtype] で、別名 [queue] が与えられています。
+線形かもしれない型 T と整数 N が与えられたとき、型 [queue(T, N)] は型 T の要素を N 個含むキューを表わします。
+
+型 [queue(T, N)] のキューを存在を考えれば、N が自然数であるべきなのは明らかです。
+これは次の関数 (もしくはより正確に証明関数) の型によって捕捉されています:
+")
 
 <pre
 class="patsyntax">
@@ -69,7 +88,12 @@ lemma_queue_param
   {a:vt0p}{n:int} (que: !queue (a, n)): [n >= 0] void
 ")</pre>
 
+#langeng("
 The following function is to be called to create a queue of size 0:
+")
+#langja("
+次の関数はサイズ 0 のキューを生成します:
+")
 
 <pre
 class="patsyntax">
@@ -77,15 +101,27 @@ class="patsyntax">
 fun{} queue_make_nil {a:vt0p} (): queue (a, 0)
 ")</pre>
 
+#langeng("
 By declaring [queue_make_nil] as a function template, we have a better
 chance to expect that its definition be inlined during compilation. This
 makes sense as [queue_make_nil] should really just be a function of a tiny
 body.
+")
+#langja("
+関数テンプレートとして [queue_make_nil] を宣言することで、その定義がコンパイル時にインライン化されることを要求できます。
+[queue_make_nil] は小さな本体の関数なので、これは理にかなっているでしょう。
+")
 
 <p>
 
+#langeng("
 The following function is to be called to destroy a queue of size 0 (and
 free the memory it occupies):
+")
+#langja("
+次の関数はサイズ 0 のキューを破棄します
+(そしてそれが占有していたメモリを解放します):
+")
 
 <pre
 class="patsyntax">
@@ -93,8 +129,14 @@ class="patsyntax">
 fun{} queue_free_nil {a:vt0p} (que: queue (a, 0)): void
 ")</pre>
 
+#langeng("
 Clearly, we also need to test whether a given queue is empty. So let us
 declare the following function for this purpose:
+")
+#langja("
+明確に、与えられたキューが空かどうかテストする必要があります。
+そこで、この目的のために次の関数を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -104,8 +146,13 @@ queue_is_empty
   {a:vt0p}{n:int} (que: !queue (a, n)): bool (n==0)
 ")</pre>
 
+#langeng("
 Similarly, let us declare the following function for testing whether a
 given queue is not empty:
+")
+#langja("
+同様に、与えられたキューが空でないかどうかテストするために、次の関数を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -115,7 +162,12 @@ queue_isnot_empty
   {a:vt0p}{n:int} (que: !queue (a, n)): bool (n > 0)
 ")</pre>
 
+#langeng("
 As for enqueueing, we declare the following function: 
+")
+#langja("
+挿入操作のために、次の関数を宣言します:
+")
 
 <pre
 class="patsyntax">
@@ -125,14 +177,26 @@ queue_insert_atend{n:int}
   (que: !queue (a, n) >> queue (a, n+1), x: a): void
 ")</pre>
 
+#langeng("
 Note that the syntax indicates that [que] is a call-by-value argument and
 the type of the queue it refers to changes from [queue(T, N)] to [queue(T,
 N+1)] for some type T and integer N. Obviously, the increased size is due
 to one element being inserted into the queue.
+")
+#langja("
+この構文は、[que] が値渡し (call-by-value) の引数であり、なんらかの型 T と整数 N
+においてそのキューの型が [queue(T, N)] から [queue(T, N+1)] に変化することを参照していることを示しています。
+明らかに、サイズの増加はキューに挿入された1つの要素によるものです。
+")
 
 <p>
 
+#langeng("
 As for dequeueing, we declare the following function: 
+")
+#langja("
+デバッグのために、次の関数を宣言しましょう:
+")
 
 <pre
 class="patsyntax">
@@ -141,20 +205,38 @@ fun{a:vt0p}
 queue_takeout_atbeg{n:int | n > 0} (que: !queue (a, n) >> queue (a, n-1)): a
 ")</pre>
 
+#langeng("
 Note that the syntax indicates that [que] is a call-by-value argument and
 the type of the queue it refers to changes from [queue(T, N)] to [queue(T,
 N-1)] for some type T and <em>positive</em> integer N. Obviously, the
 decreased size is due to one element being removed from the queue.
+")
+#langja("
+この構文は、[que] が値渡し (call-by-value) の引数であり、なんらかの型 T と<em>正の</em>整数 N
+においてそのキューの型が [queue(T, N)] から [queue(T, N-1)] に変化することを参照していることを示しています。
+明らかに、サイズの減少はキューから削除された1つの要素によるものです。
+")
 
 <p>
 
+#langeng("
 Now it is ready for us to implement the abstract type [queue_vtype] and the functions
 associated with it.
+")
+#langja("
+これで抽象型 [queue_vtype] とそれに関連した関数を実装する準備が整いました。
+")
 
 <h2>
+#langeng("
 A 2-List-Based Implementation of Queues
+")
+#langja("
+2つのリストを用いたキューの実装
+")
 </h2>
 
+#langeng("
 In a functional programming setting, a queue is often represented as two
 lists: the front part and the rear part. For enqueueing, the rear part is
 replaced with a new list whose head is the enqueued element and whose tail
@@ -163,20 +245,40 @@ it is first replaced with the reverse of the rear part while the rear part
 is replaced with the empty list; if the front part is not empty, then it is
 replaced with its own tail while its head is returned as the dequeued
 element.
+")
+#langja("
+関数型プログラミングの環境では、キューはしばしば2つのリストで表わされます: 前方部と後方部です。
+挿入操作の際、挿入した要素を head、元の後方部を tail とする新しいリストで後方部を置換します。
+削除操作の際、もし前方部が空なら、はじめに前方部を後方部の逆順で置き換えてから後方部を空リストで置き換えます;
+もし前方部が空でなければ、前方部を自身の tail で置換して、削除された要素として自身の head を返します。
+")
 
 <p>
 
+#langeng("
 Clearly, this implementation guarantees that enqueueing is always O(1)-time
 but dequeueing may be O(n)-time, where n is the size of the rear part of the
 queue. It can also be readily noted that enqueueing and dequeueing are both
 O(1)-time if amortized time-complexity is of the concern.
+")
+#langja("
+この実装は n がキュー後方部のサイズであるとき、削除操作は O(n) 時間ですが、挿入操作は常に O(1) 時間であることを保証していることは明確です。
+また、もし償却時間的計算量を考えると、挿入操作と削除操作は両方とも O(1) 時間であることはたやすく示すことができます。
+")
 
 <p>
 
+#langeng("
 Let us now see the actual code for this 2-list-based implementation of
 queues.  Instead of functional lists, which require the presence of GC to
 avoid memory leaks, the code makes use of linear singly-linked lists (of
 the type [sllist]), performing memory allocation/deallocation explicitly.
+")
+#langja("
+ここで、この2つのリストを用いたキューの実装に対する実際のコードを見てみましょう。
+メモリリークを回避するために GC が必要な関数的なリストの代わりに、
+このコードは (型 [sllist] の) 線形片方向リストを使っていて、メモリの取得/解放を明示的に行ないます。
+")
 
 <pre
 class="patsyntax">
@@ -191,8 +293,13 @@ queue (a:viewt@ype+, n:int) =
 assume queue_vtype (a, n) = queue (a, n)
 ')</pre>
 
+#langeng("
 Clearly, the above code indicates that the size of a queue equals
 the sum of lengths of its front and rear parts.
+")
+#langja("
+上記のコードは明確に、キューのサイズがその前方部と後方部の長さの和に等しいことを示しています。
+")
 
 <pre
 class="patsyntax">
@@ -201,8 +308,13 @@ implement{}
 queue_make_nil () = QUEUE (sllist_nil (), sllist_nil ())
 ")</pre>
 
+#langeng("
 The function [queue_make_nil] is called to create a queue of size 0, which
 consists of an empty front part and an empty rear part.
+")
+#langja("
+関数 [queue_make_nil] は、空の前方部と空の後方部から成るサイズ 0 のキューを生成します。
+")
 
 <pre
 class="patsyntax">
@@ -223,10 +335,16 @@ in
 end // end of [queue_free_nil]
 ")</pre>
 
+#langeng("
 The function [queue_free_nil] is called to destroy a queue of size 0.
 As the elements in a queue may be of a linear type, that is, they may
 contain resources, a queue can be safely freed only if it contains no
 elements.
+")
+#langja("
+関数 [queue_free_nil] はサイズ 0 のキューを破棄します。
+キュー内の要素は線形型である、つまり要素はリソースを含む可能性があるので、キューは何も要素を持たない時のみ安全に解放することができます。
+")
 
 <pre
 class="patsyntax">
@@ -239,7 +357,12 @@ in
 end // end of [queue_is_empty]
 ")</pre>
 
+#langeng("
 A queue is empty if and only if both of its front and rear parts are empty.
+")
+#langja("
+もし前方部と後方部の両方が空なら、キューは空です。
+")
 
 <pre
 class="patsyntax">
@@ -252,9 +375,15 @@ in
 end // end of [queue_isnot_empty]
 ")</pre>
 
+#langeng("
 A queue is not empty if and only if either its front or its rear is not
 empty. It is also possible to implement [queue_isnot_empty] directly based
 on [queue_is_empty] as is shown below:
+")
+#langja("
+もしその前方部もしくは後方部が空でないなら、キューは空ではありません。
+次に示すように [queue_is_empty] を用いて直接 [queue_isnot_empty] を実装することも可能です:
+")
 
 <pre
 class="patsyntax">
@@ -265,18 +394,31 @@ queue_isnot_empty (que) = let
 end // end of [queue_isnot_empty]
 ")</pre>
 
+#langeng("
 Note that the negation of a value of the type [bool(N == 0)] for some N is
 of the type [bool(N != 0)].  In order to show that [N != 0] implies [N >
 0], we need to prove that [N >= 0], which is achieved by calling
 [lemma_queue_param].
+")
+#langja("
+
+なんらかの N について、型 [bool(N == 0)] の値の否定は型 [bool(N != 0)] になることに注意してください。
+[N != 0] が [N > 0] を含むことを示すために [N >= 0]
+を証明する必要があり、それは [lemma_queue_param] を呼び出すことで成立します。
+")
 
 <p>
 
+#langeng("
 The functions
 [queue_insert_atend]
 and
 [queue_takeout_atbeg]
 are implemented as follows:
+")
+#langja("
+関数 [queue_insert_atend] と [queue_takeout_atbeg] は次のように実装されます:
+")
 
 <pre
 class="patsyntax">
@@ -321,14 +463,26 @@ end // end of [if]
 end // end of [queue_takeout_atbeg]
 ")</pre>
 
+#langeng("
 By following the description given at the beginning of this section, one
 should find it straightforward to understand the code for enqueueing and
 dequeueing.
+")
+#langja("
+
+この章の最初で与えられた説明にしたがって、挿入操作と削除操作のコードを理解することは簡単なはずです。
+")
 
 <p>
 
+#langeng("
 For a running implementation, please find in queue-sllist2.dats the
 entirety of the above presented code plus some code for testing.
+")
+#langja("
+実行可能な実装のために、
+上記に示したコード全体とテストコードが queue-sllist2.dats から入手できます。
+")
 
 <hr size="2">
 
