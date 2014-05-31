@@ -234,7 +234,7 @@ where stream_vt (a:vt@ype) = lazy_vt (stream_vt_con(a))
 #para('\
 
 The following code gives an implementation of the sieve
-of Eratosthenes in which a linear stream of all the primer numbers is
+of Eratosthenes in which a linear stream of all the prime numbers is
 constructed:
 
 #atscode('\

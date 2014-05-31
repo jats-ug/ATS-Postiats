@@ -23,7 +23,7 @@ Time of Generation: #timestamp()\
 #langeng("
 #para("\
 
-I use the name #emphasis("matrix-with-size") to refer to a persistant
+I use the name #emphasis("matrix-with-size") to refer to a persistent
 matrix with attached dimension information (that is, number of rows and
 number of columns).  Given a viewtype VT, the type for a matrix-with-size
 that contains M rows and N columns of elements of viewtype VT is
@@ -136,7 +136,7 @@ mtrxszref_set_at (M: mtrxszref(a), i: size_t, j: size_t, x: a): void
 #langeng("
 #para('\
 
-As a simple example, the following code implements a functiont that
+As a simple example, the following code implements a function that
 transpose the content of the matrix inside a given matrix-with-size:
 
 #atscode('\
