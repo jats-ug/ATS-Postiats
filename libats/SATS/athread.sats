@@ -33,7 +33,7 @@
 //
 (* ****** ****** *)
 //
-// HX: abstract thread interface
+// An abstract thread interface
 //
 (* ****** ****** *)
 
@@ -42,112 +42,177 @@
 
 (* ****** ****** *)
 
-absview locked (l:addr)
+absview locked_v (l:addr)
 
 (* ****** ****** *)
 
-abstype spin_type (v:view, l:addr) = ptr(l)
-abstype mutex_type (v:view, l:addr) = ptr(l)
-abstype condvar_type (lc:addr, lm:addr) = ptr(lc)
+abstype
+spin_type (l:addr) = ptr(l)
+typedef spin (l:addr) = spin_type(l)
+typedef spin0 = [l:agez] spin_type(l)
+typedef spin1 = [l:addr | l > null] spin_type(l)
+
+(* ****** ****** *)
+
+absvtype
+spin_vtype (l:addr) = ptr(l)
+vtypedef spin_vt (l:addr) = spin_vtype(l)
 
 (* ****** ****** *)
 //
-stadef spin = spin_type
-stadef mutex = mutex_type
-stadef condvar = condvar_type
+castfn
+spin2ptr{l:addr} (spin(l)):<> ptr (l)
+castfn
+spin2ptr_vt{l:addr} (!spin_vt(l)):<> ptr (l)
 //
-typedef spin(v:view) = [l:addr] spin(v, l)
-typedef mutex(v:view) = [l:addr] mutex(v, l)
+overload ptrcast with spin2ptr
+overload ptrcast with spin2ptr_vt
 //
 (* ****** ****** *)
-//
+
 castfn
-spin2ptr{v:view}{l:addr}(spin (v, l)):<> ptr(l)
-//
+unsafe_spin_t2vt{l:addr}(spin(l)): spin_vt(l)
 castfn
-mutex2ptr{v:view}{l:addr}(mutex (v, l)):<> ptr(l)
+unsafe_spin_vt2t{l:addr}(!spin_vt(l)): spin(l)
+
+(* ****** ****** *)
 //
-castfn
-condvar2ptr{lc,lm:addr}(condvar (lc, lm)):<> ptr(lc)
+fun{} spin_create ((*void*)): spin0
+fun{} spin_create_exn ((*void*)): spin1
 //
+(* ****** ****** *)
+
+fun{} spin_vt_destroy{l:addr}(spin_vt(l)): void
+
 (* ****** ****** *)
 //
 fun{}
-spin_create_locked
-  {v:view}
+spin_lock{l:agz} (x: spin(l)):<!wrt> (locked_v(l) | void)
+fun{}
+spin_trylock{l:agz}
+  (x: spin(l)): [b:bool] (option_v(locked_v(l), b) | bool(b))
+fun{}
+spin_unlock{l:addr} (pf: locked_v(l) | x: spin(l)):<!wrt> void
+//
+(* ****** ****** *)
+
+abstype
+mutex_type (l:addr) = ptr(l)
+typedef mutex (l:addr) = mutex_type(l)
+typedef mutex0 = [l:agez] mutex_type(l)
+typedef mutex1 = [l:addr | l > null] mutex_type(l)
+
+(* ****** ****** *)
+
+absvtype
+mutex_vtype (l:addr) = ptr(l)
+vtypedef mutex_vt (l:addr) = mutex_vtype(l)
+
+(* ****** ****** *)
+//
+castfn
+mutex2ptr{l:addr} (mutex(l)):<> ptr (l)
+castfn
+mutex2ptr_vt{l:addr} (!mutex_vt(l)):<> ptr (l)
+//
+overload ptrcast with mutex2ptr
+overload ptrcast with mutex2ptr_vt
+//
+(* ****** ****** *)
+
+castfn
+unsafe_mutex_t2vt{l:addr}(mutex(l)): mutex_vt(l)
+castfn
+unsafe_mutex_vt2t{l:addr}(!mutex_vt(l)): mutex(l)
+
+(* ****** ****** *)
+//
+fun{} mutex_create ((*void*)): mutex0
+fun{} mutex_create_exn ((*void*)): mutex1
+//
+(* ****** ****** *)
+
+fun{} mutex_vt_destroy{l:addr}(mutex_vt(l)): void
+
+(* ****** ****** *)
+//
+fun{}
+mutex_lock{l:agz} (m: mutex(l)):<!wrt> (locked_v(l) | void)
+fun{}
+mutex_trylock{l:agz}
+  (m: mutex(l)): [b:bool] (option_v(locked_v(l), b) | bool(b))
+fun{}
+mutex_unlock{l:addr} (pf: locked_v(l) | m: mutex(l)):<!wrt> void
+//
+(* ****** ****** *)
+//
+abstype
+condvar_type(l:addr) = ptr(l)
+typedef condvar (l:addr) = condvar_type(l)
+typedef condvar0 = [l:agez] condvar_type(l)
+typedef condvar1 = [l:addr | l > null] condvar_type(l)
+//
+(* ****** ****** *)
+
+absvtype
+condvar_vtype (l:addr) = ptr(l)
+vtypedef condvar_vt (l:addr) = condvar_vtype(l)
+
+(* ****** ****** *)
+
+castfn
+condvar2ptr{l:addr} (condvar(l)):<> ptr (l)
+overload ptrcast with condvar2ptr
+castfn
+condvar2ptr_vt{l:addr} (!condvar_vt(l)):<> ptr (l)
+overload ptrcast with condvar2ptr_vt
+
+(* ****** ****** *)
+
+castfn
+unsafe_condvar_t2vt{l:addr}(condvar(l)): condvar_vt(l)
+castfn
+unsafe_condvar_vt2t{l:addr}(!condvar_vt(l)): condvar(l)
+
+(* ****** ****** *)
+//
+fun{} condvar_create (): condvar0
+fun{} condvar_create_exn (): condvar1
+//
+(* ****** ****** *)
+
+fun{} condvar_vt_destroy{l:addr}(condvar_vt(l)): void
+
+(* ****** ****** *)
+//
+fun{} condvar_signal (cvr: condvar1): void
+fun{} condvar_broadcast (cvr: condvar1): void
+//
+fun{} condvar_wait{l:addr}
+  (pf: !locked_v(l) | cvr: condvar1, p: mutex (l)): void
+//
+(* ****** ****** *)
+  
+typedef tid = lint
+  
+(* ****** ****** *)
+//
+fun{}
+athread_create_funenv
+  {env:vtype}
 (
-// argumentless
-) : [l:addr] (locked(l) | spin(v, l))
+  tid: &tid? >> _
+, fwork: (env) -> void, env: env
+) : int(*err*)
 //
 fun{}
-spin_create_unlocked
-  {v:view} (pf: v | (*void*)): spin(v)
-//
-symintr spin_create
-overload spin_create with spin_create_locked
-overload spin_create with spin_create_unlocked
-//
-(* ****** ****** *)
-
-fun{}
-spin_lock
-  {v:view}{l:addr}
-  (lock: spin(v, l)): (v, locked(l)| void)
-// end of [spin_lock]
-
-fun{}
-spin_unlock
-  {v:view}{l:addr}
-  (pf1: v, pf2: locked (l) | lock: spin(v, l)): void
-// end of [spin_unlock]
-
-(* ****** ****** *)
-//
-fun{}
-mutex_create_locked
-  {v:view}
+athread_create_cloptr
 (
-// argumentless
-) : [l:addr] (locked(l) | mutex(v, l))
-//
+  tid: &tid? >> _, fwork: () -<lincloptr1> void
+) : int(*err*)
 fun{}
-mutex_create_unlocked
-  {v:view} (pf: v | (*void*)): mutex(v)
-//
-symintr mutex_create
-overload mutex_create with mutex_create_locked
-overload mutex_create with mutex_create_unlocked
-//
-(* ****** ****** *)
-
-fun{}
-mutex_lock
-  {v:view}{l:addr}
-  (lock: mutex(v, l)): (v, locked(l) | void)
-// end of [mutex_lock]
-
-fun{}
-mutex_unlock
-  {v:view}{l:addr}
-  (pf1: v, pf2: locked (l) | lock: mutex(v, l)): void
-// end of [mutex_unlock]
-
-(* ****** ****** *)
-//
-fun{}
-condvar_create
-  {v:view}{lm:addr}
-  (lock: mutex (v, lm)): [lc:addr] condvar (lc, lm)
-//
-fun{}
-condvar_signal{lc,lm:addr} (cond: condvar(lc, lm)): void
-fun{}
-condvar_broadcast{lc,lm:addr} (cond: condvar(lc, lm)): void
-//
-fun{}
-condvar_wait
-  {v:view}{lc,lm:addr}
-  (pf1: !v, pf2: !locked (lm) | cond: condvar(lc, lm), p: mutex (v, lm)): void
+athread_create_cloptr_exn
+  (fwork: ((*void*)) -<lincloptr1> void): lint(*tid*)
 //
 (* ****** ****** *)
 
