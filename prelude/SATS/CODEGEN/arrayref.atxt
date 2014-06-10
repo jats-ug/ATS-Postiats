@@ -348,11 +348,6 @@ fun{
 
 #atscode_separator()
 
-symintr .ref
-overload .ref with arrszref_get_ref
-
-#atscode_separator()
-
 fun{}
 arrszref_get_refsize{a:vt0p}
   (A: arrszref (a), asz: &size_t? >> size_t n):<!wrt> #[n:nat] arrayref (a, n)
@@ -489,10 +484,6 @@ overload [] with arrszref_set_at_guint of 0
 
 #atscode_separator()
 
-overload ptrcast with arrayref2ptr
-
-#atscode_separator()
-
 overload .head with arrayref_head
 overload .tail with arrayref_tail
 
@@ -506,6 +497,10 @@ overload fprint with fprint_arrayref
 overload fprint with fprint_arrayref_sep
 overload fprint with fprint_arrszref
 overload fprint with fprint_arrszref_sep
+
+#atscode_separator()
+
+overload ptrcast with arrayref2ptr
 
 #atscode_separator()
 
