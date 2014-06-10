@@ -17,7 +17,7 @@ id="introduction-to-views-and-viewtypes">
 #title("Introduction to Views and Viewtypes")
 ")
 #langja("
-#title("view と viewtype 入門")
+#title("観 (view) と観型入門")
 ")
 
 <!-- ****** ****** -->
@@ -48,18 +48,18 @@ views in ATS, for classifying resources as well as capabilities.
 
 おそらく、ATS 開発の背後にある最も大きな動機は、ATS
 をオペレーティングシステムのカーネルの中で実行される安全で信頼できるプログラムを効果的に構築できるようなプログラミング言語にしたいという要求です。
-一見したところ自然なアプローチは、
-C言語の "安全な" サブセットを苦心して作り上げることに集中したり、
-C言語の "安全でない" プログラミングの機能のラッパーを作ったりすることでしょう。
+一見したところ自然なアプローチは、C言語の "安全な"
+サブセットを苦心して作り上げることに集中したり、C言語の "安全でない"
+プログラミングの機能のラッパーを作ったりすることでしょう。
 このようなアプローチの代わりに、ATS は定理証明によるプログラミングのパラダイムを信頼しています。
 このおかげで、メモリのようなリソースが誤って使用されたり誤って処置されたりするのを防ぐことができます。
 一般化と柔軟性を両立した安全性のためにこのアプローチを指示しています。
 例えば、ATS ではポインタ演算がサポートされているにもかわらず、ATS
 で構築された型付けされたプログラムは実行時にバッファオーバーランを引き起しません。
-より具体的には、もしポインタがデリファレンスされると、
-ATS はデリファレンス操作の安全性を実証するような証明を要求します。
+より具体的には、もしポインタがデリファレンスされると、ATS
+はデリファレンス操作の安全性を実証するような証明を要求します。
 このような証明は線形命題の正当性を立証することで構築されます。
-この線形命題は ATS では view と呼ばれ、リソースおよび性能を分類します。
+この線形命題は ATS では観 (view) と呼ばれ、リソースおよび性能を分類します。
 
 ')#comment("para")
 ")
@@ -90,7 +90,7 @@ id="views_for_pointers">
 #title("Views for Memory Access through Pointers")
 ")
 #langja("
-#title("ポインタを通じたメモリアクセスのための view")
+#title("ポインタを通じたメモリアクセスのための観")
 ")
 
 #langeng("
@@ -120,16 +120,16 @@ ptr_set0 {l:addr} (pf: a? @ l | p: ptr l, x: a): (a @ l | void)
 #langja("
 #para('\
 
-view は prop の線形バージョンです。
-#emphasis("線形 (linear)") という単語は、
-Jean-Yves Girard によって考案されたリソースを意識した論理である線形論理に由来します。
-view を表わす静的な項のためにビルトインの種 #stacode("view") があります。
-型 T とメモリ位置 L が与えられた時、#stacode("T@L") という view を作ることができ、
+観は命題 (prop) の線形バージョンです。
+#emphasis("線形 (linear)") という単語は、Jean-Yves Girard
+によって考案されたリソースを意識した論理である線形論理に由来します。
+観を表わす静的な項のためにビルトインの種 #stacode("view") があります。
+型 T とメモリ位置 L が与えられた時、#stacode("T@L") という観を作ることができ、
 これは型 T の値が位置 L にあるメモリに格納されていることを示しています。
 #stacode("@") は中置の特殊演算子です。
-この形の view は実用上非常に一般的で、それらはしばしば at-view と呼ばれます。
-例として、次の関数テンプレート #dyncode("ptr_get0") と #dyncode("ptr_set0") は、
-与えられたポインタを通して読み書きをするためで、at-view を含む型が割り当てられています:
+この形の観は実用上非常に一般的で、それらはしばしば駐観 (at-view) と呼ばれます。
+例として、次の関数テンプレート #dyncode("ptr_get0") と #dyncode("ptr_set0")
+は、与えられたポインタを通して読み書きをし、駐観を含む型が割り当てられています:
 
 #atscode('\
 fun{a:t@ype}
@@ -155,8 +155,8 @@ pointer that points to the location denoted by L.
 #langja("
 #para('\
 
-#stacode("ptr") は型コンストラクタで、種 #stacode("addr") の静的な項 L に適用されると型 #stacode("ptr(L)")
-を作ることに注意してください。
+#stacode("ptr") は型コンストラクタで、種 #stacode("addr") の静的な項 L に適用されると型
+#stacode("ptr(L)") を作ることに注意してください。
 型 #stacode("ptr(L)") の唯一の値は L によって示された位置を指すポインタです。
 
 ')
@@ -194,12 +194,13 @@ memory location L would have been precluded.
 {l:addr} (T @ l | ptr (l)) -> (T @ l | T)
 ')
 
-これは view #stacode("T@L") の証明とどこか L について型 #stacode("ptr(L)") のポインタに適用すると、
-関数 #dyncode("ptr_get0&lt;T&gt;") が view #stacode("T@L") の証明と型 T の値を返すことを示しています。
-直感的に言うと、#stacode("T@L") が線形であるようなリソースである view #stacode("T@L")
+これは観 #stacode("T@L") の証明とどこか L について型 #stacode("ptr(L)")
+のポインタに適用すると、関数 #dyncode("ptr_get0&lt;T&gt;") が観 #stacode("T@L")
+の証明と型 T の値を返すことを示しています。
+直感的に言うと、#stacode("T@L") が線形であるようなリソースである観 #stacode("T@L")
 の証明は、#dyncode("ptr_get0&lt;T&gt;") に渡された時に #emphasis("消費 (consumed)") されます。
-さらに同じ view #stacode('T@L') の別の証明が #dyncode("ptr_get0&lt;T&gt;") が返る時に生成されます。
-view #stacode('T@L') の証明が返らなければならないことに注意してください。
+さらに同じ観 #stacode('T@L') の別の証明が #dyncode("ptr_get0&lt;T&gt;") が返る時に生成されます。
+観 #stacode('T@L') の証明が返らなければならないことに注意してください。
 さもなければ後続のメモリ位置 L へのアクセスは不可能になります。
 
 ')
@@ -242,9 +243,9 @@ memory location at L is assumed to be uninitialized when
 #para('\
 
 T? は未初期化であることを仮定したサイズ #stacode("sizeof(T)") の値のための型であることに注意してください。
-関数 #dyncode("ptr_set0&lt;T&gt;") は、view #stacode("T?@L") の証明と型 #stacode("ptr(L)")
-のポインタ、型 T の値に適用されると、view #stacode("T@L") の証明を返します。
-view #stacode("T?@L") の使用は、#dyncode("ptr_set0&lt;T&gt;")
+関数 #dyncode("ptr_set0&lt;T&gt;") は、観 #stacode("T?@L") の証明と型 #stacode("ptr(L)")
+のポインタ、型 T の値に適用されると、観 #stacode("T@L") の証明を返します。
+観 #stacode("T?@L") の使用は、#dyncode("ptr_set0&lt;T&gt;")
 が呼び出された時に、L のメモリ位置が未初期化であると仮定されていることを示しています。
 
 ')
@@ -408,29 +409,29 @@ ptr_set1 {l:addr} (pf: !a? @ l >> a @ l | p: ptr l, x: a): void
 {l:addr} (!T @ l >> T @ l | ptr(l)) -> T
 ')
 
-どこか L と型 #stacode("ptr(L)") のポインタ p について、view #stacode("T@L") の線形の証明 pf
+どこか L と型 #stacode("ptr(L)") のポインタ p について、観 #stacode("T@L") の線形の証明 pf
 が与えられた時、関数呼び出し #dyncode("ptr_get1&lt;T&gt;")(pf, p) は型 T の値を返すことが期待されています。
 けれども、証明 pf は消費されません。
-その代わりに、関数呼び出しが返った後も view #stacode("T@L") の証明はまだ在ります。
+その代わりに、関数呼び出しが返った後も観 #stacode("T@L") の証明はまだ在ります。
 同様に、関数 #dyncode("ptr_set1&lt;T&gt;") には次の型が割り当てられます:
 
 #atscode('\
 {l:addr} (!T? @ l >> T @ l | ptr(l), T) -> void
 ')
 
-どこか L と型 #stacode("ptr(L)") のポインタ p、型 T の値 v について、view #stacode("T?@L") の線形の証明 pf
-が与えられた時、関数呼び出し #dyncode("ptr_set1&lt;T&gt;")(pf, p, v) は pf の view を #stacode("T?@L")
+どこか L と型 #stacode("ptr(L)") のポインタ p、型 T の値 v について、観 #stacode("T?@L") の線形の証明 pf
+が与えられた時、関数呼び出し #dyncode("ptr_set1&lt;T&gt;")(pf, p, v) は pf の観を #stacode("T?@L")
 から #stacode("T@L") に変えて、void 値を返すことが期待されています。
-一般に、view V1 と V2 が与えられた時、f には次の形の型が与えられます:
+一般に、観 V1 と V2 が与えられた時、f には次の形の型が与えられます:
 
 #atscode('\
 (...,!V1 >> V2, ...) -> ...
 ')
 
-そのとき、view V1 の証明の値 pf について、関数呼び出し f(..., pf, ...) は返る時に pf の view を V2 に変えます。
+そのとき、観 V1 の証明の値 pf について、関数呼び出し f(..., pf, ...) は返る時に pf の観を V2 に変えます。
 V1 と V2 が同じ場合には、!V1 >> V2 は単に !V1 と書くこともできます。
-例として、
-与えられた2つのメモリ位置のコンテンツをスワップする関数テンプレート #dyncode("swap1") は次のように実装されます:
+例として、与えられた2つのメモリ位置のコンテンツをスワップする関数テンプレート
+#dyncode("swap1") は次のように実装されます:
 
 #atscode('\
 fn{a:t@ype}
@@ -501,12 +502,12 @@ end // end of [swap1]
 どこか L について型 #stacode("ptr(L)") のポインタ p が与えられた時、#dyncode("!p")
 はメモリ位置 L に保存された値を生じます。
 #dyncode("!p") を型検査すると、型検査器はまずはじめに現在有効な全ての証明の中で T について
-view #stacode("T@L") の証明を検索します:
+観 #stacode("T@L") の証明を検索します:
 もしそのような証明 pf が見つかったら、#dyncode("!p") は本質的に #dyncode("ptr_get1(pf | p)")
 に詳細化されて、型検査は終わります。
 #dyncode("!p") が左辺値 (詳細は後に説明します) である場合、
 なんらかの値 v について #dyncode("!p := v") のような割り当てで使うこともできます。
-もし現在有効な全ての証明の中である型 T について at-view #stacode("T@L") の証明が見つかれば、
+もし現在有効な全ての証明の中である型 T について駐観 #stacode("T@L") の証明が見つかれば、
 型検査器は型検査のために #dyncode("!p := v") を #dyncode("ptr_set1(pf | p, v)") に詳細化します。
 #dyncode("swap1") のこの実装は線形の証明を明示的に扱うための管理上のコードを使っていないことに注意してください。
 
@@ -523,7 +524,7 @@ id="viewtypes_as_combination">
 #title("Viewtypes as a Combination of Views and Types")
 ")
 #langja("
-#title("view と型を組み合わせた viewtype")
+#title("観と型を組み合わせた観型")
 ")
 
 #langeng("
@@ -547,14 +548,14 @@ from the view part residing within it.
 #para("\
 
 ATS の線形型は #emphasis("viewtype") という名前です。
-これは線形型は2つの部分から構成されることを示しています: 一つは view でもう一つが型 (type) です。
-例えば、view V と型 T が与えられた時、タプル (V | T) は viewtype で、バー記号 (|) は view と型を
+これは線形型は2つの部分から構成されることを示しています: 一つは観 (view)でもう一つが型 (type) です。
+例えば、観 V と型 T が与えられた時、タプル (V | T) は viewtype で、バー記号 (|) は観と型を
 (コンマのように) 分離しています。
 少し意外かもしれませんが、反対に:
-それぞれの viewtype VT について、VT が (V | T) と等しいような view V と型 T の存在を仮定できます。
+それぞれの viewtype VT について、VT が (V | T) と等しいような 観 V と型 T の存在を仮定できます。
 形式上、ATS ではこの T は VT?! として参照されます。
 この幾分意外な線形型の解釈は ATS の目立った新規性です。
-それは viewtype の線形性は #emphasis("完全に") その中に存在する view 部分に由来することを強調しています。
+それは viewtype の線形性は #emphasis("完全に") その中に存在する 観部分に由来することを強調しています。
 
 ")
 ")
@@ -761,7 +762,7 @@ with the left-value.
 割り当てられた文の左側に置かれることが許された値に由来します。
 しばしば直感的に、左辺値はアドレスが付属した値として説明されます。
 左辺値として選ばれたどのような表現も、
-ポインタと左辺値に関連する (なんらかの at-view の)
+ポインタと左辺値に関連する (なんらかの駐観の)
 線形の証明の両方ともを識別できなければならないことに注意してください。
 
 ')
@@ -951,7 +952,7 @@ as follows that is based on stack-allocation of local variables.
 #para('\
 
 型 T とアドレス L が与えられた時、
-最初の段階で view #stacode("T@L") の証明はどのように得られるのでしょうか？
+最初の段階で観 #stacode("T@L") の証明はどのように得られるのでしょうか？
 実際にそのような証明を得る方法は様々です。
 次のようにローカルの値としてスタックに確保する方法を紹介します。
 
@@ -1022,7 +1023,7 @@ initial value 3 while #dyncode("pfz") is introduced as an alias for
 値は宣言された時、その型またはその初期値を与える必要があります。
 もし値が型をともなわずに宣言されたら、その初期値の型がその型であると見なされます。
 値 x が型 T で宣言されていたと仮定しましょう。
-するとその値の位置を指すポインタは #dyncode("addr@(x)") で表わされ、関連した (at-view の) 線形の証明は
+するとその値の位置を指すポインタは #dyncode("addr@(x)") で表わされ、関連した (駐観の) 線形の証明は
 #dyncode("view@(x)") で表わされます。
 このとき #dyncode("addr@") と #dyncode("view@") はキーワードです。
 値は ATS における左辺値のもう一つの形です。
@@ -1099,12 +1100,12 @@ C言語でこのスタイルのプログラミングをする時、#dyncode("fac
 #dyncode("res") を指すポインタがデリファレンスされてしまう不安がしばしばあります。
 これは一般に、宙ぶらりんなポインタのデリファレンス (derefencing a dangling pointer) と呼ばれます。
 ATS ではこの不安は完全に取り除かれています。
-変数 #dyncode("res") に関連する at-view の線形証明は、#dyncode("res")
+変数 #dyncode("res") に関連する駐観の線形証明は、#dyncode("res")
 のスコープが終わるまで存在することが ATS の型システムによって要求されます。
-より具体的には、もし型 T の変数 x が宣言されていたら、L がアドレス x のとき view #stacode("T?@L")
+より具体的には、もし型 T の変数 x が宣言されていたら、L がアドレス x のとき観 #stacode("T?@L")
 の線形証明は、x のスコープの終わりに型検査が到達するまで有効でなければなりません。
 この要求は、確保されたスタックの割り当てが終わった後、もはや変数にアクセスできないことを保証します。
-その変数に関連した at-view の線形証明がその時点では無効なのです。
+その変数に関連した駐観の線形証明がその時点では無効なのです。
 
 ')
 ")
@@ -1161,9 +1162,9 @@ val () = println! ("A * B = ", dotprod (A, B)) // A * B = 6.0
 } (* end of [main0] *)
 ')
 
-変数 A に関連した at-view は #stacode("(@[double][3])@A") です。
+変数 A に関連した駐観は #stacode("(@[double][3])@A") です。
 このとき A は 値 A のアドレスもまた参照しています。
-同様に変数 B に関連した at-view は #stacode("(@[double][3])@B") です。
+同様に変数 B に関連した駐観は #stacode("(@[double][3])@B") です。
 
 完全を期すために、次のような未初期化の配列のための構文を紹介します:
 型 T と整数 N が与えられた時、構文 #dyncode("@[T][N]()") は型 T の N 個の未初期化の値からなる配列を表わします。
