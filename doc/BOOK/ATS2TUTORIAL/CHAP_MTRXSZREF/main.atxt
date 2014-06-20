@@ -106,7 +106,7 @@ j, v)") can be written as #dyncode("M[i,j]") and #dyncode("M[i,j] := v"),
 respectively. Notice that matrix-bounds checking is performed at run-time
 whenever #dyncode("mtrxszref_get_at") or #dyncode("mtrxszref_set_at") is
 called, and the exception #dyncode("MatrixSubscriptExn") is raised in case
-of out-of-bounds matrix access is detected.
+of out-of-bounds matrix access being detected.
 
 ')
 ")
@@ -157,8 +157,8 @@ fun loop
 ) : void =
   if j < n then let
     val x = M[i,j]
-    val () = M[j,i] := M[i,j]
-    val () = M[i,j] := x
+    val () = M[i,j] := M[j,i]
+    val () = M[j,i] := x
   in
     loop (i, succ(j))
   end else let
