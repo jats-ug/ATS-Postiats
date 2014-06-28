@@ -321,6 +321,13 @@ doc/BOOK/ATS2TUTORIAL/CHAP_*/main.db
 doc/BOOK/ATS2TUTORIAL/HTML
 
 #
+# ATS-for-APUE3
+#
+
+doc/BOOK/ATS-for-APUE3/apue.3e
+doc/BOOK/ATS-for-APUE3/CHAP_*/main.db
+
+#
 # JATS-UG
 #
 doc/BOOK/*/build_ja

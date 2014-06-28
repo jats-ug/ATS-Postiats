@@ -61,7 +61,7 @@ staload "libats/ML/SATS/hashtblref.sats"
 //
 implement
 hash_key<string> (str) =
-  string_hash_multiplier (31UL, 61803398875UL, str)
+  string_hash_multiplier (31UL, 31415926536UL, str)
 //
 (* ****** ****** *)
 
@@ -221,6 +221,33 @@ prval () = $UN.cast2void (tbl)
 val kxs = list0_of_list_vt{(key,itm)}(kxs)
 //
 } (* end of [hashtbl_takeout_all] *)
+
+(* ****** ****** *)
+
+implement
+{key,itm}
+fprint_hashtbl
+  (out, tbl) = let
+//
+implement
+$HT.fprint_hashtbl$sep<> = fprint_hashtbl$sep<>
+implement
+$HT.fprint_hashtbl$mapto<> = fprint_hashtbl$mapto<>
+//
+val tbl = htdecode (tbl)
+val () = $HT.fprint_hashtbl (out, tbl)
+prval () = $UN.cast2void (tbl)
+//
+in
+  // nothing
+end // end of [fprint_hashtbl]
+
+(* ****** ****** *)
+
+implement{}
+fprint_hashtbl$sep (out) = fprint (out, "; ")
+implement{}
+fprint_hashtbl$mapto (out) = fprint (out, "->")
 
 (* ****** ****** *)
 
