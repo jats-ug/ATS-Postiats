@@ -28,7 +28,7 @@
 (* ****** ****** *)
 //
 // Author: Hongwei Xi
-// Authoremail: gmhwxi AT gmail DOT com
+// Authoremail: gmhwxiATgmailDOTcom
 // Start Time: March, 2011
 //
 (* ****** ****** *)
@@ -87,76 +87,86 @@ macdef posdecby1
   (pos) = $LOC.position_decby_count (,(pos), 1u)
 macdef posincbyc
   (pos, i) = $LOC.position_incby_char (,(pos), ,(i))
-// end of [posincbyc]
+//
+(* ****** ****** *)
+
+fun
+xdigit_get_val
+  (c: char): int =
+(
+  case+ 0 of
+  | _ when c <= '9' => c - '0'
+  | _ when c <= 'F' => 10 + (c - 'A') // HX: A = 10
+  | _ => 10 + (c - 'a')
+) (* end of [xdigit_get_val] *)
 
 (* ****** ****** *)
 
 fun
 char_for_escaped
-  (c: char): char = begin
+  (c: char): char =
+(
   case+ c of
   | 'n' => '\012' (* newline *)
   | 't' => '\011' (* horizontal tab *)
-  | 'v' => '\013' (* vertical tab *)
-  | 'b' => '\010' (* backspace *)
-  | 'r' => '\015' (* carriage return *)
-  | 'f' => '\014' (* line feed *)
   | 'a' => '\007' (* alert *)
-  |  _  => c
-end // end of [char_for_escaped]
-
-fun xdigit_get_val
-  (c: char): int =
-  case+ 0 of
-  | _ when c <= '9' => c - '0'
-  | _ when c <= 'F' => 10 + (c - 'A') // HX: A = 10
-  | _ => 10 + (c - 'a')
-// end of [xdigit_get_val]    
+  | 'b' => '\010' (* backspace *)
+  | 'v' => '\013' (* vertical tab *)
+  | 'f' => '\014' (* line feed *)
+  | 'r' => '\015' (* carriage return *)
+  |  _ (*rest-of-char*) => c
+) (* end of [char_for_escaped] *)
 
 (* ****** ****** *)
 
+(*
 //
-// HX: there are various "irregular" tokens in ATS
-// (e.g., type+, type-, t@ype, fold@, free@, while*),
+// HX-2011:
+// There are various "irregular" tokens in ATS,
 // which complicate lexing considerably; [lexsym] is
 // primarily introduced for handling such tokens.
 //
+*)
 
-datatype
-lexsym =
+datatype lexsym =
 //
-  | LS_NONE of () // this is a dymmy
+  | LS_NONE of () // dummy
 //
-  | LS_ABST // for abst@ype
-  | LS_ABSVT // for absvt@ype
-  | LS_ABSVIEWT // for absviewt@ype
-  | LS_ADDR // for addr@
-  | LS_CASE // for case+ and case-
-  | LS_FIX // for fix@
-  | LS_FOR // for for*
-  | LS_FOLD // for fold@
-  | LS_FREE // for free@
-  | LS_LAM // for lam@
-  | LS_LLAM // for llam@
-  | LS_PROP // for prop+ and prop-
-  | LS_REF // for ref@
+  | LS_VAL of () // for val+ and val-
+  | LS_CASE of () // for case+ and case-
 //
-  | LS_T // for t@ype
-  | LS_TYPE // for type+ and type-
-  | LS_T0YPE // for t0ype+ and t0ype-
+  | LS_ADDR of () // for addr@
 //
-  | LS_VAL // for val+ and val-
+  | LS_FOLD of () // for fold@
+  | LS_FREE of () // for free@
 //
-  | LS_VIEW // for view+ and view-
-  | LS_VIEWT // for viewt@ype
-  | LS_VIEWTYPE // for viewtype+ and viewtype-
-  | LS_VIEWT0YPE // for viewt0ype+ and viewt0ype-
+  | LS_FIX of () // for fix@
+  | LS_LAM of () // for lam@
+  | LS_LLAM of () // for llam@
 //
-  | LS_VT // for vt@ype
-  | LS_VTYPE // for vtype+ and vtype-
-  | LS_VT0YPE // for vt0ype+ and vt0ype-
+  | LS_REF of () // for ref@
 //
-  | LS_WHILE // for while*
+  | LS_PROP of () // for prop+ and prop-
+  | LS_TYPE of () // for type+ and type-
+  | LS_VIEW of () // for view+ and view- and view@
+  | LS_VIEWTYPE of () // for viewtype+ and viewtype-
+//
+  | LS_T of () // for t@ype
+  | LS_T0YPE of () // for t0ype+ and t0ype-
+//
+  | LS_VT of () // for vt@ype
+  | LS_VTYPE of () // for vtype+ and vtype-
+  | LS_VT0YPE of () // for vt0ype+ and vt0ype-
+//
+  | LS_VIEWT of () // for viewt@ype
+  | LS_VIEWT0YPE of () // for viewt0ype+ and viewt0ype-
+//
+  | LS_ABST of () // for abst@ype
+  | LS_ABSVT of () // for absvt@ype
+  | LS_ABSVIEWT of () // for absviewt@ype
+//
+  | LS_FOR of () // for for*
+  | LS_WHILE of () // for while*
 //
 (*
   | LS_LTBANG of () // "<!" // not a symbol
@@ -168,6 +178,7 @@ lexsym =
   | LS_SLASH2 of () // "//" line comment
   | LS_SLASHSTAR of () // "/*" block comment
   | LS_SLASH4 of () // "////" // rest-of-file comment
+//
 // end of [lexsym]
 
 (* ****** ****** *)
@@ -247,35 +258,40 @@ fun insert (
   prval () = opt_clear (res)
 } // end of [insert]
 //
-val () = insert (ptbl, "abst", LS_ABST)
-val () = insert (ptbl, "absvt", LS_ABSVT)
-val () = insert (ptbl, "absviewt", LS_ABSVIEWT)
-val () = insert (ptbl, "addr", LS_ADDR)
+val () = insert (ptbl, "val", LS_VAL)
 val () = insert (ptbl, "case", LS_CASE)
-val () = insert (ptbl, "fix", LS_FIX)
-val () = insert (ptbl, "for", LS_FOR)
+//
+val () = insert (ptbl, "addr", LS_ADDR)
+//
 val () = insert (ptbl, "fold", LS_FOLD)
 val () = insert (ptbl, "free", LS_FREE)
+//
 val () = insert (ptbl, "lam", LS_LAM)
 val () = insert (ptbl, "llam", LS_LLAM)
-val () = insert (ptbl, "prop", LS_PROP)
+val () = insert (ptbl, "fix", LS_FIX)
+//
 val () = insert (ptbl, "ref", LS_REF)
 //
-val () = insert (ptbl, "t", LS_T)
+val () = insert (ptbl, "prop", LS_PROP)
 val () = insert (ptbl, "type", LS_TYPE)
-val () = insert (ptbl, "t0ype", LS_T0YPE) // = t@ype
-//
-val () = insert (ptbl, "val", LS_VAL)
-//
 val () = insert (ptbl, "view", LS_VIEW)
-val () = insert (ptbl, "viewt", LS_VIEWT)
 val () = insert (ptbl, "viewtype", LS_VIEWTYPE)
-val () = insert (ptbl, "viewt0ype", LS_VIEWT0YPE) // = viewt@ype
+//
+val () = insert (ptbl, "t", LS_T)
+val () = insert (ptbl, "t0ype", LS_T0YPE) // = t@ype
 //
 val () = insert (ptbl, "vt", LS_VT)
 val () = insert (ptbl, "vtype", LS_VTYPE)
 val () = insert (ptbl, "vt0ype", LS_VT0YPE) // = vt@ype
 //
+val () = insert (ptbl, "viewt", LS_VIEWT)
+val () = insert (ptbl, "viewt0ype", LS_VIEWT0YPE) // = viewt@ype
+//
+val () = insert (ptbl, "abst", LS_ABST)
+val () = insert (ptbl, "absvt", LS_ABSVT)
+val () = insert (ptbl, "absviewt", LS_ABSVIEWT)
+//
+val () = insert (ptbl, "for", LS_FOR)
 val () = insert (ptbl, "while", LS_WHILE)
 //
 val rtbl = HASHTBLref_make_ptr {key,itm} (ptbl)
@@ -300,59 +316,79 @@ end // end of [local]
 
 (* ****** ****** *)
 
-fun IDENT_sym_get_lexsym
+local
+
+staload
+STRING = "libc/SATS/string.sats" // for [string.cats]
+extern
+fun substrncmp
+  (x1: string, i1: int, x2: string, i2: int): int = "mac#atslib_substrcmp"
+// end of [substrncmp]
+
+macdef
+slash2_test (x, i) = (substrncmp (,(x), ,(i), "//", 0) = 0)
+
+in (*in-of-local*)
+
+fun
+IDENT_sym_get_lexsym
   (x: string): lexsym = let
 //
-  fun slash2_test
-    {n:int} {i:nat | i <= n} 
-    (x: string n, i: int i): bool = let
-//
-    staload STRING = "libc/SATS/string.sats" // for [string.cats]
-    extern fun substrncmp
-      (x1: string, i1: int, x2: string, i2: int): int = "mac#atslib_substrcmp"
-    // end of [substrncmp]
-  in
-    substrncmp (x, i, "//", 0) = 0
-  end // end of [slash2_test]
-//
-  val x = string1_of_string (x)
+val x = string1_of_string (x)
 //
 in
-  if string_isnot_atend (x, 0) then let
-    val x0 = x[0]
-  in
-    case+ x0 of
+//
+if
+string_isnot_atend (x, 0)
+then let
+  val x0 = x[0]
+in
+//
+case+ x0 of
 (*
-    | '<' =>
-        if string_isnot_atend (x, 1) then let
-          val x1 = x[1]
-        in
-          case+ x1 of
-          | '!' => LS_LTBANG ()
-          | '$' => LS_LTDOLLAR ()
-          | _ => LS_NONE ()
-        end else LS_NONE ()
+| '<' =>
+  if
+  string_isnot_atend (x, 1)
+  then let
+    val x1 = x[1]
+  in
+    case+ x1 of
+    | '!' => LS_LTBANG ()
+    | '$' => LS_LTDOLLAR ()
+    | _ (*rest*) => LS_NONE ()
+  end // end of [then]
+  else LS_NONE () // end of [else]
 *)
-    | '?' =>
-        if string_isnot_atend (x, 1) then let
-          val x1 = x[1]
-        in
-          case+ x1 of
-          | '>' => LS_QMARKGT ()
-          | _ => LS_NONE ()
-        end else LS_NONE ()
-    | '/' =>
-        if string_isnot_atend (x, 1) then let
-          val x1 = x[1]
-        in
-          case+ x1 of
-          | '*' => LS_SLASHSTAR ()
-          | '/' => if slash2_test (x, 2) then LS_SLASH4 () else LS_SLASH2 ()
-          | _ => LS_NONE ()
-        end else LS_NONE ()
-    | _ => LS_NONE ()
-  end else LS_NONE () // end of [if]
+| '?' =>
+  if
+  string_isnot_atend (x, 1)
+  then let
+    val x1 = x[1]
+  in
+    case+ x1 of
+    | '>' => LS_QMARKGT () | _ => LS_NONE ()
+  end // end of [then]
+  else LS_NONE () // end of [else]
+| '/' =>
+  if
+  string_isnot_atend (x, 1)
+  then let
+    val x1 = x[1]
+  in
+    case+ x1 of
+    | '*' => LS_SLASHSTAR ()
+    | '/' => if slash2_test (x, 2) then LS_SLASH4 () else LS_SLASH2 ()
+    | _ (*rest*) => LS_NONE ()
+  end // end of [then]
+  else LS_NONE () // end of [else]
+| _ (*rest-of-char*) => LS_NONE ()
+//
+end // end of [then]
+else LS_NONE () // end of [else]
+//
 end // end of [IDENT_sym_get_lexsym]
+
+end // end of [local]
 
 (* ****** ****** *)
 
@@ -363,27 +399,32 @@ fun BLANK_test
 (* ****** ****** *)
 
 fun IDENTFST_test
-  (c: char): bool = case+ 0 of
+  (c: char): bool =
+(
+  case+ 0 of
   | _ when ('a' <= c andalso c <= 'z') => true
   | _ when ('A' <= c andalso c <= 'Z') => true
   | _ when c = '_' => true
-  | _ => false
-// end of [IDENTFST_test]
+  | _ (*rest-of-char*) => false
+) (* end of [IDENTFST_test] *)
 
 fun IDENTRST_test
-  (c: char): bool = case+ 0 of
+  (c: char): bool =
+(
+  case+ 0 of
   | _ when ('a' <= c andalso c <= 'z') => true
   | _ when ('A' <= c andalso c <= 'Z') => true
   | _ when ('0' <= c andalso c <= '9') => true
   | _ when c = '_' => true
   | _ when c = '\'' => true
   | _ when c = '$' => true
-  | _ => false
-// end of [IDENTRST_test]
+  | _ (*rest-of-char*) => false
+) (* end of [IDENTRST_test] *)
 
 (* ****** ****** *)
 
-fun SYMBOLIC_test
+fun
+SYMBOLIC_test
   (c: char): bool = let
   val symbolic = "%&+-./:=@~`^|*!$#?<>"
 in
@@ -391,57 +432,61 @@ in
 end // end of [SYMBOLIC_test]
 
 (* ****** ****** *)
-
+//
 fun xX_test
   (c: char): bool =
   if c = 'x' then true else c = 'X'
-// end of [xX_test]
-
+//
 fun DIGIT_test
   (c: char): bool = char_isdigit (c)
 fun XDIGIT_test
   (c: char): bool = char_isxdigit (c)
-
+//
 (* ****** ****** *)
-
+//
 fun INTSP_test
   (c: char): bool = string_contains ("LlUu", c)
 fun FLOATSP_test
   (c: char): bool = string_contains ("fFlL", c)
-
+//
 (* ****** ****** *)
-
+//
 fun eE_test
-  (c: char): bool =
-  if c = 'e' then true else c = 'E'
-// end of [eE_test]
-
+  (c: char): bool = if c = 'e' then true else c = 'E'
+//
 fun pP_test
-  (c: char): bool =
-  if c = 'p' then true else c = 'P'
-// end of [pP_test]
-
+  (c: char): bool = if c = 'p' then true else c = 'P'
+//
+(* ****** ****** *)
+//
 fun SIGN_test
-  (c: char): bool =
-  if c = '+' then true else c = '-'
-// end of [SIGN_test]
-
+  (c: char): bool = if c = '+' then true else c = '-'
+//
 (* ****** ****** *)
 
+local
+//
+#define ESCAPED "ntvbrfa\\\?\'\"\(\[\{"
+//
+in(*in-of-local*)
+//
 fun ESCHAR_test
-  (c: char): bool = let
-  val escaped = "ntvbrfa\\\?\'\"\(\[\{"
-in
-  string_contains (escaped, c)
-end // end of [ESCHAR_test]
+  (c: char): bool = string_contains (ESCAPED, c)
+//
+end // end of [local]
 
 (* ****** ****** *)
+(*
 //
 // HX: f('\n') must be false!
 //
+*)
 extern
-fun ftesting_opt (
-  buf: &lexbuf, pos: &position, f: char -> bool
+fun
+ftesting_opt
+(
+  buf: &lexbuf
+, pos: &position, f: char -> bool
 ) : uint // end of [ftesting_opt]
 implement
 ftesting_opt
@@ -460,8 +505,11 @@ end // end of [ftesting_opt]
 // HX: f('\n') must be false!
 //
 extern
-fun ftesting_seq0 (
-  buf: &lexbuf, pos: &position, f: char -> bool
+fun
+ftesting_seq0
+(
+  buf: &lexbuf
+, pos: &position, f: char -> bool
 ) : uint // end of [ftesting_seq0]
 implement
 ftesting_seq0
@@ -490,22 +538,34 @@ ftesting_seq0
 // HX: f('\n') must be false!
 //
 extern
-fun ftesting_seq1 (
-  buf: &lexbuf, pos: &position, f: char -> bool
+fun
+ftesting_seq1
+(
+  buf: &lexbuf
+, pos: &position, f: char -> bool
 ) : int // end of [ftesting_seq1]
 implement
 ftesting_seq1
   (buf, pos, f) = let
-  val i = lexbufpos_get_char (buf, pos)
+//
+val i = lexbufpos_get_char (buf, pos)
+//
 in
-  if i >= 0 then (
-    if f ((i2c)i) then let
+//
+if (
+i >= 0
+) then (
+  if f((i2c)i)
+    then let
       val () = posincby1 (pos)
       val nchr = ftesting_seq0 (buf, pos, f)
     in
       (u2i)nchr + 1
-    end else ~1 // end of [if]
-  ) else ~1 // end of [if]
+    end // end of [then]
+    else (~1) // end of [else]
+  // end of [if]
+) else (~1) // end of [if]
+//
 end // end of [ftesting_seq1]
 
 (* ****** ****** *)
@@ -515,7 +575,8 @@ end // end of [ftesting_seq1]
 // as '\n' is considered a blank character
 //
 fun
-testing_blankseq0 (
+testing_blankseq0
+(
   buf: &lexbuf, pos: &position
 ) : uint = diff where {
   fun loop (
@@ -532,16 +593,21 @@ testing_blankseq0 (
   val nchr0 = lexbufpos_diff (buf, pos)
   val nchr1 = loop (buf, pos, nchr0)
   val diff = nchr1 - nchr0
-} // end of testing_blankseq0]
+} (* end of testing_blankseq0] *)
 
 (* ****** ****** *)
 
 extern
-fun testing_char (
+fun
+testing_char
+(
   buf: &lexbuf, pos: &position, lit: char
 ) : int // end of [testing_char]
-implement testing_char
-  (buf, pos, lit) = res where {
+implement
+testing_char
+(
+  buf, pos, lit
+) = res where {
   val i = lexbufpos_get_char (buf, pos)
   val res = (
     if i >= 0 then
@@ -556,11 +622,15 @@ implement testing_char
 // HX: [lit] contains no '\n'!
 //
 extern
-fun testing_literal (
+fun
+testing_literal
+(
   buf: &lexbuf, pos: &position, lit: string
 ) : int // end of [testing_literal]
-implement testing_literal
-  (buf, pos, lit) = res where {
+implement
+testing_literal
+  (buf, pos, lit) = res where
+{
 //
 val [n:int] lit = string1_of_string (lit)
 //
@@ -796,7 +866,7 @@ extern
 fun lexing_IDENT_alp
   (buf: &lexbuf, pos: &position, k1: uint): token
 extern
-fun lexing_IDENT1_alp {l:agz}
+fun lexing_IDENT2_alp {l:agz}
   (buf: &lexbuf, pos: &position, str: strptr l): token
 
 extern
@@ -1261,7 +1331,8 @@ end // end of [lexing_PERCENT]
 (* ****** ****** *)
 
 extern
-fun lexing_DOLLAR
+fun
+lexing_DOLLAR
   (buf: &lexbuf, pos: &position): token
 implement
 lexing_DOLLAR
@@ -1285,7 +1356,8 @@ end // end of [lexing_DOLLAR]
 (* ****** ****** *)
 
 extern
-fun lexing_SHARP
+fun
+lexing_SHARP
   (buf: &lexbuf, pos: &position): token
 implement
 lexing_SHARP
@@ -1313,7 +1385,8 @@ end // end of [lexing_SHARP]
 (* ****** ****** *)
 
 extern
-fun lexing_BQUOTE
+fun
+lexing_BQUOTE
   (buf: &lexbuf, pos: &position): token
 implement
 lexing_BQUOTE
@@ -1333,20 +1406,21 @@ in
 end // end of [lexing_BQUOTE]
 
 (* ****** ****** *)
-
+//
 extern
-fun lexing_QUOTE
+fun
+lexing_QUOTE
   (buf: &lexbuf, pos: &position): token
-// end of [lexing_QUOTE]
+//
 extern
-fun lexing_DQUOTE
+fun
+lexing_DQUOTE
   (buf: &lexbuf, pos: &position): token
-// end of [lexing_DQUOTE]
-
+//
 (* ****** ****** *)
 
 local
-
+//
 extern
 fun lexing_char_oct
   (buf: &lexbuf, pos: &position, k: uint): token
@@ -1359,6 +1433,8 @@ fun lexing_char_special
 extern
 fun lexing_char_closing
   (buf: &lexbuf, pos: &position, c: char): token
+//
+in (* in of [local] *)
 
 implement
 lexing_char_oct
@@ -1445,8 +1521,6 @@ in
   // end of [if]
 end // end of [lexing_char_closing]
 
-in // in of [local]
-
 implement
 lexing_QUOTE (buf, pos) = let
   val i = lexbufpos_get_char (buf, pos)
@@ -1474,12 +1548,20 @@ end // end of [local]
 (* ****** ****** *)
 
 local
+//
+#define AGAIN 1
+//
+(* ****** ****** *)
 
 staload "libats/SATS/linqueue_arr.sats"
 staload _(*anon*) = "libats/DATS/linqueue_arr.dats"
 staload _(*anon*) = "libats/ngc/DATS/deque_arr.dats"
 
-fun lexing_string_char_oct (
+(* ****** ****** *)
+
+fun
+lexing_string_char_oct
+(
   buf: &lexbuf, pos: &position
 ) : int = let
   fun loop (
@@ -1515,7 +1597,9 @@ in
   i // char code
 end // end of [lexing_string_char_oct]
 
-fun lexing_string_char_hex (
+fun
+lexing_string_char_hex
+(
   buf: &lexbuf, pos: &position
 ) : int = let
   fun loop (
@@ -1551,11 +1635,14 @@ in
   i // char code
 end // end of [lexing_string_char_hex]
 
-#define AGAIN 1
-fun lexing_string_char_special (
+fun
+lexing_string_char_special
+(
   buf: &lexbuf, pos: &position, err: &int
 ) : int = let
-  val i = lexbufpos_get_char (buf, pos)
+//
+val i = lexbufpos_get_char (buf, pos)
+//
 in
 //
 if i >= 0 then let
@@ -1578,7 +1665,7 @@ end else 0  // end of [if]
 //
 end // end of [lexing_string_char_special]
 
-in // in of [local]
+in (* in of [local] *)
 
 implement
 lexing_DQUOTE
@@ -1664,7 +1751,9 @@ end // end of [local]
 
 (* ****** ****** *)
 
-fun lexing_postfix (
+fun
+lexing_postfix
+(
   buf: &lexbuf
 , pos: &position
 , tn: tnode, tn_post: tnode, c0: char
@@ -1679,7 +1768,9 @@ in
   | _ => lexbufpos_token_reset (buf, pos, tn)
 end // end of [lexing_postfix]
 
-fun lexing_polarity (
+fun
+lexing_polarity
+(
   buf: &lexbuf, pos: &position
 , tn: tnode, tn_pos: tnode, tn_neg: tnode
 ) : token = let
@@ -1698,23 +1789,31 @@ in
 end // end of [lexing_polarity]
 
 (* ****** ****** *)
-
-fun lexing_FOR (
+//
+fun
+lexing_FOR
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, FOR, FORSTAR, '*')
-fun lexing_WHILE (
+//
+fun
+lexing_WHILE
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, WHILE, WHILESTAR, '*')
-
+//
 (* ****** ****** *)
 
-fun lexing_CASE (
+fun
+lexing_CASE
+(
   buf: &lexbuf, pos: &position
 ) : token =
   lexing_polarity (buf, pos, CASE, CASE_pos, CASE_neg)
 // end of [lexing_CASE]
 
-fun lexing_VAL (
+fun lexing_VAL
+(
   buf: &lexbuf, pos: &position
 ) : token = 
   lexing_polarity (buf, pos, VAL, VAL_pos, VAL_neg)
@@ -1722,23 +1821,31 @@ fun lexing_VAL (
 
 (* ****** ****** *)
 
-fun lexing_TYPE (
+fun
+lexing_TYPE
+(
   buf: &lexbuf, pos: &position
 ) : token =
   lexing_polarity (buf, pos, TYPE, TYPE_pos, TYPE_neg)
 // end of [lexing_TYPE]
-fun lexing_T0YPE (
+fun
+lexing_T0YPE
+(
   buf: &lexbuf, pos: &position
 ) : token =
   lexing_polarity (buf, pos, T0YPE, T0YPE_pos, T0YPE_neg)
 // end of [lexing_T0YPE]
-fun lexing_PROP (
+fun
+lexing_PROP
+(
   buf: &lexbuf, pos: &position
 ) : token =
   lexing_polarity (buf, pos, PROP, PROP_pos, PROP_neg)
 // end of [lexing_PROP]
 //
-fun lexing_VIEW (
+fun
+lexing_VIEW
+(
   buf: &lexbuf, pos: &position
 ) : token = let
   val i = lexbufpos_get_char (buf, pos)
@@ -1759,29 +1866,37 @@ in
   | _ => lexbufpos_token_reset (buf, pos, VIEW)
 end // end of [lexing_VIEW]
 //
-fun lexing_VIEWTYPE (
+fun
+lexing_VIEWTYPE
+(
   buf: &lexbuf, pos: &position
 ) : token =
   lexing_polarity (buf, pos, VIEWTYPE, VIEWTYPE_pos, VIEWTYPE_neg)
 // end of [lexing_VIEWTYPE]
-fun lexing_VIEWT0YPE (
+fun
+lexing_VIEWT0YPE
+(
   buf: &lexbuf, pos: &position
 ) : token =
   lexing_polarity (buf, pos, VIEWT0YPE, VIEWT0YPE_pos, VIEWT0YPE_neg)
 // end of [lexing_VIEWT0YPE]
 
 (* ****** ****** *)
-
-fun lexing_LAM (
+//
+fun lexing_LAM
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, LAM, LAMAT, '@')
-fun lexing_LLAM (
+fun lexing_LLAM
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, LLAM, LLAMAT, '@')
-fun lexing_FIX (
+//
+fun lexing_FIX
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, FIX, FIXAT, '@')
-
+//
 (* ****** ****** *)
 
 fun lexing_REF (
@@ -1789,17 +1904,22 @@ fun lexing_REF (
 ) : token = lexing_postfix (buf, pos, REF, REFAT, '@')
 
 (* ****** ****** *)
-
-fun lexing_ADDR (
+//
+fun lexing_ADDR
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, ADDR, ADDRAT, '@')
-fun lexing_FOLD (
+
+fun lexing_FOLD
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, FOLD, FOLDAT, '@')
-fun lexing_FREE (
+//
+fun lexing_FREE
+(
   buf: &lexbuf, pos: &position
 ) : token = lexing_postfix (buf, pos, FREE, FREEAT, '@')
-
+//
 (* ****** ****** *)
 
 implement
@@ -1811,6 +1931,7 @@ val i = lexbufpos_get_char (buf, pos)
 in
 //
 case+ (i2c)i of
+//
 | '<' => let
     val () = posincby1 (pos)
     val str = lexbuf_get_strptr1 (buf, k)
@@ -1818,6 +1939,7 @@ case+ (i2c)i of
   in
     lexbufpos_token_reset (buf, pos, T_IDENT_tmp (str))
   end
+//
 | '\[' => let
     val () = posincby1 (pos)
     val str = lexbuf_get_strptr1 (buf, k)
@@ -1825,6 +1947,7 @@ case+ (i2c)i of
   in
     lexbufpos_token_reset (buf, pos, T_IDENT_arr (str))
   end
+//
 | '!' => let
     val () = posincby1 (pos)
     val str = lexbuf_get_strptr1 (buf, k)
@@ -1832,137 +1955,141 @@ case+ (i2c)i of
   in
     lexbufpos_token_reset (buf, pos, T_IDENT_ext (str))
   end
+//
 | _ => let
-    val str =
+    val mystr =
       lexbuf_get_strptr1 (buf, k)
     // end of [val]
   in
-    lexing_IDENT1_alp (buf, pos, str)
+    lexing_IDENT2_alp (buf, pos, mystr)
   end // end of [_]
 // end of [case]
 //
 end // end of [lexing_IDENT_alp]
 
 implement
-lexing_IDENT1_alp
-  {l} (buf, pos, str) = let
+lexing_IDENT2_alp
+  {l}(buf, pos, mystr) = let
 //
-viewtypedef vt = strptr (l)
-val sym = IDENT_alp_get_lexsym ($UN.castvwtp1{string}{vt}(str))
+viewtypedef mystr = strptr(l)
+//
+val sym = IDENT_alp_get_lexsym ($UN.castvwtp1{string}{mystr}(mystr))
 //
 in
 case+ sym of
 | LS_ABST () when
     testing_literal (buf, pos, "@ype") >= 0 => let
-    val () = strptr_free (str) in
+    val () = strptr_free (mystr) in
     lexbufpos_token_reset (buf, pos, ABST0YPE)
   end
 | LS_ABSVT () when
     testing_literal (buf, pos, "@ype") >= 0 => let
-    val () = strptr_free (str) in
+    val () = strptr_free (mystr) in
     lexbufpos_token_reset (buf, pos, ABSVIEWT0YPE)
   end
 | LS_ABSVIEWT () when
     testing_literal (buf, pos, "@ype") >= 0 => let
-    val () = strptr_free (str) in
+    val () = strptr_free (mystr) in
     lexbufpos_token_reset (buf, pos, ABSVIEWT0YPE)
   end
+//
 | LS_CASE () => let
-    val () = strptr_free (str) in lexing_CASE (buf, pos)
-  end
-| LS_FOR () => let
-    val () = strptr_free (str) in lexing_FOR (buf, pos)
-  end
+    val () = strptr_free (mystr) in lexing_CASE (buf, pos)
+  end // end of [LS_CASE]
+//
 | LS_PROP () => let
-    val () = strptr_free (str) in lexing_PROP (buf, pos)
-  end
+    val () = strptr_free (mystr) in lexing_PROP (buf, pos)
+  end // end of [LS_PROP]
 //
 | LS_T () when
     testing_literal (buf, pos, "@ype") >= 0 => let
-    val () = strptr_free (str) in lexing_T0YPE (buf, pos)
+    val () = strptr_free (mystr) in lexing_T0YPE (buf, pos)
   end
 | LS_TYPE () => let
-    val () = strptr_free (str) in lexing_TYPE (buf, pos)
+    val () = strptr_free (mystr) in lexing_TYPE (buf, pos)
   end
 | LS_T0YPE () => let
-    val () = strptr_free (str) in lexing_T0YPE (buf, pos)
-  end
-//
-| LS_VAL () => let
-    val () = strptr_free (str) in lexing_VAL (buf, pos)
-  end
-//
-| LS_VIEW () => let
-    val () = strptr_free (str) in lexing_VIEW (buf, pos)
-  end
-| LS_VIEWT () when
-    testing_literal (buf, pos, "@ype") >= 0 => let
-    val () = strptr_free (str) in lexing_VIEWT0YPE (buf, pos)
-  end
-| LS_VIEWTYPE () => let
-    val () = strptr_free (str) in lexing_VIEWTYPE (buf, pos)
-  end
-| LS_VIEWT0YPE () => let
-    val () = strptr_free (str) in lexing_VIEWT0YPE (buf, pos)
+    val () = strptr_free (mystr) in lexing_T0YPE (buf, pos)
   end
 //
 | LS_VT () when
     testing_literal (buf, pos, "@ype") >= 0 => let
-    val () = strptr_free (str) in lexing_VIEWT0YPE (buf, pos)
+    val () = strptr_free (mystr) in lexing_VIEWT0YPE (buf, pos)
   end
 | LS_VTYPE () => let
-    val () = strptr_free (str) in lexing_VIEWTYPE (buf, pos)
+    val () = strptr_free (mystr) in lexing_VIEWTYPE (buf, pos)
   end
 | LS_VT0YPE () => let
-    val () = strptr_free (str) in lexing_VIEWT0YPE (buf, pos)
+    val () = strptr_free (mystr) in lexing_VIEWT0YPE (buf, pos)
   end
 //
-| LS_WHILE () => let
-    val () = strptr_free (str) in lexing_WHILE (buf, pos)
+| LS_VIEW () => let
+    val () = strptr_free (mystr) in lexing_VIEW (buf, pos)
   end
+| LS_VIEWT () when
+    testing_literal (buf, pos, "@ype") >= 0 => let
+    val () = strptr_free (mystr) in lexing_VIEWT0YPE (buf, pos)
+  end
+| LS_VIEWTYPE () => let
+    val () = strptr_free (mystr) in lexing_VIEWTYPE (buf, pos)
+  end
+| LS_VIEWT0YPE () => let
+    val () = strptr_free (mystr) in lexing_VIEWT0YPE (buf, pos)
+  end
+//
+| LS_VAL () => let
+    val () = strptr_free (mystr) in lexing_VAL (buf, pos)
+  end // end of [LS_VAL]
+//
+| LS_FOR () => let
+    val () = strptr_free (mystr) in lexing_FOR (buf, pos)
+  end // end of [LS_FOR]
+| LS_WHILE () => let
+    val () = strptr_free (mystr) in lexing_WHILE (buf, pos)
+  end // end of [LS_WHILE]
 //
 | LS_ADDR () => let
-    val () = strptr_free (str) in lexing_ADDR (buf, pos)
+    val () = strptr_free (mystr) in lexing_ADDR (buf, pos)
   end
 | LS_FOLD () => let
-    val () = strptr_free (str) in lexing_FOLD (buf, pos)
+    val () = strptr_free (mystr) in lexing_FOLD (buf, pos)
   end
 | LS_FREE () => let
-    val () = strptr_free (str) in lexing_FREE (buf, pos)
+    val () = strptr_free (mystr) in lexing_FREE (buf, pos)
   end
 //
 | LS_LAM () => let
-    val () = strptr_free (str) in lexing_LAM (buf, pos)
+    val () = strptr_free (mystr) in lexing_LAM (buf, pos)
   end
 | LS_LLAM () => let
-    val () = strptr_free (str) in lexing_LLAM (buf, pos)
+    val () = strptr_free (mystr) in lexing_LLAM (buf, pos)
   end
 | LS_FIX () => let
-    val () = strptr_free (str) in lexing_FIX (buf, pos)
-  end
+    val () = strptr_free (mystr) in lexing_FIX (buf, pos)
+  end // end of [LS_FIX]
 //
 | LS_REF () => let
-    val () = strptr_free (str) in lexing_REF (buf, pos)
-  end
+    val () = strptr_free (mystr) in lexing_REF (buf, pos)
+  end // end of [LS_REF]
 //
 | _ => let
     val tnode =
-      tnode_search ($UN.castvwtp1{string}{vt} (str))
+      tnode_search ($UN.castvwtp1{string}{mystr}(mystr))
     // end of [val]
   in
     case+ tnode of
     | T_NONE () => let
-        val str = string_of_strptr (str) in
-        lexbufpos_token_reset (buf, pos, T_IDENT_alp (str))
+        val mystr = string_of_strptr (mystr)
+      in
+        lexbufpos_token_reset (buf, pos, T_IDENT_alp (mystr))
       end
     | _ => let
-        val str = strptr_free (str) in
-        lexbufpos_token_reset (buf, pos, tnode)
+        val () = strptr_free (mystr) in lexbufpos_token_reset (buf, pos, tnode)
       end // end of [_]
   end // end of [_]
 // end of [case]
 //
-end // end of [lexing_IDENT1_alp]
+end // end of [lexing_IDENT2_alp]
 
 (* ****** ****** *)
 
@@ -1970,53 +2097,61 @@ implement
 lexing_IDENT_sym
   (buf, pos, k) = let
 //
-  val [l:addr] str = lexbuf_get_strptr1 (buf, k)
+val [l:addr]
+  mystr = lexbuf_get_strptr1 (buf, k)
 //
-  viewtypedef vt = strptr l
-  val sym = IDENT_sym_get_lexsym ($UN.castvwtp1{string}{vt}(str))
+viewtypedef mystr = strptr(l)
+//
+val sym = IDENT_sym_get_lexsym ($UN.castvwtp1{string}{mystr}(mystr))
+//
 in
-  case+ sym of
+//
+case+ sym of
 (*
-  | LS_LTBANG () => let
-      val () = posdecby1 (pos)
-      val () = strptr_free (str) in
-      lexbufpos_token_reset (buf, pos, LT)
-    end // end of [LS_LTBANG]
-  | LS_LTDOLLAR () => let
-      val () = posdecby1 (pos)
-      val () = strptr_free (str) in
-      lexbufpos_token_reset (buf, pos, LT)
-    end // end of [LS_LTDOLLOR]
+| LS_LTBANG () => let
+    val () = posdecby1 (pos)
+    val () = strptr_free (mystr) in
+    lexbufpos_token_reset (buf, pos, LT)
+  end // end of [LS_LTBANG]
+| LS_LTDOLLAR () => let
+    val () = posdecby1 (pos)
+    val () = strptr_free (mystr) in
+    lexbufpos_token_reset (buf, pos, LT)
+  end // end of [LS_LTDOLLOR]
 *)
-  | LS_QMARKGT () => let
-      val () = posdecby1 (pos)
-      val () = strptr_free (str) in
-      lexbufpos_token_reset (buf, pos, QMARK)
-    end // end of [LS_QMARKGT]
+| LS_QMARKGT () => let
+    val () = posdecby1 (pos)
+    val () = strptr_free (mystr)
+  in
+    lexbufpos_token_reset (buf, pos, QMARK)
+  end // end of [LS_QMARKGT]
 //
-  | LS_SLASH2 () => let
-      val () = strptr_free (str) in lexing_COMMENT_line (buf, pos)
-    end // end of [LS_SLASH2]
-  | LS_SLASHSTAR () => let
-      val () = strptr_free (str) in lexing_COMMENT_block_c (buf, pos)
-    end // end of [LS_SLASHSTAR]
-  | LS_SLASH4 () => let
-      val () = strptr_free (str) in lexing_COMMENT_rest (buf, pos)
-    end // end of [LS_SLASH2]
+| LS_SLASH2 () => let
+    val () = strptr_free (mystr) in lexing_COMMENT_line (buf, pos)
+  end // end of [LS_SLASH2]
+| LS_SLASHSTAR () => let
+    val () = strptr_free (mystr) in lexing_COMMENT_block_c (buf, pos)
+  end // end of [LS_SLASHSTAR]
+| LS_SLASH4 () => let
+    val () = strptr_free (mystr) in lexing_COMMENT_rest (buf, pos)
+  end // end of [LS_SLASH2]
 //
-  | _ => let
-      val tnode = tnode_search ($UN.castvwtp1{string}{vt} (str))
-    in
-      case+ tnode of
-      | T_NONE () => let
-          val str = string_of_strptr (str) in
-          lexbufpos_token_reset (buf, pos, T_IDENT_sym (str))
-        end // end of [T_NONE]
-      | _ => let
-          val () = strptr_free (str) in
-          lexbufpos_token_reset (buf, pos, tnode)
-        end // end of [_]
-    end // end of [_]
+| _ => let
+    val tnode =
+      tnode_search ($UN.castvwtp1{string}{mystr}(mystr))
+    // end of [val]
+  in
+    case+ tnode of
+    | T_NONE () => let
+        val mystr = string_of_strptr (mystr)
+      in
+        lexbufpos_token_reset (buf, pos, T_IDENT_sym (mystr))
+      end // end of [T_NONE]
+    | _ => let
+        val () = strptr_free (mystr) in lexbufpos_token_reset (buf, pos, tnode)
+      end // end of [_]
+  end // end of [_]
+//
 end // end of [lexing_IDENT_sym]
 
 (* ****** ****** *)
@@ -2025,39 +2160,45 @@ implement
 lexing_IDENT_dlr
   (buf, pos, k) = let
 //
-  val [l:addr] str = lexbuf_get_strptr1 (buf, k)
+val [l:addr]
+  mystr = lexbuf_get_strptr1 (buf, k)
 //
-  viewtypedef vt = strptr l
-  val tnode = tnode_search ($UN.castvwtp1{string}{vt} (str))
+viewtypedef mystr = strptr(l)
+//
+val tnode = tnode_search ($UN.castvwtp1{string}{mystr}(mystr))
+//
 in
   case+ tnode of
   | T_NONE () => let
-      val str = string_of_strptr (str) in
-      lexbufpos_token_reset (buf, pos, T_IDENT_dlr (str))
-    end
-  | _ => let
-      val str = strptr_free (str) in
-      lexbufpos_token_reset (buf, pos, tnode)
+      val mystr = string_of_strptr (mystr) in
+      lexbufpos_token_reset (buf, pos, T_IDENT_dlr (mystr))
+    end // end of [T_NONE]
+  | _ (*rest*) => let
+      val () = strptr_free (mystr) in lexbufpos_token_reset (buf, pos, tnode)
     end // end of [_]
 end // end of [lexing_IDENT_dlr]
+
+(* ****** ****** *)
 
 implement
 lexing_IDENT_srp
   (buf, pos, k) = let
 //
-  val [l:addr] str = lexbuf_get_strptr1 (buf, k)
+val [l:addr]
+  mystr = lexbuf_get_strptr1 (buf, k)
 //
-  viewtypedef vt = strptr l
-  val tnode = tnode_search ($UN.castvwtp1{string}{vt} (str))
+viewtypedef mystr = strptr(l)
+//
+val tnode = tnode_search ($UN.castvwtp1{string}{mystr}(mystr))
+//
 in
   case+ tnode of
   | T_NONE () => let
-      val str = string_of_strptr (str) in
-      lexbufpos_token_reset (buf, pos, T_IDENT_srp (str))
-    end
-  | _ => let
-      val () = strptr_free (str) in
-      lexbufpos_token_reset (buf, pos, tnode)
+      val mystr = string_of_strptr (mystr) in
+      lexbufpos_token_reset (buf, pos, T_IDENT_srp (mystr))
+    end // end of [T_NONE]
+  | _ (*rest*) => let
+      val () = strptr_free (mystr) in lexbufpos_token_reset (buf, pos, tnode)
     end // end of [_]
 end // end of [lexing_IDENT_srp]
 
@@ -2190,84 +2331,93 @@ lexing_next_token
 //
 var pos: position
 val () = lexbuf_get_position (buf, pos)
-val k = testing_blankseq0 (buf, pos)
-val () = lexbuf_set_nspace (buf, (u2i)k)
+val k0 = testing_blankseq0 (buf, pos)
+val () = lexbuf_set_nspace (buf, (u2i)k0)
 val () = lexbuf_reset_position (buf, pos)
+//
 val i0 = lexbuf_get_char (buf, 0u)
 //
 in
 //
-if i0 >= 0 then let
-  val c = (i2c)i0 // the first character
+if
+i0 >= 0
+then let
+  val c0 = (i2c)i0
   val () = posincbyc (pos, i0)
 in
-  case+ 0 of
 //
-  | _ when c = '\(' =>
-      lexing_LPAREN (buf, pos) // HX: handling "(*"
-  | _ when c = ')' =>
-      lexbufpos_token_reset (buf, pos, T_RPAREN)
-  | _ when c = '\[' =>
-      lexbufpos_token_reset (buf, pos, T_LBRACKET)
-  | _ when c = ']' =>
-      lexbufpos_token_reset (buf, pos, T_RBRACKET)
-  | _ when c = '\{' =>
-      lexbufpos_token_reset (buf, pos, T_LBRACE)
-  | _ when c = '}' =>
-      lexbufpos_token_reset (buf, pos, T_RBRACE)
+case+ 0 of
 //
-  | _ when c = ',' => lexing_COMMA (buf, pos)
-  | _ when c = ';' =>
-      lexbufpos_token_reset (buf, pos, T_SEMICOLON)
+| _ when c0 = '\(' =>
+    lexing_LPAREN (buf, pos) // HX: handling "(*"
+| _ when c0 = ')' =>
+    lexbufpos_token_reset (buf, pos, T_RPAREN)
+| _ when c0 = '\[' =>
+    lexbufpos_token_reset (buf, pos, T_LBRACKET)
+| _ when c0 = ']' =>
+    lexbufpos_token_reset (buf, pos, T_RBRACKET)
+| _ when c0 = '\{' =>
+    lexbufpos_token_reset (buf, pos, T_LBRACE)
+| _ when c0 = '}' =>
+    lexbufpos_token_reset (buf, pos, T_RBRACE)
 //
-  | _ when c = '@' => lexing_AT (buf, pos)
-  | _ when c = ':' => lexing_COLON (buf, pos)
-  | _ when c = '.' => lexing_DOT (buf, pos)
-  | _ when c = '%' => lexing_PERCENT (buf, pos)
-  | _ when c = '$' => lexing_DOLLAR (buf, pos)
-  | _ when c = '#' => lexing_SHARP (buf, pos)
+| _ when c0 = ',' => lexing_COMMA (buf, pos)
+| _ when c0 = ';' =>
+    lexbufpos_token_reset (buf, pos, T_SEMICOLON)
 //
-  | _ when c = '`' => lexing_BQUOTE (buf, pos)
+| _ when c0 = '@' => lexing_AT (buf, pos)
+| _ when c0 = ':' => lexing_COLON (buf, pos)
+| _ when c0 = '.' => lexing_DOT (buf, pos)
+| _ when c0 = '%' => lexing_PERCENT (buf, pos)
+| _ when c0 = '$' => lexing_DOLLAR (buf, pos)
+| _ when c0 = '#' => lexing_SHARP (buf, pos)
 //
-  | _ when c = '\'' => lexing_QUOTE (buf, pos)
-  | _ when c = '"' => lexing_DQUOTE (buf, pos) // for strings
+| _ when c0 = '`' => lexing_BQUOTE (buf, pos)
 //
-  | _ when c = '\\' =>
-      lexbufpos_token_reset (buf, pos, T_BACKSLASH)
+| _ when c0 = '\'' => lexing_QUOTE (buf, pos)
+| _ when c0 = '"' => lexing_DQUOTE (buf, pos)
 //
-  | _ when IDENTFST_test (c) => let
-      val k = testing_identrstseq0 (buf, pos)
-    in
-      lexing_IDENT_alp (buf, pos, succ(k))
-    end // end of [_ when ...]
-  | _ when SYMBOLIC_test (c) => let
-      val k = testing_symbolicseq0 (buf, pos)
-    in
-      lexing_IDENT_sym (buf, pos, succ(k))
-    end // end of [_ when ...]
+| _ when c0 = '\\' =>
+    lexbufpos_token_reset (buf, pos, T_BACKSLASH)
 //
-  | _ when c = '0' => lexing_ZERO (buf, pos)
+| _ when
+    IDENTFST_test (c0) => let
+    val k = testing_identrstseq0 (buf, pos)
+  in
+    lexing_IDENT_alp (buf, pos, succ(k))
+  end // end of [_ when ...]
+| _ when
+    SYMBOLIC_test (c0) => let
+    val k = testing_symbolicseq0 (buf, pos)
+  in
+    lexing_IDENT_sym (buf, pos, succ(k))
+  end // end of [_ when ...]
 //
-  | _ when DIGIT_test (c) => let
-      val k1 = testing_digitseq0 (buf, pos)
-    in
-      lexing_INTEGER_dec (buf, pos, k1)
-    end // end of [_ when ...]
+| _ when c0 = '0' => lexing_ZERO (buf, pos)
 //
-  | _ => let
+| _ when
+    DIGIT_test (c0) => let
+    val k1 = testing_digitseq0 (buf, pos)
+  in
+    lexing_INTEGER_dec (buf, pos, k1)
+  end // end of [_ when ...]
 //
-// HX: skipping unrecognized chars
+| _ (*rest-of-char*) => let
 //
-      val loc = lexbufpos_get_location (buf, pos)
-      val err = lexerr_make (loc, LE_UNSUPPORTED (c))
-      val () = the_lexerrlst_add (err)
-      val () = lexbuf_reset_position (buf, pos)
-    in
-      lexing_next_token (buf)
-    end // end of [_]
-end else
-  lexbufpos_token_reset (buf, pos, T_EOF)
-// end of [if]
+// HX: skipping the unrecognized char
+//
+    val loc =
+      lexbufpos_get_location (buf, pos)
+    val err =
+      lexerr_make (loc, LE_UNSUPPORTED (c0))
+    val () = the_lexerrlst_add (err)
+    val () = lexbuf_reset_position (buf, pos)
+  in
+    lexing_next_token (buf)
+  end // end of [rest-of-char]
+//
+end // end of [then]
+else lexbufpos_token_reset (buf, pos, T_EOF)
 //
 end // end of [lexing_next_token]
 
