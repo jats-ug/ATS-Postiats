@@ -76,11 +76,12 @@ EFF = "./pats_effect.sats"
 typedef effset = $EFF.effset
 
 (* ****** ****** *)
-
+//
 staload
 JSON = "./pats_jsonize.sats"
+//
 typedef jsonval = $JSON.jsonval
-
+//
 (* ****** ****** *)
 
 staload "./pats_staexp1.sats"
@@ -1432,9 +1433,13 @@ fun jsonize_s2varlst (s2vs: s2varlst): jsonval
 fun jsonize_d2con (d2c: d2con): jsonval
 fun jsonize_d2con_long (d2c: d2con): jsonval
 //
+fun jsonize_tyreckind : tyreckind -> jsonval
+//
 fun jsonize_s2exp (flag: int, s2e: s2exp): jsonval
 fun jsonize_s2explst (flag: int, s2es: s2explst): jsonval
-fun jsonize_s2expopt (flag: int, opt: s2expopt): jsonval
+fun jsonize_s2expopt (flag: int, s2eopt: s2expopt): jsonval
+//
+fun jsonize_labs2explst (flag: int, ls2es: labs2explst): jsonval  
 //
 fun jsonize_s2eff (s2fe: s2eff): jsonval
 //

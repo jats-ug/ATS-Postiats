@@ -1081,13 +1081,25 @@ fun p0at_rec (
 
 (* ****** ****** *)
 
-fun p0at_lst (
+fun
+p0at_lst
+(
   lin: int
 , t_beg: token, p0ts: p0atlst, t_end: token
 ) : p0at // end of [p0at_lst]
-fun p0at_lst_quote (
+
+(*
+//
+// HX-2014-07:
+// a list-pattern
+// like '[x1, x2] is no longer supported
+//
+fun
+p0at_lst_quote
+(
   t_beg: token, p0ts: p0atlst, t_end: token
 ) : p0at // end of [p0at_lst_quote]
+*)
 
 (* ****** ****** *)
 
@@ -1125,7 +1137,8 @@ datatype i0mparg =
 
 fun i0mparg_sarglst_none (): i0mparg
 
-fun i0mparg_sarglst_some (
+fun i0mparg_sarglst_some
+(
   t_beg: token, arg: s0arglst, t_end: token
 ) : i0mparg // end of [i0mparg_sarglst_some]
 
