@@ -73,7 +73,7 @@ id="programming-with-dependent-types">
 
 <part
 id="programming-with-linear-views-and-types">
-<title>線形 view と線形型を使ったプログラミング</title>
+<title>線形観と線形型を使ったプログラミング</title>
 &chap_vvtintro;
 &chap_dataview;
 &chap_datavtype;
