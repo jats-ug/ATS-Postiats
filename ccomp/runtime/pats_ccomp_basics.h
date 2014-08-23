@@ -50,18 +50,25 @@
 #define ATSextval(name) name
 //
 /* ****** ****** */
+//
+#define ATSstruct struct
+/*
+#define ATStypedef typedef
+*/
+//
+/* ****** ****** */
 
 #define ATSinline() static inline
 
 /* ****** ****** */
 
-#define ATSglobaldec() extern
-#define ATSstaticdec() static
+#define ATSextern() extern
+#define ATSstatic() static
 
 /* ****** ****** */
 
 #define ATSdynload0(flag) int flag = 0
-#define ATSdynload1(flag) ATSglobaldec() int flag
+#define ATSdynload1(flag) ATSextern() int flag
 #define ATSdynloadset(flag) flag = 1
 #define ATSdynloadfcall(dynloadfun) dynloadfun()
 
@@ -70,9 +77,10 @@
 #ifndef _ATS_CCOMP_EXCEPTION_NONE
 //
 #define \
-ATSdynexn_dec(d2c) atstype_exncon d2c = { 0, "ats-exncon-name" }
-#define ATSdynexn_initize(d2c, exnmsg) the_atsexncon_initize(&(d2c), exnmsg)
-#define ATSdynexn_extdec(d2c) ATSglobaldec() atstype_exncon d2c
+ATSdynexn_dec(d2c) atstype_exncon d2c = { 0, "#ATSEXNCON" }
+#define \
+ATSdynexn_initize(d2c, exnmsg) the_atsexncon_initize(&(d2c), exnmsg)
+#define ATSdynexn_extdec(d2c) ATSextern() atstype_exncon d2c
 //
 #endif // end of [_ATS_CCOMP_EXCEPTION_NONE]
 
@@ -81,16 +89,21 @@ ATSdynexn_dec(d2c) atstype_exncon d2c = { 0, "ats-exncon-name" }
 #define ATSassume(flag) void *flag = (void*)0
 
 /* ****** ****** */
+//
+#define ATSclosurerize_end(flab)
+#define ATSclosurerize_beg(flab, tenvs, targs, tres)
+//
+/* ****** ****** */
 
 #define ATSdyncst_mac(d2c)
 #define ATSdyncst_castfn(d2c)
-#define ATSdyncst_extfun(d2c, targs, tres) ATSglobaldec() tres d2c targs
-#define ATSdyncst_stafun(d2c, targs, tres) ATSstaticdec() tres d2c targs
+#define ATSdyncst_extfun(d2c, targs, tres) ATSextern() tres d2c targs
+#define ATSdyncst_stafun(d2c, targs, tres) ATSstatic() tres d2c targs
 
 /* ****** ****** */
 
 #define ATSdyncst_valimp(d2c, type) type d2c
-#define ATSdyncst_valdec(d2c, type) ATSglobaldec() type d2c
+#define ATSdyncst_valdec(d2c, type) ATSextern() type d2c
 #define ATSdyncst_valbind(d2c, pmv) d2c = (pmv)
 
 /* ****** ****** */
