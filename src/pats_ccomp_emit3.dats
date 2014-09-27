@@ -1357,7 +1357,8 @@ end // end of [emit_funlab_funapy]
 (* ****** ****** *)
 
 extern
-fun emit_funent_fundec
+fun
+emit_funent_fundec
   (out: FILEref, fent: funent): void
 implement
 emit_funent_fundec
@@ -1712,9 +1713,10 @@ end (* end of [emit_dynload] *)
 (* ****** ****** *)
 
 local
-
-staload UN = "prelude/SATS/unsafe.sats"
-
+//
+staload
+UN = "prelude/SATS/unsafe.sats"
+//
 fun emit_primdec
   (out: FILEref, pmd: primdec) : void = let
 in
@@ -1726,6 +1728,10 @@ case+ pmd.primdec_node of
 | PMDlist (pmds) => emit_primdeclst (out, pmds)
 //
 | PMDsaspdec _ => ()
+//
+| PMDextvar
+    (name, inss) =>
+    emit_instrlst_ln (out, $UN.cast{instrlst}(inss))
 //
 | PMDdatdecs _ => ()
 | PMDexndecs _ => ()

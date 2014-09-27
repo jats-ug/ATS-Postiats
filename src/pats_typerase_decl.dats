@@ -133,8 +133,12 @@ case+
   in
     hidecl_extype (loc0, name, hse_def)
   end // end of [D3Cextype]
-| D3Cextval (name, d3e_def) =>
-    hidecl_extval (loc0, name, d3exp_tyer (d3e_def))
+| D3Cextvar
+    (name, d3e_def) =>
+  (
+    hidecl_extvar (loc0, name, d3exp_tyer (d3e_def))
+  ) (* end of [D3Cextvar] *)
+//
 | D3Cextcode
     (knd, pos, code) => hidecl_extcode (loc0, knd, pos, code)
   // end of [D3Cextcode]
@@ -318,7 +322,8 @@ end // end of [decarg2imparg]
 
 local
 
-fun f3undec_tyer
+fun
+f3undec_tyer
 (
   imparg: s2varlst, f3d: f3undec
 ) : hifundec = let
@@ -346,7 +351,8 @@ in
   hifundec_make (loc, d2v_fun, imparg, hde_def)
 end // end of [f3undec_tyer]
 
-fun f3undeclst_tyer
+fun
+f3undeclst_tyer
 (
   knd: funkind
 , decarg: s2qualst, f3ds: f3undeclst
@@ -354,14 +360,17 @@ fun f3undeclst_tyer
   val isprf = funkind_is_proof (knd)
 in
 //
-if isprf then
-  list_nil () // proofs are erased
+if
+isprf
+then list_nil () // proofs are erased
 else let
   val imparg = decarg2imparg (decarg)
-  val hfds = list_map_cloptr<f3undec><hifundec> (f3ds, lam (f3d) =<1> f3undec_tyer (imparg, f3d))
+  val hfds =
+    list_map_cloptr<f3undec><hifundec> (f3ds, lam (f3d) =<1> f3undec_tyer (imparg, f3d))
+  // end of [val]
 in
   list_of_list_vt (hfds)
-end // end of [if]
+end // end of [else]
 //
 end // end of [f3undeclst_tyer]
 

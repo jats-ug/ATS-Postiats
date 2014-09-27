@@ -1295,6 +1295,7 @@ case+ d1e0.d1exp_node of
   in
     d2exp_extval (loc0, s2e, name)
   end (* end of [D1Eextval] *)
+//
 | D1Eextfcall
     (s1e, _fun, _arg) => let
     val s2e = s1exp_trdn_vt0ype (s1e)
@@ -1302,6 +1303,18 @@ case+ d1e0.d1exp_node of
   in
     d2exp_extfcall (loc0, s2e, _fun, _arg)
   end (* end of [D1Eextfcall] *)
+| D1Eextmcall
+  (
+    s1e, _obj, _mtd, _arg
+  ) => let
+    val s2e =
+      s1exp_trdn_vt0ype (s1e)
+    // end of [val]
+    val _obj = d1exp_tr (_obj)
+    val _arg = d1explst_tr (_arg)
+  in
+    d2exp_extmcall (loc0, s2e, _obj, _mtd, _arg)
+  end (* end of [D1Eextmcall] *)
 //
 | D1Eloopexn (knd) => d2exp_loopexn (loc0, knd)
 //
@@ -1518,14 +1531,17 @@ case+ d1e0.d1exp_node of
 //
 | D1Eselab
     (knd, d1e, d1l) => let
-    val d2e = d1exp_tr d1e; val d2l = d1lab_tr (d1l)
+    val d2e = d1exp_tr d1e
+    val d2l = d1lab_tr (d1l)
   in
     if knd = 0 then ( // [.]
       case+ d2e.d2exp_node of
-      | D2Eselab (d2e_root, d2ls) =>
+      | D2Eselab
+          (d2e_root, d2ls) =>
+        (
           d2exp_sel_dot (loc0, d2e_root, l2l (list_extend (d2ls, d2l)))
-        // end of [D2Eselab]
-      | _ => d2exp_sel_dot (loc0, d2e, list_sing (d2l))
+        ) (* end of [D2Eselab] *)
+      | _ (*non-D2Eselab*) => d2exp_sel_dot (loc0, d2e, list_sing (d2l))
     ) else (
       d2exp_sel_ptr (loc0, d2e, d2l) // [->]
     ) // end of [if]
@@ -1682,7 +1698,7 @@ case+ d1e0.d1exp_node of
   end // end of [D1Esexparg]
 //
 // (*
-| _ => let
+| _ (*unsupported*) => let
     val () = prerr_interror_loc (loc0)
     val () = filprerr_ifdebug "d1exp_tr"
     val () = prerr ": not yet implemented: d1e0 = "
@@ -1690,10 +1706,10 @@ case+ d1e0.d1exp_node of
     val () = prerr_newline ((*void*))
   in
     $ERR.abort {d2exp} ()
-  end // end of [_]
+  end // end of [_(*unsupported*)]
 // *)
 //
-end // end of [d1exp_tr]
+end // end of [let] // end of [d1exp_tr]
 
 (* ****** ****** *)
 
@@ -1724,7 +1740,7 @@ val loc0 = d1l0.d1lab_loc
 in
 //
 case+
-  d1l0.d1lab_node of
+d1l0.d1lab_node of
 | D1LABlab (lab) => let
     val dotid =
       $LAB.label_dotize (lab)
@@ -1732,15 +1748,22 @@ case+
     val ans = the_d2expenv_find (dotid)
     val opt = (
       case+ ans of
-      | ~Some_vt (d2i) => (
-        case+ d2i of
-        | D2ITMsymdef
-            (sym, xs) => let
-            val d2s = d2sym_make (loc0, $SYN.the_d0ynq_none, dotid, xs)
-          in
-            Some (d2s)
-          end // end of [D2ITMsymdef]
-        | _ => None ()
+      | ~Some_vt (d2i) =>
+        (
+          case+ d2i of
+          | D2ITMsymdef
+              (sym, xs) =>
+            (
+              case+ xs of
+              | list_nil () => None ()
+              | list_cons _ => let
+                  val dq = $SYN.the_d0ynq_none
+                  val d2s = d2sym_make (loc0, dq, dotid, xs)
+                in
+                  Some (d2s)
+                end // end of [list_cons]
+            ) (* D2ITMsymdef *)
+          | _ (*non-symdef*) => None ()
         ) (* end of [some_vt] *)
       | ~None_vt ((*void*)) => None ()
     ) : d2symopt // end of [val]

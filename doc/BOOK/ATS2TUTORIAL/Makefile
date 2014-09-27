@@ -47,11 +47,17 @@ preface.db:: preface.exe ; ./$< > $@
 preface.db:: ; $(RMF) preface.exe preface_atxt_dats.c preface_atxt.dats preface_atxt.txt
 
 ######
+#
+# Basic Topics
+#
+######
 
 allchap:: CHAP_SYNCLR
 CHAP_SYNCLR:: ; \
   make -C CHAP_SYNCLR -f ../Makefile_chap main.db
 clean:: ; make -C CHAP_SYNCLR -f ../Makefile_chap clean
+
+######
 
 allchap:: CHAP_FILENAME
 CHAP_FILENAME:: ; \
@@ -63,10 +69,26 @@ CHAP_FILEINCL:: ; \
   make -C CHAP_FILEINCL -f ../Makefile_chap main.db
 clean:: ; make -C CHAP_FILEINCL -f ../Makefile_chap clean
 
+######
+
 allchap:: CHAP_FIXITY
 CHAP_FIXITY:: ; \
   make -C CHAP_FIXITY -f ../Makefile_chap main.db
 clean:: ; make -C CHAP_FIXITY -f ../Makefile_chap clean
+
+######
+
+allchap:: CHAP_STALOAD
+CHAP_STALOAD:: ; \
+  make -C CHAP_STALOAD -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_STALOAD -f ../Makefile_chap clean
+
+######
+
+allchap:: CHAP_DYNLOAD
+CHAP_DYNLOAD:: ; \
+  make -C CHAP_DYNLOAD -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_DYNLOAD -f ../Makefile_chap clean
 
 ######
 
@@ -112,6 +134,20 @@ clean:: ; make -C CHAP_MTRXSZREF -f ../Makefile_chap clean
 
 ######
 
+allchap:: CHAP_DOTOVERLD
+CHAP_DOTOVERLD:: ; \
+  make -C CHAP_DOTOVERLD -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_DOTOVERLD -f ../Makefile_chap clean
+
+######
+
+allchap:: CHAP_BRKTOVERLD
+CHAP_BRKTOVERLD:: ; \
+  make -C CHAP_BRKTOVERLD -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_BRKTOVERLD -f ../Makefile_chap clean
+
+######
+
 allchap:: CHAP_TAILREC
 CHAP_TAILREC:: ; \
   make -C CHAP_TAILREC -f ../Makefile_chap main.db
@@ -126,6 +162,17 @@ clean:: ; make -C CHAP_HORDFUN -f ../Makefile_chap clean
 
 ######
 
+allchap:: CHAP_STREAM
+CHAP_STREAM:: ; \
+  make -C CHAP_STREAM -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_STREAM -f ../Makefile_chap clean
+
+######
+#
+# Advanced Topics
+#
+######
+
 allchap:: CHAP_CLOPTR
 CHAP_CLOPTR:: ; \
   make -C CHAP_CLOPTR -f ../Makefile_chap main.db
@@ -133,10 +180,10 @@ clean:: ; make -C CHAP_CLOPTR -f ../Makefile_chap clean
 
 ######
 
-allchap:: CHAP_STREAM
-CHAP_STREAM:: ; \
-  make -C CHAP_STREAM -f ../Makefile_chap main.db
-clean:: ; make -C CHAP_STREAM -f ../Makefile_chap clean
+allchap:: CHAP_EXTVAR
+CHAP_EXTVAR:: ; \
+  make -C CHAP_EXTVAR -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_EXTVAR -f ../Makefile_chap clean
 
 ######
 

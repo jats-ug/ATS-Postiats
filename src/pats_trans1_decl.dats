@@ -69,6 +69,10 @@ macdef ATS_PACKNAME = $SYM.symbol_ATS_PACKNAME
 macdef ATS_STALOADFLAG = $SYM.symbol_ATS_STALOADFLAG
 *)
 macdef ATS_DYNLOADFLAG = $SYM.symbol_ATS_DYNLOADFLAG
+macdef ATS_DYNLOADNAME = $SYM.symbol_ATS_DYNLOADNAME
+//
+macdef ATS_STATIC_PREFIX = $SYM.symbol_ATS_STATIC_PREFIX
+//
 macdef ATS_MAINATSFLAG = $SYM.symbol_ATS_MAINATSFLAG
 //
 (* ****** ****** *)
@@ -1113,9 +1117,9 @@ case+ d0c0.d0ecl_node of
 | D0Cextype (knd, name, def) => let
     val def = s0exp_tr (def) in d1ecl_extype2 (loc0, knd, name, def)
   end // end of [D0Cextype]
-| D0Cextval (name, def) => let
-    val def = d0exp_tr (def) in d1ecl_extval (loc0, name, def)
-  end // end of [D0Cextval]
+| D0Cextvar (name, def) => let
+    val def = d0exp_tr (def) in d1ecl_extvar (loc0, name, def)
+  end // end of [D0Cextvar]
 | D0Cextcode (knd, pos, code) => d1ecl_extcode (loc0, knd, pos, code)
 //
 | D0Cdcstdecs
@@ -1316,19 +1320,50 @@ in
 case+ opt of
 | ~Some_vt (e) => (
   case+ e.e1xp_node of
-  | E1XPint (x) => $GLOB.the_DYNLOADFLAG_set (x)
-  | E1XPintrep (rep) => $GLOB.the_DYNLOADFLAG_set (intrep2int(rep))
+  | E1XPint (x) =>
+      $GLOB.the_DYNLOADFLAG_set (x)
+  | E1XPintrep (rep) =>
+      $GLOB.the_DYNLOADFLAG_set (intrep2int(rep))
   | _ => let
-      val () = prerr_error1_loc (e.e1xp_loc)
-      val () = prerr ": only integer definition for [ATS_DYNLOADFLAG]."
-      val () = prerr_newline ()
+      val () =
+        prerr_error1_loc (e.e1xp_loc)
+      val () = prerr ": non-integer definition for [ATS_DYNLOADFLAG]."
+      val () = prerr_newline ((*void*))
     in
        $ERR.abort {void} ()
     end // end of [_]
-  ) // end of [Some_vt]
-| ~None_vt () => () // HX: the [ATS_DYNLOADFLAG] is set to 1 by default
+  ) (* end of [Some_vt] *)
+//
+// HX: [ATS_DYNLOADFLAG] is set to 1 by default
+//
+| ~None_vt ((*void*)) => ()
 //
 end // end of [aux_dynloadflag]
+
+fun aux_dynloadname (): void = let
+  val opt = the_e1xpenv_find (ATS_DYNLOADNAME)
+in
+//
+case+ opt of
+| ~Some_vt (e) => (
+  case+ e.e1xp_node of
+  | E1XPstring (x) =>
+      $GLOB.the_DYNLOADNAME_set (x)
+  | _ => let
+      val () =
+        prerr_error1_loc (e.e1xp_loc)
+      val () = prerr ": non-string definition for [ATS_DYNLOADNAME]."
+      val () = prerr_newline ((*void*))
+    in
+       $ERR.abort {void} ()
+    end // end of [_]
+  ) (* end of [Some_vt] *)
+//
+// HX: the [ATS_DYNLOADNAME] is set to stropt_none
+//
+| ~None_vt ((*void*)) => ()
+//
+end // end of [aux_dynloadname]
 
 fun aux_mainatsflag (): void = let
   val opt = the_e1xpenv_find (ATS_MAINATSFLAG)
@@ -1337,29 +1372,63 @@ in
 case+ opt of
 | ~Some_vt (e) => (
   case+ e.e1xp_node of
-  | E1XPint (x) => $GLOB.the_MAINATSFLAG_set (x)
-  | E1XPintrep (rep) => $GLOB.the_MAINATSFLAG_set (intrep2int(rep))
+  | E1XPint (x) =>
+      $GLOB.the_MAINATSFLAG_set (x)
+  | E1XPintrep (rep) =>
+      $GLOB.the_MAINATSFLAG_set (intrep2int(rep))
   | _ => let
-      val () = prerr_error1_loc (e.e1xp_loc)
-      val () = prerr ": only integer definition for [ATS_MAINATSFLAG]."
-      val () = prerr_newline ()
+      val () =
+        prerr_error1_loc (e.e1xp_loc)
+      val () = prerr ": non-integer definition for [ATS_MAINATSFLAG]."
+      val () = prerr_newline ((*void*))
     in
        $ERR.abort {void} ()
     end // end of [_]
-  ) // end of [Some_vt]
-| ~None_vt () => () // HX: the [ATS_MAINATSFLAG] is set to 0 by default
+  ) (* end of [Some_vt] *)
+//
+// HX: the [ATS_MAINATSFLAG] is set to 0 by default
+//
+| ~None_vt ((*void*)) => ()
 //
 end // end of [aux_mainatsflag]
+
+fun aux_static_prefix (): void = let
+  val opt = the_e1xpenv_find (ATS_STATIC_PREFIX)
+in
+//
+case+ opt of
+| ~Some_vt (e) => (
+  case+ e.e1xp_node of
+  | E1XPstring (x) =>
+      $GLOB.the_STATIC_PREFIX_set (x)
+  | _ => let
+      val () =
+        prerr_error1_loc (e.e1xp_loc)
+      val () = prerr ": non-string definition for [ATS_STATIC_PREFIX]."
+      val () = prerr_newline ((*void*))
+    in
+       $ERR.abort {void} ()
+    end // end of [_]
+  ) (* end of [Some_vt] *)
+//
+// HX: the [ATS_STATIC_PREFIX] is set to stropt_none
+//
+| ~None_vt ((*void*)) => ()
+//
+end // end of [aux_static_prefix]
 
 in (* in of [local] *)
 
 implement
-trans1_finalize () = let
+trans1_finalize () =
+{
+//
   val () = aux_dynloadflag ()
+  val () = aux_dynloadname ()
   val () = aux_mainatsflag ()
-in
-  (*nothing*)
-end // end of [trans1_finalize]
+  val () = aux_static_prefix ()
+//
+} (* end of [trans1_finalize] *)
 
 end // end of [local]
 

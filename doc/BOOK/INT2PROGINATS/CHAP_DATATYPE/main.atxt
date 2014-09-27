@@ -295,8 +295,8 @@ matching generates no bindings.\
 <listitem>
 #para("\
 
-The void value () only matches the pattern (), and this matching generates
-no bindings.\
+The void-value () only matches the void-pattern (), and this matching
+generates no bindings.\
 
 ")
 </listitem>
@@ -319,12 +319,12 @@ binding between the variable and the value.\
 <listitem>
 #para("\
 
-A tuple value matches a tuple pattern if they are of the same length and
+A tuple-value matches a tuple-pattern if they are of the same length and
 each value component in the former matches the corresponding pattern
 component in the latter, and this matching generates a collection of
 bindings that is the union of the bindings generated from matching the
-value components in the tuple value against the pattern components in the
-tuple pattern.\
+value components in the tuple-value against the pattern components in the
+tuple-pattern.\
 
 ")
 </listitem>
@@ -332,12 +332,12 @@ tuple pattern.\
 <listitem>
 #para("\
 
-A record value matches a record pattern if they have the same field names
+A record-value matches a record-pattern if they have the same field names
 and each value component in the former matches the corresponding pattern
 component in the latter, and this matching generates a collection of
 bindings that is the union of the bindings generated from matching the
-value components in the record value against the pattern components in the
-record pattern.\
+value components in the record-value against the pattern components in the
+record-pattern.\
 
 ")
 </listitem>
@@ -367,7 +367,7 @@ against pat with a binding from x to the value.\
 
 </itemizedlist>
 
-Suppose we have a tuple value (0, 1, 2, 3) and a tuple pattern (0, _, x,
+Suppose we have a tuple-value (0, 1, 2, 3) and a tuple-pattern (0, _, x,
 y). Then the value matches the pattern and this matching yields bindings
 from x and y to 2 and 3, respectively.\
 
@@ -1327,14 +1327,18 @@ tree of an integer expression and returns an integer that is the value of
 the expression:
 
 #atscode("\
-fun eval_iexp (e0: IEXP): int = case+ e0 of
-  | IEXPcst (n) => n
-  | IEXPneg (e) => ~eval_iexp (e)
-  | IEXPadd (e1, e2) => eval_iexp (e1) + eval_iexp (e2)
-  | IEXPsub (e1, e2) => eval_iexp (e1) - eval_iexp (e2)
-  | IEXPmul (e1, e2) => eval_iexp (e1) * eval_iexp (e2)
-  | IEXPdiv (e1, e2) => eval_iexp (e1) / eval_iexp (e1)
-// end of [eval_iexp]
+fun
+eval_iexp
+  (e0: IEXP): int =
+(
+case+ e0 of
+| IEXPcst (n) => n
+| IEXPneg (e) => ~eval_iexp (e)
+| IEXPadd (e1, e2) => eval_iexp (e1) + eval_iexp (e2)
+| IEXPsub (e1, e2) => eval_iexp (e1) - eval_iexp (e2)
+| IEXPmul (e1, e2) => eval_iexp (e1) * eval_iexp (e2)
+| IEXPdiv (e1, e2) => eval_iexp (e1) / eval_iexp (e1)
+) (* end of [eval_iexp] *)
 ")
 ")#comment("para")
 ")
@@ -1420,7 +1424,8 @@ integer expressions. The following two functions #dyncode("eval_iexp") and
 respectively, are defined mutually recursively as can be expected:
 
 #atscode("\
-fun eval_iexp
+fun
+eval_iexp
   (e0: IEXP): int =
 (
 case+ e0 of
@@ -1439,7 +1444,8 @@ case+ e0 of
   ) // end of [IEXPif]
 ) (* end of [eval_iexp] *)
 
-and eval_bexp
+and
+eval_bexp
   (e0: BEXP): bool =
 (
 case+ e0 of

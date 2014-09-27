@@ -66,12 +66,17 @@
 #define ATSstatic() static
 
 /* ****** ****** */
-
-#define ATSdynload0(flag) int flag = 0
-#define ATSdynload1(flag) ATSextern() int flag
+//
+#define ATSdynload()
+//
+#define ATSdynloadflag_sta(flag)
+#define ATSdynloadflag_ext(flag) ATSextern() int flag
+//
+#define ATSdynloadflag_init(flag) int flag = 0
+//
 #define ATSdynloadset(flag) flag = 1
 #define ATSdynloadfcall(dynloadfun) dynloadfun()
-
+//
 /* ****** ****** */
 
 #ifndef _ATS_CCOMP_EXCEPTION_NONE
@@ -104,7 +109,6 @@ ATSdynexn_initize(d2c, exnmsg) the_atsexncon_initize(&(d2c), exnmsg)
 
 #define ATSdyncst_valimp(d2c, type) type d2c
 #define ATSdyncst_valdec(d2c, type) ATSextern() type d2c
-#define ATSdyncst_valbind(d2c, pmv) d2c = (pmv)
 
 /* ****** ****** */
 //

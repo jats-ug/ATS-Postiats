@@ -109,10 +109,30 @@ JNI_targetloc "$PATSHOMERELOC/contrib/JNI"
 (* ****** ****** *)
 //
 #define
-HTML_targetloc "$PATSHOMERELOC/contrib/HTML"
+GUROBI_targetloc "$PATSHOMERELOC/contrib/gurobi"
+//
+(* ****** ****** *)
 //
 #define
-HTML5canvas2d_targetloc "$PATSHOMERELOC/contrib/HTML/canvas-2d"
+KERNELATS_targetloc "$PATSHOMERELOC/contrib/kernelats"
+//
+(* ****** ****** *)
+//
+#define
+LIBATSCC_targetloc
+"$PATSHOMERELOC/contrib/libatscc"
+//
+#define
+LIBATSCC2PY_targetloc
+"$PATSHOMERELOC/contrib/libatscc/libatscc2py"
+//
+#define
+LIBATSCC2JS_targetloc
+"$PATSHOMERELOC/contrib/libatscc/libatscc2js"
+//
+#define
+LIBATSCC2PHP_targetloc
+"$PATSHOMERELOC/contrib/libatscc/libatscc2php"
 //
 (* ****** ****** *)
 //
@@ -128,16 +148,6 @@ LIBATSHWXI_targetloc "$PATSHOMERELOC/contrib/libats-/hwxi"
 LIBATS_HWXI_sourceloc "$ATSLANGWEBLIB/contrib/libats-/hwxi"
 #define
 LIBATS_HWXI_targetloc "$PATSHOMERELOC/contrib/libats-/hwxi"
-//
-(* ****** ****** *)
-//
-#define
-GUROBI_targetloc "PATSHOMERELOC/contrib/gurobi_targetloc"
-//
-(* ****** ****** *)
-//
-#define
-KERNELATS_targetloc "PATSHOMERELOC/contrib/kernelats_targetloc"
 //
 (* ****** ****** *)
 

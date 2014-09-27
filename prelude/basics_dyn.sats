@@ -181,6 +181,12 @@ lazy_vt_force (lazyval: lazy_vt (a)): (a)
 //
 (* ****** ****** *)
 //
+fun
+lazy2cloref
+  {a:t0p}(lazy(a)): ((*void*)) -<cloref1> (a) = "mac#%"
+//
+(* ****** ****** *)
+//
 // HX-2013:
 // macro implemented in [pats_ccomp_instrset]
 //
@@ -562,13 +568,14 @@ overload assertexn with assertexn_bool0 of 0
 overload assertexn with assertexn_bool1 of 10
 //
 (* ****** ****** *)
-
+//
+symintr assert_errmsg
+//
 fun assert_errmsg_bool0
   (x: bool, msg: string):<!exn> void = "mac#%"
 fun assert_errmsg_bool1
   {b:bool} (x: bool b, msg: string):<!exn> [b] void = "mac#%"
 //
-symintr assert_errmsg
 overload assert_errmsg with assert_errmsg_bool0 of 0
 overload assert_errmsg with assert_errmsg_bool1 of 10
 //

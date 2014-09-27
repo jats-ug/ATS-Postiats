@@ -140,6 +140,8 @@ in
   aux ids
 end // end of [symintr_tr]
 
+(* ****** ****** *)
+
 fn symelim_tr
   (ids: i0delst): void = let
   fn f (id: i0de): void = let
@@ -147,12 +149,15 @@ fn symelim_tr
     val ans = the_d2expenv_find (sym)
   in
     case+ ans of
-    | ~Some_vt (d2i) => (case+ d2i of
-      | D2ITMsymdef _ =>
-          the_d2expenv_add (sym, D2ITMsymdef (sym, list_nil))
-      | _ => () // HX: should a warning be reported?
+    | ~Some_vt (d2i) =>
+      (
+        case+ d2i of
+        | D2ITMsymdef _ =>
+            the_d2expenv_add (sym, D2ITMsymdef (sym, list_nil))
+          // end of [D2ITMsymdef]
+        | _ (*non-symdef*) => () // HX: should a warning be reported?
       ) // end of [Some_vt]
-    | ~None_vt () => ()
+    | ~None_vt ((*void*)) => ()
   end // end of [f]
 in
   list_app_fun (ids, f)
@@ -2156,9 +2161,9 @@ case+ d1c0.d1ecl_node of
   in
     d2ecl_extype (loc0, name, s2e_def)
   end // end of [D1Cextype]
-| D1Cextval (name, def) => let
-    val def = d1exp_tr (def) in d2ecl_extval (loc0, name, def)
-  end // end of [D1Cextval]
+| D1Cextvar (name, def) => let
+    val def = d1exp_tr (def) in d2ecl_extvar (loc0, name, def)
+  end // end of [D1Cextvar]
 | D1Cextcode (knd, pos, code) => d2ecl_extcode (loc0, knd, pos, code)
 //
 | D1Cdcstdecs
