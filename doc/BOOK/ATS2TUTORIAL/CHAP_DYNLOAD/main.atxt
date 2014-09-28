@@ -14,15 +14,30 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="dynload">
+#langeng("
 #title("Dynamic Load")
+")
+#langja("
+#title("動的ロード (dynload)")
+")
 
+#langeng("
 #para("\
 
 In ATS, dynamic load (or dynload for short) refers to some form of
 initialization of a loaded package.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS では、動的ロード (もしくは dynload と略します) ロードされたパッケージの初期化を表わします。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Suppose that a file named #filename('foo.dats') contains the following
@@ -71,6 +86,53 @@ Note that <command>atscc</command> may need to be changed to
 <command>patscc</command>.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+次のようなコードを含むファイル #filename('foo.dats') を想定します:
+
+#atscode('\
+//
+val x = 1000
+val y = x + x // = 2000
+val z = y * y // = 4000000
+//
+extern
+fun sum_x_y_z (): int
+//
+implement sum_x_y_z () = x + y + z
+//
+')
+
+関数 #dyncode("sum_x_y_z") の呼び出しが評価される前に、x, y, z
+の名前にはなんらかの値が束縛されていることは明確です。このような束縛を生成するために、なんらかの初期化が必要になります。さらに、次のコードを含むファイル #filename('foo2.dats')
+を想定してみましょう:
+
+#atscode('\
+
+staload "./foo.dats"
+dynload "./foo.dats" // for initialization
+
+implement
+main0 () =
+{
+val () = assertloc (4003000 = sum_x_y_z())
+} (* end of [main0] *)\
+
+')
+
+これで次のコマンドによって実行ファイル #filename('mytest') を生成できます:
+
+<informalexample><programlisting>
+<command>atscc</command> -o mytest foo.dats foo2.dats
+</programlisting></informalexample>
+
+<command>atscc</command> は <command>patscc</command>
+と読み替える必要があるかもしれないことに、注意してください。
+
+")#comment("para")
+")
 
 #para('\
 
