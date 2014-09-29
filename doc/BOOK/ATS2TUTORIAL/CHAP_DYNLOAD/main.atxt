@@ -134,6 +134,7 @@ val () = assertloc (4003000 = sum_x_y_z())
 ")#comment("para")
 ")
 
+#langeng("
 #para('\
 
 The line starting with the keyword #dyncode("dynload") is referred to as a
@@ -148,6 +149,14 @@ is referred as a dynload-function (for #filename("foo.dats")), which is
 always idempotent.
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+キーワード #dyncode("dynload") で始まる行は dynload 宣言と呼ばれます。 #filename("foo2.dats") ファイルからこの宣言を削除すると、上記のコマンドによって文字列 #emphasis("__dynloadflag") で終わるある名前の変数に対する未定義参照のリンク時エラーが発生します。#filename("foo.dats") に対する dynload 宣言はこの特殊な変数を導入し、それから #filename("foo.dats") に関連する初期化を実行するための特別な関数呼び出しを生成します。この特殊関数は (#filename("foo.dats") に対する) dynload 関数と呼ばれます。この関数は常に冪等です。
+
+')#comment("para")
+")
 
 #para("\
 
