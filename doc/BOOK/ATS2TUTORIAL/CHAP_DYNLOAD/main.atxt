@@ -32,7 +32,7 @@ initialization of a loaded package.\
 #langja("
 #para("\
 
-ATS では、動的ロード (もしくは dynload と略します) ロードされたパッケージの初期化を表わします。\
+ATS では、動的ロード (もしくは dynload と略します) はロードされたパッケージの初期化を表わします。\
 
 ")#comment("para")
 ")
