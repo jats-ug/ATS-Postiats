@@ -158,6 +158,7 @@ always idempotent.
 ')#comment("para")
 ")
 
+#langeng("
 #para("\
 
 There is also a dynload-function generated for #filename("foo2.dats").
@@ -167,7 +168,16 @@ dynload-function for #filename("foo2.dats") is automatically called inside
 the body of the #dyncode("main") function.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+また #filename("foo2.dats") に対して生成された dynload 関数もあります。特殊な関数 #dyncode("main") の一種である #dyncode("main0") 関数が #filename("foo2.dats") で実装されているので、#filename("foo2.dats") に対する dynload 関数は #dyncode("main") 関数の本体中から自動的に呼び出されます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 If there is a reason to suppress the generation of a dynload-function, one
@@ -182,9 +192,22 @@ following line is added into #filename("foo.dats"):
 Of course, skipping proper initialization for #filename("foo.dats") means
 that an erroneous result is expected if the function #dyncode("sum_x_y_z")
 is ever called.
-
 ")#comment("para")
+")
+#langja("
+#para("\
 
+もし dynload 関数の生成を抑制する理由があるのであれば、#dyncode("ATS_DYNLOADFLAG") フラグを 0 に設定することができます。例えば、次の行を #filename("foo.dats") に追加すれば、#filename("foo.dats") に対する dynload 関数は生成されません:
+
+#atscode('\
+\#define ATS_DYNLOADFLAG 0
+')
+
+もちろん、#filename("foo.dats") に対する適切な初期化を行なわないということは、#dyncode("sum_x_y_z") が呼び出されると結果は誤った結果になることを意味しています。
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 If there is a reason to call the dynload-function for
@@ -200,13 +223,36 @@ then the dynload-function for #filename("foo2.dats") is given an alias
 #dyncode("foo2_dynload").
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#filename("foo2.dats") に対する dynload 関数を明示的に呼び出したい場合には、dynload 関数に別名を付けて、その別名の関数を呼び出すことができます。例えば、#filename("foo2.dats") に次の行を追加すると:
+
+#atscode('\
+\#define ATS_DYNLOADNAME "foo2_dynload"
+')
+
+このとき #filename("foo2.dats") に対する dynload 関数には #dyncode("foo2_dynload") という別名が与えられます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("CHAP_DYNLOAD/.", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章のコード全体は #mycodelink("CHAP_DYNLOAD/.", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"dynload"-->
 
