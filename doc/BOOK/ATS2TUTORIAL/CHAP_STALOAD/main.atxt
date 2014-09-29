@@ -14,11 +14,23 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="staload">
+#langeng("
 #title("Static Load")
+")
+#langja("
+#title("静的ロード (staload)")
+")
 
+#langeng("
 #para("\
 In ATS, static load (or staload for short) refers to the creation
 of a namespace populated with the declared names in a loaded package.
+")
+")
+#langja("
+#para("\
+ATS では、静的ロード (もしくは staload と略します) はロードされるパッケージ中で宣言された名前に対する名前空間を生成します。
+")
 ")
 
 </chapter><!--"staload"-->
