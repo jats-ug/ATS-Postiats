@@ -87,6 +87,7 @@ fun{a:vt0p} lock_release(!lock(a), a): void
 ')#comment("para")
 ")
 
+#langeng("
 #para('\
 
 Suppose that we now introduce the following overloading declarations:
@@ -115,7 +116,37 @@ refer to a function that returns the void-value. In the above example, the
 function #dyncode("lock_release") returns the void-value.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+ここで、次のオーバーロード宣言を導入することを想像してみましょう:
+
+#atscode('\
+//
+overload [] with lock_acquire
+overload [] with lock_release
+//
+')#comment("atscode")
+
+この宣言の後で次のコードを型検査を通ります:
+
+#atscode('\
+//
+val
+mylock = $extval(lock(int), "mylock")
+//
+val x0 = mylock[] // = lock_acquire (myclok)
+val () = mylock[] := x0 // = lock_release (myclok, x0)
+//
+')#comment("atscode")
+
+代入における角括弧表記は void 値を返す関数のみ参照できることに注意してください。上記の例では、関数 #dyncode("lock_release") は void 値を返します。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 In ATS, bracket-notation is already overloaded with functions performing
@@ -123,13 +154,30 @@ list-subscripting, array-subscripting and matrix-subscripting, and it can
 also be used to access and update a given reference.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+ATS では、角括弧表記は既にリストの添字指定、配列の添字指定、行列の添字指定の関数でオーバーロードされています。そしてそれは与えれた参照にアクセス/更新するためにも使われます。\
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_brktoverld.dats", "on-line") the entirety of the
 code presented in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で示したコードの全体は #mycodelink("chap_brktoverld.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"bracket-overload"-->
 
