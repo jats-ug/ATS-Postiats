@@ -13,8 +13,14 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="bracket-overload">
+#langeng("
 #title("Bracket Overloading")
+")
+#langja("
+#title("角括弧オーバーロード")
+")
 
+#langeng("
 #para('\
 
 In many programming languages, bracket-notation is commonly associated
@@ -27,7 +33,16 @@ It is expected that this style of calling functions can, sometimes, make
 the code written in ATS more easily accessible.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+多くのプログラミング言語では、角括弧表記は一般に配列の添字を連想させます。例えば、#dyncode("A[i]") はC言語における左辺値で、#dyncode("A") によって参照された配列の配列セル #dyncode("i") を示しています。ATS では、角括弧表記で複数の関数を呼び出せるようにその複数の関数名で角括弧をオーバーロードすることができます。その結果、添字アクセスのような見た目のコードになります。このスタイルの関数呼び出しは、ときに、ATS で書かれたコードをより読み易いものにするでしょう。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Let us now see a simple example of bracket-notation in overloading.
@@ -50,6 +65,27 @@ stored in a given lock while #dyncode("lock_release") is called to return a
 value to a given lock.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+ここで、角括弧オーバーロードの単純な例を見てみましょう。次のコードでは、線形抽象型 #dyncode("lock") が2つの関数と共に導入されています:
+
+#atscode('\
+//
+absvtype lock(a:vt@ype)
+//
+extern
+fun{a:vt0p} lock_acquire(!lock(a)): a
+extern
+fun{a:vt0p} lock_release(!lock(a), a): void
+//
+')#comment("atscode")
+
+想像できるように、#dyncode("lock_acquire") は与えられたロック中に保管された値を得るために呼び出され、#dyncode("lock_release") 与えられたロックに値を戻すために呼び出されます。\
+
+')#comment("para")
+")
 
 #para('\
 
