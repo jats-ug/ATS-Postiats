@@ -302,18 +302,26 @@ val () = p0.x(y0) // point_set_x (p0, y0)
 and () = p0.y(x0) // point_set_y (p0, x0)
 ')
 
-私は
-I may use the phrase #emphasis("functional dot-notation") to refer to this form of dot-notation so as to differentiate it from the general form of dot-notation.
+ドット表記の一般的な形式と区別するために、私はこの形式のドット表記を #emphasis("関数的なドット表記") と呼ぶことがあります。
 
 ")#comment("para")
 ")
 
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_dotoverld.dats", "on-line") the entirety of the
 code presented in this chapter plus some testing code.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で示したコード全体とテストコードは #mycodelink("chap_dotoverld.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"dot-overload"-->
 
