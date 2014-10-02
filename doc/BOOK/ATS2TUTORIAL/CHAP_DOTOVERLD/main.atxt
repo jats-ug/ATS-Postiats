@@ -203,7 +203,19 @@ integer value.
 カウンタオブジェクトを表わす線形抽象型 #stacode("counter") と関連するいくつかの関数を導入しましょう:
 
 #atscode('\
-xxx
+//
+absvtype counter = ptr
+//
+extern
+fun counter_make (): counter
+extern
+fun counter_free (counter): void
+//
+extern
+fun counter_get (cntr: !counter): int
+extern
+fun counter_incby (cntr: !counter, n: int): void
+//
 ')
 
 予想されることですが、関数 #dyncode("counter_make") と #dyncode("counter_free") はカウンタオブジェクトの生成と破棄をそれぞれ表わします。関数 #dyncode("counter_get") は与えられたカウンタに保管されている現在のカウントを返し、関数 #dyncode("counter_incby") は与えられた整数値でそのカウントを増やします。
