@@ -13,15 +13,30 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="extvar-declaration">
+#langeng("
 #title("Extvar-Declaration")
+")
+#langja("
+#title("extvar 宣言")
+")
 
+#langeng("
 #para('\
 
 ATS puts great emphasis on interacting with other programming
 languages.
 
 ')
+")
+#langja("
+#para('\
 
+ATS は他のプログラミング言語との相互利用を重要視しています。
+
+')
+")
+
+#langeng("
 #para('\
 
 Suppose that I have in some C code a (global) integer variable of the name
@@ -56,6 +71,39 @@ extern var "foo" = x0 + 1
 where #dyncode("extvar") expands into #dyncode("extern var").
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+C言語コード中に #dyncode("foo") という名前の (グローバルの) 整数変数を持ち、ATS コード中で #dyncode("foo") に保管された値を 1 増加させたいとします。これは次のように書けます:
+
+#atscode('\
+val x0 = $extval(int, "foo") // get the value of foo
+val p_foo = $extval(ptr, "&foo") // get the address of foo
+val () = $UNSAFE.ptr_set<int> (p_foo, x0 + 1) // update foo
+')
+
+where the address-of operator (&amp;) in C is needed for taking the address of #dyncode("foo").
+If I want to interact in ATS with a language that does not support the address-of operator (e.g., JavaScript and Python), then I can do it as follows:
+
+#atscode('\
+extvar "foo" = x0 + 1
+')
+
+where the keyword #dyncode("extvar") indicates that the string following it
+refers to an external variable (or left-value) that should be updated with
+the value of the expression on the right-hand side of the equality symbol
+following the string. This so-called-extvar declaration can also be written
+as follow:
+
+#atscode('\
+extern var "foo" = x0 + 1
+')
+
+where #dyncode("extvar") expands into #dyncode("extern var").
+
+')#comment("para")
+")
 
 #para('\
 
