@@ -1,7 +1,10 @@
 PUBLISH_PATH    = $(HOME)/doc/jats-ug.github.io/doc/ATS2/EXAMPLE/EFFECTIVATS
 CHAP_ATXT_FILES = $(glob */*.atxt)
-CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES))
 CHAP_DIRS       = $(dirname $(CHAP_ATXT_FILES))
+CHAP_PHP_FILES  = $(glob */*.php)
+CHAP_PHP_DIRS   = $(dirname $(CHAP_PHP_FILES))
+CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES)) \
+		  $(addsuffixes .html, $(filter-out html.php, $(split _, $(CHAP_PHP_FILES))))
 
 .PHONY: all clean publish
 .DEFAULT: all
@@ -11,10 +14,14 @@ all: $(CHAP_HTML_FILES)
 	%.html: %.atxt
 		make $@
 
+.SUBDIRS: $(CHAP_PHP_DIRS)
+	%.html: %_html.php
+		make $@
+
 publish: all
 	rm -rf $(PUBLISH_PATH)
 	mkdir -p $(PUBLISH_PATH)
-	cd $(PUBLISH_PATH) && mkdir -p $(CHAP_DIRS)
+	cd $(PUBLISH_PATH) && mkdir -p $(CHAP_DIRS) $(CHAP_PHP_DIRS)
 	foreach(i, $(CHAP_HTML_FILES))
 		cp $(i) $(PUBLISH_PATH)/$(i)
 
