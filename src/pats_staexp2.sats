@@ -77,15 +77,8 @@ typedef effset = $EFF.effset
 
 (* ****** ****** *)
 //
-staload
-JSON = "./pats_jsonize.sats"
-//
-typedef jsonval = $JSON.jsonval
-//
-(* ****** ****** *)
-
 staload "./pats_staexp1.sats"
-
+//
 (* ****** ****** *)
 //
 // HX: assumed in [pats_staexp2_scst.dats]
@@ -96,6 +89,15 @@ typedef s2cstlst = List (s2cst)
 typedef s2cstopt = Option (s2cst)
 //
 vtypedef s2cstlst_vt = List_vt (s2cst)
+//
+abstype s2cstset_type
+typedef s2cstset = s2cstset_type
+absvtype s2cstset_vtype
+vtypedef s2cstset_vt = s2cstset_vtype
+//
+abstype
+s2cstmap_type_type (a:type)
+typedef s2cstmap(a:type) = s2cstmap_type_type(a)
 //
 (* ****** ****** *)
 //
@@ -155,6 +157,9 @@ vtypedef d2conlst_vt = List_vt (d2con)
 //
 abstype d2conset_type
 typedef d2conset = d2conset_type
+//
+absvtype d2conset_vtype
+vtypedef d2conset_vt = d2conset_vtype
 //
 (* ****** ****** *)
 
@@ -303,6 +308,7 @@ fun s2rt_is_prgm (x: s2rt): bool // is program?
 fun s2rt_is_impred (x: s2rt): bool // is impredicative?
 fun s2rt_is_tkind (x: s2rt): bool // is tkind?
 //
+fun s2rt_is_lin_fun (x: s2rt): bool // is (... ->) linear?
 fun s2rt_is_boxed_fun (x: s2rt): bool // is (... ->) boxed?
 fun s2rt_is_tkind_fun (x: s2rt): bool // is (... ->) tkind?
 //
@@ -466,10 +472,10 @@ s2exp_node =
 //
   | S2Eexi of ( // exist. quantified type
       s2varlst(*vars*), s2explst(*props*), s2exp(*body*)
-    ) // end of [S2Euni]
+    ) (* end of [S2Eexi] *)
   | S2Euni of ( // universally quantified type
       s2varlst(*vars*), s2explst(*props*), s2exp(*body*)
-    ) // end of [S2Euni]
+    ) (* end of [S2Euni] *)
 //
 // HX: reference argument type // related to [S1Einvar]
   | S2Erefarg of (int(*0/1:val/ref*), s2exp) (* !/&: call-by-val/ref *)
@@ -545,15 +551,15 @@ s2qua = @{
 } // end of [s2qua]
 typedef s2qualst = List (s2qua)
 vtypedef s2qualst_vt = List_vt (s2qua)
-
+//
 fun s2qua_make (s2vs: s2varlst, s2ps: s2explst): s2qua
-
+//
 fun fprint_s2qua : fprint_type (s2qua)
-
+//
 fun print_s2qualst (xs: s2qualst): void
 fun prerr_s2qualst (xs: s2qualst): void
 fun fprint_s2qualst : fprint_type (s2qualst)
-
+//
 (* ****** ****** *)
 
 fun s2cst_make (
@@ -621,8 +627,8 @@ fun s2cst_add_supcls (x: s2cst, sup: s2exp): void
 fun s2cst_get_sVarset (x: s2cst): s2Varset
 fun s2cst_set_sVarset (x: s2cst, _: s2Varset): void
 
-fun s2cst_get_tag (x: s2cst):<> int
-fun s2cst_set_tag (x: s2cst, tag: int): void
+fun s2cst_get_dstag (x: s2cst): int
+fun s2cst_set_dstag (x: s2cst, tag: int): void
 
 fun s2cst_get_stamp (x: s2cst): stamp
 
@@ -642,17 +648,20 @@ fun compare_s2cst_s2cst (x1: s2cst, x2: s2cst):<> Sgn
 overload compare with compare_s2cst_s2cst
 
 (* ****** ****** *)
-
+//
 fun s2cst_is_abstr (x: s2cst): bool
 fun s2cst_is_tkind (x: s2cst): bool
-
+//
 fun s2cst_is_datype (s2c: s2cst): bool
-
+//
 fun s2cst_is_tagless (x: s2cst): bool
 fun s2cst_is_listlike (x: s2cst): bool
 fun s2cst_is_singular (x: s2cst): bool
 fun s2cst_is_binarian (x: s2cst): bool
-
+//
+fun s2cst_is_linear (x: s2cst): bool
+fun s2cst_is_nonlinear (x: s2cst): bool
+//
 (* ****** ****** *)
 
 fun s2cst_subeq (s2c1: s2cst, s2c2: s2cst): bool
@@ -676,24 +685,23 @@ overload fprint with fprint_s2cstlst
 
 (* ****** ****** *)
 //
-absvtype
-s2cstset_vtype // assumed in [pats_staexp2_scst.dats]
-vtypedef s2cstset_vt = s2cstset_vtype
+fun s2cstset_nil (): s2cstset
+fun s2cstset_add (xs: s2cstset, x: s2cst): s2cstset
+fun s2cstset_listize (xs: s2cstset): s2cstlst_vt
+//
 fun s2cstset_vt_nil (): s2cstset_vt
-fun s2cstset_vt_free (xs: s2cstset_vt): void
 fun s2cstset_vt_add (xs: s2cstset_vt, x: s2cst): s2cstset_vt
+fun s2cstset_vt_listize_free (xs: s2cstset_vt): s2cstlst_vt
 //
 (* ****** ****** *)
 //
-abstype
-s2cstmap_type_type (a:type)
-stadef s2cstmap = s2cstmap_type_type
-//
-fun s2cstmap_nil {a:type} (): s2cstmap (a)
-fun s2cstmap_add {a:type}
+fun
+s2cstmap_nil{a:type} (): s2cstmap (a)
+fun
+s2cstmap_add{a:type}
   (map: s2cstmap (a), key: s2cst, itm: a):<> s2cstmap (a)
-fun s2cstmap_find
-  {a:type} (map: s2cstmap (a), key: s2cst):<> Option_vt (a)
+fun
+s2cstmap_find{a:type} (map: s2cstmap (a), key: s2cst):<> Option_vt (a)
 //
 (* ****** ****** *)
 
@@ -762,7 +770,10 @@ fun s2varset_nil (): s2varset
 fun s2varset_add (xs: s2varset, x: s2var): s2varset
 fun s2varset_del (xs: s2varset, x: s2var): s2varset
 fun s2varset_union (xs: s2varset, ys: s2varset): s2varset
+fun s2varset_listize (xs: s2varset): s2varlst_vt
 
+(* ****** ****** *)
+//
 fun s2varset_vt_nil (): s2varset_vt
 fun s2varset_vt_add
   (xs: s2varset_vt, x: s2var): s2varset_vt
@@ -772,10 +783,10 @@ fun s2varset_vt_delist
   (xs1: s2varset_vt, xs2: s2varlst): s2varset_vt
 fun s2varset_vt_union
   (xs: s2varset_vt, ys: s2varset_vt): s2varset_vt
-
+//
 fun s2varset_vt_free (xs: s2varset_vt): void
 fun s2varset_vt_listize_free (xs: s2varset_vt): s2varlst_vt
-
+//
 (* ****** ****** *)
 
 fun s2varmset_nil (): s2varmset
@@ -967,10 +978,10 @@ fun compare_d2con_d2con (x1: d2con, x2: d2con):<> Sgn
 overload compare with compare_d2con_d2con
 
 (* ****** ****** *)
-
+//
 fun d2con_is_con (d2c: d2con): bool // data constructor
 fun d2con_is_exn (d2c: d2con): bool // exceptn constructor
-
+//
 fun d2con_is_nullary (d2c: d2con): bool // nullary constructor
 fun d2con_is_tagless (d2c: d2con): bool // tagless constructor
 //
@@ -980,13 +991,22 @@ fun d2con_is_listlike (d2c: d2con): bool // like listnil/listcons
 //
 fun d2con_is_singular (d2c: d2con): bool // singular constructor
 fun d2con_is_binarian (d2c: d2con): bool // binarian constructor
-
+//
+fun d2con_is_linear (d2c: d2con): bool // linear constructor
+fun d2con_is_nonlinear (d2c: d2con): bool // nonlinear constructor
+//
 (* ****** ****** *)
 
 fun d2conset_nil ():<> d2conset
-fun d2conset_ismem (xs: d2conset, x: d2con):<> bool
 fun d2conset_add (xs: d2conset, x: d2con):<> d2conset
+fun d2conset_ismem (xs: d2conset, x: d2con):<> bool
 
+(* ****** ****** *)
+  
+fun d2conset_vt_nil ():<> d2conset_vt
+fun d2conset_vt_add (xs: d2conset_vt, x: d2con):<> d2conset_vt
+fun d2conset_vt_listize_free (xs: d2conset_vt):<> d2conlst_vt
+  
 (* ****** ****** *)
 //
 // HX: static expressions
@@ -1426,41 +1446,15 @@ fun s2aspdec_make (
 
 (* ****** ****** *)
 //
-fun jsonize_s2rt (s2t: s2rt): jsonval
-fun jsonize_s2rtlst (s2ts: s2rtlst): jsonval
+absvtype appenv_type = ptr
+vtypedef appenv = appenv_type
 //
-fun jsonize_s2cst (s2c: s2cst): jsonval
-fun jsonize_s2var (s2v: s2var): jsonval
-fun jsonize_s2Var (s2V: s2Var): jsonval
+typedef synent_app (a:type) = (a, !appenv) -> void
 //
-fun jsonize_s2varlst (s2vs: s2varlst): jsonval
-//
-fun jsonize_d2con (d2c: d2con): jsonval
-fun jsonize_d2con_long (d2c: d2con): jsonval
-//
-fun jsonize_tyreckind : tyreckind -> jsonval
-//
-fun jsonize_s2exp (flag: int, s2e: s2exp): jsonval
-fun jsonize_s2explst (flag: int, s2es: s2explst): jsonval
-fun jsonize_s2expopt (flag: int, s2eopt: s2expopt): jsonval
-//
-fun jsonize_labs2explst (flag: int, ls2es: labs2explst): jsonval  
-//
-fun jsonize_s2eff (s2fe: s2eff): jsonval
-//
-fun jsonize_s2zexp (s2e: s2zexp): jsonval
+fun
+synentlst_app{a:type}
+  (xs: List(a), env: !appenv, app: synent_app(a)): void
 //
 (* ****** ****** *)
-//
-fun jsonize0_s2exp (s2e: s2exp): jsonval // w/o hnfizing
-fun jsonize1_s2exp (s2e: s2exp): jsonval // with hnfizing
-//
-fun jsonize0_s2explst (s2es: s2explst): jsonval // w/o hnfizing
-fun jsonize1_s2explst (s2es: s2explst): jsonval // with hnfizing
-//
-fun jsonize0_s2expopt (opt: s2expopt): jsonval // w/o hnfizing
-fun jsonize1_s2expopt (opt: s2expopt): jsonval // with hnfizing
-//  
-(* ****** ****** *)
-
+  
 (* end of [pats_staexp2.sats] *)

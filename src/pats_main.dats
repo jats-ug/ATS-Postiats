@@ -77,8 +77,10 @@ staload "./pats_jsonize.sats"
 
 (* ****** ****** *)
 
-staload DEPGEN = "./pats_depgen.sats"
-staload TAGGEN = "./pats_taggen.sats"
+staload
+DEPGEN = "./pats_depgen.sats"
+staload
+TAGGEN = "./pats_taggen.sats"
 
 (* ****** ****** *)
 
@@ -98,6 +100,10 @@ staload "./pats_staexp2.sats"
 staload "./pats_stacst2.sats"
 staload "./pats_dynexp2.sats"
 
+(* ****** ****** *)
+  
+staload "./pats_synent2_jsonize.sats"
+  
 (* ****** ****** *)
 
 staload
@@ -223,7 +229,6 @@ dynload "pats_stacst2.dats"
 //
 dynload "pats_staexp2_print.dats"
 dynload "pats_staexp2_pprint.dats"
-dynload "pats_staexp2_jsonize.dats"
 //
 dynload "pats_staexp2_sort.dats"
 //
@@ -252,13 +257,15 @@ dynload "pats_dynexp2.dats"
 dynload "pats_dyncst2.dats"
 //
 dynload "pats_dynexp2_print.dats"
-dynload "pats_dynexp2_jsonize.dats"
 //
 dynload "pats_dynexp2_dcst.dats"
 dynload "pats_dynexp2_dvar.dats"
 dynload "pats_dynexp2_dmac.dats"
 //
 dynload "pats_dynexp2_util.dats"
+//
+dynload "pats_dynexp2_mapgen.dats"
+dynload "pats_synent2_jsonize.dats"
 //
 dynload "pats_namespace.dats"
 //
@@ -323,9 +330,13 @@ dynload pats_lintprgm_myint_gmp.dats
 dynload "pats_lintprgm_solve.dats"
 //
 dynload "pats_constraint3.dats"
-dynload "pats_constraint3_init.dats"
+//
 dynload "pats_constraint3_print.dats"
+//
+dynload "pats_constraint3_mapgen.dats"
 dynload "pats_constraint3_jsonize.dats"
+//
+dynload "pats_constraint3_init.dats"
 dynload "pats_constraint3_simplify.dats"
 dynload "pats_constraint3_icnstr.dats"
 dynload "pats_constraint3_solve.dats"
@@ -455,12 +466,15 @@ HX: VERSION-0.0.8 released on Sunday, May 4, 2014
 //
 HX: VERSION-0.1.0 released on Monday, June 9, 2014
 HX: VERSION-0.1.1 released on Wednesday, July 30, 2014
-HX: VERSION-0.1.2 released on Friday, Auguest 29, 2014
+HX: VERSION-0.1.2 released on Friday, August 29, 2014
+HX: VERSION-0.1.3 released on Monday, September 29, 2014
+HX: VERSION-0.1.4 released on Thursday, October 23, 2014
+HX: VERSION-0.1.5 released on Thursday, November 20, 2014
 //
 *)
 #define PATS_MAJOR_VERSION 0
 #define PATS_MINOR_VERSION 1
-#define PATS_MICRO_VERSION 3
+#define PATS_MICRO_VERSION 6
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -897,10 +911,13 @@ do_pkgreloc
 val itms =
   $TRENV1.the_pkgrelocitmlst_get ()
 //
-val filr = outchan_get_filr (state.outchan)
+val filr =
+  outchan_get_filr (state.outchan)
 //
 in
-  $TRENV1.fprint_pkgrelocitmlst (filr, itms)
+//
+$TRENV1.fprint_pkgrelocitmlst(filr, itms)
+//
 end // end of [do_pkgreloc]
 //
 (* ****** ****** *)
@@ -910,7 +927,7 @@ fun
 do_jsonize_2
 (
   state: &cmdstate
-, given: string, d2cs: d2eclist
+, given: string(*unused*), d2cs: d2eclist
 ) : void // end-of-fun
 //
 (* ****** ****** *)
@@ -933,9 +950,9 @@ case+ jsvs of
 | list_cons
     (jsv, jsvs) => let
     val () =
-      if i > 0
-        then fprint_string (out, ",\n")
-      // end of [if]
+    if i > 0
+      then fprint_string (out, ",\n")
+    // end of [if]
     val ((*void*)) = fprintln! (out, jsv)
   in
     loop (out, jsvs, i+1)
@@ -954,17 +971,14 @@ implement
 do_jsonize_2
 (
   state, given, d2cs
-) = () where {
+) = let
 //
-val jsv = jsonize_d2eclist (d2cs)
-val-JSONlist(d2cs) = jsv
-val out = outchan_get_filr (state.outchan)
+val out = state.outchan
+val out = outchan_get_filr (out)
 //
-val ((*void*)) = fprint_string (out, "[\n")
-val ((*void*)) = fprint_jsonlst (out, d2cs)
-val ((*void*)) = fprint_string (out, "]\n")
-//
-} (* end of [do_jsonize_2] *)
+in
+  d2eclist_export (out, d2cs)
+end (* end of [do_jsonize_2] *)
 
 end // end of [local]
 

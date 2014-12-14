@@ -28,8 +28,8 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#ifndef ATSLIB_PRELUDE_CHAR_CATS
-\#define ATSLIB_PRELUDE_CHAR_CATS
+\#ifndef ATSLIB_PRELUDE_CATS_CHAR
+\#define ATSLIB_PRELUDE_CATS_CHAR
 
 #atscode_separator_for_C()
 
@@ -37,7 +37,7 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#if(0)
+\#if(1)
 \#ifndef isascii
 extern int isascii (int c) ; // _XOPEN_SOURCE
 \#endif // end of [isascii]
@@ -49,7 +49,7 @@ extern int isblank (int c) ; // _XOPEN_SOURCE >= 600
 \#ifndef toascii
 extern int toascii (int c) ; // _XOPEN_SOURCE
 \#endif // end of [toascii]
-\#endif // end of [ \#if(0) ]
+\#endif // end of [ \#if(1) ]
 
 #atscode_separator_for_C()
 
@@ -432,7 +432,7 @@ atspre_int2xxdigit
 
 #atscode_separator_for_C()
 
-\#endif // ifndef ATSLIB_PRELUDE_CHAR_CATS
+\#endif // ifndef ATSLIB_PRELUDE_CATS_CHAR
 
 #atscode_separator_for_C()
 

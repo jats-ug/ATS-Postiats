@@ -207,7 +207,7 @@ Encoding the Policy for Database Access
 
 #langeng("
 The policy for database access is formally encoded in the types
-of the following declared function:
+of the following declared functions:
 ")
 #langja("
 データベースアクセスのポリシーは次に宣言された関数の型に形式的にエンコードされています:
@@ -560,15 +560,11 @@ DB_read_write.sats
 DB_read_write.dats
 </pre>
 
-#langeng("
+<!--
 Instead of being coded in C directly, the rest of my implementation is also
 written in ATS but it makes pervasive use of some unsafe programming
 features.
-")
-#langja("
-C言語を直接使ってコーディングする代わりに、私の実装の残りを ATS で書くことも可能です。
-しかし安全でないプログラミングの機能を広範囲に使うことになるでしょう。
-")
+-->
 
 <hr size="2">
 
