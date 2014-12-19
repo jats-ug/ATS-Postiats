@@ -1363,13 +1363,24 @@ function has returned.
 #langja("
 #para('\
 
-配列に対するマージソートの実装全体とテストコードは
-#mycodelink("CHAP_ABSVTYPE/mergeSort.dats", "オンライン")
-から入手できます。
+また、特殊な関数 #dyncode("alloca") を呼び出すことでコールスタックにメモリを確保する関数も作ることができます。それには ATS では次のような型が与えられます:
+
+#atscode('\
+(*
+staload "libc/SATS/alloa.sats"
+*)
+fun alloca
+  {dummy:addr}{n:int} (
+  pf: void@dummy | n: size_t (n)
+) : [l:addr] (bytes(n) @ l, bytes(n) @ l -> void@dummy | ptr(l))
+')
+
+#dyncode("alloca") に割り当てられた型は、型付けされた ATS コードが #dyncode("alloca") 関数呼び出しが返った後に誤ってその関数呼び出しから得られたメモリにアクセスすることを防止します。
 
 ')
 ")
 
+#langeng("
 #para('\
 
 The following function #dyncode("array_ptr_alloca_tsz") is the
@@ -1415,13 +1426,62 @@ very difficult to determine. In general, choosing #dyncode("alloca") over
 should be scrutinized.
 
 ')
+")
+#langja("
+#para('\
 
+次の関数 #dyncode("array_ptr_alloca_tsz") は動的には #dyncode("alloca") と同じです。しかしより便利な型が付けられています:
+
+#atscode('\
+fun
+array_ptr_alloca_tsz
+  {a:vt0p}{dummy:addr}{n:int}
+(
+  pf: void@dummy | asz: size_t(n), tsz: sizeof_t(a)
+) : [l:addr] (array(a?,n)@l, array(a?,n)@l -> void@dummy | ptr(l))
+')
+
+例として、上記で実装された関数テンプレート #dyncode("mergeSort") 次のように実装することもできます:
+
+#atscode('\
+implement
+{a}(*tmp*)
+mergeSort (A, n, cmp) = let
+  val tsz = sizeof<a>
+  var dummy: void = ()
+  prval pf = view@dummy
+  val (
+    pfat, fpfat | p
+  ) = array_ptr_alloca_tsz{a}(pf | n, tsz)
+  val ((*void*)) = msort1<a> (A, n, !p, cmp)
+  prval ((*void*)) = view@dummy := fpfat (pfat)
+in
+  // nothing
+end // end of [mergeSort]
+')
+
+ここではマージを行なうのに必要なスクラッチ領域として使われる配列を #dyncode("mergeSort") のコールスタックに確保しています。この #dyncode("mergeSort") の実装は興味深いものですが、実際には以前の実装より劣っています。多きなメモリチャンクを確保する #dyncode("alloca") 呼び出しはクラッシュをたやすく引き起こし、その原因を見つけ出すのはしばしば困難です。一般に、#dyncode("malloc") よりも #dyncode("alloca") を使うことは正当化しずらく、前者に対する呼び出しは綿密に精査すべきです。
+
+')
+")
+
+#langeng("
 #para('\
 
 The entire implementation of merge-sort on arrays plus some testing code
 is available #mycodelink("CHAP_ABSVTYPE/mergeSort.dats", "on-line").
 
 ')
+")
+#langja("
+#para('\
+
+配列に対するマージソートの実装全体とテストコードは
+#mycodelink("CHAP_ABSVTYPE/mergeSort.dats", "オンライン")
+から入手できます。
+
+')
+")
 
 </sect1><!--id="memory-allocation-deallocation"-->
 

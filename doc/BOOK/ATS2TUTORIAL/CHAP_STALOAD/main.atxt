@@ -121,7 +121,6 @@ occurrence of a name is resolved in ATS by searching first through the
 available names delcared in the same file.
 
 ")#comment("para")
->>>>>>> master
 
 </chapter><!--"staload"-->
 
