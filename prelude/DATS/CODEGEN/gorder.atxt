@@ -90,17 +90,28 @@ gmin_val (x, y) = if glte_val (x, y) then x else y
 
 #atscode_separator()
 
-\#include "prelude/DATS/gorder_int.dats"
-\#include "prelude/DATS/gorder_uint.dats"
-\#include "prelude/DATS/gorder_bool.dats"
-\#include "prelude/DATS/gorder_char.dats"
-\#include "prelude/DATS/gorder_float.dats"
-\#include "prelude/DATS/gorder_string.dats"
+\#include "./SHARE/gorder_int.dats"
+\#include "./SHARE/gorder_uint.dats"
+
+#atscode_separator()
+
+\#include "./SHARE/gorder_bool.dats"
+\#include "./SHARE/gorder_char.dats"
+
+#atscode_separator()
+
+\#include "./SHARE/gorder_float.dats"
+
+#atscode_separator()
+
+\#include "./SHARE/gorder_string.dats"
 
 #atscode_separator()
 
 #atscode_eof_strsub("\#thisfilename$")\
 
 %{
-implement main () = fprint_filsub (stdout_ref, "gorder_atxt.txt")
+implement
+main (argc, argv) =
+  fprint_filsub (stdout_ref, "gorder_atxt.txt")
 %}\

@@ -28,8 +28,8 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#ifndef ATSLIB_PRELUDE_MATRIXPTR_CATS
-\#define ATSLIB_PRELUDE_MATRIXPTR_CATS
+\#ifndef ATSLIB_PRELUDE_CATS_MATRIXPTR
+\#define ATSLIB_PRELUDE_CATS_MATRIXPTR
 
 #atscode_separator_for_C()
 
@@ -41,13 +41,14 @@ atspre_matrixptr_free
 
 #atscode_separator_for_C()
 
-\#endif // ifndef ATSLIB_PRELUDE_MATRIXPTR_CATS
+\#endif // ifndef ATSLIB_PRELUDE_CATS_MATRIXPTR
 
 #atscode_separator_for_C()
 
 #atscode_eof_strsub_for_C("\#thisfilename$")\
 
 %{
-implement main () = fprint_filsub (stdout_ref, "matrixptr_atxt.txt")
+implement
+main (argc, argv) = fprint_filsub (stdout_ref, "matrixptr_atxt.txt")
 %}\
 

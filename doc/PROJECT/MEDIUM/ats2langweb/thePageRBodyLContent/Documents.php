@@ -4,10 +4,11 @@ class="thePageRBodyLContent"
 
 <hr></hr>
 
-<h2><a id="#INT2PROGINATS">Introduction to Programming in ATS</a></h2>
+<h2><a id="INT2PROGINATS">Introduction to Programming in ATS</a></h2>
 
 <table>
-<tr><td>
+<tr>
+<td>
 This book starts from the core of ATS, a statically typed call-by-value
 functional programming language, gradually introducing the reader to
 dependent types, linear types and the paradigm of programming with
@@ -16,17 +17,17 @@ programming but it does expect the reader to have already acquired
 basic understanding of programming and possibly some programming skills.
 </td>
 </tr>
-<tr>
-<td>
+<tr><td>
 Links:
-<a href="http://www.ats-lang.org/DOCUMENT/INT2PROGINATS/HTML/book1.html">html</a>
+<a href="http://ats-lang.sourceforge.net/DOCUMENT/INT2PROGINATS/HTML/INT2PROGINATS-BOOK.html">html</a>
+<a href="http://ats-lang.sourceforge.net/DOCUMENT/INT2PROGINATS/CODE/INT2PROGINATS-CODE.html">code</a>
 </td></tr>
 <tr height="8px"><td></td></tr>
 </table>
 
 <hr></hr>
 
-<h2><a id="#TUT2PROGINATS">A Tutorial on Programming Features in ATS</a></h2>
+<h2><a id="TUT2PROGINATS">A Tutorial on Programming Features in ATS</a></h2>
 
 <table>
 <tr><td>
@@ -41,7 +42,8 @@ gained from the tutorial alone.
 <tr>
 <td>
 Links:
-<a href="http://www.ats-lang.org/DOCUMENT/ATS2TUTORIAL/HTML/book1.html">html</a>
+<a href="http://ats-lang.sourceforge.net/DOCUMENT/ATS2TUTORIAL/HTML/ATS2TUTORIAL-BOOK.html">html</a>
+<a href="http://ats-lang.sourceforge.net/DOCUMENT/ATS2TUTORIAL/CODE/ATS2TUTORIAL-CODE.html">code</a>
 </td>
 </tr>
 <tr height="8px"><td></td></tr>

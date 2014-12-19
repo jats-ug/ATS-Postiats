@@ -28,17 +28,18 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#ifndef ATSLIB_PRELUDE_LIST_CATS
-\#define ATSLIB_PRELUDE_LIST_CATS
+\#ifndef ATSLIB_PRELUDE_CATS_LIST
+\#define ATSLIB_PRELUDE_CATS_LIST
 
 #atscode_separator_for_C()
 
-\#endif // ifndef ATSLIB_PRELUDE_LIST_CATS
+\#endif // ifndef ATSLIB_PRELUDE_CATS_LIST
 
 #atscode_separator_for_C()
 
 #atscode_eof_strsub_for_C("\#thisfilename$")\
 
 %{
-implement main () = fprint_filsub (stdout_ref, "list_atxt.txt")
+implement
+main (argc, argv) = fprint_filsub (stdout_ref, "list_atxt.txt")
 %}\

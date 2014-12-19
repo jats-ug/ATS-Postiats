@@ -79,12 +79,6 @@ typedef macsynkind = $SYN.macsynkind
 (* ****** ****** *)
 
 staload
-JSON = "./pats_jsonize.sats"
-typedef jsonval = $JSON.jsonval
-
-(* ****** ****** *)
-
-staload
 S1E = "./pats_staexp1.sats"
 typedef e1xp = $S1E.e1xp
 typedef s1exp = $S1E.s1exp
@@ -125,8 +119,11 @@ vtypedef d2cstopt_vt = Option_vt (d2cst)
 abstype d2cstset_type
 typedef d2cstset = d2cstset_type
 //
-abstype d2cstmap_type (a:type)
-typedef d2cstmap (a:type) = d2cstmap_type (a)
+absvtype d2cstset_vtype
+vtypedef d2cstset_vt = d2cstset_vtype
+//
+abstype d2cstmap_type(a:type)
+typedef d2cstmap(a:type) = d2cstmap_type(a)
 //
 (* ****** ****** *)
 //
@@ -183,19 +180,27 @@ typedef d2itmopt = Option (d2itm)
 vtypedef d2itmopt_vt = Option_vt (d2itm)
 
 (* ****** ****** *)
-
+//
 typedef
 d2sym = '{
   d2sym_loc= location
 , d2sym_qua= $SYN.d0ynq, d2sym_sym= symbol
 , d2sym_pitmlst= d2pitmlst
 } (* end of [d2sym] *)
-
-typedef d2symopt = Option (d2sym)
-
+//
+(* ****** ****** *)
+//
+typedef d2symlst = List(d2sym)
+vtypedef d2symlst_vt = List_vt(d2sym)
+typedef d2symopt = Option(d2sym)
+//
+absvtype d2symset_vtype
+vtypedef d2symset_vt = d2symset_vtype
+//
 (* ****** ****** *)
 
-fun d2cst_make
+fun
+d2cst_make
 (
   id: symbol
 , loc: location // location of declaration
@@ -282,17 +287,26 @@ overload compare with compare_d2cst_d2cst
 (* ****** ****** *)
 
 fun d2cstset_nil ():<> d2cstset
-fun d2cstset_ismem (xs: d2cstset, x: d2cst):<> bool
 fun d2cstset_add (xs: d2cstset, x: d2cst):<> d2cstset
+fun d2cstset_ismem (xs: d2cstset, x: d2cst):<> bool
 
 (* ****** ****** *)
 
-fun d2cstmap_nil {a:type} ():<> d2cstmap (a)
-fun d2cstmap_search
-  {a:type} (map: d2cstmap(a), d2v: d2cst): Option_vt (a)
-fun d2cstmap_insert
-  {a:type} (map: &d2cstmap(a), d2v: d2cst, x: a): bool(*found*)
+fun d2cstset_vt_nil ():<> d2cstset_vt
+fun d2cstset_vt_add (xs: d2cstset_vt, x: d2cst):<> d2cstset_vt
+fun d2cstset_vt_listize_free (xs: d2cstset_vt):<> d2cstlst_vt
 
+(* ****** ****** *)
+//
+fun
+d2cstmap_nil{a:type} ():<> d2cstmap (a)
+fun
+d2cstmap_search
+  {a:type}(map: d2cstmap(a), d2v: d2cst): Option_vt (a)
+fun
+d2cstmap_insert
+  {a:type}(map: &d2cstmap(a), d2v: d2cst, x: a): bool(*found*)
+//
 (* ****** ****** *)
 
 fun d2var_make
@@ -516,6 +530,12 @@ overload print with print_d2sym
 overload prerr with prerr_d2sym
 overload fprint with fprint_d2sym
 //
+(* ****** ****** *)
+
+fun d2symset_vt_nil ():<> d2symset_vt
+fun d2symset_vt_add (xs: d2symset_vt, x: d2sym):<> d2symset_vt
+fun d2symset_vt_listize_free (xs: d2symset_vt):<> d2symlst_vt
+
 (* ****** ****** *)
 
 datatype pckind =
@@ -1786,20 +1806,23 @@ fun d2exp_get_seloverld (d2e0: d2exp): d2symopt
 fun d2exp_get_seloverld_root (d2e0: d2exp): d2exp
 //
 (* ****** ****** *)
-
-fun jsonize_d2cst (d2c: d2cst): jsonval
-fun jsonize_d2cst_long (d2c: d2cst): jsonval
-
+//
+// HX-2014-12-11
+//
 (* ****** ****** *)
-
-fun jsonize_d2var (d2v: d2var): jsonval
-fun jsonize_d2var_long (d2v: d2var): jsonval
-
-(* ****** ****** *)
-
-fun jsonize_d2ecl (d2c: d2ecl): jsonval
-fun jsonize_d2eclist (d2cs: d2eclist): jsonval
-
+//
+fun
+d2eclist_mapgen_all
+(
+  d2cs: d2eclist
+) : 
+( s2cstset_vt // static
+, s2varset_vt // static
+, d2conset_vt // static
+, d2cstset_vt // dynamic
+, d2varset_vt // dynamic
+) (* end of [d2eclist_mapgen_all] *)
+//
 (* ****** ****** *)
 
 (* end of [pats_dynexp2.sats] *)

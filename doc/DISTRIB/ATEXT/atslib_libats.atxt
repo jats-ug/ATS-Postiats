@@ -136,6 +136,13 @@ The ATSLIB/libats library\
 
 (* ****** ****** *)
 
+#packfilename("SATS/gvector.sats")
+#packfilename("SATS/gmatrix.sats")
+#packfilename("SATS/gmatrix_col.sats")
+#packfilename("SATS/gmatrix_row.sats")
+
+(* ****** ****** *)
+
 #packfilename("SATS/refcount.sats")
 
 (* ****** ****** *)
@@ -262,6 +269,13 @@ The ATSLIB/libats library\
 
 (* ****** ****** *)
 
+#packfilename("DATS/gvector.dats")
+#packfilename("DATS/gmatrix.dats")
+#packfilename("DATS/gmatrix_col.dats")
+#packfilename("DATS/gmatrix_row.dats")
+
+(* ****** ****** *)
+
 #packfilename("DATS/refcount.dats")
 
 (* ****** ****** *)
@@ -363,7 +377,7 @@ The ATSLIB/libats library\
 (* ****** ****** *)
 
 %{
-implement main () = ()
+implement main (argc, argv) = ()
 %}
 
 (* ****** ****** *)

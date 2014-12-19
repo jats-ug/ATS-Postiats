@@ -320,7 +320,6 @@ The ATS/Postiats (ATS2) Compiler\
 
 #packfilename("pats_staexp2_print.dats")
 #packfilename("pats_staexp2_pprint.dats")
-#packfilename("pats_staexp2_jsonize.dats")
 
 (* ****** ****** *)
 
@@ -360,7 +359,6 @@ The ATS/Postiats (ATS2) Compiler\
 (* ****** ****** *)
 
 #packfilename("pats_dynexp2_print.dats")
-#packfilename("pats_dynexp2_jsonize.dats")
 
 (* ****** ****** *)
 
@@ -368,6 +366,20 @@ The ATS/Postiats (ATS2) Compiler\
 #packfilename("pats_dynexp2_dvar.dats")
 #packfilename("pats_dynexp2_dmac.dats")
 #packfilename("pats_dynexp2_util.dats")
+
+(* ****** ****** *)
+
+#packfilename("pats_staexp2_appenv.hats")
+#packfilename("pats_dynexp2_appenv.hats")
+
+(* ****** ****** *)
+
+#packfilename("pats_dynexp2_mapgen.dats")
+
+(* ****** ****** *)
+
+#packfilename("pats_synent2_jsonize.sats")
+#packfilename("pats_synent2_jsonize.dats")
 
 (* ****** ****** *)
 
@@ -456,9 +468,14 @@ The ATS/Postiats (ATS2) Compiler\
 
 #packfilename("pats_constraint3.sats")
 #packfilename("pats_constraint3.dats")
-#packfilename("pats_constraint3_init.dats")
+
 #packfilename("pats_constraint3_print.dats")
+
+#packfilename("pats_constraint3_appenv.hats")
+#packfilename("pats_constraint3_mapgen.dats")
 #packfilename("pats_constraint3_jsonize.dats")
+
+#packfilename("pats_constraint3_init.dats")
 #packfilename("pats_constraint3_simplify.dats")
 #packfilename("pats_constraint3_icnstr.dats")
 #packfilename("pats_constraint3_solve.dats")
@@ -524,11 +541,9 @@ The ATS/Postiats (ATS2) Compiler\
 (* ****** ****** *)
 
 %{
-
-implement main () = ()
-
+implement main (argc, argv) = ()
 %}
 
 (* ****** ****** *)
 
-(* end of [patsopt.atxt] *)
+(* end of [patsopt_src.atxt] *)

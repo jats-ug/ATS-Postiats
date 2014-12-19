@@ -64,6 +64,16 @@ include './thePageRBodyRight/Home.php';\n\
 
 (* ****** ****** *)
 
+val () =
+thePageRFooterRest.content
+("\
+<?php\n\
+include './thePageRFooterRest/Home.php';\n\
+?>\n\
+") (* end of [val] *)
+
+(* ****** ****** *)
+
 implement
 main0 () =
 {

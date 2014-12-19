@@ -20,11 +20,13 @@ staload _ = "{$LIBATSHWXI}/weboxy/DATS/weboxy.dats"
 
 (*
 local
-
+//
+val () = randcolor_initize ()
+//
 val webox_make_ = webox_make<>
-
+//
 in (* in-of-local *)
-
+//
 implement
 {}(*tmp*)
 webox_make
@@ -33,21 +35,20 @@ webox_make
   val wbx = webox_make_ ()
   val () = wbx.bgcolor(randcolor())
 } (* end of [webox_make] *)
-
+//
 end // end of [local]
 *)
 
 (* ****** ****** *)
 //
-val () =
-  randcolor_initize ()
-//
-(* ****** ****** *)
-//
 val thePage =
   webox_make_name ("thePage")
 //
+(*
 val () = thePage.bgcolor("#d6f0fd")
+val () = thePage.bgcolor("#fffff0")
+*)
+val () = thePage.bgcolor("#ffffff")
 //
 (* ****** ****** *)
 //
@@ -62,7 +63,7 @@ val () = thePageRight.pheight(100)
 val () =
   thePage.tabstyle(TShbox)
 val () =
-  thePage.percentlst ($list(15, ~1))
+  thePage.percentlst ($list(15, 85))
 val () =
   thePage.children (thePageLeft, thePageRight)
 //
@@ -102,10 +103,12 @@ val () =
 //
 (* ****** ****** *)
 //
-val thePageRBodyLHeader =
- webox_make_name ("thePageRBodyLHeader")
-val thePageRBodyLContent =
- webox_make_name ("thePageRBodyLContent")
+val
+thePageRBodyLHeader =
+  webox_make_name ("thePageRBodyLHeader")
+val
+thePageRBodyLContent =
+  webox_make_name ("thePageRBodyLContent")
 (*
 val () =
   thePageRBodyLeft.tabstyle (TSvbox)
@@ -115,19 +118,18 @@ val () =
 //
 (* ****** ****** *)
 //
-val thePageRFooter =
+val
+thePageRFooter =
   webox_make_name ("thePageRFooter")
 //
-val thePageRFooterSep =
+val
+thePageRFooterSep =
   webox_make_name ("thePageRFooterSep")
 val () = thePageRFooterSep.bgcolor("#8f0222")
 //
-val thePageRFooterRest =
+val
+thePageRFooterRest =
   webox_make_name ("thePageRFooterRest")
-//
-val () =
-thePageRFooterRest.content
-  ("This page is created with help from ATS/weboxy")
 //
 val () =
   thePageRFooter.children (thePageRFooterSep, thePageRFooterRest)
@@ -167,7 +169,7 @@ fprint (out, "\
   margin:auto;\n\
   padding:10px;\n\
   color: #000000;\n\
-  background-color: #FFFFFF;\n\
+  background-color: #D0D0D0;\n\
   border-radius:6px\n\
 }\n\
 ") (* end of [fprint] *)
@@ -259,6 +261,24 @@ implement
 fprint_webox_head_end<>
   (out) = let
 //
+(*
+val () =
+fprint (out, "\
+<link\n\
+ rel=\"shortcut icon\"\n\
+ href=\"./MYDATA/favicon.ico\">\n\
+</link>\n"
+) (* end of [val] *)
+*)
+//
+val () =
+fprint (out, "\
+<link\n\
+ rel=\"icon\" type=\"image/gif\"\n\
+ href=\"./MYDATA/favicon_animated.gif\">\n\
+</link>\n"
+) (* end of [val] *)
+//
 val () =
 fprint (out, "\
 <script\n\
@@ -278,19 +298,19 @@ fprint (out, "\
 val () =
 fprint (out, "\
 <script\n\
- src=\"./CLIENT/mycode/libatscc2js_all.js\">\n\
+ src=\"./CLIENT/MYCODE/libatscc2js_all.js\">\n\
 </script>\n"
 ) (* end of [val] *)
 val () =
 fprint (out, "\
 <script\n\
- src=\"./CLIENT/mycode/libatscc2js_print_store.js\">\n\
+ src=\"./CLIENT/MYCODE/libatscc2js_print_store.js\">\n\
 </script>\n"
 ) (* end of [val] *)
 val () =
 fprint (out, "\
 <script\n\
- src=\"./CLIENT/mycode/atslangweb_utils_dats.js\">\n\
+ src=\"./CLIENT/MYCODE/atslangweb_utils_dats.js\">\n\
 </script>\n"
 ) (* end of [val] *)
 //

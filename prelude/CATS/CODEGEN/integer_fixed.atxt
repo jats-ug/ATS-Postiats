@@ -28,8 +28,8 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#ifndef ATSLIB_PRELUDE_INTEGER_FIXED_CATS
-\#define ATSLIB_PRELUDE_INTEGER_FIXED_CATS
+\#ifndef ATSLIB_PRELUDE_CATS_INTEGER_FIXED
+\#define ATSLIB_PRELUDE_CATS_INTEGER_FIXED
 
 #atscode_separator_for_C()
 
@@ -654,13 +654,13 @@ atspre_fprint_uint64
 
 #atscode_separator_for_C()
 
-\#endif // ifndef ATSLIB_PRELUDE_INTEGER_FIXED_CATS
+\#endif // ifndef ATSLIB_PRELUDE_CATS_INTEGER_FIXED
 
 #atscode_separator_for_C()
 
 #atscode_eof_strsub_for_C("\#thisfilename$")\
 
 %{
-implement main () = fprint_filsub (stdout_ref, "integer_fixed_atxt.txt")
+implement
+main (argc, argv) = fprint_filsub (stdout_ref, "integer_fixed_atxt.txt")
 %}\
-

@@ -32,7 +32,7 @@ Bohem-GC) can be readily employed.
 ## Installing ATS2
 
 Please see
-[http://www.ats-lang.org/DOWNLOAD/](http://www.ats-lang.org/DOWNLOAD/) for
+[http://www.ats-lang.org/Downloads.html](http://www.ats-lang.org/Downloads.html) for
 instructions.
 
 Note that the code in this github directory is primarily meant for people
@@ -49,7 +49,7 @@ at [http://sourceforge.net/projects/ats-lang/](http://sourceforge.net/projects/a
 
 ATS-users are encouraged to share what they have learned on the
 [ATS2 wiki](https://github.com/githwxi/ATS-Postiats/wiki), which currently
-contains over 35 articles with content.  A list of article stubs is
+contains over 45 articles with content.  A list of article stubs is
 maintained at [TODO](https://github.com/githwxi/ATS-Postiats/wiki/TODO).
 
 

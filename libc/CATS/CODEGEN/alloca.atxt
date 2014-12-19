@@ -28,8 +28,8 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#ifndef ATSLIB_LIBC_ALLOCA_CATS
-\#define ATSLIB_LIBC_ALLOCA_CATS
+\#ifndef ATSLIB_LIBC_CATS_ALLOCA
+\#define ATSLIB_LIBC_CATS_ALLOCA
 
 #atscode_separator_for_C()
 
@@ -47,12 +47,13 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 //
 #atscode_separator_for_C()
 
-\#endif // ifndef ATSLIB_LIBC_ALLOCA_CATS
+\#endif // ifndef ATSLIB_LIBC_CATS_ALLOCA
 
 #atscode_separator_for_C()
 
 #atscode_eof_strsub_for_C("\#thisfilename$")\
 
 %{
-implement main () = fprint_filsub (stdout_ref, "alloca_atxt.txt")
+implement
+main (argc, argv) = fprint_filsub (stdout_ref, "alloca_atxt.txt")
 %}\

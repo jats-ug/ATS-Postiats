@@ -21,7 +21,8 @@
 
 <h1>
 #langeng("
-Effective ATS: Loops as Tail-Recursive Functions
+Effective ATS:<br>
+Loops as Tail-Recursive Functions
 ")
 #langja("
 Effective ATS: 末尾再帰関数としてのループ

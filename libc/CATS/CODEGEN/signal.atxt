@@ -28,8 +28,8 @@ val () = theAtextMap_insert_str ("thisfilename", _thisfilename)
 
 #atscode_separator_for_C()
 
-\#ifndef ATSLIB_LIBC_SIGNAL_CATS
-\#define ATSLIB_LIBC_SIGNAL_CATS
+\#ifndef ATSLIB_LIBC_CATS_SIGNAL
+\#define ATSLIB_LIBC_CATS_SIGNAL
 
 #atscode_separator_for_C()
 
@@ -102,12 +102,13 @@ char* strsignal (int signum) ; // declared in <string.h>
 
 #atscode_separator_for_C()
 
-\#endif // ifndef ATSLIB_LIBC_SIGNAL_CATS
+\#endif // ifndef ATSLIB_LIBC_CATS_SIGNAL
 
 #atscode_separator_for_C()
 
 #atscode_eof_strsub_for_C("\#thisfilename$")\
 
 %{
-implement main () = fprint_filsub (stdout_ref, "signal_atxt.txt")
+implement
+main (argc, argv) = fprint_filsub (stdout_ref, "signal_atxt.txt")
 %}\

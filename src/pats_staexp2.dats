@@ -395,25 +395,28 @@ in hnf '{
 implement
 s2exp_top
   (knd, s2e) = let
-  val s2t = s2e.s2exp_srt
-  val s2t_new = (
-    if s2rt_is_prf s2t then s2rt_prop else
-      (if s2rt_is_boxed s2t then s2rt_type else s2rt_t0ype)
-    // end of [if]
-  ) : s2rt // end of [val]
+//
+val s2t = s2e.s2exp_srt
+//
+val s2t_new = (
+  if s2rt_is_prf s2t then s2rt_prop else
+    (if s2rt_is_boxed s2t then s2rt_type else s2rt_t0ype)
+  // end of [if]
+) : s2rt // end of [val]
 in
   s2exp_top_srt (s2t_new, knd, s2e)
 end // end of [s2exp_top]
 
 implement
-s2exp_top_srt (s2t, knd, s2e) = '{
+s2exp_top_srt
+  (s2t, knd, s2e) = '{
   s2exp_srt= s2t, s2exp_node= S2Etop (knd, s2e)
-} // end of [s2exp_top_srt]
+} (* end of [s2exp_top_srt] *)
 
 implement
 s2exp_without (s2e) = '{
   s2exp_srt= s2rt_t0ype, s2exp_node= S2Ewithout (s2e)
-}
+} (* end of [s2exp_without] *)
 
 (* ****** ****** *)
 
@@ -673,6 +676,19 @@ implement
 s2aspdec_make (loc, s2c, def) = '{
   s2aspdec_loc= loc, s2aspdec_cst= s2c, s2aspdec_def= def
 } // end of [s2aspdec_make]
+
+(* ****** ****** *)
+
+implement
+synentlst_app
+  (xs, env, app) =
+(
+case+ xs of
+| list_nil () => ()
+| list_cons (x, xs) =>
+    (app (x, env); synentlst_app (xs, env, app))
+  // end of [list_cons]
+) (* end of [synentlst_app] *)
 
 (* ****** ****** *)
 
