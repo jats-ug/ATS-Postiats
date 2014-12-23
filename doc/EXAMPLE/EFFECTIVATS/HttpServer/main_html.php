@@ -141,24 +141,34 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Basically, [myserver] implements a server; it does some form of
 initializating by calling [myserver_init] and then starts a loop for
 handling requests by calling [myserver_loop]. The function
 [myserver_waitfor_request] is supposed to be blocked until a request
 is available, and the function [myserver_process_request] processes a
 given request.
+-->
+基本的に [myserver] は1つのサーバを実装しています;
+つまり [myserver_init] 呼び出しでなんらかの初期化を行ない、その後 [myserver_loop] 呼び出しでリクエストを扱うループを開始します。関数 [myserver_waitfor_request] はリクエストが到着するまでブロックし、関数 [myserver_process_request] は与えられたリクエストを処理することになります。
 </p>
 
 <h2>
+<!--
 Turning abstract into concrete
+-->
+抽象を具体化する
 </h2>
 
 <p>
+<!--
 The three functions that need to be implemented
 (in order to get a running server)
 are [myserver_init], [myserver_waitfor_request], and
 [myserver_waitfor_process]. For someone familiar with
 BSD sockets, the following code should be readily accessible:
+-->
+実装すべき3つの関数は、サーバの実行順に、[myserver_init], [myserver_waitfor_request], [myserver_waitfor_process] ということになります。BSD ソケットに馴染みのあるプログラマにとって、次のコードは受け入れやすいものでしょう:
 </p>
 
 <?php
