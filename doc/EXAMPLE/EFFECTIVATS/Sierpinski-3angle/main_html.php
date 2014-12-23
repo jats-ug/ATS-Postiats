@@ -34,20 +34,34 @@ include
 
 <h1>
 Effective ATS:<br>
+<!--
 Drawing Sierpinski triangles
+-->
+シェルピンスキーの三角形を描く
 </h1>
 
 <p>
+<!--
 In this article, I would like to give an example that
 combines ATS code with JavaScript (JS) code. This is also
 an occasion for me to advocate refinement-based programming.
+-->
+この記事では、JavaScript (JS) コードと ATS コードを組み合わせた例を紹介します。この実装は私にとって、改良を基本としたプログラミングを主張するための良い機会にもなりました。
 </p>
 
 <h2>
+<!--
 Setup for animation
+-->
+アニメーションを作る
 </h2>
 
+<!--
 The following code implements a typical setup for doing animation:
+-->
+<p>
+次のコードは、典型的なアニメーションの実装です。
+</p>
 
 <?php
 $mycode = <<<EOT
@@ -80,18 +94,25 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 The code is self-explanatory: [drawAnim] is the main function to be
 called for doing animation; it calls [drawAnim_init] to do some form of
 initialization and then [drawAnim_loop] to start a loop that repeatedly
 draws a frame (by calling [drawFrame]) and sleeps (by calling [sleep]).
+-->
+このコードの内容は次のようなものです:
+[drawAnim] はアニメーションの実行を実行するのに呼び出されるメイン関数です。この関数はなんらかの初期化を行なう [drawAnim_init] を呼び出し、その後 [drawAnim_loop] を呼び出します。この [drawAnim_loop] は、[drawFrame] を呼び出してフレーム描画し、[sleep] を呼び出してスリープした後、ループします。
 </p>
 
 <p>
+<!--
 However, the call to [sleep] inside the body of [drawAnim_loop] is
 problematic. As we want to run the animation inside a browser, calling
 [sleep], if supported, means to stop the browzer entirely, which is
 probably unacceptable. Instead, [drawAnim_loop] can be implemented as
 follows:
+-->
+けれども、[drawAnim_loop] 中での [sleep] 呼び出しには問題があります。Web ブラウザの中でアニメーションを動作させたいとすると、もしサポートされていれば [sleep] 呼び出しは Web ブラウザ全体を停止させてしまうことを意味します。このような実装は許容できないでしょう。その代わりに、[drawAnim_loop] を次のように実装できます:
 </p>
 
 <?php
@@ -109,15 +130,21 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Essentially, the call to the external function [setTimeout] in
 JS requests that the browser schedule a call to [drawAnim_loop]
 1000 milliseconds (that is, 1 second) after the time when the call is made.
+-->
+本質的に、JS における外部関数 [setTimeout] 呼び出しは、1000 ミリ秒 (つまり 1 秒) 後にその呼び出しをスケジュールするように Web ブラウザに要求します。
 </p>
 
 <p>
+<!--
 I present as follows a simple implementation of [drawFrame] in JS
 directly so as to allow the reader to obtain a concrete feel for the
 above animation setup:
+-->
+上記のアニメーションを具体例を読者に理解してもらうために、次のような JS を使った [drawFrame] の単純な実装を示します:
 </p>
 
 <?php
