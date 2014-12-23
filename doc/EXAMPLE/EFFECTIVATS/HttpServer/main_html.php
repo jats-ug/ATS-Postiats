@@ -34,20 +34,29 @@ include
 
 <h1>
 Effective ATS:<br>
+<!--
 Implementing a minimal http-server
+-->
+最小の HTTP サーバを実装する
 </h1>
 
 <p>
+<!--
 In this article, I would like to present an implementation
 of a minimal http-server. This is also a good occasion for me
 to advocate refinement-based programming.
-</p>
+-->
+この記事では、最小の HTTP サーバの実装を紹介しようと思います。この実装は私にとって、改良を基本としたプログラミングを主張するための良い機会にもなりました。</p>
 
 <h2>
+<!--
 A simplistic abstract server
+-->
+単純化した抽象サーバ
 </h2>
 
 <p>
+<!--
 As I have said repeatedly, I, like many others, feel that the most
 challenging issue in programming (and many other forms of engineering) is
 to keep the inherent complexity of the implemented system under
@@ -55,11 +64,15 @@ control. What may sound ironic is that keeping-it-simple is probably the
 hardest thing to do. I hope that programmers can rely on the support for
 abstract types in ATS to make this hardest thing significantly easier to
 manage.
+-->
+繰り返しになりますが、多くの人々と同様、私とってプログラミングにおける最も挑戦的な課題は、実装されたシステム固有の複雑性を上手く制御することです。これは他の工学でも同様でしょう。皮肉にも、設計をシンプルに保つことは、時にとてつもなく困難です。この困難を軽減させるために、プログラマは ATS の抽象型を使うことができると思います。
 </p>
 
 <p>
-Let us first take a look at the following self-explanatory implementation
-of a simplistic abstract server:
+<!--
+Let us first take a look at the following self-explanatory implementation of a simplistic abstract server:
+-->
+はじめに、次のような単純化した抽象サーバの実装を見てみましょう:
 </p>
 
 <?php
