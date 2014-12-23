@@ -223,6 +223,7 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Essentially, [myserver_init] creates a server-side socket
 that is allowed to accept connection from any party, and then
 listens on the socket. Note that the file descriptor of the
@@ -233,11 +234,16 @@ it returns normally.
 Similarly, the function [atslib_listen_exn] calls [listen]; it
 exits if the call to [listen] results in an error; otherwise,
 it returns normally.
+-->
+本質的に [myserver_init] は、どこからでも接続を受け付けるサーバ側ソケットを生成し、そのソケットをリッスンします。生成したソケットのファイルディスクリプタはグローバル変数 [theSockID] に保管されていることに、注意してください。関数 [atslib_bind_exn] は [bind] を呼び出し、[bind] 呼び出しがエラーを返したらプログラムは終了し、そうでない場合にはこの関数は返ります。同様に、関数 [atslib_listen_exn] は [listen] を呼び出し、[listen] 呼び出しがエラーを返したらプログラムは終了し、そうでない場合にはこの関数は返ります。
 </p>
 
 <p>
+<!--
 The function [myserver_waitfor_request] can be implemented
 as follows:
+-->
+関数 [myserver_waitfor_request] は次のように実装できます:
 </p>
 
 <?php
@@ -259,13 +265,20 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 A call to [accept] is blocked until a connection between the server and a
 client is established. What is returned by [accept] is the file descriptor of
 a socket that can be used to communicate with the client.
+-->
+[accept] 呼び出しは、サーバとクライアントの接続が確立されるまでブロックします。
+[accept] は、クライアントと通信するためのソケットのファイルディスクリプタを返します。
 </p>
 
 <p>
+<!--
 The function [myserver_process_request] is implemented as follows:
+-->
+関数 [myserver_process_request] は次のように実装できます:
 </p>
 
 <?php
