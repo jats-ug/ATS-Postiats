@@ -371,37 +371,55 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 The implementation of [myserver_process_request] reads into a
 buffer whatever is sent by the client; it generates an HTML page
 containing the content of the buffer plus a time stamp and then
 sends the page to the client.
+-->
+[myserver_process_request] の実装は、クライアントから送信されたデータをバッファに読み込みます。そして、そのバッファの内容とタイムスタンプを含む HTML ページを生成し、そのページをクライアントに送信します。
 </p>
 
 <h2>
+<!--
 Testing
+-->
+テスト
 </h2>
 
 <p>
+<!--
 The entirety of the code for this implementation is contained in
 <u>myserver.dats</u>. There is also a Makefile available for building
 the server. Please click the link
 <a href="http://127.0.0.1:8888">http://127.0.0.1:8888</a>
 to test after the server is started running locally.
+-->
+この実装のコード全体は <u>myserver.dats</u> から入手できます。サーバをコンパイルするための Makefile もあります。ローカルにサーバを起動した後、リンク <a href="http://127.0.0.1:8888">http://127.0.0.1:8888</a> をクリックすればテストできます。
 </p>
 
 <h2>
+<!--
 A side note
+-->
+メモ
 </h2>
 
 <p>
+<!--
 For someone interested in <a href="http://www.zeromq.org">ZMQ</a>,
 please find in the file <u>myserver2.dats</u> a ZMQ-based implementation
 of a http-server that is essentially equivalent to the one given above.
+-->
+<a href="http://www.zeromq.org">ZMQ</a> に興味がある読者には、ZMQ を使った上記と本質的に等価な HTTP サーバの実装 <u>myserver2.dats</u> もあります。
 </p>
 
 <hr size="2">
 
+<!--
 This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+-->
+この記事は <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a> によって書かれ、<a href="http://jats-ug.metasepi.org/">Japan ATS User Group</a> によって翻訳されています。
 
 </body>
 </html>
