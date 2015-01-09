@@ -130,12 +130,19 @@ abstype s2Var_type
 typedef s2Var = s2Var_type
 typedef s2Varlst = List (s2Var)
 typedef s2Varopt = Option (s2Var)
+//
+vtypedef s2Varlst_vt = List_vt (s2Var)
+//
 abstype s2Varset_type
 typedef s2Varset = s2Varset_type
+//
+absvtype s2Varset_vtype
+vtypedef s2Varset_vt = s2Varset_vtype
+//
 abstype s2VarBound_type
 typedef s2VarBound = s2VarBound_type
 typedef s2VarBoundlst = List (s2VarBound)
-
+//
 (* ****** ****** *)
 
 abstype s2hole_type
@@ -687,10 +694,12 @@ overload fprint with fprint_s2cstlst
 //
 fun s2cstset_nil (): s2cstset
 fun s2cstset_add (xs: s2cstset, x: s2cst): s2cstset
+fun s2cstset_ismem (xs: s2cstset, x: s2cst):<> bool
 fun s2cstset_listize (xs: s2cstset): s2cstlst_vt
 //
 fun s2cstset_vt_nil (): s2cstset_vt
 fun s2cstset_vt_add (xs: s2cstset_vt, x: s2cst): s2cstset_vt
+fun s2cstset_vt_ismem (xs: !s2cstset_vt, x: s2cst):<> bool
 fun s2cstset_vt_listize_free (xs: s2cstset_vt): s2cstlst_vt
 //
 (* ****** ****** *)
@@ -885,18 +894,27 @@ overload prerr with prerr_s2Varlst
 fun fprint_s2Varlst : fprint_type (s2Varlst)
 
 (* ****** ****** *)
-
-fun s2Varset_make_nil (): s2Varset
+//
+fun s2Varset_nil (): s2Varset
 fun s2Varset_add (xs: s2Varset, x: s2Var): s2Varset
-fun s2Varset_is_member (xs: s2Varset, x: s2Var): bool
+fun s2Varset_ismem (xs: s2Varset, x: s2Var): bool
 fun s2Varset_listize (xs: s2Varset): List_vt (s2Var)
-
+//
+fun s2Varset_vt_nil (): s2Varset_vt
+fun s2Varset_vt_add (xs: s2Varset_vt, x: s2Var): s2Varset_vt
+fun s2Varset_vt_ismem (xs: !s2Varset_vt, x: s2Var):<> bool
+fun s2Varset_vt_free (xs: s2Varset_vt): void
+fun s2Varset_vt_listize_free (xs: s2Varset_vt): List_vt (s2Var)
+//
+(* ****** ****** *)
+//
 fun print_s2Varset (xs: s2Varset): void
-overload print with print_s2Varset
 fun prerr_s2Varset (xs: s2Varset): void
-overload prerr with prerr_s2Varset
 fun fprint_s2Varset : fprint_type (s2Varset)
-
+//
+overload print with print_s2Varset
+overload prerr with prerr_s2Varset
+//
 (* ****** ****** *)
 
 fun s2hole_make_srt (s2t: s2rt): s2hole
@@ -1063,7 +1081,8 @@ fun s2exp_lam_srt (s2t: s2rt, s2vs: s2varlst, s2e: s2exp): s2exp
 fun s2exp_lamlst (s2vss: s2varlstlst, s2e: s2exp): s2exp
 
 fun
-s2exp_fun_srt (
+s2exp_fun_srt
+(
   s2t: s2rt
 , fc: funclo
 , lin: int
@@ -1169,37 +1188,43 @@ fun s2exp_t0ype_err (): s2exp // HX: s2exp_err (s2rt_t0ype)
 fun s2exp_refeq (s2e1: s2exp, s2e2: s2exp):<> bool
 
 (* ****** ****** *)
-
+//
 fun print_s2exp (x: s2exp): void
-overload print with print_s2exp
 fun prerr_s2exp (x: s2exp): void
-overload prerr with prerr_s2exp
 fun fprint_s2exp : fprint_type (s2exp)
+//
+overload print with print_s2exp
+overload prerr with prerr_s2exp
 overload fprint with fprint_s2exp
-
+//
+(* ****** ****** *)
+//
 fun print_s2explst (xs: s2explst): void
-overload print with print_s2explst
 fun prerr_s2explst (xs: s2explst): void
-overload prerr with prerr_s2explst
 fun fprint_s2explst : fprint_type (s2explst)
+//
+overload print with print_s2explst
+overload prerr with prerr_s2explst
 overload fprint with fprint_s2explst
-
+//
 (* ****** ****** *)
-
+//
 fun print_s2expopt (opt: s2expopt): void
-overload print with print_s2expopt
 fun prerr_s2expopt (opt: s2expopt): void
-overload prerr with prerr_s2expopt
 fun fprint_s2expopt : fprint_type (s2expopt)
+//
+overload print with print_s2expopt
+overload prerr with prerr_s2expopt
 overload fprint with fprint_s2expopt
-
+//
 (* ****** ****** *)
-
+//
 fun fprint_labs2explst : fprint_type (labs2explst)
-overload fprint with fprint_labs2explst
 fun fprint_wths2explst : fprint_type (wths2explst)
+//
+overload fprint with fprint_labs2explst
 overload fprint with fprint_wths2explst
-
+//
 (* ****** ****** *)
 
 fun fprint_s2explstlst : fprint_type (s2explstlst)
@@ -1312,14 +1337,22 @@ s2kexplstlst = List (s2kexplst)
 and
 labs2kexplst = List (labs2kexp)
 
+(* ****** ****** *)
+
 fun print_s2kexp (x: s2kexp): void
-overload print with print_s2kexp
 fun prerr_s2kexp (x: s2kexp): void
-overload prerr with prerr_s2kexp
 fun fprint_s2kexp : fprint_type (s2kexp)
+
+overload print with print_s2kexp
+overload prerr with prerr_s2kexp
+overload fprint with fprint_s2kexp  
+
+(* ****** ****** *)
 
 fun fprint_s2kexplst : fprint_type (s2kexplst)
 fun fprint_labs2kexp : fprint_type (labs2kexp)
+
+(* ****** ****** *)
 
 fun s2kexp_make_s2exp (s2e: s2exp): s2kexp
 
@@ -1356,11 +1389,17 @@ s2zexplstlst = List (s2zexplst)
 and
 labs2zexplst = List (labs2zexp)
 
+(* ****** ****** *)
+//
 fun print_s2zexp (s2ze: s2zexp): void
-overload print with print_s2zexp
 fun prerr_s2zexp (s2ze: s2zexp): void
-overload prerr with prerr_s2zexp
 fun fprint_s2zexp : fprint_type (s2zexp)
+//
+overload print with print_s2zexp
+overload prerr with prerr_s2zexp
+overload fprint with fprint_s2zexp
+//
+(* ****** ****** *)
 
 fun s2Var_get_szexp (s2V: s2Var): s2zexp
 fun s2Var_set_szexp (s2V: s2Var, s2ze: s2zexp): void
@@ -1393,12 +1432,16 @@ s2exparg_node =
 typedef
 s2exparg = '{
   s2exparg_loc= location, s2exparg_node= s2exparg_node
-} // end of [s2exparg]
+} (* end of [s2exparg] *)
 
 typedef s2exparglst = List (s2exparg)
 
+(* ****** ****** *)
+
 fun fprint_s2exparg : fprint_type (s2exparg)
 fun fprint_s2exparglst : fprint_type (s2exparglst)
+
+(* ****** ****** *)
 
 fun s2exparg_one (loc: location): s2exparg
 fun s2exparg_all (loc: location): s2exparg
@@ -1409,12 +1452,14 @@ fun s2exparg_seq (loc: location, s2fs: s2explst): s2exparg
 typedef
 t2mpmarg = '{
   t2mpmarg_loc= location, t2mpmarg_arg= s2explst
-} // end of [t2mpmarg]
+} (* end of [t2mpmarg] *)
 
 typedef t2mpmarglst = List (t2mpmarg)
 vtypedef t2mpmarglst_vt = List_vt (t2mpmarg)
 
 fun t2mpmarg_make (loc: location, arg: s2explst): t2mpmarg
+
+(* ****** ****** *)
 
 fun fpprint_t2mpmarg : fprint_type (t2mpmarg)
 fun fpprint_t2mpmarglst : fprint_type (t2mpmarglst)
@@ -1438,7 +1483,7 @@ s2aspdec = '{
   s2aspdec_loc= location
 , s2aspdec_cst= s2cst
 , s2aspdec_def= s2exp
-} // end of [s2aspdec]
+} (* end of [s2aspdec] *)
 
 fun s2aspdec_make (
   loc: location, s2c: s2cst, def: s2exp

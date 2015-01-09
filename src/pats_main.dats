@@ -6,7 +6,7 @@
 
 (*
 ** ATS/Postiats - Unleashing the Potential of Types!
-** Copyright (C) 2011-2014 Hongwei Xi, ATS Trustful Software, Inc.
+** Copyright (C) 2011-2015 Hongwei Xi, ATS Trustful Software, Inc.
 ** All rights reserved
 **
 ** ATS is free software;  you can  redistribute it and/or modify it under
@@ -171,10 +171,10 @@ dynload "pats_errmsg.dats"
 
 dynload "pats_reader.dats"
 dynload "pats_lexbuf.dats"
-dynload "pats_lexing_token.dats"
-dynload "pats_lexing_print.dats"
-dynload "pats_lexing_error.dats"
 dynload "pats_lexing.dats"
+dynload "pats_lexing_error.dats"
+dynload "pats_lexing_print.dats"
+dynload "pats_lexing_token.dats"
 
 dynload "pats_label.dats"
 dynload "pats_effect.dats"
@@ -187,8 +187,8 @@ dynload "pats_taggen.dats"
 
 dynload "pats_tokbuf.dats"
 dynload "pats_parsing.dats"
-dynload "pats_parsing_error.dats"
 dynload "pats_parsing_util.dats"
+dynload "pats_parsing_error.dats"
 dynload "pats_parsing_kwds.dats"
 dynload "pats_parsing_base.dats"
 dynload "pats_parsing_e0xp.dats"
@@ -214,8 +214,8 @@ dynload "pats_e1xpval_error.dats"
 //
 dynload "pats_filename_reloc.dats"
 //
-dynload "pats_trans1_error.dats"
 dynload "pats_trans1_e0xp.dats"
+dynload "pats_trans1_error.dats"
 dynload "pats_trans1_effect.dats"
 dynload "pats_trans1_sort.dats"
 dynload "pats_trans1_staexp.dats"
@@ -281,8 +281,8 @@ dynload "pats_trans2_decl.dats"
 dynload "pats_dynexp3.dats"
 dynload "pats_dynexp3_print.dats"
 //
-dynload "pats_trans3_error.dats"
 dynload "pats_trans3_util.dats"
+dynload "pats_trans3_error.dats"
 //
 dynload "pats_trans3_env.dats"
 dynload "pats_trans3_env_print.dats"
@@ -470,11 +470,12 @@ HX: VERSION-0.1.2 released on Friday, August 29, 2014
 HX: VERSION-0.1.3 released on Monday, September 29, 2014
 HX: VERSION-0.1.4 released on Thursday, October 23, 2014
 HX: VERSION-0.1.5 released on Thursday, November 20, 2014
+HX: VERSION-0.1.6 released on Tuesday, January 6, 2015
 //
 *)
 #define PATS_MAJOR_VERSION 0
 #define PATS_MINOR_VERSION 1
-#define PATS_MICRO_VERSION 6
+#define PATS_MICRO_VERSION 7
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -494,7 +495,7 @@ implement
 patsopt_version (out) =
 {
   val () = fprintf (out
-, "ATS/Postiats version %i.%i.%i with Copyright (c) 2011-2014 Hongwei Xi\n"
+, "ATS/Postiats version %i.%i.%i with Copyright (c) 2011-2015 Hongwei Xi\n"
 , @(PATS_MAJOR_VERSION, PATS_MINOR_VERSION, PATS_MICRO_VERSION)
   ) // end of [fprintf]
 } (* end of [patsopt_version] *)
@@ -569,6 +570,8 @@ cmdstate = @{
 , typecheckflag= int // 0 by default
 //
 , cnstrsolveflag= int // 0 by default
+//
+, olevel= int // level for output
 //
 , nerror= int // number of accumulated errors
 } // end of [cmdstate]
@@ -1016,6 +1019,10 @@ extern
 fun
 do_transfinal
   (state: &cmdstate, given: string, d0cs: d0eclist): void
+extern
+fun
+do_transfinal2
+  (state: &cmdstate, given: string, d0cs: d0eclist): void
 //
 (* ****** ****** *)
 
@@ -1026,6 +1033,7 @@ do_trans1
 val d1cs =
   $TRANS1.d0eclist_tr_errck (d0cs)
 // end of [val]
+//
 val () = $TRANS1.trans1_finalize ()
 //
 val () =
@@ -1048,9 +1056,11 @@ do_trans12
   state, given, d0cs
 ) = d2cs where {
 //
-val d1cs = do_trans1 (state, given, d0cs)
+val d1cs =
+  do_trans1 (state, given, d0cs)
 //
-val d2cs = $TRANS2.d1eclist_tr_errck (d1cs)
+val d2cs =
+  $TRANS2.d1eclist_tr_errck (d1cs)
 //
 val () =
 if isdebug() then
@@ -1070,10 +1080,13 @@ do_trans123
   state, given, d0cs
 ) = d3cs where {
 //
-val d2cs = do_trans12 (state, given, d0cs)
+val d2cs =
+  do_trans12 (state, given, d0cs)
 //
-val () = $TRENV3.trans3_env_initialize ()
-val d3cs = $TRANS3.d2eclist_tr_errck (d2cs)
+val () =
+  $TRENV3.trans3_env_initialize ()
+val d3cs =
+  $TRANS3.d2eclist_tr_errck (d2cs)
 //
 (*
 val () = {
@@ -1122,6 +1135,7 @@ do_trans1234
 val d3cs =
   do_trans123 (state, given, d0cs)
 // end of [d3cs]
+//
 val hids = $TYER.d3eclist_tyer_errck (d3cs)
 //
 (*
@@ -1147,34 +1161,149 @@ do_transfinal
 case+ 0 of
 | _ when
     state.pkgreloc > 0 => let
-    val d1cs =
-      do_trans1 (state, given, d0cs)
-    // end of [val]
+    val d1cs = do_trans1 (state, given, d0cs)
   in
     do_pkgreloc (state, given, d1cs)
   end // end of [when ...]
 | _ when
     state.jsonizeflag = 2 => let
-    val d2cs =
-      do_trans12 (state, given, d0cs)
-    // end of [val]
+    val d2cs = do_trans12 (state, given, d0cs)
   in
     do_jsonize_2 (state, given, d2cs)
   end // end of [when ...]
 | _ when
-    state.typecheckflag > 0 => let
-    val d3cs = do_trans123 (state, given, d0cs) in (*none*)
-  end // end of [when ...]
+    state.typecheckflag > 0 =>
+  {
+    val d3cs = do_trans123 (state, given, d0cs)
+  } (* end of [when ...] *)
 | _ => let
+    val () = state.olevel := 1 // there is output
     val hids = do_trans1234 (state, given, d0cs)
-    val out = outchan_get_filr (state.outchan)
+    val outfil = outchan_get_filr (state.outchan)
     val flag = waitkind_get_stadyn (state.waitkind)
-    val () = $CCOMP.ccomp_main (out, flag, state.infil, hids)
+    val ((*void*)) = $CCOMP.ccomp_main (outfil, flag, state.infil, hids)
   in
     // nothing
   end // end of [_]
 //
 ) (* end of [do_transfinal] *)
+
+(* ****** ****** *)
+
+local
+
+fun
+auxexn
+(
+  p0: ptr
+, given: string, d0cs: d0eclist, exn: exn
+) : void = let
+//
+fun
+auxerr
+(
+  n: int, outfil: FILEref, given: string, msg: string
+) : void = let
+val
+cmtl =
+"/* ****** ****** */\n"
+//
+in
+//
+if
+(n > 0)
+then
+fprintf
+(
+  outfil
+, "%s//\n#error(PATSOPT_ERROR_(patsopt(%s): %s))\n//\n%s", @(cmtl, given, msg, cmtl)
+) // end of [fprintf]
+//
+end (* end of [auxerr] *)
+//
+val
+(pf, fpf | p) =
+$UN.ptr0_vtake{cmdstate}(p0)
+//
+val olevel = p->olevel
+val outfil = outchan_get_filr (p->outchan)
+//
+val nerror = p->nerror
+val ((*void*)) = p->nerror := nerror + 1
+//
+prval ((*addback*)) = fpf (pf)
+//
+in
+//
+case+ exn of
+//
+| ~($ERR.PATSOPT_FIXITY_EXN()) =>
+  (
+    auxerr (olevel, outfil, given, "fixity-errors")
+  )
+//
+| ~($ERR.PATSOPT_TRANS1_EXN()) =>
+  (
+    auxerr (olevel, outfil, given, "trans1-errors")
+  )
+//
+| ~($ERR.PATSOPT_TRANS2_EXN()) =>
+  (
+    auxerr (olevel, outfil, given, "trans2-errors")
+  )
+//
+| ~($ERR.PATSOPT_TRANS3_EXN()) =>
+  (
+    auxerr (olevel, outfil, given, "trans3-errors")
+  )
+//
+| ~($ERR.PATSOPT_TRANS4_EXN()) =>
+  (
+    auxerr (olevel, outfil, given, "trans4-errors")
+  )
+//
+(*
+| $ERR.PATSOPT_FILENONE_EXN(fname) =>
+  (
+    fold@(exn);  
+    fprintf (outfil, "/* ****** ****** */\n//\n", @());
+    fprintf (outfil, "#error(patsopt(%s): [%s] cannot be accessed)\n", @(given, fname));
+    fprintf (outfil, "//\n/* ****** ****** */\n", @());
+    $raise(exn);
+  )
+*)
+//
+| exn => $raise(exn)
+//
+end // end of [auxexn]
+
+in (* in-of-local*)
+
+implement
+do_transfinal2
+  (state, given, d0cs) = let
+//
+val p0 = &state
+//
+in
+//
+try let
+//
+val
+(pf, fpf | p) =
+$UN.ptr0_vtake{cmdstate}(p0)
+//
+val () = do_transfinal(!p, given, d0cs)
+//
+prval ((*addback*)) = fpf (pf)
+//
+in
+  // nothing
+end with exn => auxexn (p0, given, d0cs, exn)
+//
+end // end of [do_transfinal2]
+
+end // end of [local]
 
 (* ****** ****** *)
 
@@ -1187,9 +1316,11 @@ process_cmdline
 in
 //
 case+ arglst of
+//
 | ~list_vt_cons
     (arg, arglst) =>
     process_cmdline2 (state, arg, arglst)
+//
 | ~list_vt_nil ()
     when state.ninpfile = 0 => let
     val stadyn =
@@ -1220,15 +1351,20 @@ case+ arglst of
 //
         val given = "<STDIN>"
 //
-        val () = if isdepgen then do_depgen (state, given, d0cs)
-        val () = if istaggen then do_taggen (state, given, d0cs)
+        val () =
+          if isdepgen then do_depgen (state, given, d0cs)
+        val () =
+          if istaggen then do_taggen (state, given, d0cs)
 //
-        val () = if istrans then do_transfinal (state, given, d0cs)
+        val () =
+          if istrans then do_transfinal2 (state, given, d0cs)
+        // end of [val]
 //
       } // end of [_ when ...]
     | _ => ()
   end // end of [list_vt_nil when ...]
-| ~list_vt_nil () => ()
+//
+| ~list_vt_nil ((*void*)) => ()
 //
 end // end of [process_cmdline]
 
@@ -1280,10 +1416,14 @@ case+ arg of
         val istaggen = state.taggen > 0
         val () = if istaggen then istrans := false
 //
-        val () = if isdepgen then do_depgen (state, given, d0cs)
-        val () = if istaggen then do_taggen (state, given, d0cs)
+        val () =
+          if isdepgen then do_depgen (state, given, d0cs)
+        val () =
+          if istaggen then do_taggen (state, given, d0cs)
 //
-        val () = if istrans then do_transfinal (state, given, d0cs)
+        val () =
+          if istrans then do_transfinal2 (state, given, d0cs)
+        // end of [val]
 //
       in
         process_cmdline (state, arglst)
@@ -1407,7 +1547,7 @@ case+ key of
 //
 | "-v" => patsopt_version (stdout_ref)
 //
-| _ => comarg_warning (key) // unrecognized key
+| _ (*rest*) => comarg_warning (key) // unrecognized key
 //
 ) : void // end of [val]
 //
@@ -1502,9 +1642,12 @@ patsopt_main
   {n:int | n > 0}
   (argc: int(n), argc: &(@[string][n])): void
 //
+(* ****** ****** *)
+
 implement
 patsopt_main
-  (argc, argv) = {
+  (argc, argv) = () where
+{
 //
 val () =
 set () where
@@ -1586,14 +1729,21 @@ state = @{
 //
 , cnstrsolveflag= 0 // cnstr-solving by default
 //
+, olevel= 0 // level of output
+//
 , nerror= 0 // number of accumulated errors
 } : cmdstate // end of [var]
 //
 val () = process_ATSPKGRELOCROOT ()
 //
-val ((*void*)) = process_cmdline (state, arglst)
+val () = process_cmdline (state, arglst)
 //
-} (* end of [patsopt_main] *)
+// HX-2015-01-09:
+// A tool like patscc should receive an error:
+//
+val () = if state.nerror > 0 then $ERR.abort{void}()
+//
+} (* end of [where] *) // end of [patsopt_main]
 //
 (* ****** ****** *)
 //
@@ -1601,11 +1751,12 @@ implement
 main (argc, argv) =
 (
 //
-if argc >= 2
-  then patsopt_main (argc, argv)
-  else prerrln! ("Hello from ATS2(ATS/Postiats)!")
+if
+(argc >= 2)
+then patsopt_main (argc, argv)
+else prerrln! ("Hello from ATS2(ATS/Postiats)!")
 // end of [if]
-)
+) (* end of [main] *)
 //
 (* ****** ****** *)
 

@@ -44,6 +44,8 @@ end // end of [local]
 val thePage =
   webox_make_name ("thePage")
 //
+val () = thePage.pheight(100)
+//
 (*
 val () = thePage.bgcolor("#d6f0fd")
 val () = thePage.bgcolor("#fffff0")
@@ -63,7 +65,7 @@ val () = thePageRight.pheight(100)
 val () =
   thePage.tabstyle(TShbox)
 val () =
-  thePage.percentlst ($list(15, 85))
+  thePage.percentlst ($list(14, 86))
 val () =
   thePage.children (thePageLeft, thePageRight)
 //
@@ -146,6 +148,7 @@ val theBodyProp =
 //
 val () = theBodyProp.bgcolor("")
 //
+val () = theBodyProp.pheight(100)
 val () = theBodyProp.children(thePage)
 //
 (* ****** ****** *)
@@ -188,11 +191,16 @@ val () =
 fprint (out, "\
 \n\
 body {\n\
+  margin-top: 8px;\n\
+  margin-bottom: 8px;\n\
+  margin-left: 0px;\n\
+  margin-right: 0px;\n\
   font-family: Helvetica, Arial, sans-serif;\n\
   background-color: #213449; /* dark blue */\n\
 }\n\
 ") (* end of [fprint] *)
-// 
+//
+(*
 val () =
 fprint (out, "\
 \n\
@@ -202,6 +210,7 @@ fprint (out, "\
   margin-right: auto;\n\
 }\n\
 ") (* end of [fprint] *)
+*)
 //
 val () =
 fprint (out, "\

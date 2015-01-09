@@ -110,24 +110,24 @@ case+ knd of
 | C3NSTRKsome_fin
     (d2v, s2e1, s2e2) => let
     val d2v = jsonize_d2var (d2v)
-    val s2e1 = jsonize_s2exp (s2e1)
-    val s2e2 = jsonize_s2exp (s2e2)
+    val s2e1 = jsonize1_s2exp (s2e1)
+    val s2e2 = jsonize1_s2exp (s2e2)
   in
     jsonval_conarg3 ("C3NSTRKsome_fin", d2v, s2e1, s2e2)
   end // end of [C3NSTRKsome_fin]
 | C3NSTRKsome_lvar
     (d2v, s2e1, s2e2) => let
     val d2v = jsonize_d2var (d2v)
-    val s2e1 = jsonize_s2exp (s2e1)
-    val s2e2 = jsonize_s2exp (s2e2)
+    val s2e1 = jsonize1_s2exp (s2e1)
+    val s2e2 = jsonize1_s2exp (s2e2)
   in
     jsonval_conarg3 ("C3NSTRKsome_lvar", d2v, s2e1, s2e2)
   end // end of [C3NSTRKsome_lvar]
 | C3NSTRKsome_vbox
     (d2v, s2e1, s2e2) => let
     val d2v = jsonize_d2var (d2v)
-    val s2e1 = jsonize_s2exp (s2e1)
-    val s2e2 = jsonize_s2exp (s2e2)
+    val s2e1 = jsonize1_s2exp (s2e1)
+    val s2e2 = jsonize1_s2exp (s2e2)
   in
     jsonval_conarg3 ("C3NSTRKsome_vbox", d2v, s2e1, s2e2)
   end // end of [C3NSTRKsome_vbox]
@@ -306,8 +306,9 @@ c3nstr_export
   (out, c3t0) = let
 //
 val
-(s2cs, s2vs) =
-  c3nstr_mapgen_scst_svar (c3t0)
+(
+  s2cs, s2vs
+) = c3nstr_mapgen_scst_svar (c3t0)
 //
 val s2cs = s2cstset_vt_listize_free (s2cs)
 val s2vs = s2varset_vt_listize_free (s2vs)

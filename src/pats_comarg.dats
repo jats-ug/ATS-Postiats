@@ -200,7 +200,7 @@ in
 //
 case+ opt of
 | ~Some_vt (def) => let
-    val+$SYN.DATSDEF (key, opt) = def
+    val+$SYN.DATSDEF(key, opt) = def
     val e1xp = (
       case+ opt of
       | Some v => $TRANS1.e0xp_tr (v)
@@ -209,11 +209,15 @@ case+ opt of
   in
     $TRENV1.the_e1xpenv_addperv (key, e1xp)
   end // end of [Some_vt]
-| ~None_vt () => let
-    val () = prerr ("error(ATS)")
-    val () = prerrln! (": the command-line argument [", def, "] cannot be properly parsed.")
+| ~None_vt ((*void*)) => let
+    val () =
+    prerr ("patsopt: error(0)")
+    val () =
+    prerrln! (
+      ": the command-line argument [", def, "] cannot be properly parsed."
+    ) (* end of [prerrln!] *)
   in
-    $ERR.abort ()
+    $ERR.abort ((*reachable*))
   end // end of [None_vt]
 //
 end // end of [process_DATS_def]
@@ -251,20 +255,28 @@ val opt = get () where
 } // end of [where] // end of [val]
 val issome = stropt_is_some (opt)
 //
-val def =
-(
-if issome
-  then stropt_unsome (opt)
-  else let
-    val user = getenv ("USER")
-    val issome = stropt_is_some (user)
-    val user =
-    (
-      if issome then stropt_unsome (user) else "$USER"
-    ) : string // end of [val]
-  in
-    string_of_strptr(sprintf("/tmp/.ATSPKGRELOCROOT-%s", @(user)))
-  end // end of [else]
+val def = (
+//
+if
+issome
+then stropt_unsome (opt)
+else let
+  val user = getenv ("USER")
+  val issome = stropt_is_some (user)
+  val user =
+  (
+    if issome
+      then stropt_unsome(user) else "$USER"
+    // end of [if]
+  ) : string // end of [val]
+  val
+  ATSPKGRELOCROOT =
+    sprintf("/tmp/.ATSPKGRELOCROOT-%s", @(user))
+  // end of [val]
+in
+  string_of_strptr(ATSPKGRELOCROOT)
+end // end of [else]
+//
 ) : string // end of [val]
 //
 (*

@@ -49,6 +49,12 @@ LBF = "./pats_lexbuf.sats"
 stadef lexbuf = $LBF.lexbuf
 
 (* ****** ****** *)
+//
+typedef
+arrayref
+  (a:t@ype, n:int) = array(a, n)
+//
+(* ****** ****** *)
 
 datatype
 token_node =
@@ -129,7 +135,7 @@ token_node =
   | T_FUN of (funkind) // fn, fnx, fun, prfn and prfun
   | T_IF of () // (dynamic) if
   | T_IMPLEMENT of
-      (int) // 0/1: implement/primplement
+      (int) // 0/1/2: implmnt/implement/primplmnt
   | T_IMPORT of () // import (for packages)
   | T_IN of () // in
   | T_LAM of int // lam, llam (linear lam) and lam@ (flat lam)
@@ -207,6 +213,8 @@ token_node =
 //
   | T_DLRSHOWTYPE of () // $showtype // for debugging purpose
 //
+  | T_DLRCLOSURENV of () // $closurenv // for adding envar
+//
   | T_DLRVCOPYENV of (int) // $vcopyenv_v(v)/$vcopyenv_vt(vt)
 //
   | T_SRPASSERT of () // #assert
@@ -242,7 +250,7 @@ token_node =
   | T_FLOAT of (int(*base*), string(*rep*), uint(*suffix*))
 //
   | {n:int}
-    T_CDATA of (array (char, n), size_t (n))
+    T_CDATA of (arrayref(char, n), size_t(n)) // for binaries
   | T_STRING of (string)
 //
 (*
@@ -335,6 +343,7 @@ val FORSTAR : tnode
 val FREE : tnode
 val FREEAT : tnode
 
+val IMPLMNT : tnode // implmnt
 val IMPLEMENT : tnode // implement
 val PRIMPLMNT : tnode // primplmnt
 
@@ -385,10 +394,11 @@ val VIEWTYPEDEF : tnode
 val VAL : tnode
 val VAL_pos : tnode
 val VAL_neg : tnode
-val PRVAL  : tnode
+val MCVAL : tnode // for model-checking
+val PRVAL : tnode // for theorem-proving
 
 val VAR : tnode
-val PRVAR  : tnode
+val PRVAR : tnode
 
 val WHILE : tnode
 val WHILESTAR : tnode
