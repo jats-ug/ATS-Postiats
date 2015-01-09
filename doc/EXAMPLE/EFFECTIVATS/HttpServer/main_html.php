@@ -34,20 +34,29 @@ include
 
 <h1>
 Effective ATS:<br>
+<!--
 Implementing a minimal http-server
+-->
+最小の HTTP サーバを実装する
 </h1>
 
 <p>
+<!--
 In this article, I would like to present an implementation
 of a minimal http-server. This is also a good occasion for me
 to advocate refinement-based programming.
-</p>
+-->
+この記事では、最小の HTTP サーバの実装を紹介しようと思います。この実装は私にとって、改良を基本としたプログラミングを主張するための良い機会にもなりました。</p>
 
 <h2>
+<!--
 A simplistic abstract server
+-->
+単純化した抽象サーバ
 </h2>
 
 <p>
+<!--
 As I have said repeatedly, I, like many others, feel that the most
 challenging issue in programming (and many other forms of engineering) is
 to keep the inherent complexity of the implemented system under
@@ -55,11 +64,15 @@ control. What may sound ironic is that keeping-it-simple is probably the
 hardest thing to do. I hope that programmers can rely on the support for
 abstract types in ATS to make this hardest thing significantly easier to
 manage.
+-->
+繰り返しになりますが、多くの人々と同様、私とってプログラミングにおける最も挑戦的な課題は、実装されたシステム固有の複雑性を上手く制御することです。これは他の工学でも同様でしょう。皮肉にも、設計をシンプルに保つことは、時にとてつもなく困難です。この困難を軽減させるために、プログラマは ATS の抽象型を使うことができると思います。
 </p>
 
 <p>
-Let us first take a look at the following self-explanatory implementation
-of a simplistic abstract server:
+<!--
+Let us first take a look at the following self-explanatory implementation of a simplistic abstract server:
+-->
+はじめに、次のような単純化した抽象サーバの実装を見てみましょう:
 </p>
 
 <?php
@@ -128,24 +141,34 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Basically, [myserver] implements a server; it does some form of
 initializating by calling [myserver_init] and then starts a loop for
 handling requests by calling [myserver_loop]. The function
 [myserver_waitfor_request] is supposed to be blocked until a request
 is available, and the function [myserver_process_request] processes a
 given request.
+-->
+基本的に [myserver] は1つのサーバを実装しています;
+つまり [myserver_init] 呼び出しでなんらかの初期化を行ない、その後 [myserver_loop] 呼び出しでリクエストを扱うループを開始します。関数 [myserver_waitfor_request] はリクエストが到着するまでブロックし、関数 [myserver_process_request] は与えられたリクエストを処理することになります。
 </p>
 
 <h2>
+<!--
 Turning abstract into concrete
+-->
+抽象を具体化する
 </h2>
 
 <p>
+<!--
 The three functions that need to be implemented
 (in order to get a running server)
 are [myserver_init], [myserver_waitfor_request], and
 [myserver_waitfor_process]. For someone familiar with
 BSD sockets, the following code should be readily accessible:
+-->
+実装すべき3つの関数は、サーバの実行順に、[myserver_init], [myserver_waitfor_request], [myserver_waitfor_process] ということになります。BSD ソケットに馴染みのあるプログラマにとって、次のコードは受け入れやすいものでしょう:
 </p>
 
 <?php
@@ -200,6 +223,7 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Essentially, [myserver_init] creates a server-side socket
 that is allowed to accept connection from any party, and then
 listens on the socket. Note that the file descriptor of the
@@ -210,11 +234,16 @@ it returns normally.
 Similarly, the function [atslib_listen_exn] calls [listen]; it
 exits if the call to [listen] results in an error; otherwise,
 it returns normally.
+-->
+本質的に [myserver_init] は、どこからでも接続を受け付けるサーバ側ソケットを生成し、そのソケットをリッスンします。生成したソケットのファイルディスクリプタはグローバル変数 [theSockID] に保管されていることに、注意してください。関数 [atslib_bind_exn] は [bind] を呼び出し、[bind] 呼び出しがエラーを返したらプログラムは終了し、そうでない場合にはこの関数は返ります。同様に、関数 [atslib_listen_exn] は [listen] を呼び出し、[listen] 呼び出しがエラーを返したらプログラムは終了し、そうでない場合にはこの関数は返ります。
 </p>
 
 <p>
+<!--
 The function [myserver_waitfor_request] can be implemented
 as follows:
+-->
+関数 [myserver_waitfor_request] は次のように実装できます:
 </p>
 
 <?php
@@ -236,13 +265,20 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 A call to [accept] is blocked until a connection between the server and a
 client is established. What is returned by [accept] is the file descriptor of
 a socket that can be used to communicate with the client.
+-->
+[accept] 呼び出しは、サーバとクライアントの接続が確立されるまでブロックします。
+[accept] は、クライアントと通信するためのソケットのファイルディスクリプタを返します。
 </p>
 
 <p>
+<!--
 The function [myserver_process_request] is implemented as follows:
+-->
+関数 [myserver_process_request] は次のように実装できます:
 </p>
 
 <?php
@@ -335,37 +371,55 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 The implementation of [myserver_process_request] reads into a
 buffer whatever is sent by the client; it generates an HTML page
 containing the content of the buffer plus a time stamp and then
 sends the page to the client.
+-->
+[myserver_process_request] の実装は、クライアントから送信されたデータをバッファに読み込みます。そして、そのバッファの内容とタイムスタンプを含む HTML ページを生成し、そのページをクライアントに送信します。
 </p>
 
 <h2>
+<!--
 Testing
+-->
+テスト
 </h2>
 
 <p>
+<!--
 The entirety of the code for this implementation is contained in
 <u>myserver.dats</u>. There is also a Makefile available for building
 the server. Please click the link
 <a href="http://127.0.0.1:8888">http://127.0.0.1:8888</a>
 to test after the server is started running locally.
+-->
+この実装のコード全体は <u>myserver.dats</u> から入手できます。サーバをコンパイルするための Makefile もあります。ローカルにサーバを起動した後、リンク <a href="http://127.0.0.1:8888">http://127.0.0.1:8888</a> をクリックすればテストできます。
 </p>
 
 <h2>
+<!--
 A side note
+-->
+メモ
 </h2>
 
 <p>
+<!--
 For someone interested in <a href="http://www.zeromq.org">ZMQ</a>,
 please find in the file <u>myserver2.dats</u> a ZMQ-based implementation
 of a http-server that is essentially equivalent to the one given above.
+-->
+<a href="http://www.zeromq.org">ZMQ</a> に興味がある読者には、ZMQ を使った上記と本質的に等価な HTTP サーバの実装 <u>myserver2.dats</u> もあります。
 </p>
 
 <hr size="2">
 
+<!--
 This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+-->
+この記事は <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a> によって書かれ、<a href="http://jats-ug.metasepi.org/">Japan ATS User Group</a> によって翻訳されています。
 
 </body>
 </html>

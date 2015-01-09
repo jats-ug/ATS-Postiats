@@ -25,7 +25,7 @@ id="staload">
 #para("\
 
 In ATS, static load (or staload for short) refers to the creation
-of a namespace populated with the declared names in a loaded package.
+of a namespace populated with the declared names in a loaded package.\
 ")
 ")
 #langja("
