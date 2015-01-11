@@ -39,7 +39,7 @@ deduction systems and their meta-properties.\
 
 ATS プログラミング言語システムには、(対話的な) 定理証明をサポートする ATS/LF という名前の部品あります。
 ATS/LF では、全域関数のプログラムとして証明をコンストラクトすることで定理証明は行なわれます。
-このスタイルの定理証明は関数型プログラミングと組み合わさってあるプログラミングパラダイムを産み出すことがすぐに明確になるでしょう。
+この定理証明のスタイルは、関数型プログラミングと組み合わさってあるプログラミングパラダイムを産み出すことがすぐに明確になるでしょう。
 このようなパラダイムを ATS では #emphasis("定理証明を使ったプログラミング") と呼んでいます。
 その上、ATS/LF は様々な演繹システムとそれらのメタな性質をエンコードすることができます。\
 
@@ -73,7 +73,7 @@ id="encoding_relations_as_dataprops">
 #title("Encoding Relations as Dataprops")
 ")
 #langja("
-#title("dataprop として関係をエンコードする")
+#title("データ証明 (dataprop) として関係をエンコードする")
 ")
 
 #langeng("
@@ -161,9 +161,9 @@ only if fib(n) equals r. For instance, the proof value
 #para("\
 
 ATS の静的な部分には、証明の型を表わす静的な項のためのビルトインの種 #emphasis("prop") があります。
-種 #emphasis("prop") の静的な項は、型もしくはより正確に prop 型や単に prop と呼ばれます。
-dataprop は datatype の宣言とよく似た作法で宣言できます。
-例えば、#stacode("FIB") をコンストラクトする prop は次の dataprop 宣言で導入できます:
+種 #emphasis("prop") の静的な項は、型もしくはより正確に証明型や、単に証明と呼ばれます。
+データ証明はデータ型の宣言とよく似た作法で宣言できます。
+例えば、#stacode("FIB") をコンストラクトする証明は次のデータ証明宣言で導入できます:
 
 #atscode("\
 dataprop FIB (int, int) =
@@ -175,9 +175,9 @@ dataprop FIB (int, int) =
 ")
 
 #stacode("FIB") に割り当てられた種は #emphasis("(int, int) -&gt; prop") で、#stacode("FIB")
-が2つの静的な整数を取って prop 型を作ることを示していいます。
-#stacode("FIB") に関連して3つのデータ (もしくは証明の) コンストラクタがあります:
-それらは #dyncode("FIB0"), #dyncode("FIB1"), #dyncode("FIB2") で、次の関数型 (もしくはより正確に prop 型)
+が2つの静的な整数を取って証明型を作ることを示していいます。
+#stacode("FIB") に関連して3つのデータ (もしくは証明の) コンストラクタがあります。
+それらは #dyncode("FIB0"), #dyncode("FIB1"), #dyncode("FIB2") で、次の関数型 (もしくはより正確に証明型)
 が割り当てられています:
 
 <itemizedlist>
@@ -229,7 +229,7 @@ fib(n+2) = fib(n+1) + fib(n) for n >= 2.
 
 </itemizedlist>
 
-証明の値 prop #stacode("FIB(n, r)") は fib(n) が r と等しい場合のみコンストラクトできます。
+証明 #stacode("FIB(n, r)") の値は、fib(n) が r と等しい場合のみコンストラクトできます。
 例えば、証明の値 #dyncode("FIB2(FIB0(), FIB1())") には prop  #dyncode("FIB(2, 1)") が割り当てられ、
 これは fib(2) が 1 に等しいことを証明しています。\
 
@@ -287,8 +287,7 @@ relation that represents the standard multiplication function on integers.\
 #langja("
 #para("\
 
-dataprop の別の例として、
-次の宣言は prop コンストラクタ #stacode("MUL") と関連する3つの証明コンストラクタを導入しています:
+データ証明の別の例として、次の宣言は証明コンストラクタ #stacode("MUL") と関連する3つの証明コンストラクタを導入しています:
 
 #atscode("\
 dataprop MUL (int, int, int) =
@@ -300,7 +299,7 @@ dataprop MUL (int, int, int) =
 // end of [MUL]
 ")
 
-3つの整数 m, n, p が与えられた時、prop #stacode("MUL(m, n, p)") は関係 m*n = p をエンコードしています。
+3つの整数 m, n, p が与えられた時、証明 #stacode("MUL(m, n, p)") は関係 m*n = p をエンコードしています。
 #dyncode("MULbas"), #dyncode("MULind"), #dyncode("MULneg") はそれぞれ次の3つの等式に相当します:
 
 <itemizedlist>
@@ -325,8 +324,7 @@ dataprop MUL (int, int, int) =
 
 </itemizedlist>
 
-言い換えると、
-dataprop 宣言 #stacode("MUL") は整数の乗法関数を表わす関係をエンコードしています。\
+言い換えると、データ証明宣言 #stacode("MUL") は整数の乗法関数を表わす関係をエンコードしています。\
 
 ")
 ")
@@ -344,7 +342,7 @@ as Prolog.\
 #langja("
 #para("\
 
-関数的な関係 (例: 関数を表わす関係) を dataprop にエンコードする過程は Prolog
+関数的な関係 (例: 関数を表わす関係) をデータ証明にエンコードする過程は Prolog
 のような論理型プログラミング言語における関数の実装に類似していることにすぐに気が付くでしょう。\
 
 ")#comment("para")
