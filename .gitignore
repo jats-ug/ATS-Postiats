@@ -323,6 +323,7 @@ doc/BOOK/ATS-for-APUE3/CHAP_*/main.db
 # JATS-UG
 #
 doc/BOOK/*/build_ja
+doc/BOOK/*/HTML
 doc/BOOK/*/HTML_EUC
 doc/BOOK/*/HTML_UTF8
 doc/BOOK/*/TEMP
