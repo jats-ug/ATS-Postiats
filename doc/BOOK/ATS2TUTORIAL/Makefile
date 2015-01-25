@@ -99,6 +99,13 @@ clean:: ; make -C CHAP_RECURSION -f ../Makefile_chap clean
 
 ######
 
+allchap:: CHAP_DATATYPES
+CHAP_DATATYPES:: ; \
+  make -C CHAP_DATATYPES -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_DATATYPES -f ../Makefile_chap clean
+
+######
+
 allchap:: CHAP_EXCEPTION
 CHAP_EXCEPTION:: ; \
   make -C CHAP_EXCEPTION -f ../Makefile_chap main.db

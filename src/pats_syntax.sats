@@ -1414,6 +1414,8 @@ and d0exp_node =
 //
   | D0Evcopyenv of (int(*knd*), d0exp) // $vcopyenv_v/$vcopyenv_vt
 //
+  | D0Etempenver of (d0exp) // $tempenver for adding environvar
+//
   | D0Eptrof of () // taking the addr of a left-value
   | D0Eviewat of () // taking the view at the addr of a left-value
 //
@@ -1779,7 +1781,12 @@ fun d0exp_showtype (tok: token, d0e: d0exp): d0exp
 
 (* ****** ****** *)
 
-fun d0exp_vcopyenv (knd: int, tok: token, d0e: d0exp): d0exp
+fun d0exp_vcopyenv
+  (knd: int(*0/1*), tok: token, d0e: d0exp): d0exp
+
+(* ****** ****** *)
+
+fun d0exp_tempenver (tok: token, d0e: d0exp): d0exp
 
 (* ****** ****** *)
 

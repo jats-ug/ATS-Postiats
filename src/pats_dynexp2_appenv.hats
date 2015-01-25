@@ -639,6 +639,8 @@ d2e0.d2exp_node of
 //
 | D2Evcopyenv (knd, d2e) => d2exp_app (d2e, env)
 //
+| D2Etempenver (d2vs) => d2varlst_app (d2vs, env)
+//
 | D2Eexist (s2a, d2e) =>
   (
     s2exparg_app (s2a, env); d2exp_app (d2e, env)

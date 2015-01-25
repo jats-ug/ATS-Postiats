@@ -73,6 +73,16 @@ cleanall:: ; $(RMF) chap_recursion
 ######
 #
 all:: \
+chap_datatypes
+chap_datatypes: \
+  chap_datatypes.dats ; \
+  $(PATSCC2) -D_GNU_SOURCE -DATS_MEMALLOC_LIBC -o $@ $<
+regress:: chap_datatypes; ./$<
+cleanall:: ; $(RMF) chap_datatypes
+#
+######
+#
+all:: \
 chap_exception
 chap_exception: \
   chap_exception.dats ; \

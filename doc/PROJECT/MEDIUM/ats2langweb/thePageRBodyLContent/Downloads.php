@@ -19,16 +19,16 @@ released packages of ATS2 are available at the following links:
 <ul>
 <li>
 The current <em>stable</em> release of ATS2 is at
-<a href="http://sourceforge.net/projects/ats2-lang/download">ATS2-0.1.6</a>.
+<a href="http://sourceforge.net/projects/ats2-lang/download">ATS2-0.1.8</a>.
 </li>
 
 <li>
 The current <em>pre-stable</em> release of ATS2 is at
-<a href="http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.1.7.tgz">ATS2-0.1.7</a>
+<a href="http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.1.9.tgz">ATS2-0.1.9</a>
 </li>
 <li>
 The current <em>pre-stable</em> release of ATS2-intmin is at
-<a href="http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-intmin-0.1.7.tgz">ATS2-intmin-0.1.7</a>
+<a href="http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-intmin-0.1.7.tgz">ATS2-intmin-0.1.8</a>
 </li>
 </ul>
 
@@ -186,12 +186,20 @@ ATS programs.
 </p>
 
 <p>
-If you encounter errors during or after building <u>patscc</u> and <u>patsopt</u>,
-please re-build by issuing the following command-line:
+If you want <u>patsopt</u> to run GC when it is called to compile
+ATS source, please re-build by issuing the following command-line:
 </p>
 <div
 class="command_line"
->make cleanall && ./configure && make GCFLAG=-D_ATS_NGC all
+>make cleanall && ./configure && make GCFLAG=-D_ATS_GCATS all
+</div>
+<p>
+If you prefer to have <u>patsopt</u> run Boehm-GC, please issue
+the following command-line:
+</p>
+<div
+class="command_line"
+>make cleanall && ./configure && make GCFLAG=-D_ATS_GCBDW all
 </div>
 
 <p>
@@ -246,7 +254,7 @@ of library packages, tutorials, examples, documentation of various sorts, etc.
 <ul>
 <li>
 The current <em>stable</em> release of ATS2-contrib is at
-<a href="http://sourceforge.net/projects/ats2-lang-contrib/download">ATS2-contrib-0.1.6</a>.
+<a href="http://sourceforge.net/projects/ats2-lang-contrib/download">ATS2-contrib-0.1.7</a>.
 </li>
 </ul>
 

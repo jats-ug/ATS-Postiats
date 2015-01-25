@@ -6,6 +6,22 @@ style="margin-top:8px;padding:8px;"
 
 <hr></hr>
 
+ATS-2015-01-20:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/zFpSIr2lwxA"
+>ATS2-0.1.7 has been released</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-01-15:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/qAn8eR4eOdQ"
+>Learn ATS by solving math puzzles</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
 ATS-2015-01-06:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/bT0t5emu8cE"
@@ -129,6 +145,7 @@ by <a href="https://github.com/ashalkhakov">Artyom Shalkhakov</a>
 
 <hr></hr>
 
+<!--
 ATS-2014-10-19:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/xJmNk4oGo6A"
@@ -137,6 +154,7 @@ by <a href="http://www.masterq.net">Kiwamu Okabe</a>
 at <a href="http://www.METASEPI.org">METASEPI DESIGN<a>
 
 <hr></hr>
+-->
 
 </div>
 <?php /* end of [Community.php] */ ?>

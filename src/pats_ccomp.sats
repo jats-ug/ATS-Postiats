@@ -1287,19 +1287,20 @@ fun instr_move_arg_val
 
 (* ****** ****** *)
 
-fun instr_fcall
+fun
+instr_fcall
 (
   loc: loc_t
 , tmpret: tmpvar
 , pmv_fun: primval, hse_fun: hisexp, pmvs_arg: primvalist
 ) : instr // end of [instr_fcall]
 
-fun instr_fcall2
+fun
+instr_fcall2
 (
   loc: loc_t
 , tmpret: tmpvar
-, fl: funlab, ntl: int, hse_fun: hisexp
-, pmvs_arg: primvalist
+, fl: funlab, ntl: int, hse_fun: hisexp, pmvs_arg: primvalist
 ) : instr // end of [instr_fcall2]
 
 (* ****** ****** *)
@@ -1807,16 +1808,29 @@ ccompenv_add_impdecloc
 //
 fun ccompenv_add_fundecsloc
 (
-  env: !ccompenv, sub: !stasub, knd: funkind, decarg: s2qualst, hfds: hifundeclst
+  env: !ccompenv
+, sub: !stasub, knd: funkind, decarg: s2qualst, hfds: hifundeclst
 ) : void // end of [ccompenv_add_fundecsloc]
 //
 fun ccompenv_add_tmpcstmat (env: !ccompenv, tmpmat: tmpcstmat): void
 fun ccompenv_add_tmpvarmat (env: !ccompenv, tmpmat: tmpvarmat): void
 //
 (* ****** ****** *)
-
-fun ccompenv_get_d2vbindmap (env: !ccompenv): d2varmap (primval)
-
+//
+// HX-2015-01-10:
+// [get] and [get2] return the same result
+// however, [get2] is supposed to be more efficient
+//
+fun ccompenv_get_tempenver (env: !ccompenv): d2varlst_vt
+fun ccompenv_get2_tempenver (env: !ccompenv): d2varlst_vt
+//
+fun ccompenv_add_tempenver (env: !ccompenv, d2vs: d2varlst): void
+//
+(* ****** ****** *)
+//
+fun
+ccompenv_dvarsetenv_add_tempenver (env: !ccompenv, d2es: d2envset_vt): d2envset_vt
+//
 (* ****** ****** *)
 
 fun hipatck_ccomp
