@@ -2072,60 +2072,6 @@ end // end of [d0exp_seq]
 (* ****** ****** *)
 
 implement
-d0exp_raise (tok, ent2) = let
-  val loc = tok.token_loc + ent2.d0exp_loc
-in '{
-  d0exp_loc= loc, d0exp_node= D0Eraise (ent2)
-} end // end of [d0exp_raise]
-
-(* ****** ****** *)
-
-implement
-d0exp_effmask
-  (tok, eff, body) = let
-  val loc = tok.token_loc + body.d0exp_loc
-in '{
-  d0exp_loc= loc, d0exp_node= D0Eeffmask (eff, body)
-} end // end of [d0exp_effmask]
-
-implement
-d0exp_effmask_arg
-  (knd, tok, body) = let
-  val loc = tok.token_loc + body.d0exp_loc
-in '{
-  d0exp_loc= loc, d0exp_node= D0Eeffmask_arg (knd, body)
-} end // end of [d0exp_effmask_arg]
-
-(* ****** ****** *)
-
-implement
-d0exp_showtype (tok, ent2) = let
-  val loc = tok.token_loc + ent2.d0exp_loc
-in '{
-  d0exp_loc= loc, d0exp_node= D0Eshowtype (ent2)
-} end // end of [d0exp_showtype]
-
-(* ****** ****** *)
-
-implement
-d0exp_vcopyenv (knd, tok, ent2) = let
-  val loc = tok.token_loc + ent2.d0exp_loc
-in '{
-  d0exp_loc= loc, d0exp_node= D0Evcopyenv (knd, ent2)
-} end // end of [d0exp_vcopyenv]
-
-(* ****** ****** *)
-
-implement
-d0exp_tempenver (tok, ent2) = let
-  val loc = tok.token_loc + ent2.d0exp_loc
-in '{
-  d0exp_loc= loc, d0exp_node= D0Etempenver (ent2)
-} end // end of [d0exp_tempenver]
-
-(* ****** ****** *)
-
-implement
 d0exp_ptrof (t_addrat) = '{
   d0exp_loc= t_addrat.token_loc, d0exp_node= D0Eptrof ()
 } // end of [d0exp_ptrof]
@@ -2159,6 +2105,69 @@ d0exp_sel_int (tok) = let
 in '{
   d0exp_loc= tok.token_loc, d0exp_node= D0Esel_lab (knd, lab)
 } end // end of [d0exp_sel_int]
+
+(* ****** ****** *)
+
+implement
+d0exp_raise (tok, ent2) = let
+  val loc = tok.token_loc + ent2.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Eraise (ent2)
+} end // end of [d0exp_raise]
+
+(* ****** ****** *)
+
+implement
+d0exp_effmask
+  (tok, eff, body) = let
+  val loc = tok.token_loc + body.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Eeffmask (eff, body)
+} end // end of [d0exp_effmask]
+
+implement
+d0exp_effmask_arg
+  (knd, tok, body) = let
+  val loc = tok.token_loc + body.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Eeffmask_arg (knd, body)
+} end // end of [d0exp_effmask_arg]
+
+(* ****** ****** *)
+
+implement
+d0exp_seval (tok, ent2) = let
+  val loc = tok.token_loc + ent2.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Eseval (ent2)
+} end // end of [d0exp_seval]
+
+(* ****** ****** *)
+
+implement
+d0exp_showtype (tok, ent2) = let
+  val loc = tok.token_loc + ent2.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Eshowtype (ent2)
+} end // end of [d0exp_showtype]
+
+(* ****** ****** *)
+
+implement
+d0exp_vcopyenv (knd, tok, ent2) = let
+  val loc = tok.token_loc + ent2.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Evcopyenv (knd, ent2)
+} end // end of [d0exp_vcopyenv]
+
+(* ****** ****** *)
+
+implement
+d0exp_tempenver (tok, ent2) = let
+  val loc = tok.token_loc + ent2.d0exp_loc
+in '{
+  d0exp_loc= loc, d0exp_node= D0Etempenver (ent2)
+} end // end of [d0exp_tempenver]
 
 (* ****** ****** *)
 

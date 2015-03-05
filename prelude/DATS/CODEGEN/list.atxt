@@ -31,6 +31,10 @@ staload _(*anon*) = "prelude/DATS/unsafe.dats"
 
 #atscode_separator()
 
+abstype List0_(a:t@ype+) = List0(a)
+
+#atscode_separator()
+
 implement
 {x}(*tmp*)
 list_make_sing (x) = list_vt_cons{x}(x, list_vt_nil)
@@ -213,10 +217,15 @@ fprint_listlist_sep
   (out, xss, sep1, sep2) = let
 //
 implement
-fprint_val<List(a)> (out, xs) = fprint_list_sep<a> (out, xs, sep2)
+fprint_val<List0_(a)>
+  (out, xs) = let
+  val xs = $UN.cast{List0(a)}(xs)
+in
+  fprint_list_sep<a> (out, xs, sep2)
+end // end of [fprint_val]
 //
 in
-  fprint_list_sep<List(a)> (out, xss, sep1)
+  fprint_list_sep<List0_(a)> (out, $UN.cast{List(List0_(a))}(xss), sep1)
 end // end of [fprint_listlist_sep]
 
 #atscode_separator()
@@ -1183,19 +1192,6 @@ end // end of [list_map_fun]
 
 implement
 {x}{y}(*tmp*)
-list_map_cloref
-  (xs, f) = let
-//
-implement
-{x2}{y2}
-list_map$fopr (x2) = $UN.castvwtp0{y2}(f($UN.cast{x}(x2)))
-//
-in
-  list_map<x><y> (xs)
-end // end of [list_map_cloref]
-
-implement
-{x}{y}(*tmp*)
 list_map_clo
   (xs, f) = let
 //
@@ -1208,6 +1204,19 @@ list_map$fopr (x2) = $UN.castvwtp0{y2}(f($UN.cast{x}(x2)))
 in
   list_map<x><y> (xs)
 end // end of [list_map_clo]
+
+implement
+{x}{y}(*tmp*)
+list_map_cloref
+  (xs, f) = let
+//
+implement
+{x2}{y2}
+list_map$fopr (x2) = $UN.castvwtp0{y2}(f($UN.cast{x}(x2)))
+//
+in
+  list_map<x><y> (xs)
+end // end of [list_map_cloref]
 
 #atscode_separator()
 
@@ -1482,19 +1491,6 @@ end // end of [list_tabulate_fun]
 
 implement
 {a}(*tmp*)
-list_tabulate_cloref (n, f) = let
-//
-val f = $UN.cast{int -<cloref1> a}(f)
-//
-implement(a2)
-list_tabulate$fopr<a2> (n) = $UN.castvwtp0{a2}(f(n))
-//
-in
-  list_tabulate<a> (n)
-end // end of [list_tabulate_cloref]
-
-implement
-{a}(*tmp*)
 list_tabulate_clo (n, f) = let
 //
 val f = $UN.cast{int -<cloref1> a}(addr@f)
@@ -1505,6 +1501,19 @@ list_tabulate$fopr<a2> (n) = $UN.castvwtp0{a2}(f(n))
 in
   list_tabulate<a> (n)
 end // end of [list_tabulate_clo]
+
+implement
+{a}(*tmp*)
+list_tabulate_cloref (n, f) = let
+//
+val f = $UN.cast{int -<cloref1> a}(f)
+//
+implement(a2)
+list_tabulate$fopr<a2> (n) = $UN.castvwtp0{a2}(f(n))
+//
+in
+  list_tabulate<a> (n)
+end // end of [list_tabulate_cloref]
 
 #atscode_separator()
 

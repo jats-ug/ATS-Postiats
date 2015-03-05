@@ -77,6 +77,12 @@ fun{}
 d2pitmlst_app : synent_app (d2pitmlst)
 //
 (* ****** ****** *)
+
+extern
+fun{}
+d2atdecs_app : synent_app (s2cstlst)
+
+(* ****** ****** *)
 //
 implement
 {}(*tmp*)
@@ -145,7 +151,7 @@ implement
 d2pitm_app
   (d2pi, env) = let
 //
-val+D2PITM(pval, d2i) = d2pi in d2pitm_app (d2pi, env)
+val+D2PITM(pval, d2i) = d2pi in d2itm_app (d2i, env)
 //
 end // end of [d2pitm_app]
 
@@ -156,6 +162,59 @@ implement
 d2pitmlst_app
   (xs, env) = synentlst_app (xs, env, d2pitm_app)
 //
+(* ****** ****** *)
+
+implement
+{}(*tmp*)
+d2atdecs_app
+  (s2cs, env) = let
+//
+fun
+auxlst_dcon
+(
+  d2cs: d2conlst, env: !appenv
+) : void = 
+(
+case+ d2cs of
+| list_nil () => ()
+| list_cons
+    (d2c, d2cs) => let
+    val () = d2con_app (d2c, env)
+    val s2e = d2con_get_type (d2c)
+    val () = s2exp_app (s2e, env)
+  in
+    auxlst_dcon (d2cs, env)
+  end // end of [list_cons]
+) (* end of [auxlst_dcon] *)
+//
+fun
+auxlst_scst
+(
+  s2cs: s2cstlst, env: !appenv
+) : void = 
+(
+case+ s2cs of
+| list_nil () => ()
+| list_cons
+    (s2c, s2cs) => let
+    val opt = s2cst_get_dconlst(s2c)
+    val ((*void*)) =
+    (
+      case+ opt of
+      | None () => ()
+      | Some (d2cs) => auxlst_dcon (d2cs, env)
+    ) (* end of [val] *)
+  in
+    auxlst_scst (s2cs, env)
+  end // end of [list_cons]
+) (* end of [auxlst_scst] *)
+//
+val () = s2cstlst_app (s2cs, env)
+//
+in
+  auxlst_scst (s2cs, env)
+end // end of [d2atdecs_app]
+
 (* ****** ****** *)
 
 extern
@@ -635,6 +694,8 @@ d2e0.d2exp_node of
 //
 | D2Eeffmask (s2fe, d2e) => d2exp_app (d2e, env)
 //
+| D2Eseval (knd, d2e) => d2exp_app (d2e, env)
+//
 | D2Eshowtype (d2e) => d2exp_app (d2e, env)
 //
 | D2Evcopyenv (knd, d2e) => d2exp_app (d2e, env)
@@ -880,7 +941,7 @@ d2c0.d2ecl_node of
 | D2Cextvar (name, d2e) => d2exp_app (d2e, env)
 | D2Cextcode (knd, pos, code) => ((*void*))
 //
-| D2Cdatdecs (int, s2cs) => s2cstlst_app (s2cs, env)
+| D2Cdatdecs (int, s2cs) => d2atdecs_app (s2cs, env)
 | D2Cexndecs ( d2cs_exn ) => d2conlst_app (d2cs_exn, env)
 //
 | D2Cdcstdecs (staext, knd, d2cs) => d2cstlst_app (d2cs, env)

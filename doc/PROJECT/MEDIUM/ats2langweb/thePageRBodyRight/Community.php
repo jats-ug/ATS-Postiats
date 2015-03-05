@@ -6,6 +6,30 @@ style="margin-top:8px;padding:8px;"
 
 <hr></hr>
 
+ATS-2015-02-27:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/olyjkpQu0Ns"
+>ATS2-0.1.9 has been released</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-02-14:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/-fkC3tTmCTs"
+>Let us do geometry!</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-02-10:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/A_AzNOxWkRI"
+>Programmer-centric theorem-proving</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
 ATS-2015-01-27:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/FSgjjkUURs4"
@@ -128,12 +152,12 @@ by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
 
+<!--
 ATS-2014-11-07:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/PqtPZKGKrFw"
 >Animating sorting in ATS</a><br>
 by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
-
 
 <hr></hr>
 
@@ -145,7 +169,6 @@ by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
 
-<!--
 ATS-2014-10-24:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/prfDLf2_LKM"

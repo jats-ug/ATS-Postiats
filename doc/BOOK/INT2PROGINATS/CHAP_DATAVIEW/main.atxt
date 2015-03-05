@@ -361,10 +361,10 @@ opt 型を用いたこのバージョンはかなりすっきりしています�
 <sect1
 id="linear_arrays">
 #langeng("
-#title("Views for Linear Arrays")
+#title("Dataview for Linear Arrays")
 ")
 #langja("
-#title("線形配列の view")
+#title("線形配列の dataview")
 ")
 
 #langeng("
@@ -400,8 +400,12 @@ T@L#sub("0"), T@L#sub("1"), ..., T@L#sub("N-1") です。
 ")
 
 #atscode('\
-dataview array_v
-  (a:t@ype+, addr(*beg*), int(*size*)) =
+dataview
+array_v (
+  a:t@ype+ // covariant argument
+, addr(*beg*)
+, int(*size*)
+) = // array_v
   | {l:addr}
     array_v_nil (a, l, 0)
   | {l:addr}{n:nat}
@@ -798,12 +802,28 @@ Please find the entirety of the above presented code
 <!-- ****** ****** -->
 
 <sect1
+id="linear_strings">
+#title("Dataview for Linear Strings")
+
+#para('\
+
+The following dataview #stacode("strbuf_v") captures the notion of a
+string in C, which consisits a sequence of non-null characters followed by the
+null character.
+
+')
+
+</sect1>#comment("sect1/id=linear_strings")
+
+<!-- ****** ****** -->
+
+<sect1
 id="singly-linked_lists">
 #langeng("
-#title("Views for Singly-Linked Lists")
+#title("Dataview for Singly-Linked Lists")
 ")
 #langja("
-#title("片方向リストの view")
+#title("片方向リストの dataview")
 ")
 
 #langeng("
@@ -818,8 +838,8 @@ slseg_v (
   a:t@ype+ // covariant argument
 , addr(*beg*)
 , addr(*end*)
-, int(*len*)
-) =
+, int(*length*)
+) = // slseg_v
   | {l:addr}
     slseg_v_nil (a, l, l, 0) of ()
   | {l_fst:agz}{l_nxt,l_end:addr}{n:nat}

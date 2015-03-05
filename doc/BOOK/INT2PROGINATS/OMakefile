@@ -22,7 +22,8 @@ HTML_JA/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
 	jw -b html --parser $(JADE) --dsl $(DSL) --output HTML_EUC build_ja/main_ja.db
 	sh iconv_dir.sh EUCJP UTF8 HTML_EUC HTML_UTF8
 	sh addchaset_dir.sh UTF-8 HTML_UTF8 HTML_JA
-	cp HTML/INT2PROGINATS-BOOK.css HTML_JA/
+	mkdir -p HTML_JA/assets
+	cp HTML/assets/INT2PROGINATS-BOOK.css HTML_JA/assets/
 	cd HTML_JA && ln -sf book1.html index.html
 
 preface.db: preface.atxt
@@ -41,8 +42,7 @@ preface.db: preface.atxt
 		./$(removesuffix $<) > $@
 		rm -f $(replacesuffixes .atxt, _atxt.dats, $<) $(replacesuffixes .atxt, _atxt.txt, $<) $(removesuffix $<)
 
-publish: HTML_JA/index.html
-	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
+publish: HTML_JA/index.htm	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
 	rm -rf $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
 	cp -rf HTML_JA $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
 

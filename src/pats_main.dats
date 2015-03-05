@@ -421,7 +421,7 @@ val COMARGkey (_, cmdname) = arg0
 //
 in
 //
-fprintln! (out, "usage: ", cmdname, " <command> ... <command>\n");
+fprintln! (out, "Usage: ", cmdname, " <command> ... <command>\n");
 fprintln! (out, "where a <command> is of one of the following forms:\n");
 fprintln! (out, "  -h (for printing out this help usage)");
 fprintln! (out, "  --help (for printing out this help usage)");
@@ -474,11 +474,12 @@ HX: VERSION-0.1.5 released on Thursday, November 20, 2014
 HX: VERSION-0.1.6 released on Tuesday, January 6, 2015
 HX: VERSION-0.1.7 released on Tuesday, January 20, 2015
 HX: VERSION-0.1.8 released on Saturday, January 24, 2015
+HX: VERSION-0.1.8 released on Friday, February 27, 2015
 //
 *)
 #define PATS_MAJOR_VERSION 0
 #define PATS_MINOR_VERSION 1
-#define PATS_MICRO_VERSION 9
+#define PATS_MICRO_VERSION 10
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -1556,7 +1557,11 @@ case+ key of
     end // end of [if]
   end
 //
-| "-h" => patsopt_usage (stdout_ref, state.comarg0)
+| "-h" => let
+    val cmd = state.comarg0
+  in
+    patsopt_usage (stdout_ref, cmd)
+  end // end of ["-h"]
 //
 | "-v" => patsopt_version (stdout_ref)
 //

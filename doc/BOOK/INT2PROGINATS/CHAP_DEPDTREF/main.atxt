@@ -956,29 +956,30 @@ The following defined function #dyncode("merge") combines two
 ordered list (according to a given ordering) into a single ordered list:
 
 #atscode("\
+//
 typedef lte (a:t@ype) = (a, a) -> bool
-
+//
 fun{
 a:t@ype
 } merge
   {m,n:nat} .<m+n>.
 (
-  xs: list (a, m), ys: list (a, n), lte: lte a
+  xs0: list (a, m), ys0: list (a, n), lte: lte a
 ) : list (a, m+n) =
-  case+ xs of
-  | list_nil () => ys
+  case+ xs0 of
+  | list_nil () => ys0
   | list_cons (x, xs1) =>
     (
-    case+ ys of
-    | list_nil () => xs
+    case+ ys0 of
+    | list_nil () => xs0
     | list_cons (y, ys1) =>
-        if x \lte y then
-          list_cons (x, merge (xs1, ys, lte))
-        else
-          list_cons (y, merge (xs, ys1, lte))
+        if x \lte y
+          then list_cons (x, merge (xs1, ys0, lte))
+          else list_cons (y, merge (xs0, ys1, lte))
         // end of [if]
     ) // end of [list_cons]
 // end of [merge]
+//
 ")
 
 Clearly, the type assigned to #dyncode("merge") indicates that the function
@@ -1042,7 +1043,9 @@ a:t@ype
   (
     xs: list (a, n), n: int n, lte: lte a
   ) : list (a, n) =
-    if n >= 2 then split (xs, n, lte, n/2, list_nil) else xs
+    if n >= 2
+      then split (xs, n, lte, half(n), list_nil) else xs
+    // end of [if]
   // end of [msort]
   and split
     {n:int | n >= 2}{i:nat | i <= n/2} .<n,i>.
@@ -1055,9 +1058,10 @@ a:t@ype
     in
       split (xs, n, lte, i-1, list_cons (x, xsf))
     end else let
+      val n2 = half(n)
       val xsf = list_reverse<a> (xsf) // make sorting stable!
       val xsf = list_of_list_vt (xsf) // linear list -> nonlinear list
-      val xsf = msort (xsf, n/2, lte) and xs = msort (xs, n-n/2, lte)
+      val xsf = msort (xsf, n2, lte) and xs = msort (xs, n-n2, lte)
     in
       merge (xsf, xs, lte)
     end // end of [if]

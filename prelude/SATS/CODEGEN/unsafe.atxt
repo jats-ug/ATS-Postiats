@@ -35,12 +35,26 @@ sortdef t0p = t@ype and vt0p = viewt@ype
 
 #atscode_separator()
 //
-castfn cast {to:t0p}{from:t0p} (x: INV(from)):<> to
+praxi
+prop_assert{b:bool}((*void*)): [b] void
+//
+praxi
+eqint_assert{i1,i2:int}((*void*)): EQINT(i1,i2)
+praxi
+eqaddr_assert{l1,l2:addr}((*void*)): EQADDR(l1,l2)
+praxi
+eqbool_assert{b1,b2:bool}((*void*)): EQBOOL(b1,b2)
 //
 #atscode_separator()
 //
 castfn
-castvwtp0 {to:vt0p}{from:vt0p} (x: INV(from)):<> to
+cast{to:t0p}{from:t0p} (x: INV(from)):<> to
+//
+#atscode_separator()
+//
+castfn
+castvwtp0
+  {to:vt0p}{from:vt0p} (x: INV(from)):<> to
 //
 // HX:
 // [castvwtp1] is mostly used in a situation
@@ -50,7 +64,8 @@ castvwtp0 {to:vt0p}{from:vt0p} (x: INV(from)):<> to
 // temporarily.
 //
 castfn
-castvwtp1{to:vt0p}{from:vt0p} (x: !INV(from)>>from):<> to
+castvwtp1
+  {to:vt0p}{from:vt0p} (x: !INV(from)>>from):<> to
 //
 #atscode_separator()
 //

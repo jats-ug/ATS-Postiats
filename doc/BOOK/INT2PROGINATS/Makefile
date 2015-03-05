@@ -27,6 +27,7 @@ cleanall::
 
 ######
 
+MAKE=make
 JADE=/usr/bin/openjade
 
 ######
@@ -44,6 +45,8 @@ DSL=./mydocbook.dsl
 #
 html: main.db ; \
 jw -b html --parser $(JADE) --dsl $(DSL) --output HTML/ main.db
+#
+htmltoc: ; $(MAKE) -C HTML -f Makefile htmltoc
 #
 ######
 
@@ -101,6 +104,12 @@ allchap:: CHAP_VVTINTRO
 allchap:: CHAP_DATAVIEW
 allchap:: CHAP_DATAVTYPE
 allchap:: CHAP_ABSVTYPE
+#
+######
+#
+# PART V
+#
+allchap:: CHAP_FNTMPINT
 #
 ######
 
@@ -189,6 +198,12 @@ clean:: ; make -C CHAP_DATAVTYPE -f ../Makefile_chap clean
 CHAP_ABSVTYPE:: ; \
   make -C CHAP_ABSVTYPE -f ../Makefile_chap main.db
 clean:: ; make -C CHAP_ABSVTYPE -f ../Makefile_chap clean
+
+######
+
+CHAP_FNTMPINT:: ; \
+  make -C CHAP_FNTMPINT -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_FNTMPINT -f ../Makefile_chap clean
 
 ######
 

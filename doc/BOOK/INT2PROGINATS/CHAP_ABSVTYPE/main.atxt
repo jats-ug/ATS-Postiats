@@ -102,9 +102,10 @@ Let us now take a look at a concrete example of simple linear object.
 The following code presents an interface for a timer (that is, stopwatch):
 
 #atscode('\
+//
 absvtype timer_vtype
 vtypedef timer = timer_vtype
-
+//
 fun timer_new (): timer
 fun timer_free (x: timer): void
 fun timer_start (x: !timer): void
@@ -113,12 +114,14 @@ fun timer_pause (x: !timer): void
 fun timer_resume (x: !timer): void
 fun timer_get_ntick (x: !timer): uint
 fun timer_reset (x: !timer): void
+//
 ')
 
 The state of a timer is given the
 record type #stacode("timer_struct") defined as follows:
 
 #atscode('\
+//
 typedef
 timer_struct = @{
   started= bool // the timer has started
@@ -127,6 +130,7 @@ timer_struct = @{
 , ntick_beg= uint // was turned on last time
 , ntick_acc= uint // the number of accumulated ticks
 } (* end of [timer_struct] *)
+//
 ')
 
 The following linear datatype #stacode("timer")
@@ -199,7 +203,6 @@ Various functions on timers can now be readily implemented.
 Let us first see the code for creating and freeing timers:
 
 #atscode('\
-
 implement
 timer_new () = let
 //
@@ -1264,7 +1267,8 @@ a:t@ype
 
 implement
 {a}(*tmp*)
-mergeSort (A, n, cmp) = let
+mergeSort
+  (A, n, cmp) = let
   val (pfat, pfgc | p) = array_ptr_alloc<a> (n)
   val ((*void*)) = msort1 (A, n, !p, cmp)
   val ((*void*)) = array_ptr_free (pfat, pfgc | p)
@@ -1403,7 +1407,8 @@ above can also be implemented as follows:
 #atscode('\
 implement
 {a}(*tmp*)
-mergeSort (A, n, cmp) = let
+mergeSort
+  (A, n, cmp) = let
   val tsz = sizeof<a>
   var dummy: void = ()
   prval pf = view@dummy
@@ -1530,23 +1535,27 @@ Some properties on the parameters of #stacode("cbufObj") can be captured
 by introducing the following proof function:
 
 #atscode('\
+//
 prfun
 lemma_cbufObj_param
   {a:vt0p}{m,n:int}
   (buf: !cbufObj(a, m, n)): [m>=n; n>=0] void
+//
 ')
 
 The interface for the following two function templates indicates that they
 can be called to compute the capacity and current size of a buffer:
 
 #atscode('\
+//
 fun{a:vt0p}
 cbufObj_get_cap
   {m,n:int} (buf: !cbufObj(a, m, n)): size_t(m)
-
+//
 fun{a:vt0p}
 cbufObj_get_size
   {m,n:int}(buf: !cbufObj(a, m, n)): size_t(n)
+//
 ')
 
 ")
@@ -1579,12 +1588,14 @@ The functions for creating and destroying circular buffers are named
 #dyncode("cbufObj_new") and #dyncode("cbufObj_free"), respectively:
 
 #atscode('\
+//
 fun{a:vt0p}
 cbufObj_new
   {m:pos}(m: size_t(m)): cbufObj(a, m, 0)
 //
 fun cbufObj_free
   {a:vt0p}{m:int}(buf: cbufObj(a, m, 0)): void
+//
 ')
 
 Note that a buffer can be freed only if it contains no elements as
@@ -1681,15 +1692,15 @@ in this implementation.
 #para("\
 
 In concurrent programming, the issue of safely locking and unlocking
-shared resources is both essential and challenging. I will demonstrate
-here concretely and convincingly that linear types can be used with
-great effectiveness to address this issue.
+shared resources is both essential and challenging. I am to demonstrate
+in this section concretely and convincingly that linear types can be used
+with great effectiveness to address this issue.
 
 ")
 
 #para("\
 
-Let us first introduce a linear abstract type #stacode("shared_vtype")
+Let us first introduce a linear abstract type #stacode("shared")
 as follows:
 
 #atscode('\
