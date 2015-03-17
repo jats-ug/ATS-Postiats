@@ -964,7 +964,7 @@ mul_neg_2
 #title("Algebraic Datasorts")
 ")
 #langja("
-#title("代数的 datasort")
+#title("代数的なデータ種 (datasort)")
 ")
 
 #langeng("
@@ -993,18 +993,18 @@ B are really just tree skeletons carrying no data.\
 ")
 #langja("
 #para("\
-datasort は datatype に少し似ています。
-けれども、後者は ATS の動的な宣言ですが、前者はATSの静的な宣言です。
-datasort の典型的な用途を見るために、
+データ種 (datasort) はデータ型 (datatype) に少し似ています。
+けれども、後者は ATS の動的な宣言ですが、前者は ATS の静的な宣言です。
+データ種の典型的な用途を見るために、
 s と h がそれぞれ与えられた二分木のサイズと高さであるなら、s がきっちり 2<superscript>h</superscript>
 より小さくなることを示す定理を ATS でエンコードしてみましょう。
-二分木を静的に表わすために、まず次の datasort を宣言しましょう:
+二分木を静的に表わすために、まず次のデータ種を宣言しましょう:
 
 #atscode("\
 datasort tree = E of () | B of (tree, tree)
 ")
 
-宣言した datasort の名前は #stacode("tree") で、関連する2つのコンストラクタがあります:
+宣言した データ種 の名前は #stacode("tree") で、関連する2つのコンストラクタがあります:
 それは #stacode("E") と #stacode("B") で、E は空の木を作り、B は与えられた2つの木を結合した木を作ります。
 例えば、#stacode("B(E(), E())") は種 #stacode("tree") の静的な項で、シングルトン木を表わしています。
 つまりノードが1つしかない木です。
@@ -1041,7 +1041,7 @@ encodes the relation that the height of t equals h.
 ")
 #langja("
 #para("\
-次のように木のサイズと高さの概念を捕捉するために2つの dataprop を宣言しましょう:
+次のように木のサイズと高さの概念を捕捉するために2つのデータ命題を宣言しましょう:
 
 #atscode("\
 dataprop
@@ -1083,7 +1083,7 @@ Given two integers h and p, POW2 (h, p) encodes the relation that
 ")
 #langja("
 #para("\
-2を底にした累乗関数は ATS の静的な部分にはないので、それを捕捉する次の dataprop を宣言します:
+2を底にした累乗関数は ATS の静的な部分にはないので、それを捕捉する次のデータ命題を宣言します:
 
 #atscode("\
 dataprop POW2 (int, int) =
@@ -1205,7 +1205,7 @@ prfun pow2_inc
 // end of [pow2_inc]
 ")
 
-明確に、#dyncode("pow2_istot") は dataprop #stacode("POW2")
+明確に、#dyncode("pow2_istot") はデータ命題 #stacode("POW2")
 にエンコードされた関係が全域な関係であることを表わしています;
 #dyncode("pow2_pos") は自然数の累乗が正の数になることを証明しています;
 #dyncode("pow2_inc") は累乗関数が単調増加であることを証明しています。\
@@ -1328,7 +1328,7 @@ end // end of [lemma_tree_size_height]
 2つの項 t1 と t2 が種 #stacode("tree") として与えられ、t1 が t2 より小さい構造であるなら、t1 は きっちり t2
 より小さくなります。
 明らかに、これは根拠の確かな順序です。
-キーワード #keycode("scase") は (宣言された datasort に関連するコンストラクタで構築される)
+キーワード #keycode("scase") は (宣言された データ種 に関連するコンストラクタで構築される)
 静的な項のcase判定をする動的な式を作るのに使われます。
 そのため、#keycode("sif") と #keycode("scase") の関係は #keycode("if") と #keycode("case") の関係と同じです。
 上記のコード全体は #mycodelink("CHAP_THMPRVING/tree.dats", "オンライン") から入手できます。\
@@ -1375,7 +1375,7 @@ isBraun (tree) =
 #para("\
 
 この本で以前示したように、空であるか、もしくは左と右の子がブラウンツリーでなおかつ左の子のサイズから右の子のサイズを引くと0もしくは1なら、そのような二分木はブラウンツリーです。
-形式的には、ブラウンツリーの概念を捕捉するために、次の dataprop #dyncode("isBraun") を宣言できます:
+形式的には、ブラウンツリーの概念を捕捉するために、次のデータ命題 #dyncode("isBraun") を宣言できます:
 
 #atscode("\
 dataprop isBraun (tree) =
@@ -1584,7 +1584,7 @@ lemma_unicity
 ) : EQ (t1, t2) // end of [lemma_unicity]
 ")
 
-#stacode("EQ") は次の dataprop 宣言で導入されている prop コンストラクタです:
+#stacode("EQ") は次のデータ命題宣言で導入されている prop コンストラクタです:
 
 #atscode("\
 dataprop EQ (tree, tree) =
@@ -1756,7 +1756,7 @@ end // end of [lemma_unicity]
 特殊記号 #keycode("=/=>") の使用に注意してください。
 これは ATS のキーワードで、パターンマッチに含まれる節が #emphasis("到達不能") であることを ATS
 の型検査器に指示します;
-節の右辺にうそを書くのはプログラマの責務です。
+節の右辺に嘘を書くのはプログラマの責務です。
 上記のコード全体は #mycodelink("CHAP_THMPRVING/brauntree.dats", "オンライン") から入手できます。\
 
 ")#comment("para")
@@ -1768,8 +1768,14 @@ end // end of [lemma_unicity]
 
 <sect1
  id="programmer_centric_theorem_proving">
+#langeng("
 #title("Programmer-Centric Theorem-Proving")
+")
+#langja("
+#title("プログラマ中心の定理証明")
+")
 
+#langeng("
 #para("\
 
 I have so far presented several formal proofs in ATS.  However,
@@ -1791,7 +1797,16 @@ rest of this section a simple but telling example of programmer-centric
 theorem-proving.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS におけるいくつかの形式の証明をこれまで紹介してきました。けれども、そのような証明を構築することは、ATSにおいて最重要ではありません。もし私が Isabelle や Coq のような定理証明システムと ATS を比較するとしたら、ATS における定理証明のデザインは定理証明に対する視点が根本的に異なることを指摘したいと思います。特に、ATS における定理証明は、定理を公理や法則の最小集合の正当性に変換することで、その正当さを立証するような基礎的なアプローチを取りません。その代わりに、ATS での定理証明は準形式的な作法で行なわれ、その主眼は、間違った仮定や要求をプログラマが使ってしまう可能性を大きく減少させることです。この点において、ATS の定理証明は (数学その他における) 紙とペンによる非形式的な証明の構築に似ています。私は ATS における定理証明のこのスタイルをプログラマ中心であると呼んでいます。このような定理証明のスタイルがどのようなものなのか、読者により具体的な実感を得てもらうために、この章では単純かつ有用なプログラマ中心の定理証明の例を示します。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Suppose we are to prove that the square of any rational number cannot equal
@@ -1800,7 +1815,16 @@ square root of 2 is irrational as the latter assumes the very existence of the
 square root of 2. Let us first sketch an informal proof as follows.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+有理数の二乗が2に等しくないことを証明することを想像してみましょう。この表明は、2の平方根が有理数でない表明より少し弱いことに注意してください。後者は2の平方根の存在を仮定しています。はじめに、次のような非形式的な証明をスケッチしてみましょう。\
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Suppose (m/n)#sup("2")=2 for some positive numbers m and n. Clearly,
@@ -1813,7 +1837,16 @@ Therefore, there is no rational number whose square equals 2. Clearly,
 this proof still holds if the number 2 is replaced with another prime number.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+なんらかの正の数 m と n について、(m/n)#sup("2")=2 を考えます。これは (m)#sup("2")=2(n)#sup("2") を意味し、m は偶数であることを暗示しています。m=2m#sub("2") としてみると、(2m#sub("2"))#sup("2")=2(n)#sup("2") が得られ、これは (n/m#sub("2"))#sup("2")=2 を暗示しています。明確に、m &gt; n &gt; m#sub("2") ということになります。なんらかの n について (m/n)#sup("2")=2 を満たすような最小の正の数を m と仮定すると、n は m と同じ特性を持つことになり、矛盾が生じます。従って、二乗が2に等しくなる有理数は存在しません。数2を別の素数で置き換えてもこの証明は成立することも明確です。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 The primary argument in the above informal proof can be encoded in
@@ -1860,7 +1893,54 @@ The interface for #dyncode("mylemma_main") states that
 some natural number m#sub("2").
 
 ")
+")
+#langja("
+#para("\
 
+上記の非形式的な証明における主な論拠は、ATS では次のようにエンコードできます:
+
+#atscode('\
+//
+extern
+prfun
+mylemma_main
+{m,n,p:int | m*m==p*n*n}(PRIME(p)): [m2:nat | n*n==p*m2*m2] void
+//
+primplmnt
+mylemma_main
+{m,n,p}(pfprm) = let
+  prval pfeq_mm_pnn =
+    eqint_make{m*m,p*n*n}()
+  prval () = square_is_nat{m}()
+  prval () = square_is_nat{n}()
+  prval () = lemma_PRIME_param(pfprm)
+  prval
+  pfmod1 =
+    lemma_MOD0_intr{m*m,p,n*n}()
+  prval
+  pfmod2 = mylemma1{m,p}(pfmod1, pfprm)
+  prval
+  [m2:int]
+  EQINT() =
+    lemma_MOD0_elim(pfmod2)
+  prval EQINT() = pfeq_mm_pnn
+  prval () =
+  __assert{p}{p*m2*m2,n*n}() where
+  {
+    extern prfun __assert{p:pos}{x,y:int | p*x==p*y}(): [x==y] void
+  } (* end of [where] *) // end of [prval]
+in
+  #[m2 | ()]
+end // end of [mylemma_main]
+//
+')
+
+#dyncode("mylemma_main") のインターフェイスは、なんらかの自然数 m#sub("2") について、(m)#sup("2")=p(n)#sup("2") は (n)#sup("2")=p(m#sub("2"))#sup("2") を意味することを表明しています。
+
+")
+")
+
+#langeng("
 #para("\
 
 Given two integers m and p, #dyncode("MOD0(m,p)") means that m equals the
@@ -1910,7 +1990,50 @@ proposition to be obviously true. Certainly, this is a kind of programmer-centri
 judgment. \
 
 ")
+")
+#langja("
+#para("\
 
+2つの整数 m と p が与えられたとき、#dyncode("MOD0(m,p)") はなんらかの自然数 q について、m が p と q の積に等しいことを意味するとします。この意味は次の2つの証明関数にエンコードできます:
+
+#atscode("\
+//
+prfun
+lemma_MOD0_intr{m,p,q:nat | m==p*q}(): MOD0(m, p)
+//
+prfun
+lemma_MOD0_elim{m,p:int}(MOD0(m, p)): [q:nat] EQINT(m, p*q)
+//
+")
+
+このとき #dyncode("EQINT") は次のようなデータ命題です:
+
+#atscode('\
+dataprop EQINT(int, int) = {x:int} EQINT(x, x)
+')
+
+2つの整数 x と y が与えられたとき、#dyncode("EQINT(x, y)") は x と y が等しいことを意味するとします。また、関数 #dyncode("eqint_make") には以下のインターフェイスが割り当てられます:
+
+#atscode('\
+prfun eqint_make{x,y:int | x == y}((*void*)): EQINT (x, y)
+')
+
+整数 p が与えられたとき、#dyncode("PRIME(p)") は p が素数であることを意味するとします。次の2つの証明関数が、上記 #dyncode("mylemma_main") の実装では使われています:
+
+#atscode('\
+//
+prfun lemma_PRIME_param{p:int}(PRIME(p)): [p >= 2] void
+//
+prfun mylemma1{n,p:int}(MOD0(n*n, p), PRIME(p)): MOD0(n, p)
+//
+')
+
+証明関数 #dyncode("mylemma1") は、もし p が n の二乗で割り切れるなら p は n で割り切れ、かつ p は素数である、という命題をエンコードしています。エンコードされた命題は明らかに真であると見做したので、私は #dyncode("mylemma1") に実装を与えませんでした。これがプログラマ中心の判断です。\
+
+")
+")
+
+#langeng("
 #para("\
 
 One may find that
@@ -1930,13 +2053,36 @@ This means that the equality between
 of (static) assumptions after the above declaration is typechecked.
 
 ")
+")
+#langja("
+#para("\
 
+#dyncode("mylemma_main") の実装において次の宣言が不可解だ、という人がいるかもしれません:
+
+#atscode("\
+  prval EQINT() = pfeq_mm_pnn
+")
+
+#dyncode("pfeq_mm_pnn") は命題 #dyncode('EQINT(m*m, p*(n*n))') であることに注意してください。また、上記の宣言が型検査された時点で、なんらかの自然数 m#sub("2") について m が p*m#sub("2") に等しいことになります。これは、上記の宣言が型検査された後で、(p*m#sub("2"))#sup("2") と p*(n)#sup("2") が等しいことを静的な仮定に追加することを意味しています。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("CHAP_THMPRVING/sqrt2_irrat.dats", "on-line") the
 entirety of an encoded proof showing that there exists no rational number whose
 square equals 2.\
 
+")
+")
+#langja("
+#para("\
+
+二乗が2に等しくなる有理数が存在しないことをエンコードした証明全体は #mycodelink("CHAP_THMPRVING/sqrt2_irrat.dats", "オンライン") から入手できます。\
+
+")
 ")
 
 </sect1><!--id="programmer_centric_theorem_proving"-->
