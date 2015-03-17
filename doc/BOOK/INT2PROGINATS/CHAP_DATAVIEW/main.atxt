@@ -16,7 +16,7 @@ Time of Generation: #timestamp()\
 #title("Dataviews as Linear Dataprops")
 ")
 #langja("
-#title("線形な dataprop としての dataview")
+#title("線形なデータ命題としてのデータ観 (dataview)")
 ")
 
 #langeng("
@@ -33,11 +33,10 @@ commonly encountered dataviews and their uses.
 #langja("
 #para("\
 
-型 T とアドレス L について #stacode("T@L") をなす at-view は他の形の view
-をコンストラクトするブロックを形成します。
-そのような形成されたブロックを一緒に配置するメカニズムは dataview として宣言されます
-大部分においてそれは dataprop の宣言と同じです。
-この章ではいくつかの一般な dataview とその使い方を紹介します。
+型 T とアドレス L について #stacode("T@L") をなす駐観 (at-view) は他の形の観をコンストラクトするブロックを形成します。
+そのような形成されたブロックを一緒に配置するメカニズムはデータ観 (dataview) として宣言されます。
+大部分においてそれはデータ命題 (dataprop) の宣言と同じです。
+この章ではいくつかの一般なデータ観とその使い方を紹介します。
 
 ")
 ")
@@ -66,7 +65,7 @@ id="optional_views">
 #title("Optional Views")
 ")
 #langja("
-#title("選択 view")
+#title("オプショナル観")
 ")
 
 #langeng("
@@ -92,19 +91,18 @@ false)") contains nothing.
 #langja("
 #para('\
 
-dataview #stacode("option_v") は次のように宣言されます:
+データ観 #stacode("option_v") は次のように宣言されます:
 
 #atscode('\
 dataview option_v (v:view+, bool) =
   | Some_v (v, true) of (v) | None_v (v, false) of ()
 ')
 
-この宣言は dataview #stacode("option_v") が1番目の引数に対して共変で、
+この宣言はデータ観 #stacode("option_v") が1番目の引数に対して共変で、
 関連する2つの証明コンストラクタ #dyncode("Some_v") と #dyncode("None_v") があることを示しています。
-view V が与えられ、b がブールの時、#stacode("option_v(V, b)") はしばしば選択 view (optional view)
+観 V が与えられ、b がブールの時、#stacode("option_v(V, b)") はしばしばオプショナル観 (optional view)
 と呼ばれます。
-明確に view #dyncode("option_v(V, true)") の証明は view V の証明を含んでいますが、
-証明 view #stacode("option_v(V, false)") は何も含んでいません。
+明確に観 #dyncode("option_v(V, true)") の証明は観 V の証明を含んでいますが、観 #stacode("option_v(V, false)") の証明は何も含んでいません。
 
 ')
 ")
@@ -131,7 +129,7 @@ otherwise, there is no at-view associated with the returned pointer.
 #langja("
 #para('\
 
-例として、次の関数インターフェイスは選択 view の典型的な使用例です:
+例として、次の関数インターフェイスはオプショナル観の典型的な使用例です:
 
 #atscode('\
 fun{a:t@ype}
@@ -139,10 +137,10 @@ ptr_alloc_opt (): [l:addr] (option_v (a? @ l, l > null) | ptr l)
 ')
 
 型 T が与えられた時、
-関数 #dyncode("ptr_alloc_opt&lt;T&gt;") は選択 view の証明とポインタのペアを返します;
+関数 #dyncode("ptr_alloc_opt&lt;T&gt;") はオプショナル観の証明とポインタのペアを返します;
 もし返されたポインタが NULL でなければ、
-ポインタが指す場所 L についてその証明は view #stacode("T?@L") の証明に成ることができます;
-そうでなければ、返されたポインタに関連する at-view は含まれません。
+ポインタが指す場所 L についてその証明は観 #stacode("T?@L") の証明に成ることができます;
+そうでなければ、返されたポインタに関連する駐観は含まれません。
 
 ')
 ")
