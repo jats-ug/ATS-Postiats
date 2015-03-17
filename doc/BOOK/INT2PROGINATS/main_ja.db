@@ -27,6 +27,7 @@
 <!ENTITY chap_dataview SYSTEM "CHAP_DATAVIEW/main.db">
 <!ENTITY chap_datavtype SYSTEM "CHAP_DATAVTYPE/main.db">
 <!ENTITY chap_absvtype SYSTEM "CHAP_ABSVTYPE/main.db">
+<!ENTITY chap_fntmpint SYSTEM "CHAP_FNTMPINT/main.db">
 ]>
 <book id="INT2PROGINATS" lang="en">
 &bookinfo;
@@ -78,6 +79,12 @@ id="programming-with-linear-views-and-types">
 &chap_dataview;
 &chap_datavtype;
 &chap_absvtype;
+</part>
+
+<part
+id="programming-with-function-templates">
+<title>関数テンプレートを使ったプログラミング</title>
+&chap_fntmpint;
 </part>
 
 </book>
