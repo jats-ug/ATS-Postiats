@@ -797,8 +797,14 @@ m は自然数の範囲を取り、n1 と n2 は整数の範囲を取ります�
 
 <sect1
  id="example_commutativity_of_multiplication">
+#langeng("
 #title("Example: Commutativity of Multiplication")
+")
+#langja("
+#title("例: 乗法の交換法則")
+")
 
+#langeng("
 #para("\
 The commutativity of multiplication means that the following equation
 holds
@@ -874,6 +880,79 @@ equation:
 for m ranging over natural numbers and n ranging over integers.
 The function #dyncode("mul_commute") can then be implemented immediately
 based on #dyncode("auxnat").\
+")
+")
+#langja("
+#para("\
+乗法の交換法則は次の等式を意味しています:
+
+#atscode("m * n = n * m")
+
+このとき m と n は整数の範囲を持ちます。この等式を直接エンコードすると次のような (証明の) 関数インターフェイスが得られます:
+
+#atscode("\
+//
+prfun
+mul_commute{m,n:int}{p:int}(MUL(m, n, p)): MUL(n, m, p)
+//
+")
+
+#dyncode("mul_commute") の実装は次のようになります:
+
+#atscode("\
+primplmnt
+mul_commute
+  {m,n}{p}(pf0) = let
+//
+prfun
+auxnat
+{m:nat}
+{p:int} .<m>.
+(
+pf: MUL(m, n, p)
+) : MUL(n, m, p) =
+(
+  case+ pf of
+  | MULbas() => mul_nx0_0{n}()
+  | MULind(pf1) =>
+      mul_distribute(auxnat(pf1), mul_nx1_n{n}())
+    // end of [MULind]
+) (* end of [auxnat] *)
+//
+in
+//
+sif
+m >= 0
+then auxnat(pf0)
+else let
+  prval MULneg(pf1) = pf0 in mul_neg_2(auxnat(pf1))
+end // end of [else]
+//
+end // end of [mul_commute]
+")
+
+このとき、次の証明関数が使われています:
+
+#atscode("\
+//
+prfun
+mul_nx0_0{n:int}(): MUL(n, 0, 0) // n * 0 = 0
+//
+prfun
+mul_nx1_n{n:int}(): MUL(n, 1, n) // n * 1 = n
+//
+prfun
+mul_neg_2
+  {m,n:int}{p:int}(MUL(m,n,p)): MUL(m,~n,~p) // m*(~n) = ~(m*n)
+//
+")
+
+内部の関数 #dyncode("auxnat") は次の等式を満たす数学的帰納法の証明を素直にエンコードしています:
+
+#atscode("m * n = n * m")
+
+このとき m は自然数の範囲を、n は整数の範囲を取ります。関数 #dyncode("mul_commute") は #dyncode("auxnat") を使ってすぐに実装できるでしょう。\
+")
 ")
 
 </sect1><!--id="example_commutativity_of_multiplication"-->
