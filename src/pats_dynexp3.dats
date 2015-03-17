@@ -812,20 +812,6 @@ in '{
 (* ****** ****** *)
 
 implement
-d3exp_seval
-  (loc, knd, d3e) = let
-//
-val s2f = d3exp_get_type (d3e)
-//
-in '{
-  d3exp_loc= loc
-, d3exp_type= s2f
-, d3exp_node= D3Eseval (knd, d3e)
-} end // end of [d3exp_seval]
-
-(* ****** ****** *)
-
-implement
 d3exp_vcopyenv
 (
   loc, s2f, knd, d2v
@@ -1007,7 +993,7 @@ d3lab_lab
 , d3lab_node= D3LABlab (lab)
 , d3lab_overld= opt
 , d3lab_overld_app= None(*void*)
-} // end of [d3lab_lab]
+} (* end of [d3lab_lab] *)
 
 implement
 d3lab_ind
@@ -1016,7 +1002,7 @@ d3lab_ind
 , d3lab_node= D3LABind (ind)
 , d3lab_overld= None(*void*)
 , d3lab_overld_app= None(*void*)
-} // end of [d3lab_ind]
+} (* end of [d3lab_ind] *)
 
 (* ****** ****** *)
 

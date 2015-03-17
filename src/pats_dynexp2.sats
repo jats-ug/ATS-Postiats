@@ -893,8 +893,6 @@ and d2exp_node =
 //
   | D2Eeffmask of (s2eff, d2exp) // $effmask (s2eff, d2exp)
 //
-  | D2Eseval of (int(*knd*), d2exp) // $seval
-//
   | D2Eshowtype of (d2exp) // $showtype: for debugging
 //
   | D2Evcopyenv of (int(*knd*), d2exp) // $vcopyenv_v/$vcopyenv_vt
@@ -955,8 +953,9 @@ and d2eclist = List (d2ecl)
 
 and
 d2exp = '{
-  d2exp_loc= location, d2exp_node= d2exp_node, d2exp_type= s2expopt
-} // end of [d2exp]
+  d2exp_loc= location
+, d2exp_node= d2exp_node, d2exp_type= s2expopt
+} (* end of [d2exp] *)
 
 and d2explst = List (d2exp)
 and d2expopt = Option (d2exp)
@@ -1426,12 +1425,6 @@ d2exp_raise (loc: location, d2e: d2exp): d2exp
 fun
 d2exp_effmask
   (loc: location, s2fe: s2eff, d2e: d2exp): d2exp
-//
-(* ****** ****** *)
-//
-fun
-d2exp_seval
-  (loc: location, knd: int, d2e: d2exp): d2exp
 //
 (* ****** ****** *)
 //

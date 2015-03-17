@@ -106,20 +106,23 @@ auxmain .<>.
   val islin = s2exp_is_lin (s2e_sel)
 in
 //
-if islin then let
+if
+islin
+then let
   val s2t_elt = s2e_elt.s2exp_srt
-  var ctxtopt: s2ctxtopt = None ()
+  var ctxtopt: s2ctxtopt = None(*void*)
   val s2e_sel =
     s2exp_get_dlablst_context (loc0, s2e_elt, d3ls, ctxtopt)
   // end of [val]
   val isctx = (
     case+ ctxtopt of Some _ => true | None _ => false
   ) : bool // end of [val]
-  val () = if ~isctx then {
+  val () =
+  if ~isctx then {
     val () = prerr_error3_loc (loc0)
     val () = prerr ": the linear component cannot taken out."
     val () = prerr_newline ()
-    val () = the_trans3errlst_add (T3E_s2addr_deref_context (loc0, s2e_elt, d3ls))
+    val () = the_trans3errlst_add (T3E_s2addr_deref_context(loc0, s2e_elt, d3ls))
   } // end of [val]
 //
   val () = d2var_inc_linval (d2vw)
@@ -137,7 +140,8 @@ if islin then let
 //
 in
   s2e_sel
-end else s2e_sel // end of [if]
+end // end of [then]
+else s2e_sel // end of [else]
 //
 end // end of [auxmain]
 
@@ -280,20 +284,39 @@ in (* in-of-local *)
 
 implement
 d2exp_trup_deref
-  (loc0, d2e, d2ls) = let
+  (loc0, d2rt, d2ls) = let
 (*
-val () = (
-  print "d2exp_trup_deref: d2e = "; print_d2exp (d2e); print_newline ()
-) // end of [val]
+val () =
+println!
+(
+  "d2exp_trup_deref: d2rt = ", d2rt
+) (* end of [val] *)
 *)
-val d3e = d2exp_trup (d2e)
+val d3rt = d2exp_trup (d2rt)
 val d3ls = d2lablst_trup (d2ls)
-val () = d3exp_open_and_add (d3e)
-val s2e0 = d3exp_get_type (d3e)
+val () = d3exp_open_and_add (d3rt)
+val s2e0 = d3exp_get_type (d3rt)
 val s2f0 = s2exp2hnf_cast (s2e0)
 //
+val
+overld = d3lablst_is_overld (d3ls)
+val () =
+if overld then
+{
+//
+val () =
+prerr_error3_loc (loc0) 
+val () =
+prerrln! (": overloaded dot-symbol should be applied.")
+//
+val () =
+the_trans3errlst_add
+  (T3E_d2exp_deref_overld(loc0, d2rt, d3ls))
+//
+} (* end of [if] *)
+//
 in
-  aux1 (loc0, s2f0, d3e, d3ls)
+  aux1 (loc0, s2f0, d3rt, d3ls)
 end // end of [d2exp_trup_deref]
 
 end // end of [local]

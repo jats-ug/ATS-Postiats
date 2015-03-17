@@ -62,7 +62,7 @@ hash_key = ghash_val<key>
 
 implement
 {key}(*tmp*)
-equal_key_key = gequal_val<key>
+equal_key_key = gequal_val_val<key>
 
 (* ****** ****** *)
 //
@@ -258,6 +258,26 @@ implement{}
 fprint_hashtbl$sep (out) = fprint (out, "; ")
 implement{}
 fprint_hashtbl$mapto (out) = fprint (out, "->")
+
+(* ****** ****** *)
+
+implement
+{key,itm}
+hashtbl_foreach_cloref
+  (tbl, fwork) = () where
+{
+//
+var env: void = ((*void*))
+//
+implement
+(env)(*tmp*)
+$HT.hashtbl_foreach$fwork<key,itm><env> (k, x, env) = fwork(k, x)
+//
+val tbl = htdecode (tbl)
+val ((*void*)) = $HT.hashtbl_foreach_env<key,itm><void> (tbl, env)
+prval ((*void*)) = $UN.cast2void (tbl)
+//
+} (* end of [hashtbl_foreach_cloref] *)
 
 (* ****** ****** *)
 

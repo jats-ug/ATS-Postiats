@@ -55,7 +55,7 @@ staload "libats/ML/SATS/funset.sats"
 (* ****** ****** *)
 
 implement{a}
-compare_elt_elt = gcompare_val<a>
+compare_elt_elt = gcompare_val_val<a>
 implement{a}
 $FS.compare_elt_elt = compare_elt_elt<a>
 
@@ -290,8 +290,10 @@ implement
 {a}(*tmp*)
 funset_foreach (xs) = let
 //
-var env: void = () in funset_foreach_env<a><void> (xs, env)
+var env: void = ((*void*))
 //
+in
+  funset_foreach_env<a><void> (xs, env)
 end // end of [funset_foreach]
 
 implement
@@ -299,11 +301,41 @@ implement
 funset_foreach_env (xs, env) = let
 //
 implement
-funset_foreach$fwork<a><env> = $FS.funset_foreach$fwork<a><env>
+$FS.funset_foreach$fwork<a><env>
+  (x, env) = funset_foreach$fwork<a><env> (x, env)
 //
 in
   $FS.funset_foreach_env<a><env> (xs, env)
 end // end of [funset_foreach_env]
+
+implement
+{a}(*tmp*)
+funset_foreach_cloref
+  (xs, fwork) = let
+//
+var env: void = ((*void*))
+//
+implement
+(env)(*tmp*)
+$FS.funset_foreach$fwork<a><env> (x, env) = fwork (x)
+//
+in
+  $FS.funset_foreach_env<a><void> (xs, env)
+end // end of [funset_foreach_cloref]
+
+(* ****** ****** *)
+
+implement
+{a}(*tmp*)
+funset_tabulate_cloref
+  (n, fopr) = let
+//
+implement
+$FS.funset_tabulate$fopr<a> (i) = fopr(i)
+//
+in
+  $FS.funset_tabulate<a> (n)
+end // end of [funset_tabulate]
 
 (* ****** ****** *)
 

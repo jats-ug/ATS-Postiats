@@ -110,16 +110,33 @@ implement{a} gidentity (x) = x
 implement{a} gidentity_vt (x) = x
 
 #atscode_separator()
+
+implement
+{a}(*tmp*)
+gcopy_val (x) = (x)
+implement
+(a:t@ype)
+gcopy_ref<a> (x) = (x)
+
+#atscode_separator()
+//
+implement
+gequal_val_val<int> (x, y) = (x = y)
+implement
+gequal_val_val<bool> (x, y) = (x = y)
+implement
+gequal_val_val<char> (x, y) = (x = y)
+implement
+gequal_val_val<double> (x, y) = (x = y)
+implement
+gequal_val_val<string> (x, y) = (x = y)
+//
+#atscode_separator()
 //
 implement
 (a:t@ype)
-gequal_ref<a> (x, y) = gequal_val<a> (x, y)
-//
-implement gequal_val<int> (x, y) = (x = y)
-implement gequal_val<bool> (x, y) = (x = y)
-implement gequal_val<char> (x, y) = (x = y)
-implement gequal_val<double> (x, y) = (x = y)
-implement gequal_val<string> (x, y) = (x = y)
+gequal_ref_ref<a>
+  (x, y) = gequal_val_val<a> (x, y)
 //
 #atscode_separator()
 

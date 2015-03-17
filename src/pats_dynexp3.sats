@@ -367,8 +367,6 @@ and d3exp_node =
 //
   | D3Eeffmask of (s2eff, d3exp) // $effmask(s2eff, d3exp)
 //
-  | D3Eseval of (int(*knd*), d3exp) // $seval: static evaluation
-//
   | D3Evcopyenv of (int(*knd*), d2var) // $vcopyenv_v/vcopyenv_vt
 //
   | D3Etempenver of (d2varlst) // $tempenver for environvars
@@ -416,9 +414,9 @@ and d3eclistopt = Option (d3eclist)
 
 and d3exp = '{
   d3exp_loc= location
-, d3exp_type= s2exp // HX: it may still be s2Var
+, d3exp_type= s2exp // HX: it may still be s2Var!!!
 , d3exp_node= d3exp_node
-} // end of [d3exp]
+} (* end of [d3exp] *)
 
 and d3explst = List (d3exp)
 and d3expopt = Option (d3exp)
@@ -433,7 +431,7 @@ and d3lab = '{
 , d3lab_node= d3lab_node
 , d3lab_overld= d2symopt
 , d3lab_overld_app= d3expopt
-} // end of [d3lab]
+} (* end of [d3lab] *)
 
 and d3lablst = List (d3lab)
 
@@ -443,7 +441,7 @@ and gm3at = '{
   gm3at_loc= location
 , gm3at_exp= d3exp
 , gm3at_pat= p3atopt
-} // end of [gm3at]
+} (* end of [gm3at] *)
 
 and gm3atlst = List (gm3at)
 
@@ -454,7 +452,7 @@ and c3lau (n:int) = '{
 , c3lau_seq= int // sequentiality
 , c3lau_neg= int // negativativity
 , c3lau_body= d3exp // expression body
-} // end of [c3lau]
+} (* end of [c3lau] *)
 
 and c3lau = [n:nat] c3lau (n)
 
@@ -468,7 +466,7 @@ and sc3lau = '{
   sc3lau_loc= location
 , sc3lau_pat= sp2at
 , sc3lau_body= d3exp
-} // end of [sc3lau]
+} (* end of [sc3lau] *)
 
 and sc3laulst = List (sc3lau)
 
@@ -480,7 +478,7 @@ and i3mpdec = '{
 , i3mpdec_imparg= s2varlst
 , i3mpdec_tmparg= s2explstlst
 , i3mpdec_def= d3exp
-} // end of [i3mpdec]
+} (* end of [i3mpdec] *)
 
 (* ****** ****** *)
 
@@ -488,7 +486,7 @@ and f3undec = '{
   f3undec_loc= location
 , f3undec_var= d2var
 , f3undec_def= d3exp
-} // end of [f3undec]
+} (* end of [f3undec] *)
 
 and f3undeclst = List f3undec
 
@@ -498,7 +496,7 @@ and v3aldec = '{
   v3aldec_loc= location
 , v3aldec_pat= p3at
 , v3aldec_def= d3exp
-} // end of [v3aldec]
+} (* end of [v3aldec] *)
 
 and v3aldeclst = List (v3aldec)
 
@@ -521,7 +519,7 @@ and v3ardeclst = List (v3ardec)
 and prv3ardec = '{
   prv3ardec_loc= location
 , prv3ardec_dvar= d2var, prv3ardec_type= s2exp, prv3ardec_init= d3exp
-} // end of [prv3ardec]
+} (* end of [prv3ardec] *)
 
 and prv3ardeclst = List (prv3ardec)
 
@@ -853,11 +851,6 @@ d3exp_effmask
   (loc: location, s2fe: s2eff, d3e: d3exp): d3exp
 // end of [d3exp_effmask]
 
-(* ****** ****** *)
-//
-fun
-d3exp_seval(loc: loc_t, knd: int, d3e: d3exp) : d3exp
-//
 (* ****** ****** *)
 //
 fun

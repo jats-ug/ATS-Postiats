@@ -53,7 +53,8 @@ ATS は他の言語と同様に for ループや while ループを直接実装�
 #para("\
 
 The code employed for illustration in this chapter plus some additional
-code for testing is available #mycodelink("CHAP_FUNCTION/", "on-line").
+code for testing is available #mycodelink("CHAP_FUNCTION/", "on-line").\
+
 ")
 ")
 #langja("
