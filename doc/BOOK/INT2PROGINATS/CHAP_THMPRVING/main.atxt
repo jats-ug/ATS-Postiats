@@ -359,7 +359,7 @@ as Prolog.\
 #title("Constructing Proofs as Total Functions")
 ")
 #langja("
-#title("全域関数として証明をコンストラクトする")
+#title("全域関数を使って証明を組み立てる")
 ")
 
 #langeng("
@@ -381,14 +381,14 @@ peculiar to those who have never tried it before.
 ")
 #langja("
 #para("\
-ATS/LF では、定理は型 (もしくはより正確に証明) によって表現されます。
-例えば、次の証明は整数の乗法が可換であると言っています:
+ATS/LF では、定理は型 (もしくはより正確に命題) によって表現されます。
+例えば、次の命題は整数の乗法が可換であると言っています:
 
 #atscode("\
 {m,n:int}{p:int} MUL (m, n, p) -<prf> MUL (n, m, p)
 ")
 
-ATS/LF において定理の証明をコンストラクトすることは、ATS/LF
+ATS/LF において定理に対する証明をコンストラクトすることは、ATS/LF
 内にエンコーディングされた定理である型の全域値 (ほぼ全域関数になるでしょう) を実装することを意味します。
 ここでの全域とは純粋で停止することを意味しています。
 このスタイルの定理証明はまだ体験していない人にはやや風変わりに見えるかもしれません。
@@ -460,7 +460,7 @@ prfun mut_istot {m,n:int} (): [p:int] MUL (m, n, p)
 ")
 
 キーワード #keycode("prfun") は (非証明関数ではなく) 証明関数のインターフェイスを示しています。
-#dyncode("mul_istot") は次の型 (より正確には証明) で宣言されていることに注意してください:
+#dyncode("mul_istot") は次の型 (より正確には命題) で宣言されていることに注意してください:
 
 #atscode("\
 {m,n:int} () -<prf> [p:int] MUL (m, n, p)
@@ -473,13 +473,15 @@ prfun mut_istot {m,n:int} (): [p:int] MUL (m, n, p)
 
 #atscode("\
 primplement
-mul_istot {m,n} () = let
-  prfun istot
-    {m:nat;n:int} .<m>. (): [p:int] MUL (m, n, p) =
-    sif m > 0 then MULind (istot {m-1,n} ()) else MULbas ()
-  // end of [istot]
+mul_istot{m,n}() = let
+//
+prfun istot
+  {m:nat;n:int} .<m>. (): [p:int] MUL(m, n, p) =
+  sif m > 0 then MULind(istot{m-1,n}()) else MULbas()
+// end of [istot]
+//
 in
-  sif m >= 0 then istot {m,n} () else MULneg (istot {~m,n} ())
+  sif m >= 0 then istot{m,n}() else MULneg(istot{~m,n}())
 end // end of [mul_istot]  
 ")
 
@@ -493,7 +495,7 @@ end // end of [mul_istot]
 もし m = 0 なら、m, n, p は関係していて p = 0 です。
 #dyncode("mul_istot") の実装にエンコードされている証明は次のようなものです:
 もし m が自然数なら、#dyncode("istot") で 証明された補題が m, n, p が関係していることを示しています;
-もし m が負の数なら、同じ補題がなんらかの整数 p1 について ~m, n, p1 が関係しているこを示していて、したがって
+もし m が負の数なら、同じ補題がなんらかの整数 p1 について ~m, n, p1 が関係していることを示していて、したがって
 m, n, p は関係していて #dyncode("MULneg") にエンコードされた規則によれば p = ~p1 です。\
 
 ")#comment("para")
@@ -552,34 +554,34 @@ ATS/LF における定理証明の別の例として、
 prfn mul_isfun
   {m,n:int}{p1,p2:int}
 (
-  pf1: MUL (m, n, p1), pf2: MUL (m, n, p2)
+  pf1: MUL(m, n, p1), pf2: MUL(m, n, p2)
 ) : [p1==p2] void = let
   prfun isfun
     {m:nat;n:int}{p1,p2:int} .<m>.
   (
-    pf1: MUL (m, n, p1), pf2: MUL (m, n, p2)
+    pf1: MUL(m, n, p1), pf2: MUL(m, n, p2)
   ) : [p1==p2] void =
     case+ pf1 of
-    | MULind (pf1prev) => let
-        prval MULind (pf2prev) = pf2 in isfun (pf1prev, pf2prev)
+    | MULind(pf1prev) => let
+        prval MULind(pf2prev) = pf2 in isfun (pf1prev, pf2prev)
       end // end of [MULind]
-    | MULbas () => let
-        prval MULbas () = pf2 in ()
+    | MULbas() => let
+        prval MULbas() = pf2 in ()
       end // end of [MULbas]
   // end of [isfun]
 in
   case+ pf1 of
-  | MULneg (pf1nat) => let
-      prval MULneg (pf2nat) = pf2 in isfun (pf1nat, pf2nat)
+  | MULneg(pf1nat) => let
+      prval MULneg(pf2nat) = pf2 in isfun (pf1nat, pf2nat)
     end // end of [MULneg]
-  | _ =>> isfun (pf1, pf2)
+  | _ (*non-MULneg*) =>> isfun (pf1, pf2)
 end // end of [mul_isfun]
 ")
 
 キーワード #keycode("prfn") は再帰的ではない証明関数を定義するために使われます。
-またキーワード #keycode("prval") は証明の式、つまり prop 型の式、に関連する名前を束縛します。
+またキーワード #keycode("prval") は証明の式、つまり命題型の式に関連する名前を束縛します。
 網羅的なパターンマッチの範囲では、#keycode("prval") は #keycode("val+") と等価です
-(証明はパターンマッチの失敗のような効果を含むことができません)。\
+(証明はパターンマッチの失敗のような作用を含むことができません)。\
 
 ")
 ")
@@ -615,7 +617,7 @@ corresponds to the base case in the inductive proof encoded by
 #dyncode("mul_isfun") が証明しているのは、関係 #stacode("MUL") が最初の2つの引数について関数的だということです:
 もし m, n, p1 が #stacode("MUL") によって関係していて、m, n, p2 もまた #stacode("MUL")
 によって関係しているなら、p1 と p2 は等しくなります。
-この文は、m が自然数であるという仮定で内部の証明関数 #dyncode("isfun") によって1番目に証明されます。
+これは、m が自然数であるという仮定で内部の証明関数 #dyncode("isfun") によって最初に証明されます。
 そしてその後この仮定は破棄されます。
 ここで #dyncode("isfun") の本体で1番目にマッチする節を見てみましょう。
 もしこの節が選択されたら、
