@@ -153,7 +153,7 @@ id="disjunctive_views">
 #title("Disjunctive Views")
 ")
 #langja("
-#title("分離 view")
+#title("選言的な観")
 ")
 
 #langeng("
@@ -179,16 +179,16 @@ V#sub("1").
 #langja("
 #para('\
 
-dataview #stacode("VOR") が次のように宣言されています:
+データ観 #stacode("VOR") は次のように宣言されています:
 
 #atscode('\
 dataview VOR (v0:view+, v1:view+, int) =
   | VORleft (v0, v1, 0) of (v0) | VORright (v0, v1, 1) of (v1)
 ')
 
-この宣言は dataview #stacode("VOR") が1番目と2番目の引数について共変であることを示しています。
+この宣言はデータ観 #stacode("VOR") が1番目と2番目の引数について共変であることを示しています。
 そして関連する2つの証明コンストラクタ #dyncode("VORleft") と #dyncode("VORright") があります。
-view V#sub("0") と V#sub("1") が与えられた時、
+観 V#sub("0") と V#sub("1") が与えられた時、
 #stacode("VOR(V#sub("0"), V#sub("1"), 0)") の証明は V#sub("0") の証明になります。
 また #stacode("VOR(V#sub("0"), V#sub("1"), 1)") の証明は V#sub("1") の証明になります。
 
@@ -312,7 +312,7 @@ opt-type is considerably less verbose.
 #langja("
 #para('\
 
-ATS では、型 T とブール B を取り、opt 型 #dyncode("opt(T, B)") を作るような型コンストラクタ #stacode("opt")
+ATS には、型 T とブール B を取り、opt 型 #dyncode("opt(T, B)") を作るような型コンストラクタ #stacode("opt")
 があります。
 このとき B が true ならば #dyncode("opt(T, B)") は T に等しく、B が false ならそれは T? に等しくなります。
 関数 #dyncode("getopt") には次のような opt 型を使ったインターフェイスを与えることができます:
@@ -362,7 +362,7 @@ id="linear_arrays">
 #title("Dataview for Linear Arrays")
 ")
 #langja("
-#title("線形配列の dataview")
+#title("線形配列のデータ観")
 ")
 
 #langeng("
@@ -386,13 +386,13 @@ declared dataview #stacode("array_v") precisely captures this intuituion:
 
 ほとんどのプログラミング言語と異なり、ATS では配列はプリミティブなデータ構造ではありません。
 もっと正確に言えば、永続的な配列はプログラマが安全に解放できる線形配列を用いて実装できます。
-その線形配列は at-view を用いて実装できます。
-直観的には、N 個の at-view からなる 型 T の N 個の要素が保存されている配列の view :
+その線形配列は駐観を用いて実装できます。
+直観的には、N 個の駐観からなる 型 T の N 個の要素が保存されている配列の観:
 T@L#sub("0"), T@L#sub("1"), ..., T@L#sub("N-1") です。
 ここで、L#sub("0") は配列の開始アドレスで、L に続くそれぞれの要素は直前の要素に T
 のサイズを加えたものと等しくなります。
 すなわち、型 T の値を保存するのに必要なバイト数です。
-次に宣言する dataview #stacode("array_v") はこの直感を正確に捕捉しています:
+次に宣言するデータ観 #stacode("array_v") はこの直感を正確に捕捉しています:
 
 ')
 ")
@@ -425,7 +425,7 @@ array-updating are given the following interfaces:
 #para('\
 
 型 T, アドレス L, 整数 N が与えられた時、#stacode("array_v(T, L, N)")
-は型 T の N 個の要素を保存する L からはじまる配列の view です。
+は型 T の N 個の要素を保存する L からはじまる配列の観です。
 すぐに予想できることですが、
 配列をアクセスしたり更新する関数テンプレートは次のインターフェイスで与えられます:
 
@@ -525,7 +525,7 @@ for supporting view-changes (of no run-time cost).
 
 これは末尾再帰的な実装で時間的計算量は O(n) です。
 けれども、配列の重要なメリットは O(1) の時間でアクセスと更新操作ができることにあります。
-(実行時のコストなしに) view の変更をサポートするような証明関数をコンストラクトする必要性に気づき、私は最初にそのような即時的な操作を実装することに注力しました。
+(実行時のコストなしに) 観の変更をサポートするような証明関数をコンストラクトする必要性に気づき、私は最初にそのような即時的な操作を実装することに注力しました。
 
 ')
 ")
@@ -545,7 +545,7 @@ encoded in the type of the proof function #dyncode("array_v_split"):
 #para('\
 
 明確に、型 T の N 個の要素を保存する L から開始する配列は2つの方法で考えることができます:
-一つは I 個の要素が L から保管されている考える方法で、もう一つは N-I 個の要素が L+I*sizeof(T)
+一つは I 個の要素が L から保管されていると考える方法で、もう一つは N-I 個の要素が L+I*sizeof(T)
 から保管されていると考える方法です。このとき I は N 以下の自然数です。
 形式的には、この文は証明関数 #dyncode("array_v_split") の型にエンコードできます:
 
@@ -643,7 +643,7 @@ covering the topic of view-change.
 #para('\
 
 もちろん、証明関数 #dyncode("array_v_split") と #dyncode("array_v_split") はまだ実装されていません。
-これは、view の変更に関するトピックを紹介するときに説明します。
+これは、観の変更に関するトピックを紹介するときに説明します。
 
 ')
 ")
@@ -663,7 +663,7 @@ of a function template for array intialization:
 #para('\
 
 型 T, アドレス L, 自然数 N が与えられた時、
-view #stacode("array_v(T?, L, N)") の証明は関数 #dyncode("malloc") と #dyncode("free")
+観 #stacode("array_v(T?, L, N)") の証明は関数 #dyncode("malloc") と #dyncode("free")
 をそれぞれ使って獲得と解放をすることができます。
 これについては別の章で詳細を解説します。
 ここで、次のような配列を初期化する関数テンプレートの実装を見てみましょう:
@@ -757,7 +757,7 @@ explicitly where the array argument is located.
 #para('\
 
 型 T と自然数 N が与えられた時、@[T][N] は ATS のビルトイン型で 型 T の N 個連続した値を表わします。
-したがって、与えられたアドレス L について at-view @[T][N]@L は配列 view #dyncode("array_v(T, L, N)")
+したがって、与えられたアドレス L について駐観 @[T][N]@L は配列観 #dyncode("array_v(T, L, N)")
 と等価です。
 参照渡しの機能を使えば、以前示した関数 #dyncode("arrget") と #dyncode("arrset")
 に次のインターフェイスを割り当てることができます:
