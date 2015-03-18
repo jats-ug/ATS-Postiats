@@ -801,8 +801,14 @@ Please find the entirety of the above presented code
 
 <sect1
 id="linear_strings">
+#langeng("
 #title("Dataview for Linear Strings")
+")
+#langja("
+#title("線形文字列のデータ観")
+")
 
+#langeng("
 #para('\
 
 The following dataview #stacode("strbuf_v") captures the notion of a
@@ -810,6 +816,14 @@ string in C, which consisits a sequence of non-null characters followed by the
 null character.
 
 ')
+")
+#langja("
+#para('\
+
+次のデータ観 #stacode("strbuf_v") はC言語文字列の概念を補足しています。C言語文字列は NULL 文字で終端する非 NULL 文字の列から成り立っています。
+
+')
+")
 
 </sect1>#comment("sect1/id=linear_strings")
 
@@ -821,7 +835,7 @@ id="singly-linked_lists">
 #title("Dataview for Singly-Linked Lists")
 ")
 #langja("
-#title("片方向リストの dataview")
+#title("片方向リストのデータ観")
 ")
 
 #langeng("
@@ -855,7 +869,7 @@ assigned the following types:
 #langja("
 #para('\
 
-次の dataview #stacode("slseg_v") は片方向リストの部分の概念を捕捉しています:
+次のデータ観 #stacode("slseg_v") は片方向リストの部分の概念を捕捉しています:
 
 #atscode('\
 dataview
@@ -903,8 +917,7 @@ a list as is formally defined below:
 #para('\
 
 #stacode("agz") は NULL ではないアドレスのサブセット種であることに注意してください。
-型 T, 2つのアドレス L1 と L2, 自然数 N が与えられた時、
-view #stacode("slseg_v(T, L1, L2, N)") は L1 からはじまり L2 で終わるような型 T の N
+型 T, 2つのアドレス L1 と L2, 自然数 N が与えられた時、観 #stacode("slseg_v(T, L1, L2, N)") は L1 からはじまり L2 で終わるような型 T の N
 個の要素を含む片方向リストの部分を表わします。
 L2 が NULL ポインタである場合、このリスト部分は次に形式的に定義されるリストと考えられます:
 
@@ -930,8 +943,7 @@ same as a pointer to a struct of the following declared type
 #langja("
 #para('\
 
-型 T が与えられた時、L を指すポインタと自然数 N について view #stacode("slist_v(T, L, N)") の証明は、
-C言語において次に宣言された構造体型 #stacode("slist_struct") へのポインタと本質的に同じです:
+型 T が与えられた時、L を指すポインタと自然数 N について観 #stacode("slist_v(T, L, N)") の証明は、C言語において次に宣言された構造体型 #stacode("slist_struct") へのポインタと本質的に同じです:
 
 ')
 ")
@@ -1292,13 +1304,13 @@ with dataviews in ATS.
 #langja("
 #para('\
 
-ここで宣言した dataview #stacode("slseg_v")
+ここで宣言したデータ観 #stacode("slseg_v")
 はリストのノードを確保/解放する問題に対処していないことを指摘しておこうと思います。
 これは複雑な表現を避けることを意図しています。
-確保と解放を扱うような片方向リストの dataview もまた ATS で宣言することができます。
-しかし dataviewtype で宣言することでそのようなリストをより使い易くすることができます。
-けれども、dataview は根本的に dataviewtype よりも一般的で柔軟です。
-多くの一般的なデータ構造 (例: 双方向リスト) は ATS において dataview を用いてのみ適切に取り扱うことができます。
+確保と解放を扱うような片方向リストのデータ観もまた ATS で宣言することができます。
+しかしデータ観型 (dataviewtype) で宣言することでそのようなリストをより使い易くすることができます。
+けれども、データ観は根本的にデータ観型よりも一般的で柔軟です。
+多くの一般的なデータ構造 (例: 双方向リスト) は ATS においてデータ観を用いてのみ適切に取り扱うことができます。
 
 ')
 ")
@@ -1312,7 +1324,7 @@ with dataviews in ATS.
 #title("Proof Functions for View-Changes")
 ")
 #langja("
-#title("view 変更のための証明関数")
+#title("観変化のための証明関数")
 ")
 
 #langeng("
@@ -1333,14 +1345,12 @@ several of such cases in the rest of this section.
 #langja("
 #para("\
 
-#emphasis("view 変更 (view-change)") という言いまわしは、関数を一連の view の証明に適用してそれらを別の
-view の証明に変換することを意味しています。
-この関数自身も証明関数なので、view 変更それぞれに関連する実行時のコストはありません。
-例えば、
-どこかのアドレス L について at-view int32@L の証明は4つの at-view: int8@L, int8@L+1, int8@L+2, int8@L+3
+#emphasis("観変化 (view-change)") という言いまわしは、関数を一連の観の証明に適用してそれらを別の観の証明に変換することを意味しています。
+この関数自身も証明関数なので、観変化それぞれに関連する実行時のコストはありません。
+例えば、どこかのアドレス L について駐観 int32@L の証明は4つの駐観: int8@L, int8@L+1, int8@L+2, int8@L+3
 からなるタプルに変化できます。
 このとき int32 と int8 はそれぞれ32ビットと8ビット整数の型です。
-しばしばより興味深い view 変更が証明関数としてそれぞれ定義されています。
+より興味深い観変化が証明関数としてそれぞれ定義されています。
 この章の残りではそのようないくつかの例を紹介します。
 
 ")
@@ -1360,10 +1370,9 @@ functions #dyncode("array_v_split") and #dyncode("array_v_unsplit"):
 #langja("
 #para("\
 
-配列の添字操作を O(1) 時間で実装するには、1つの配列の view を2つの隣接した配列の view
-に変換する証明関数と、その逆の変換を行なう別の証明関数が必要です。
+配列の添字操作を O(1) 時間で実装するには、1つの配列の観を2つの隣接した配列の観に変換する証明関数と、その逆の変換を行なう別の証明関数が必要です。
 形式的に言うと、次の2つの証明関数 #dyncode("array_v_split") と #dyncode("array_v_unsplit")
-をコンストラクトする必要があるのです:
+を作る必要があるのです:
 
 ")
 ")
@@ -1518,7 +1527,7 @@ is given as follows:
 #langja("
 #para('\
 
-ここで view 変更を行なうより興味深い証明関数を見てみましょう。
+ここで観変化を行なうより興味深い証明関数を見てみましょう。
 証明関数 #dyncode("array_v_takeout") のインターフェイスは次のように与えられます:
 
 ')
@@ -1567,15 +1576,14 @@ arrget{l}{n,i}
 #langja("
 #para('\
 
-次の型は、at-view の証明を取り配列 view の証明を返すような線形証明関数を表わすことに注意してください:
+次の型は、駐観の証明を取り配列観の証明を返すような線形証明関数を表わすことに注意してください:
 
 #atscode('\
 a @ l+i*sizeof(a) -<lin,prf> array_v (a, l, n)
 ')
 
 そのような関数は1つ要素が欠けた配列を本質的に表わし、単純に
-#dyncode("array_v_takeout") は配列の view を (1つの要素に対する) at-view と配列の残りを表わす view
-に変更すると、表現することができます。
+#dyncode("array_v_takeout") は配列の観を (1つの要素に対する) 駐観と配列の残りを表わす観に変更すると、表現することができます。
 #dyncode("array_v_takeout") を使うことで、#dyncode("arrget") に別の実装を与えることができます:
 
 #atscode('\
@@ -1704,8 +1712,8 @@ end // end of [slseg_v_unsplit]
 #langja("
 #para('\
 
-これまで示してきた view 変更のための証明関数はは全て配列 view の操作でした。
-次のコードはこれらとは異なり、片方向リストを表わす2つの view を1つに結合するものと考えることができます:
+これまで示してきた観変化のための証明関数はは全て配列観の操作でした。
+次のコードはこれらとは異なり、片方向リストを表わす2つの観を1つに結合するものと考えることができます:
 
 #atscode('\
 prfun slseg_v_unsplit
