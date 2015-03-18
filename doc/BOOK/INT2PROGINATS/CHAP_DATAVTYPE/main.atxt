@@ -16,7 +16,7 @@ Time of Generation: #timestamp()\
 #title("Dataviewtypes as Linear Datatypes")
 ")
 #langja("
-#title("線形 datatype としての dataviewtype")
+#title("線形データ型としてのデータ観型 (dataviewtype)")
 ")
 
 #langeng("
@@ -36,12 +36,11 @@ encountered dataviewtypes and their uses.
 #langja("
 #para("\
 
-dataviewtype は datatype の線形バージョンとして考えることができます。
-おおざっぱに言うと、dataviewtype は datatype と dataview との組み合わせです。
+データ観型 (dataviewtype) はデータ型の線形バージョンとして考えることができます。
+おおざっぱに言うと、データ観型はデータ型とデータ観との組み合わせです。
 このプログラミングの機能は手動でメモリ管理をする状況下でパターンマッチのような利便性を提供することを主な目的として ATS に導入されています。
-GC を削減したり完全に除去しなければならない状況下では、dataviewtype はしばしば datatype
-を置き換えることになります。
-この章ではいくつかの一般的に用いられる dataviewtype とその使い方を紹介します。
+GC を削減したり完全に除去しなければならない状況下では、データ観型はしばしばデータ型を置き換えることになります。
+この章ではいくつかの一般的に用いられるデータ観型とその使い方を紹介します。
 
 ")
 ")
@@ -54,7 +53,7 @@ id="linear_optional_values">
 #title("Linear Optional Values")
 ")
 #langja("
-#title("線形 optional 値")
+#title("線形オプショナル値")
 ")
 
 #langeng("
@@ -114,9 +113,9 @@ freeing memory allocated for constructors associated with dataviewtypes.
 #langja("
 #para("\
 
-optional 値が生成さると、その値はたいがいすぐに使用され破棄されんます。
+オプショナル値が生成さると、その値はたいがいすぐに使われて破棄されます。
 そのような値に線形型が割り当てられているなら、値を保管するために確保されたメモリを効率よく回収することができます。
-線形 optional 値を表わす dataviewtype #stacode("option_vt") は次のように宣言されます:
+線形オプショナル値を表わすデータ観型 #stacode("option_vt") は次のように宣言されます:
 
 #atscode('\
 datavtype
@@ -128,7 +127,7 @@ vtypedef Option_vt (a:t@ype) = [b:bool] option_vt (a, b)
 ')
 
 #keycode("datavtype") は単に #keycode("dataviewtype") の短縮バージョンであることに注意してください。
-導入された dataviewtype #stacode("option_vt") は1番目の引数について共変です。
+導入されたデータ観型 #stacode("option_vt") は1番目の引数について共変です。
 また関連した2つのデータコンストラクタ #dyncode("Some_vt") と #dyncode("None_vt") があります。
 次の例では、#dyncode("find_rightmost") 
 与えられた述語を満たすようなリスト中の最右辺の要素を見つけようとします:
@@ -155,7 +154,7 @@ find_rightmost{n:nat} .<n>.
 パターン #dyncode("None_vt()") の前にあるチルダ記号 (#keycode("~"))
 は、そのパターンにマッチしたノードのためのメモリが、そのマッチ節の本体が評価される前に解放されることを表わすことに注意してください。
 この例では、#dyncode("None_vt") は NULL ポインタにマップされるので、実際にはメモリの解放は起きません。
-dataviewtype に関連するコンストラクタのために確保されたメモリを解放する方法について詳細をすぐに解説します。
+データ観型に関連するコンストラクタのために確保されたメモリを解放する方法については、詳細をすぐに解説します。
 
 ")
 ")
@@ -190,8 +189,7 @@ respectively. What is special here is that the first argument of
 #langja("
 #para('\
 
-別の例として、次の関数テンプレート #dyncode("list_optcons") は与えられた
-optional 値を展開した要素を先頭にした新しいリストをコンストラクトします:
+別の例として、次の関数テンプレート #dyncode("list_optcons") は与えられたオプショナル値を展開した要素を先頭にした新しいリストをコンストラクトします:
 
 #atscode('\
 fn{a:t@ype}
@@ -207,7 +205,7 @@ list_optcons
 
 記号 #stacode("bool2int") は #dyncode("true") と #dyncode("false") をそれぞれ 1 と 0 に変換する ATS
 におけるビルトインの静的な関数です。
-ここで注目べきなのは、#dyncode("list_optcons") の最初の引数が線形であり、#dyncode("list_optcons")
+ここで注目すべきなのは、#dyncode("list_optcons") の最初の引数が線形であり、#dyncode("list_optcons")
 呼び出しが返ると消費され、それが占有していたメモリはは回収されるということです。
 
 ')
@@ -253,9 +251,9 @@ for linear lists of length I in which each element is of the type T.
 #langja("
 #para('\
 
-線形リストは dataview #stacode("slist_v") で表現された片方向リストと本質的に同じです。
+線形リストはデータ観 #stacode("slist_v") で表現された片方向リストと本質的に同じです。
 けれども、以前の実装ではできなかったリストノードのメモリ確保と解放が可能になります。
-次の宣言は線形 datatype #stacode("list_vt") を導入しています。
+次の宣言は線形データ型 #stacode("list_vt") を導入しています。
 これは型と整数に適用されると、(#stacode("viewtype") である) ボックス型を作ります:
 
 #atscode('\
@@ -293,14 +291,14 @@ available proofs.
 #langja("
 #para('\
 
-ある dataviewtype に関連する #emphasis("foo") という名前のデータコンストラクタあると仮定しましょう。
-すると、n が #emphasis("foo") のアリティのとき、n+1 個のアドレスを取り viewtype を作るような、一致する
-#emphasis("foo_unfold") という名前の viewtype コンストラクタがあります。
-例えば、viewtype コンストラクタ #stacode("list_vt_cons_unfold") は3つのアドレス L0, L1, L2
-を取り、viewtype #stacode("list_vt_cons_unfold(L0, L1, L2)") を作ります。
-この viewtype は、リストノードが L0 に配置されていて、#dyncode("list_vt_cons") の2つの引数が L1 と L2
+あるデータ観型に関連する #emphasis("foo") という名前のデータコンストラクタあると仮定しましょう。
+すると、n が #emphasis("foo") のアリティのとき、n+1 個のアドレスを取り観型 (viewtype) を作るような、一致する
+#emphasis("foo_unfold") という名前の観型コンストラクタがあります。
+例えば、観型コンストラクタ #stacode("list_vt_cons_unfold") は3つのアドレス L0, L1, L2
+を取り、観型 #stacode("list_vt_cons_unfold(L0, L1, L2)") を作ります。
+この観型は、リストノードが L0 に配置されていて、#dyncode("list_vt_cons") の2つの引数が L1 と L2
 に配置されているような、#dyncode("list_vt_cons") を呼び出して作られたリストノードを表わします。
-このとき L1 と L2 に関連する at-view の証明は現在有効な証明として保管されます。
+このとき L1 と L2 に関連する駐観の証明は現在有効な証明として保管されます。
 
 ')
 ")
@@ -427,7 +425,7 @@ into a linear list.
 
 リストノードに保管された中身を修正したくなったとしましょう。
 例えば、線形の整数リストに保管されているそれぞれの整数の値を2倍したいかもしれません。
-次のコードは、このようなことを行なうたに #dyncode("list_vt_2x") という名前の関数を実装しています:
+次のコードは、このようなことを行なう #dyncode("list_vt_2x") という名前の関数を実装しています:
 
 #atscode('\
 fun
@@ -457,7 +455,7 @@ list_vt_2x{n:nat}
 #stacode("list_vt_cons_unfold(L0, L1, L2)") に変化します。
 パターン #dyncode("list_vt_cons(x, xs1)") によるガード節の本体において、#dyncode("x") と #dyncode("xs1")
 は (左辺値の) 変数として扱われます。
-特別な証明関数 #dyncode("fold@") は #dyncode("xs") に対して呼び出され、それを畳み込むと同時に L1 と L2 に付属した at-view の証明を線形リストにします。
+特別な証明関数 #dyncode("fold@") は #dyncode("xs") に対して呼び出され、それを畳み込むと同時に L1 と L2 に付属した駐観の証明を線形リストにします。
 
 ')
 ")
@@ -539,7 +537,7 @@ implementation of #dyncode("list_vt_free"):
 #langja("
 #para('\
 
-変数が dataviewtype に関連するコンストラクタで作られたパターンにマッチした後に、線形変数はそのまま残して
+変数がデータ観型に関連するコンストラクタで作られたパターンにマッチした後に、線形変数はそのまま残して
 (またはスケルトンとも呼ばれます)
 ノードを明示的に解放するために特殊関数 #dyncode("free@") を使うことも可能です。
 例えば、次のコードは #dyncode("list_vt_free") の別の実装です:
@@ -617,8 +615,7 @@ natural number can be used in place of 0 as the second static argument of
 もし #dyncode("free@") が型 #stacode("list_vt_cons_unfold(L0, L1, L2)") ノードに適用されたら、コンストラクタ
 #dyncode("list_vt_cons") の型に2つの量化子をインスタンス化するために、2つの型と整数の静的引数を必要とします。
 #dyncode("xs") の型が #stacode("list_vt_cons_unfold(L0, L1, L2)") である場合、
-#dyncode("free@{a}{0}(xs)") 呼び出しを型検査すると at-view #stacode("a?@L1") と
-at-view #stacode("list_vt(a, 0)?@L2") の証明を暗黙的に消費します。
+#dyncode("free@{a}{0}(xs)") 呼び出しを型検査すると駐観 #stacode("a?@L1") と駐観 #stacode("list_vt(a, 0)?@L2") の証明を暗黙的に消費します。
 どのような T と I においても、#stacode("list_vt(T, 0)?") と #stacode("list_vt(T, I)?")
 の間に違いがないので、静的引数 0 をこのコードでは使っています。
 実際のところ、どのような自然数も #dyncode("free@") の第二静的引数として0の代わりに使うことができます。
@@ -716,9 +713,9 @@ end // end of [reverse]
 
 #dyncode("reverse") に割り当てられた型は、この関数が線形リストを消費してそれと同じ長さの線形リストを返すことを示しています。
 内部の関数 #dyncode("revapp") は末尾再帰であることに注意してください。
-線形リストの逆順のこの実装は、以前示した dataview #stacode("slseg_v") (これは片方向リストでした)
+線形リストの逆順のこの実装は、以前示したデータ観 #stacode("slseg_v") (これは片方向リストでした)
 を使った実装に直接対応しています。
-これら2つの実装を比較すると、dataviewtype を使った実装は型レベルで著しく単純化されています。
+これら2つの実装を比較すると、データ観型を使った実装は型レベルで著しく単純化されています。
 例えば、関数 #dyncode("reverse") と #dyncode("revapp") に割り当てられた型において、ポインタに関して明示的な言及をしていません。
 
 ')
@@ -837,9 +834,8 @@ dataviews.
 #langja("
 #para('\
 
-リスト連結のこの実装は、以前紹介した dataview #dyncode("slseg_v") を用いた実装と本質的に一致しています。
-これら2つの比較すると、上記の実装がはるかに単純できれいで、dataview に対する dataviewtype
-の利点を具体的に立証していることがわかるでしょう。
+リスト連結のこの実装は、以前紹介したデータ観 #dyncode("slseg_v") を用いた実装と本質的に一致しています。
+これら2つの比較すると、上記の実装がはるかに単純できれいで、データ観に対するデータ観型の利点を具体的に立証していることがわかるでしょう。
 
 ')
 ")
@@ -993,7 +989,7 @@ end // end of [append2]
 
 型検査の間では、アドレス L0, L1, L2 について、式 #dyncode("list_cons{a}{0}(x, _)") には線形型
 #stacode("list_cons(L0, L1, L2)") が割り当てられています。
-このとき、at-view #stacode("a@L1") と at-view #stacode("list(a, 0)?@L2") の証明が現在有効な証明として保存されます。
+このとき、駐観 #stacode("a@L1") と駐観 #stacode("list(a, 0)?@L2") の証明が現在有効な証明として保存されます。
 特殊記号 #keycode("_") は単に、新しくコンストラクトされたリストの tail
 が未初期化であることを示すことに注意してください。
 型 #stacode("list_cons(L0, L1, L2)") の部分的に初期化されたリストはパターン #dyncode("list_cons(_, res1)")
@@ -1033,11 +1029,10 @@ alternative dataview-based one.
 #langja("
 #para('\
 
-datatype に関連付けれられているパターンマッチの利便性を、dataviewtype
-を用いて明示的なメモリ管理をサポートする際にも享受することができました。
-dataview と比較すると dataviewtype は一般的ではありません。
-けれども、もし dataviewtype を用いて問題を解決できれば、
-その解決策は dataview を用いた時よりしばしばきわめて単純できれいになります。
+データ型に関連付けれられているパターンマッチの利便性を、データ観型を用いて明示的なメモリ管理をサポートする際にも享受することができました。
+データ観と比較するとデータ観型は一般的ではありません。
+けれども、もしデータ観型を用いて問題を解決できれば、
+その解決策はデータ観を用いた時よりしばしばきわめて単純できれいになります。
 
 ')
 ")
@@ -1904,14 +1899,13 @@ end // end of [if]
 ) (* end of [takeout_node_at] *)
 ')
 
-dataviewtype に関連する #emphasis("foo") という名前のデータコンストラクタを仮定します。
-すると n が #emphasis("foo") のアリティの時、n 個の型を取って viewtype を作るような対応する
-#emphasis("foo_pstruct") という名前の viewtype コンストラクタが存在します。
-例えば、2つの型 T1 と T2 を取って viewtype #stacode("list_vt_cons_pstruct(T1, T2)") を作るような
-viewtype コンストラクタ #stacode("list_vt_cons_pstruct") が存在することになります。
-この viewtype は、#dyncode("list_vt_cons") の2つの引数の型が T1 と T2 であるような、#dyncode("list_vt_cons")
+データ観型に関連する #emphasis("foo") という名前のデータコンストラクタを仮定します。
+すると n が #emphasis("foo") のアリティの時、n 個の型を取って観型を作るような対応する
+#emphasis("foo_pstruct") という名前の観型コンストラクタが存在します。
+例えば、2つの型 T1 と T2 を取って観型 #stacode("list_vt_cons_pstruct(T1, T2)") を作るような観型コンストラクタ #stacode("list_vt_cons_pstruct") が存在することになります。
+この観型は、#dyncode("list_vt_cons") の2つの引数の型が T1 と T2 であるような、#dyncode("list_vt_cons")
 呼び出しによって生成されるリストノードを表わします。
-アドレス L0, L1, L2 と2つの view #stacode("T1@L1"), #stacode("T2@L2")
+アドレス L0, L1, L2 と2つの観 #stacode("T1@L1"), #stacode("T2@L2")
 について、#stacode("list_vt_cons_pstruct(T1, T2)") は #stacode("list_vt_cons_unfold(L0, L1, L2)")
 を本質的に表わしています。
 
@@ -2209,8 +2203,8 @@ bstree_vt (a:t@ype+, int) =
 #para('\
 
 この章では、線形2分探索木に対するいくつかの基本的な操作を実装します。
-さらにその後 dataviewtype を使った実装を紹介します。
-はじめに、線形2分探索木のために次の dataviewtype #stacode("bstree_vt") を宣言しましょう:
+さらにその後、データ観型を使った実装を紹介します。
+はじめに、線形2分探索木のために次のデータ観型 #stacode("bstree_vt") を宣言しましょう:
 
 #atscode('\
 datavtype
@@ -2658,7 +2652,7 @@ end // end of [rrotate]
 4つのアドレス L0, L1, L2, L3 が与えられた時、型 #stacode("bstree_vt_cons_unfold(L0, L1, L2, l3)")
 は #dyncode("bstree_vt_cons") 呼び出しによって生成された木のノードを表わします。
 このとき、そのノードは L0 に配置され、#dyncode("bstree_vt_cons") の3つの引数は L1, L2, L3 に配置されます。
-そして L1, L2, L3 に関連する at-view の証明が現在有効な証明として保管されます。
+そして L1, L2, L3 に関連する駐観の証明が現在有効な証明として保管されます。
 
 ')
 ")
@@ -2763,7 +2757,7 @@ which can be done with dataviews but not with dataviewtypes.
 前者を末尾再帰実装にすることはできますが、後者について同じことをする直接的な方法はありません。
 root-insertion を末尾再帰的に実装するためには、親ポインタのある二分木が必要になります
 (すなわちそれぞれのノードからその親に直接アクセスできるということです)。
-これは dataview で実現できますが、dataviewtype を使って実現することはできません。
+これはデータ観で実現できますが、データ観型を使って実現することはできません。
 
 ')
 ")
@@ -2796,7 +2790,7 @@ id="transition_from_datatypes_to_dataviewtypes">
 #title("Transition from Datatypes to Dataviewtypes")
 ")
 #langja("
-#title("datatype から dataviewtype への翻訳")
+#title("データ型からデータ観型への翻訳")
 ")
 
 #langeng("
@@ -2820,13 +2814,13 @@ otherwise encounter in an attempt to program with dataviewtypes directly.
 #langja("
 #para('\
 
-多くのプログラマは、dataviewtype の値を操作するコードを書くことを幾分複雑に感じると思います。
-込み入ったデータ構造を扱う時、しばしば私は datatype をはじめに使おうとすることがあります。
-そのデータ構造をモデリングして、datatype を用いてそのデータ構造のいくつかの機能を実装してみるのです。
-それからその datatype を対応する dataviewtype に変換し、dataviewtype として動作するようにその実装を修正します。
+多くのプログラマは、データ観型の値を操作するコードを書くことを幾分複雑に感じると思います。
+込み入ったデータ構造を扱う時、しばしば私はデータ型をはじめに使おうとすることがあります。
+そのデータ構造をモデリングして、データ型を用いてそのデータ構造のいくつかの機能を実装してみるのです。
+それからそのデータ型を対応するデータ観型に変換し、データ観型として動作するようにその実装を修正します。
 ここでは、以前の <xref linkend="example_fun_red-black_trees"/> を元にした線形赤黒木の実装を次に示します。
-これは datatype から dataviewtype への漸進的な翻訳を具体的に説明しています。
-dataviewtype を直接用いてプログラミングしようとする際の難易度を大きく減少させることができるのです。
+これはデータ型からデータ観型への漸進的な翻訳を具体的に説明しています。
+データ観型を直接用いてプログラミングしようとする際の難易度を大きく減少させることができるのです。
 
 ')
 ")
@@ -2861,7 +2855,7 @@ where rbtree0 (a:t@ype, c:int, bh:int) = rbtree (a, c, bh, 0)
 #langja("
 #para('\
 
-次の dataviewtype #stacode("rbtree") 宣言は以前の datatype #stacode("rbtree") 宣言とほぼ一致しています。
+次のデータ観型 #stacode("rbtree") 宣言は以前のデータ型 #stacode("rbtree") 宣言とほぼ一致しています。
 違うのはキーワード #keycode("datatype") の代わりに、キーワード #keycode("datavtype") を使っている点です:
 
 #atscode('\
