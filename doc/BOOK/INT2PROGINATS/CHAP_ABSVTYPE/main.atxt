@@ -2304,6 +2304,7 @@ help one check whether verified programs are correct.\
 ")
 ")
 
+#langeng("
 #para("\
 
 Let us now start to implement linear channels for asynchronous
@@ -2334,7 +2335,38 @@ fun{a:vt0p} channel_remove (chan: !channel(a)): (a)
 The caller of #dyncode("channel_remove") is blocked if the channel is empty.
 
 ")
+")
+#langja("
+#para("\
 
+それでは、スレッド間の非同期通信のための線形チャネルの実装を開始しましょう。
+はじめに、次のような線形抽象型 #stacode("channel") を宣言しましょう:
+
+
+#atscode("\
+absvtype channel_vtype(a:vt@ype+) = ptr
+vtypedef channel(a:vt0p) = channel_vtype(a)
+")
+
+チャネルに要素を挿入する関数には次のインターフェイスが与えられます:
+
+#atscode("\
+fun{a:vt0p} channel_insert (!channel(a), a): void
+")
+
+もしそのチャネルが満杯であったら、#dyncode("channel_insert") の呼び出し元はブロックします。
+同様に、チャネルから要素を削除する関数には次のインターフェイスが与えられます:
+
+#atscode("\
+fun{a:vt0p} channel_remove (chan: !channel(a)): (a)
+")
+
+もしそのチャネルが空であったら、#dyncode("channel_remove") の呼び出し元はブロックします。
+
+")
+")
+
+#langeng("
 #para("\
 
 Let a channel be represented as follows:
@@ -2373,7 +2405,44 @@ where a caller (holding the mutex) wants to wait for the condition that the
 queue becomes not full.
 
 ")
+")
+#langja("
+#para("\
 
+チャネルを次のように表現してみましょう:
+
+#atscode("\
+//
+datavtype
+channel_ =
+{
+l0,l1,l2,l3:agz
+} CHANNEL of
+@{
+  cap=intGt(0)
+, spin=spin_vt(l0)
+, rfcnt=intGt(0)
+, mutex=mutex_vt(l1)
+, CVisnil=condvar_vt(l2)
+, CVisful=condvar_vt(l3)
+, queue=ptr // deqarray
+} (* end of [channel] *)
+//
+assume channel_vtype(a:vt0p) = channel_
+//
+")
+
+チャネルを表現するレコードには7つのフィールドがあります;
+#dyncode("cap") フィールドはそのチャネルの (固定の) 容量を示す整数を保持しています;
+#dyncode("spin") フィールドは、#dyncode("rfcnt") フィールドにあるリファレンスカウントを保護するためのスピンロックを保持しています;
+#dyncode("mutex") フィールドは、#dyncode("queue") フィールドにあるキューを保護するための mutex を保持しています;
+#dyncode("CVisnil") フィールドは、(mutex を保持した) 呼び出し元がキューが空ではなくなるのを待つための条件変数を保持しています;
+#dyncode("CVisful") フィールドは、(mutex を保持した) 呼び出し元がキューが満杯ではなくなるのを待つための条件変数を保持しています。
+
+")
+")
+
+#langeng("
 #para("\
 
 The function
@@ -2471,7 +2540,99 @@ function that essentially corresponds to a standard while-loop often
 appearing in C code for handling the wait on a conditional variable.\
 
 ")
+")
+#langja("
+#para("\
 
+関数 #dyncode("channel_insert") には次の実装が与えられます:
+
+#atscode("\
+implement
+{a}(*tmp*)
+channel_insert
+  (chan, x0) = let
+//
+val+CHANNEL
+  {l0,l1,l2,l3}(ch) = chan
+val mutex = unsafe_mutex_vt2t(ch.mutex)
+val (pfmut | ()) = mutex_lock (mutex)
+val xs =
+  $UN.castvwtp0{queue(a)}((pfmut | ch.queue))
+val ((*void*)) = channel_insert2<a> (chan, xs, x0)
+prval pfmut = $UN.castview0{locked_v(l1)}(xs)
+val ((*void*)) = mutex_unlock (pfmut | mutex)
+//
+in
+  // nothing
+end // end of [channel_insert]
+")
+
+このとき、補助関数 #dyncode("channel_insert2") には次のインターフェイスが与えらえます:
+
+#atscode("\
+fun{a:vt0p}
+channel_insert2
+  (!channel(a), !queue(a) >> _, a): void
+")
+
+呼び出し元がチャネル中の mutex を保持した状態で #dyncode("channel_insert2") は呼び出されることに注意してください。
+次のコードは #dyncode("channel_insert2") の実装です:
+
+#atscode("\
+implement
+{a}(*tmp*)
+channel_insert2
+  (chan, xs, x0) = let
+//
+val+CHANNEL
+  {l0,l1,l2,l3}(ch) = chan
+//
+val (pf | isful) = queue_isful (xs)
+//
+in
+//
+if
+isful
+then let
+  prval
+  (pfmut, fpf) =
+  __assert () where
+  {
+    extern
+    praxi __assert (): vtakeout0(locked_v(l1))
+  }
+  val mutex = unsafe_mutex_vt2t(ch.mutex)
+  val CVisful = unsafe_condvar_vt2t(ch.CVisful)
+  val ((*void*)) = condvar_wait (pfmut | CVisful, mutex)
+  prval ((*void*)) = fpf (pfmut)
+in
+  channel_insert2 (chan, xs, x0)
+end // end of [then]
+else let
+  val isnil = queue_isnil (xs)
+  val ((*void*)) = queue_insert (pf | xs, x0)
+  val ((*void*)) =
+  if isnil.1
+    then condvar_broadcast(unsafe_condvar_vt2t(ch.CVisnil))
+  // end of [if]
+in
+  // nothing
+end // end of [else]
+//
+end // end of [channel_insert2]
+")
+
+#dyncode("channel_insert2") の背後にあるロジックは次のように説明できます。
+与えられたチャネルのキューが満杯であったなら、呼び出し元はその mutex を手放すために #dyncode("condvar_wait")
+を呼び出し、それからチャネルの #dyncode("CVisful") フィールド中の条件変数を待ち合わせます;
+条件変数へのシグナル送信で起きた呼び出し元は、mutex を再び保持した後、#dyncode("channel_insert2") を再帰的に呼び出します。
+与えられたチャネルのキューが満杯でなかったなら、呼び出し元は #dyncode("queue") フィールド中のキューに与えられた要素を挿入して返ります。
+#dyncode("channel_insert2") が末尾再帰関数であり、条件変数を待ち合わせるC言語コードによくある標準的な while ループに本質的に対応していることに注意してください。
+
+")
+")
+
+#langeng("
 #para("\
 
 By following the above implementation for #dyncode("channel_insert") (and
@@ -2480,7 +2641,17 @@ to figure out an implementation for #dyncode("channel_remove"). I leave it
 as an exercise.
 
 ")
+")
+#langja("
+#para("\
 
+#dyncode("channel_insert") (と #dyncode("channel_insert2")) の上記実装を真似て、#dyncode("channel_remove") の実装を導くことは単純でしょう。
+これは練習問題とします。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find on-line the file
@@ -2488,6 +2659,16 @@ Please find on-line the file
 containing the entirety of the code presented in this section plus some
 code for testing.\
 
+")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体とテストコードを含む
+#mycodelink("CHAP_ABSVTYPE/channel_vt.dats", "channel_vt.dats")
+ファイルはオンラインから入手できます。\
+
+")
 ")
 
 </sect1><!--id="linear-channels-for-async-ipc"-->
