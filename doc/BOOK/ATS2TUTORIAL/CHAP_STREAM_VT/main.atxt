@@ -114,8 +114,7 @@ initiates the evaluation of exp2 (to free linear values contained in exp1).
 #langja("
 #para('\
 
-種 #stacode("(vt@ype) => vtype") の抽象型コンストラクタ #stacode("lazy_vt") は、viewtype
-に適応されると (ボックス化された) viewtype を形作ります。
+種 #stacode("(vt@ype) => vtype") の抽象型コンストラクタ #stacode("lazy_vt") は、観型に適応されると (ボックス化された) 観型を形作ります。
 型 T の式 exp1 と型 #stacode("void") の式 exp2 が与えられたとき、値
 #dyncode("$ldelay(exp1, exp2)") は型 #stacode("lazy_vt(T)") です;
 #dyncode("$ldelay(exp1, exp2)") に対して #dyncode("lazy_vt_force") を呼び出すと中断されていた exp1 の評価が再開されます;
@@ -210,7 +209,7 @@ implemented in #myatscodelink("prelude/DATS/stream_vt.dats", "prelude/DATS/strea
 #para("\
 
 #myatscodelink("prelude/SATS/stream_vt.sats", "prelude/SATS/stream_vt.sats")
-にて、線形遅延ストリームを表現する次の viewtype
+にて、線形遅延ストリームを表現する次の観型
 #stacode("stream_vt_con") と #stacode("stream_vt")
 が相互再帰的に宣言されています:
 
