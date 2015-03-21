@@ -34,6 +34,7 @@ ATS では、静的ロード (もしくは staload と略します) はロード
 ")
 ")#comment("para")
 
+#langeng("
 #para("\
 
 Suppose that a file named #filename('foo.sats') contains the
@@ -68,7 +69,42 @@ val b: $FOO.aDatatype = $FOO.B(0, $FOO.aFunction($FOO.aValue))
 ')
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#filename('foo.sats') という名前のファイルが次のコードを含んでいると考えます:
+
+#atscode('\
+//
+datatype
+aDatatype =
+| A | B of (int, int)
+//
+val aValue: int
+fun aFunction: int -> int
+//
+')
+
+次の staload 宣言は、#filename('foo.sats') で宣言された名前のために、名前空間
+#dyncode("FOO") を導入します:
+
+#atscode('\
+staload FOO = "foo.sats"
+')
+
+名前空間 #dyncode('FOO') 中の名前を参照するために、接頭辞 #dyncode("$FOO.") が必要です。
+例えば、名前空間 #dyncode("FOO") 中で有効な名前は、次のようなコードで参照できます:
+
+#atscode('\
+val a: $FOO.aDatatype = $FOO.A()
+val b: $FOO.aDatatype = $FOO.B(0, $FOO.aFunction($FOO.aValue))
+')
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 If the file #filename('foo.sats') is staloaded as follows for the second
@@ -82,7 +118,23 @@ then #filename('foo.sats') is not actually loaded by the compiler. Instead,
 #dyncode('FOO2') is simply made to be an alias of #dyncode('FOO').
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+もしファイル #filename('foo.sats') を次のように2度 staload した場合:
+
+#atscode('\
+staload FOO2 = "foo.sats"
+')
+
+すると #filename('foo.sats') は実際にはコンパイラによってロードされません。
+その代わり、#dyncode('FOO') の別名として #dyncode('FOO2') が単に作られます。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 It is also allowed for #filename('foo.sats') to be staloaded as follows:
@@ -101,8 +153,28 @@ val b: aDatatype = B(0, aFunction(aValue))
 ')
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+#filename('foo.sats') は次のようにも staload できます:
 
+#atscode('\
+staload "foo.sats"
+')
+
+この場合、#filename('foo.sats') で宣言した名前のための名前空間はオープンです。
+例えば、次のコードはこれらの名前を直接参照できることを示しています:
+
+#atscode('\
+val a: aDatatype = A()
+val b: aDatatype = B(0, aFunction(aValue))
+')
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Let us suppose that we have the following sequence of declarations:
@@ -121,6 +193,26 @@ occurrence of a name is resolved in ATS by searching first through the
 available names delcared in the same file.
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+次のような宣言を考えてみましょう:
+
+#atscode('\
+val aValue = 0
+staload "foo.sats"
+val anotheValue = aValue + 1
+')
+
+二番目に出現する #dyncode('aValue') は最初の宣言で導入された値を参照するでしょうか？
+それとも、それは #filename('foo.sats') 中で宣言された値を参照するでしょうか？
+その答は少し意外なものかもしれません:
+それは最初の宣言で導入された値を参照します。
+ATS は最初に、同一ファイル中で宣言された有効な名前を検索することで、名前の束縛を解決するからです。
+
+")#comment("para")
+")
 
 </chapter><!--"staload"-->
 
