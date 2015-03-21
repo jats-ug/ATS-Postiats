@@ -14,10 +14,17 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="recursion"
->#title("Recursion")
+>
+#langeng("
+#title("Recursion")
+")
+#langja("
+#title("再帰")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para('\
 
 The notion of recursion is ubiquitous in ATS.  For instance, there are
@@ -30,6 +37,19 @@ to define (or implement) recursive functions and non-recursive functions,
 where the latter is just a special case of the former.\
 
 ')
+")
+#langja("
+#para('\
+
+ATS において再帰の概念はあちこちに現われます。
+例えば、静的には再帰的に定義された種 (データ種) や型 (データ型) があり、また動的には再帰的に定義された関数があります。
+言葉の上では、単語 #emphasis("再帰") は "戻る (go back)" を意味しています。
+あるモノが再帰的に定義されているなら、それ自身の定義中にそのモノを書くことができることを意味しています。
+再帰関数と非再帰関数を定義する (もしくは実装する) いくつかの方法を次に示します。
+このとき後者は前者の特殊ケースです。\
+
+')
+")
 
 #para("\
 
