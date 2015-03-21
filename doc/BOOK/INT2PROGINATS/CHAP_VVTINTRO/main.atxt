@@ -547,15 +547,15 @@ from the view part residing within it.
 #langja("
 #para("\
 
-ATS の線形型は #emphasis("viewtype") という名前です。
+ATS の線形型は #emphasis("観型 (viewtype)") という名前です。
 これは線形型は2つの部分から構成されることを示しています: 一つは観 (view)でもう一つが型 (type) です。
-例えば、観 V と型 T が与えられた時、タプル (V | T) は viewtype で、バー記号 (|) は観と型を
+例えば、観 V と型 T が与えられた時、タプル (V | T) は観型で、バー記号 (|) は観と型を
 (コンマのように) 分離しています。
 少し意外かもしれませんが、反対に:
-それぞれの viewtype VT について、VT が (V | T) と等しいような 観 V と型 T の存在を仮定できます。
+それぞれの観型 VT について、VT が (V | T) と等しいような 観 V と型 T の存在を仮定できます。
 形式上、ATS ではこの T は VT?! として参照されます。
 この幾分意外な線形型の解釈は ATS の目立った新規性です。
-それは viewtype の線形性は #emphasis("完全に") その中に存在する 観部分に由来することを強調しています。
+それは観型の線形性は #emphasis("完全に") その中に存在する観部分に由来することを強調しています。
 
 ")
 ")
@@ -600,17 +600,16 @@ fn getinc
 #para('\
 
 ビルトインの種 #stacode("viewtype") と #stacode("viewt@ype") は、型部分がそれぞれ種
-#stacode("type") と #stacode("t@ype") であるような viewtype を表わす静的な項です。
-言い方をすると、前者にはポインタのサイズに等しいサイズの線形値の viewtype
-が割り当てられ、そして後者には詳細不明のサイズの線形値の viewtype が割り当てられます。
-例えば、型と、種 #stacode("viewtype") の viewtype 作るアドレスを取るような、#stacode("tptr")
+#stacode("type") と #stacode("t@ype") であるような観型を表わす静的な項です。
+言い方をすると、前者にはポインタのサイズに等しいサイズの線形値の観型が割り当てられ、そして後者には詳細不明のサイズの線形値の観型が割り当てられます。
+例えば、型と、種 #stacode("viewtype") の観型を作るアドレスを取るような、#stacode("tptr")
 は次のように定義されます:
 
 #atscode('\
 viewtypedef tptr (a:t@ype, l:addr) = (a @ l | ptr l)
 ')
 
-型 T とアドレス L が与えられた時、viewtype #stacode("tptr(T, L)") は
+型 T とアドレス L が与えられた時、観型 #stacode("tptr(T, L)") は
 L に格納された型 T の値を示す線形の証明とペアになった L のポインタです。
 カウントを表わす整数を指すポインタを示す証明とペアになったポインタとしてのカウンタのことを考えるなら、
 次に定義する関数 #dyncode("getinc") は与えられたカウンタを1増やした後、現時点でのカウントを返します:\
@@ -683,7 +682,7 @@ convincing indication of the expressiveness of the type system of ATS.
 #langja("
 #para('\
 
-次は viewtype の特に興味深い例です:
+次は観型の特に興味深い例です:
 
 #atscode('\
 viewtypedef cloptr
@@ -693,7 +692,7 @@ viewtypedef cloptr
 ')
 
 2つの型 A と B が与えられた時、型 A の値を取り型 B の値を返すようなクロージャ関数が保管されたアドレス L
-を指すポインタには viewtype #stacode("cloptr(A, B, L)") を与えることができます。
+を指すポインタには観型 #stacode("cloptr(A, B, L)") を与えることができます。
 クロージャ関数は、外から導入されたクロージャ関数本体内の値の束縛を含む環境とペアになった単なる無環境関数であることに注意してください。
 関数型 #stacode("(&amp;env, a) -> b") において、記号 #stacode("&amp;")
 は対応する関数の引数が参照で渡されていることを示しています。
