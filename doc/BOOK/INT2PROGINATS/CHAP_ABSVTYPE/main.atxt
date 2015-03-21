@@ -1502,8 +1502,14 @@ p_beg は下敷にする配列の開始位置を指し、m は配列のサイズ
 
 <sect1
  id="locking-and-unlocking">
+#langeng("
 #title("Locking and Unlocking")
+")
+#langja("
+#title("ロックとアンロック")
+")
 
+#langeng("
 #para("\
 
 In concurrent programming, the issue of safely locking and unlocking
@@ -1512,7 +1518,17 @@ in this section concretely and convincingly that linear types can be used
 with great effectiveness to address this issue.
 
 ")
+")
+#langja("
+#para("\
 
+並行プログラミングでは、共有リソースに対する安全なロックとアンロックは本質的で意欲的な課題です。
+この章では、線形型がこの課題を解決するのに有効であることを具体的に説明します。
+
+")
+")
+
+#langeng("
 #para("\
 
 Let us first introduce a linear abstract type #stacode("shared")
@@ -1548,7 +1564,38 @@ If the reference count of a shared resource is 1, then calling
 its representation and then returns the resource stored inside it.
 
 ")
+")
+#langja("
+#para("\
 
+はじめに、次のような線形抽象型 #stacode("shared") を導入しましょう:
+
+#atscode('\
+absvtype shared(a:vtype) = ptr
+')
+
+(なんらかのリソースに対する) 観型 VT が与えられたとき、型 #stacode("shared(VT)") の値は、本質的に、型 VT のリソースとなんらかのロックを含んだボックス化レコードです。
+リソースを共有リソースにするために、次のような関数 #dyncode("shared_make") が呼ばれます。
+
+#atscode('\
+fun shared_make{a:vtype}(x: a): shared(a)  
+')
+
+型 #stacode("shared(VT)") それ自身が線形であることに注意してください。
+実装では、スピンロックで保護された線形共有リソースにはリファレンスカウントが内在しています。
+関数 #dyncode("shared_ref") と #dyncode("shared_unref") は共有リソース内のリファレンスカウントを増減させます:
+
+#atscode('\
+fun shared_ref{a:vtype}(!shared(a)): shared(a)
+fun shared_unref{a:vtype}(shared(a)): Option_vt(a)
+')
+
+もし共有リソースのリファレンスカウントが 1 であったら、その共有リソースへの #dyncode("shared_unref") 呼び出しはそれらの表現で使われていたメモリを解放し、その共有リソースに保存されていたリソースを返します。
+
+")
+")
+
+#langeng("
 #para("\
 
 The function #dyncode("shared_lock") acquires the resource from a
@@ -1569,7 +1616,27 @@ proofs that are meant to remind the programmer that a shared resoure needs
 to be released after it is acquired.
 
 ")
+")
+#langja("
+#para("\
 
+関数 #dyncode("shared_lock") は与えられた共有リソースからリソースを獲得し、関数 #dyncode("shared_unlock") はその反対です:
+
+#atscode('\
+//
+absview locked_v
+//
+fun shared_lock{a:vtype}(!shared(a)): (locked_v | a)
+fun shared_unlock{a:vtype}(locked_v | !shared(a), x: a): void
+//
+')
+
+抽象観 #stacode("locked_v") が線形証明として導入されていることに注意してください。この線形証明は共有リソースは獲得の後に解放しなければならないことを、プログラマに気付かせます。
+
+")
+")
+
+#langeng("
 #para("\
 
 As can be expected, a shared resource can be implemented as a boxed tuple
@@ -1661,7 +1728,95 @@ then the shared resource is freed, the spin-lock in it
 is destroyed, and the resource in it is returned.
 
 ")
+")
+#langja("
+#para("\
 
+予想できることですが共有リソースは、スピンロック、リファレンスカウントと (保管されたリソースを差す) ポインタから成る、ボックス化タプルとして実装できます:
+
+#atscode('\
+//
+datavtype
+shared_ (a:vtype) =
+  SHARED of (spin1_vt(*lock*), int(*count*), ptr)
+//
+assume shared = shared_
+//
+')
+
+型 #stacode("spin1_vt") は線形スピンロックを表わすことに注意してください。関数 #dyncode("shared_ref") は次のように実装されます:
+
+#atscode('\
+implement
+shared_ref
+  {a}(sh) = let
+//
+val+@SHARED
+  (spin, count, _) = sh
+//
+val
+spin = // for temp. use
+  unsafe_spin_vt2t(spin)
+//
+val
+(pf | ()) = spin_lock(spin)
+val c0 = count
+val () = count := c0 + 1
+val ((*void*)) = spin_unlock(pf | spin)
+prval ((*void*)) = fold@sh
+//
+in
+  $UN.castvwtp1{shared(a)}(sh)
+end // end of [shared_ref]
+')
+
+この実装が安全でないキャストをいくつか使っていることは明白です。そのようなキャストを使わない実装は可能だとしてもとても複雑になるでしょう。
+そのとき #dyncode("c0") と #dyncode("count") に保管された整数の間に束縛を作る前にスピンロックを獲得しなければなりません。
+そうでなければレースコーンディションの原因になります。
+関数 #dyncode("shared_unref") は次のように実装されます:
+
+#atscode('\
+implement
+shared_unref
+  {a}(sh) = let
+//
+val+@SHARED
+  (spin, count, _) = sh
+//
+val
+spin = // for temp. use
+  unsafe_spin_vt2t(spin)
+//
+val
+(pf | ()) = spin_lock(spin)
+val c0 = count
+val () = count := c0 - 1
+val ((*void*)) = spin_unlock(pf | spin)
+prval ((*void*)) = fold@sh
+//
+in
+//
+if
+c0 <= 1
+then let
+  val+~SHARED(spin, _, x) = sh
+  val ((*freed*)) = spin_vt_destroy(spin)
+in
+  Some_vt($UN.castvwtp0{a}(x))
+end // end of [then]
+else let
+  prval () = $UN.cast2void(sh) in None_vt()
+end // end of [else]
+//
+end // end of [shared_unref]
+')
+
+リファレンスカウントが 1 である場合、共有リソースが解放され、その中のスピンロックが破棄され、そして共有リソースの中にあったリソースが返ります。
+
+")
+")
+
+#langeng("
 #para("\
 
 The functions
@@ -1724,7 +1879,66 @@ variable #dyncode("x") is updated before the acquired spin-lock is
 released.\
 
 ")
+")
+#langja("
+#para("\
 
+関数 #dyncode("shared_lock") と #dyncode("shared_unlock") は次のように実装されます:
+
+#atscode('\
+implement
+shared_lock
+  {a}(sh) = let
+//
+val+@SHARED(spin, _, x) = sh
+//
+val
+spin =
+  unsafe_spin_vt2t(spin)
+//
+val
+(pf | ()) = spin_lock(spin)
+//
+val x0 = $UN.castvwtp0{a}(x)
+//
+prval () = fold@sh
+//
+in
+  ($UN.castview0(pf) | x0)
+end // end of [shared_lock]
+')
+
+#atscode('\
+implement
+shared_unlock
+  {a}(pf | sh, x0) = let
+//
+val+@SHARED(spin, _, x) = sh
+//
+val
+spin =
+  unsafe_spin_vt2t(spin)
+//
+val () = x := $UN.castvwtp0{ptr}(x0)
+//
+val () =
+  spin_unlock($UN.castview0(pf) | spin)
+//
+prval () = fold@sh
+//
+in
+  // nothing
+end // end of [shared_unlock]
+')
+
+#dyncode("shared_lock") において、値 #dyncode("x") の中身はスピンロック獲得後に読み出されていることに注目してください。
+これは重要な点で、さもなくばレースコンディションを引き起こします。
+#dyncode("shared_unlock") においては、獲得されたスピンロックを解放する前に、値 #dyncode("x") の中身を更新しています。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find on-line the file
@@ -1734,6 +1948,16 @@ the file also contains an implementation of three threads that move in
 locked steps: thread 0 moves; thread 1 moves; thread 2 moves; thread 0
 moves; thread 1 moves; thread 2 moves; etc.\
 
+")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体を含む #mycodelink("CHAP_ABSVTYPE/shared_vt.dats", "shared_vt.dats")
+ファイルはオンラインから入手できます。
+また、このファイルはロックを保持した動作が: スレッド0が動作し; スレッド1が動作し; スレッド2が動作し; スレッド0が動作し; スレッド1が動作し; スレッド2が動作し; というように動く3つのスレッドの実装も含んでいます。\
+
+")
 ")
 
 </sect1><!--id="locking-and-unlocking"-->
