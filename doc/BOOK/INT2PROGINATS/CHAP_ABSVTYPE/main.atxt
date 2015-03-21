@@ -1966,8 +1966,14 @@ moves; thread 1 moves; thread 2 moves; etc.\
 
 <sect1
  id="linear-channels-for-async-ipc">
+#langeng("
 #title("Linear Channels for Asynchronous IPC")
+")
+#langja("
+#title("非同期 IPC のための線形チャネル")
+")
 
+#langeng("
 #para("\
 
 In this section, I will present an implementation of
@@ -1976,7 +1982,17 @@ is also a very fitting occasion for me to advocate what I often refer to as
 #emphasis("programmer-centric") program verification.\
 
 ")
+")
+#langja("
+#para("\
 
+この章では、スレッド間の非同期通信をサポートする、線形チャネルの実装を示します。
+これはまた、#emphasis("プログラマ中心") のプログラム検証を主張する良い機会でもあります。\
+
+")
+")
+
+#langeng("
 #para("\
 
 A communication channel between threads is essentially
@@ -2018,7 +2034,46 @@ this version of #stacode("queue") further for I intend to present a style of
 program verification that is less rigorous but far more flexible.
 
 ")
+")
+#langja("
+#para("\
 
+本質的にスレッド間の通信チャネルは、レースコンディションをに対して必要ななんらかの保護メカニズムで包んだキューです。
+容量固定のキュー、すなわち生成されたら容量が変わらないようなキューを仮定しましょう。
+もしそのキューが満杯なら、そのキューへの要素の挿入は失敗します。
+もしそのキューが空なら、そのキューからの要素の削除は失敗します。
+満杯のキューへの挿入や空のキューからの削除を防ぐために、まず次のようなキューに対する線形抽象型を導入しましょう:
+
+#atscode("\
+absvtype
+queue_vtype(a:vt@ype+, int(*m*), int(*n*))
+vtypedef queue(a:vt@ype,m:int,n:int) = queue_vtype(a,m,n)
+")
+
+このとき、型 #stacode("queue(VT,M,N)") は、型 VT の N 個の要素を含んでいる容量 M のキューを表わします。
+それから、挿入と削除を表わす関数には次のようなインターフェイスが割り当てられるでしょう:
+
+#atscode("\
+//
+fun{a:vt0p}
+queue_insert
+  {m,n:nat | m > n}
+  (!queue(a, m, n) >> queue(a, m, n+1), a): void
+//
+fun{a:vt0p}
+queue_remove
+  {m,n:nat | n > 0}(!queue(a, m, n) >> queue(a, m, n-1)): (a)
+//
+")
+
+示した抽象型 #stacode("queue") は線形チャネルを実装として機能します。
+けれども、私はこのバージョンの #stacode("queue") を採用できません。
+私は、厳密でより柔軟なプログラム検証のスタイルを示したいのです。
+
+")
+")
+
+#langeng("
 #para("\
 
 Following is another version of abstract type #stacode("queue"):
@@ -2071,7 +2126,57 @@ Given an integer ID, a proof of the prop #stacode("ISFUL(ID,true)")
 ID is (not) full.
 
 ")
+")
+#langja("
+#para("\
 
+次のコードは抽象型 #stacode("queue") の別バージョンです:
+
+#atscode("\
+//
+absvtype
+queue_vtype(a:vt@ype+, int(*id*)) = ptr
+//
+vtypedef
+queue(a:vt0p, id:int) = queue_vtype(a, id)
+vtypedef queue(a:vt0p) = [id:int] queue(a, id)
+//
+")
+
+観型 VT と整数 ID が与えられたとき、#stacode("queue(VT,ID)") は、整数 ID で一意に識別される型 VT の要素を含むキューを表わします。
+そのため ID はスタンプの一種と考えることができます。
+次に表わされた関数 #dyncode("queue_isnil") は与えられたキューが空であるかどうか調べます:
+
+
+#atscode("\
+//
+absprop ISNIL(id:int, b:bool)
+//
+fun
+{a:vt0p}
+queue_isnil{id:int}(!queue(a, id)): [b:bool] (ISNIL(id, b) | bool(b))
+//
+")
+
+整数 ID が与えられたとき、命題 #stacode("ISNIL(ID,true)") (もしくは #stacode("ISNIL(ID,false)")) の証明は、ID で同定されたキューが空である (もしくは空でない) ことを意味しています。
+同様に、次に表わされた関数 #dyncode("queue_isful") は与えられたキューが満杯であるかどうか調べます:
+
+#atscode("\
+//
+absprop ISFUL(id:int, b:bool)
+//
+fun
+{a:vt0p}
+queue_isful{id:int}(!queue(a, id)): [b:bool] (ISFUL(id, b) | bool(b))
+//
+")
+
+整数 ID が与えられたとき、命題 #stacode("ISFUL(ID,true)") (もしくは #stacode("ISFUL(ID,false)")) の証明は、ID で同定されたキューが満杯である (もしくは満杯でない) ことを意味しています。
+
+")
+")
+
+#langeng("
 #para("\
 
 The functions #dyncode("queue_insert") and #dyncode("queue_remove")
@@ -2107,7 +2212,42 @@ interpreting #stacode("ISNIL") and #stacode("ISFUL") in the manner presented
 above.
 
 ")
+")
+#langja("
+#para("\
 
+これで、与えられたキューへの挿入と削除を表わす関数 #dyncode("queue_insert") と #dyncode("queue_remove") には次のインターフェイスを割り当てることができます:
+
+#atscode("\
+//
+extern
+fun
+{a:vt0p}
+queue_insert
+  {id:int}
+(
+  ISFUL(id, false)
+| xs: !queue(a, id) >> queue(a, id2), x: a
+) : #[id2:int] void
+//
+extern
+fun
+{a:vt0p}
+queue_remove
+  {id:int}
+(
+  ISNIL(id, false) | xs: !queue(a, id) >> queue(a, id2)
+) : #[id2:int] a // end-of-fun
+//
+")
+
+キューへの挿入やキューからの削除が、新しいスタンプをそのキューに割り当てていることに注意してください。
+これは本質的に、上記に示したマナーでの #stacode("ISNIL") と #stacode("ISFUL") の解釈です。
+
+")
+")
+
+#langeng("
 #para("\
 
 In order to call #dyncode("queue_insert") on a given queue, one needs to
@@ -2118,7 +2258,18 @@ one can first call #dyncode("queue_isnil") on the queue to obtain a proof
 attesting to the queue being not empty.\
 
 ")
+")
+#langja("
+#para("\
 
+与えられたキューへ #dyncode("queue_insert") を呼び出すためには、そのキューが満杯ではないことを示す証明が必要です。
+当該キューに #dyncode("queue_isful") を呼び出して false が返れば、そのような証明を獲得できます。
+同様に、与えられたキューへ #dyncode("queue_remove") を呼び出すためには、まずそのキューに #dyncode("queue_isnil") を呼び出して、そのキューが空でないことを示す証明を獲得する必要があります。\
+
+")
+")
+
+#langeng("
 #para("\
 
 What is really of concern here is not to actually verify that
@@ -2136,6 +2287,21 @@ help one check whether the proven statements are valid, then it is only
 natural to believe that programmer-centric program verification can also
 help one check whether verified programs are correct.\
 
+")
+")
+#langja("
+#para("\
+
+ここで示した内容は、#dyncode("queue_isnil") と #dyncode("queue_isful") が持つそのインターフェイスを実際には立証していません。
+その代わりここでの焦点は、#dyncode("queue_isnil") と #dyncode("queue_isful")
+にそのようなインターフェイスが割り当てられたとき、満杯のキューに #dyncode("queue_insert")
+が呼び出されないことと #dyncode("queue_remove") が空のキューに呼び出されないことを保証することです。
+私はこのスタイルのプログラミング検証を #emphasis("プログラマ中心") であると呼んでいます。
+なぜならその正確さは客観的形式的に確立されたものではないからです。
+私自身、プログラマ中心のプログラム検証が実際にとても柔軟で効果的であることを見つけました。
+もし非形式的な数学の証明が証明された内容が正当であるかどうか検査するのに役立つと我々が信じるのであれば、プログラマ中心のプログラム検証もまた検証されたプログラムが正しいかどうか検査するのに役立つことを自然に信じることができるでしょう。\
+
+")
 ")
 
 #para("\
