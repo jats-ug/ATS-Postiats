@@ -60,7 +60,7 @@ The interfaces for various functions on references can be found in
 #langja("
 #para("\
 
-viewtype VT が与えられたとき、viewtype VT
+観型 VT が与えられたとき、観型 VT
 の値への参照の型は #stacode("ref")(VT) です。
 利便性のために、ATS では型コンストラクタ #stacode("ref") は抽象として宣言されます。
 けれども、次のような定義は可能です:
@@ -400,10 +400,9 @@ var myvar: int = 0
 val myref = ref_make_viewptr (view@(myvar) | addr@(myvar))
 ')
 
-関数 #dyncode("ref_make_viewptr") はポインタとそのポインタに関連した at-view
-の証明を取り、その証明を消費した後の参照を返します。
+関数 #dyncode("ref_make_viewptr") はポインタとそのポインタに関連した駐観の証明を取り、その証明を消費した後の参照を返します。
 #dyncode("ref_make_viewptr") はキャスト関数なので、実行時のオーバーヘッドはありません。
-上記のコードでは、#dyncode("myvar") は静的に確保されていて、その at-view 証明が
+上記のコードでは、#dyncode("myvar") は静的に確保されていて、その駐観の証明が
 #dyncode("ref_make_viewptr") によって消費された後ではもはや有効ではありません。
 C言語では #dyncode("myvar") と #dyncode("myref") の両方とも単に同じポインタですが、ATS
 ではそれらは本質的に異なる概念の具象であることは興味深いでしょう:

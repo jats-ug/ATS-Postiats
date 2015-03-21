@@ -57,8 +57,8 @@ functions on persistent matrices can be found in the SATS file
 #langja("
 #para("\
 
-viewtype VT と2つの整数 M と N が与えられたとき、
-型 #stacode("matrixref(VT, M, N)") は viewtype VT の要素を含む次元 M, N の永続化行列を表わします。
+観型 VT と2つの整数 M と N が与えられたとき、
+型 #stacode("matrixref(VT, M, N)") は観型 VT の要素を含む次元 M, N の永続化行列を表わします。
 matrixref 値にどのような次元情報も付随しません。
 永続化行列に関する様々な関数のインターフェイスを SATS ファイル
 #myatscodelink("prelude/SATS/matrixref.sats", "prelude/SATS/matrixref.sats")

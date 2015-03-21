@@ -38,7 +38,7 @@ arrays-with-size can be found in
 #para('\
 
 サイズ情報が付属した永続化配列を #emphasis("サイズを伴う配列 (array-with-size)") と呼びます。
-viewtype VT が与えられたとき、viewtype VT の N
+観型 VT が与えられたとき、観型 VT の N
 個の値を含むサイズを伴う配列の型は #stacode("arrszref(VT, N)") です。
 本質的に、この型の値は型 #stacode("arrayref(VT, N)") と #stacode("size_t(N)")
 の2つを構成要素とするボッスク化ペアです。

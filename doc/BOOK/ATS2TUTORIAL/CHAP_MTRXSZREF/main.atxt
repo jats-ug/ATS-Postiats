@@ -40,7 +40,7 @@ functions on persistent matrices-with-size can be found in
 
 次元情報 (つまり列の数や行の数)
 が付属した永続化行列を #emphasis("サイズを伴う行列 (matrix-with-size)") と呼びます。
-viewtype VT が与えられたとき、viewtype VT の要素を M 列と N
+観型 VT が与えられたとき、観型 VT の要素を M 列と N
 行含むサイズを伴う行列の型は #stacode("mtrxszref(VT, M, N)") です。
 本質的に、この型の値は3つの型
 #stacode("arrayref(VT, N)"), #stacode("size_t(M)"), #stacode("size_t(N)")
