@@ -87,8 +87,8 @@ built-in mechanism for supporting inheritance.\
 物理世界のオブジェクトが線形であることははっきりしています:
 それらは無から生成することはできませんし、単に消し去って無へと帰すこともできません。
 従って、物理オブジェクトを表現する値に線形型を割り当てることは極めて自然です。
-継承をサポートするビルトインの仕組みを含まないようなある種のオブジェクトを表わす線形値を参照するのに、ここでは
-#emphasis("単純な線形オブジェクト") という名前を使います。\
+継承をサポートするビルトインの仕組みを含まないようなある種のオブジェクトを表わす線形値を表わすのに、ここでは
+#emphasis("単純な線形オブジェクト (simple linear object)") という名前を使います。\
 
 ")
 ")
@@ -179,7 +179,7 @@ timer_struct = @{
 } (* end of [timer_struct] *)
 ')
 
-次の線形 datatype #stacode("timer") はタイマーのために宣言され、また抽象型 #stacode("timer_vtype") は
+次の線形データ型 #stacode("timer") はタイマーのために宣言され、また抽象型 #stacode("timer_vtype") は
 #stacode("timer") に等しいと見なされています:
 
 #atscode('\
@@ -310,7 +310,7 @@ in
 end // end of [timer_start]
 ')
 
-このとき #dyncode("the_current_tick_get") は (ティックの数として表現される) 現在時間を読む関数です:
+このとき #dyncode("the_current_tick_get") は (ティックの数で表わされた) 現在時間を読む関数です:
 
 #atscode('\
 extern fun the_current_tick_get (): uint
@@ -705,7 +705,7 @@ VT.
 #langja("
 #para("\
 
-リングバッファを表現する値のために、次のような線形抽象型 (つまり抽象 viewtype) を宣言してみましょう:
+リングバッファを表現する値のために、次のような線形抽象型 (つまり抽象観型) を宣言してみましょう:
 
 #atscode('\
 absvtype
@@ -713,7 +713,7 @@ cbufObj (a:vt@ype+, m:int, n: int) = ptr
 ')
 
 このような値は (状態を継承によって扱わない) 単純な線形オブジェクトであると考えられます。
-viewtype VT と2つの整数 M と N が与えられた時、viewtype #stacode("cbufObj(VT, M, N)")
+観型 VT と2つの整数 M と N が与えられた時、観型 #stacode("cbufObj(VT, M, N)")
 は型 VT の要素を N 個 持つ最大容量 M のバッファを表わします。
 
 ")
@@ -864,7 +864,7 @@ fun cbufObj_free
 ')
 
 
-バッファがリソースを含む可能性がある (なんらかの viewtype の)
+バッファがリソースを含む可能性がある (なんらかの観型の)
 要素を含まない時に限って、そのバッファを解放できることに注意してください。
 バッファ中の要素がなんらかの線形でない型である場合、次の関数を呼び出してバッファ中に保管されている全ての要素を捨てることができます:
 
@@ -1111,10 +1111,10 @@ sortdef agz = {a:addr | a > null} // [gz] for great-than-zero
 
 整数 N が与えられた時、
 型 #stacode("b0ytes(N)") は N バイトの未初期化の配列を表わす #stacode("@[byte?][N]") の略記です
-従って、at-view #stacode("b0ytes(N)@L") は L をメモリ位置とすると、配列 view
+従って、駐観 #stacode("b0ytes(N)@L") は L をメモリ位置とすると、配列観
 #stacode("array_v(byte?, L, N)") と同じです。
-view コンストラクタ #stacode("mfree_gc_v") は抽象的です。
-与えられた位置 L について、view #stacode("mfree_gc_v(L)") は次の関数 #dyncode("mfree_gc") によって解放されるべき位置 L に確保したメモリを許可する能力を表わします:
+観コンストラクタ #stacode("mfree_gc_v") は抽象的です。
+与えられた位置 L について、観 #stacode("mfree_gc_v(L)") は次の関数 #dyncode("mfree_gc") によって解放されるべき位置 L に確保したメモリを許可する能力を表わします:
 
 #atscode("\
 fun mfree_gc
@@ -1123,8 +1123,7 @@ fun mfree_gc
 // end of [free_gc]
 ")
 
-今まで紹介してきた中では、#stacode("mfree_gc_v(L)") はどのような at-view 上にも構築されていないはじめての
-view の形であることに注意してください。
+今まで紹介してきた中では、#stacode("mfree_gc_v(L)") はどのような駐観の上にも構築されていないはじめての観の形であることに注意してください。
 
 ')
 ")
