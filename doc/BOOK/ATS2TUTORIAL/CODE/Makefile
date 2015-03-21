@@ -93,6 +93,24 @@ cleanall:: ; $(RMF) chap_list
 ######
 #
 all:: \
+chap_funsetmap_set
+chap_funsetmap_set: \
+  chap_funsetmap_set.dats ; \
+  $(PATSCC2) -D_GNU_SOURCE -DATS_MEMALLOC_LIBC -o $@ $<
+regress:: chap_funsetmap_set; ./$<
+cleanall:: ; $(RMF) chap_funsetmap_set
+#
+all:: \
+chap_funsetmap_map
+chap_funsetmap_map: \
+  chap_funsetmap_map.dats ; \
+  $(PATSCC2) -D_GNU_SOURCE -DATS_MEMALLOC_LIBC -o $@ $<
+regress:: chap_funsetmap_map; ./$<
+cleanall:: ; $(RMF) chap_funsetmap_map
+#
+######
+#
+all:: \
 chap_exception
 chap_exception: \
   chap_exception.dats ; \

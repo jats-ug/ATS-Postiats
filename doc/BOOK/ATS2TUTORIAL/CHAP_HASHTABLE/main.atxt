@@ -56,9 +56,8 @@ made to simplify programming with hashtables.
 #para("\
 
 Assume that #stacode("key_t") is #stacode("string") and #stacode("itm_t")
-is #stacode("int"). The following line creates a hashtable with its
+is #stacode("int"). The following line of code creates a hashtable with its
 initial capacity set to be 1000:
-
 
 #atscode('\
 val mymap = myhashtbl_make_nil(1000)
@@ -88,7 +87,7 @@ The dot-symbol #dyncode(".insert") is overloaded with a function of the
 name #dyncode("myhashtbl_insert"). Given a key and an item,
 #dyncode("mymap.insert") inserts the key/item pair into #dyncode("mymap").
 If the key is in the domain of the map represented by #dyncode("mymap")
-before inserting, then the original item associated with the key is
+before insertion, then the original item associated with the key is
 returned. Otherwise, no item is returned. As can be expected, the size
 of #dyncode("mymap") is 3 at this point:
 
@@ -180,8 +179,6 @@ myhashtbl_foreach_cloref
 , fwork: (key, &(itm) >> _) -<cloref1> void
 ) : void // end-of-function
 //
-overload .foreach_cloref with myhashtbl_foreach_cloref
-//
 ')
 
 As an example, the following code prints out all the key/item
@@ -190,10 +187,11 @@ pairs in a given hashtable:
 #atscode('\
 //
 val () =
-mymap.foreach_cloref
+myhashtbl_foreach_cloref
 (
-  lam (k, x) => fprintln! (stdout_ref, "k=", k, " and ", "x=", x)
-) (* end of [val] *)
+  mymap
+, lam (k, x) => fprintln! (stdout_ref, "k=", k, " and ", "x=", x)
+) (* myhashtbl_foreach_cloref *)
 //
 ')
 
