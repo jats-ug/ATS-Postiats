@@ -13,10 +13,16 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="from-genericity-to-late-binding">
+#langeng("
 #title("From Genericity to Late-Binding")
+")
+#langja("
+#title("ジェネリクスから遅延バインディングへ")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para('\
 
 The support for function templates in ATS is deeply ingrained in the design
@@ -31,20 +37,49 @@ linking (#filename("libatslib.a") and #filename("libatslib.so")) are minimal, an
 they are not even necessary for compiling ATS source into executable binaries.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+ATS における関数テンプレートのサポートは ATS のデザインと実装に深く根差しています。
+第一に、関数テンプレートは ATS におけるコード再利用の一般的なアプローチを提供しています。
+それは (妥当性の面で) とても柔軟で、必要になる実行時オーバーヘッドは最小のものです。
+ATSPRE (つまり ATSLIB/prelude) と ATSLIB/libats の両方はテンプレートに基いていて、#command("atsopt")
+によって吐き出されるC言語コードが ATS ソースコード中のテンプレート実体を実装するためにそれらのライブラリにおけるテンプレートは使われます。
+リンクする ATS のライブラリファイル (#filename("libatslib.a") and #filename("libatslib.so")) は最小のものです。
+それらは ATS ソースコードを実行バイナリにコンパイルするのに不要なことさえあります。
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 The code employed for illustration in this chapter plus some additional
 code for testing is available #mycodelink("CHAP_FNTMPINT/", "on-line").\
 
 ")
+")
+#langja("
+#para("\
+
+この章で紹介するコードとテストコードは #mycodelink("CHAP_FNTMPINT/", "オンライン") から入手できます。\
+
+")
+")
 
 <!-- ****** ****** -->
 
 <sect1
  id="genericity-of-template-implementations">
+#langeng("
 #title("Genericity of Template Implementations")
+")
+#langja("
+#title("テンプレート実装のジェネリクス")
+")
 
+#langeng("
 #para('\
 
 As is briefly explained in Part I of the book, function templates can be
@@ -117,6 +152,77 @@ val ((*void*)) = print_newline((*void*))
 ')
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+この本の I 章で概説した通り、ネイティブのアンボックス化されたデータの存在下におけるパラメータ多相に関する問題に対して、関数テンプレートは自然な解決策です。
+けれども、関数テンプレートはパラメータ多相の単なるサポートより多くのことが可能です。
+#dyncode("myprint") が次のインターフェイスの関数テンプレートだとしましょう:
+
+#atscode('\
+fun{a:t@ype} myprint (x: a): void
+')
+
+値が与えられたとき、#dyncode("myprint") はこの値に対するなんらかの表現を印字するものとしましょう。
+例えば、#dyncode("myprint") を次のように実装できます:
+
+#atscode('\
+implement{a} myprint (x) = print_string "?"
+')
+
+#dyncode("myprint") のこの実装はしばしば (完全な) 総称テンプレート実装と呼ばれます。
+そのテンプレートパラメータに何の制限も課されていないからです。
+次のように同じ実装を書く別の方法もあります:
+
+#atscode('\
+implement(a) myprint<a> (x) = print_string "?"
+')
+
+Clearly, the above generic implementation of #dyncode("myprint") is
+unsatisfactory as it outputs no specific information on a given value.  We
+may want to implement #dyncode("myprint") as follows for only values of the
+type #stacode("int"):
+
+#atscode('\
+implement myprint<int> (x) = print_int (x)
+')
+
+where #dyncode("print_int") is called to print out a given integer. This
+implementation of #dyncode("myprint") is often referred to as a specific
+template implementation due to the template parameter being bound to a
+specific type (that is, #stacode("int") in this case). The following code
+implements #dyncode("myprint") for list-values (that is, values of type
+#stacode("List(T)") for some type T):
+
+#atscode('\
+implement(a)
+myprint<List(a)> (xs) =
+case+ xs of
+| list_nil () => ()
+| list_cons (x, xs) =>
+    (myprint<a> (x); myprint<List(a)> (xs))
+')
+
+This implementation of #dyncode("myprint") is often referred to as a
+partially generic template implementation. In order for an instance of
+#dyncode("myprint") to use this implementation, the template parameter for
+the instance must be of the form #stacode("List(T)") for some type T.
+As an example, the following code calls an instance of #dyncode("myprint")
+to print out a list of two integer lists:
+
+#atscode('\
+(*
+** The output is "0123401234"
+*)
+val ys = $list{int}(0,1,2,3,4)
+val yss = $list{List(int)}(ys, ys)
+val ((*void*)) = myprint<List(List(int))> (yss)
+val ((*void*)) = print_newline((*void*))
+')
+
+')#comment("para")
+")
 
 #para('\
 
