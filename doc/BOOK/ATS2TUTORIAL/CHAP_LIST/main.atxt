@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_ARRAYREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="funlist">
+#langeng("
 #title("Functional Lists")
+")
+#langja("
+#title("関数的なリスト")
+")
 
+#langeng("
 #para("\
 
 A functional list is just a singly-linked list that is immutable
@@ -38,7 +44,34 @@ various functions on functional lists can be found in the SATS file
 is automatically loaded by #command("atsopt").\
 
 ")
+")
+#langja("
+#para("\
 
+関数的なリストは、コンストラクトした後で不変な単純な片方向リストです。
+次のデータ型宣言は、関数的なリストを表わす型 #stacode("list") を導入しています:
+
+#atscode('\
+//
+datatype
+list(a:t@ype, int) =
+| list_nil(a, 0) of ()
+| {n:nat}
+  list_cons(a, n+1) of (a, list(a, n))
+//
+')
+
+型 T と整数 N が与えられたとき、型 #stacode("list(T,N)") は型 T の要素を含む長さ N のリストを表わします。
+
+関数的なリストに対する様々な関数のインターフェイスが、SATS ファイル
+#myatscodelink("prelude/SATS/list.sats", "prelude/SATS/list.sats")
+に見つかります。
+このファイルは #command("atsopt") によって自動的にロードされます。\
+
+")
+")
+
+#langeng("
 #para("\
 
 There are various functions in ATSLIB for list construction. In practice, a
@@ -134,7 +167,99 @@ Note that #dyncode("list_foldleft") is tail-recursive but #dyncode("list_foldrig
 is not.\
 
 ")
+")
+#langja("
+#para("\
 
+ATSLIB にはリストを生成する様々な関数があります。
+実際には、コンストラクタ #dyncode('list_nil') と #dyncode('list_cons') を直接使ってリストは生成されます。
+例えば次の関数 #dyncode("fromto") は、与えられた2つの整数の範囲にある整数群を持つリストを生成します:
+
+#atscode('\
+//
+fun
+fromto
+{m,n:int | m <= n}
+(
+  m: int(m), n: int(n)
+) : list(int, n-m) =
+  if m < n then list_cons(m, fromto(m+1, n)) else list_nil()
+//
+')
+
+リストを辿るには一般にパターンマッチを使います。
+例えば次のコードは、与えられたリストの長さを算出する関数を実装しています:
+
+#atscode('\
+//
+fun
+{a:t@ype}
+list_length
+  {n:nat}
+(
+  xs: list(a, n)
+) : int(n) = let
+//
+fun
+loop
+{i,j:nat}
+(
+  xs: list(a, i), j: int(j)
+) : int(i+j) =
+(
+case+ xs of
+| list_nil () => j
+| list_cons (_, xs) => loop(xs, j+1)
+)
+//
+in
+  loop (xs, 0)
+end // end of [list_length]
+//
+')
+
+空でないリスト xs が与えられたとき、#dyncode("xs.head") と #dyncode("xs.tail") はそれぞれ xs の head と tail です。
+このとき、#dyncode(".head") と #dyncode(".tail") はオーバーロードされたドット表記です。
+例えば、与えられたリストを左から fold する関数 #dyncode("list_foldleft") は次のように実装できます:
+
+#atscode('\
+//
+fun
+{a,b:t@ype}
+list_foldleft
+  {n:nat}
+(
+  f: (a, b) -> a, ini: a, xs: list(b, n)
+) : a =
+  if iseqz(xs)
+    then ini else list_foldleft(f, f(ini, xs.head), xs.tail)
+  // end of [if]
+//
+')
+
+また、与えられたリストを右から fold する関数 #dyncode("list_foldright") は次のように実装できます:
+
+#atscode('\
+//
+fun
+{a,b:t@ype}
+list_foldright
+  {n:nat}
+(
+  f: (a, b) -> b, xs: list(a, n), snk: b
+) : b =
+  if iseqz(xs)
+    then snk else f(xs.head, list_foldright(f, xs.tail, snk))
+  // end of [if]
+//
+')
+
+#dyncode("list_foldleft") は末尾再帰ですが、#dyncode("list_foldright") はそうでないことに注意してください。\
+
+")
+")
+
+#langeng("
 #para("\
 
 As an application of #dyncode("list_foldleft"), the following code
@@ -192,7 +317,64 @@ end // end of [list_reverse]
 ')
 
 ")
+")
+#langja("
+#para("\
 
+#dyncode("list_foldleft") の適用例として、次のコードは与えられたリストを逆順にする関数を実装しています:
+
+#atscode('\
+fun
+{a:t@ype}
+list_reverse
+(
+  xs: List0(a)
+) : List0(a) =
+(
+list_foldleft<List0(a),a>
+  (lam (xs, x) => list_cons(x, xs), list_nil, xs)
+)
+')
+
+このとき、型コンストラクタ #stacode("List0") は長さの規定されていないリストを表わします:
+
+#atscode('\
+typedef List0(a:t@ype) = [n:nat] list (a, n)
+')
+
+明らかに、#dyncode("list_reverse") は長さを保存します。
+つまり、入力と同じ長さのリストを常に返すのです。
+不幸にも、#dyncode("list_foldleft") を用いた #dyncode("list_reverse") の上記実装は、この不変条件を捕捉していません。
+比較のために、#dyncode("list_reverse") の別実装を次に示します。
+この実装は #dyncode("list_reverse") が長さを保存するという不変条件を捕捉しています:
+
+#atscode('\
+fun
+{a:t@ype}
+list_reverse
+  {n:nat}
+(
+  xs: list(a, n)
+) : list(a, n) = let
+//
+fun
+loop{i,j:nat}
+(
+  xs: list(a, i), ys: list(a, j)
+) : list(a, i+j) =
+  case+ xs of
+  | list_nil () => ys
+  | list_cons (x, xs) => loop (xs, list_cons (x, ys))
+//
+in
+  loop (xs, list_nil)
+end // end of [list_reverse]
+')
+
+")
+")
+
+#langeng("
 #para("\
 
 As an application of #dyncode("list_foldright"), the following code
@@ -237,7 +419,51 @@ function takes two lists of length m and n, respectively, and returns
 another list of length m+n.
 
 ")
+")
+#langja("
+#para("\
 
+#dyncode("list_foldright") の適用例として、次のコードは与えられた2つのリストを連結する関数を実装しています:
+
+#atscode('\
+//
+fun
+{a:t@ype}
+list_append
+(
+  xs: List0(a), ys: List0(a)
+) : List0(a) =
+  list_foldright<a, List0(a)>(lam (x, xs) => list_cons(x, xs), ys, xs)
+//
+')
+
+#dyncode("list_append") に割り当てられた型は、この関数が2つのリストを引数として取り、長さが規定されていないリストを返すことを示しています。
+比較のために、#dyncode("list_append") の別実装を次に示します:
+
+#atscode('\
+//
+fun
+{a:t@ype}
+list_append
+  {m,n:nat}
+(
+  xs: list(a,m), ys: list(a,n)
+) : list(a,m+n) =
+(
+case+ xs of
+| list_nil () => ys
+| list_cons (x, xs) => list_cons (x, list_append (xs, ys))
+)
+//
+')
+
+このとき、#dyncode("list_append") に割り当てられた型は、この関数が長さ
+m と n の2つのリストを取り、長さ m+n の別のリストを返すことを示しています。
+
+")
+")
+
+#langeng("
 #para("\
 
 One may think of a functional list as a representation for the finite
@@ -266,7 +492,35 @@ i)") is O(i). If one uses #dyncode("list_get_at") frequently when handling
 lists, then it is almost always a sure sign of poor programming style.
 
 ")
+")
+#langja("
+#para("\
 
+読者は関数的なリストを、リストの長さより小さい自然数 i からリストの i 番目の要素をマップする連想配列として考えるかもしれません。
+次の関数 #dyncode("list_get_at") は、与えられた位置のリスト要素へのアクセスを表わしています:
+
+#atscode("\
+//
+fun
+{a:t@ype}
+list_get_at
+  {n:nat}
+(
+  xs: list(a, n), i: natLt(n)
+) : a =
+  if i > 0 then list_get_at(xs.tail, i-1) else xs.head
+//
+")
+
+この関数は角括弧表記を使って呼び出すことができます。
+別の言い方をすると、xs と i がそれぞれリストと整数である時は、#dyncode("xs[i]") は自動的に #dyncode("list_get_at(xs, i)") に解釈されます
+#dyncode("list_get_at(xs, i)") の時間効率が O(i) であることに注意してください。
+リストの操作に #dyncode("list_get_at") を頻繁に使うようであれば、それは貧弱なプログラミングスタイルを示すサインです。
+
+")
+")
+
+#langeng("
 #para("\
 
 There is no destructive update on a functional list as it is immutable.
@@ -294,7 +548,36 @@ do so repeatedly often indicates that another data structure should probably
 be chosen in place of functional list.\
 
 ")
+")
+#langja("
+#para("\
 
+不変であるため、関数的なリストに対する破壊的な更新はできません。
+次の関数 #dyncode("list_set_at") は呼び出されると、与えられた位置にある要素を与えられた要素で置き換えたリストを生成します:
+
+#atscode('\
+//
+fun
+{a:t@ype}
+list_set_at
+  {n:nat}
+(
+  xs: list(a, n), i: natLt(n), x0: a
+) : list(a, n) =
+  if i > 0
+    then list_cons(xs.head, list_set_at(xs.tail, i-1, x0))
+    else list_cons(x0, xs.tail)
+  // end of [if]
+//
+')
+
+時折 #dyncode("list_set_at")
+を呼び出すのであれば良いですが、頻繁に何度も呼び出す必要があるなら、関数的リストの代わりに別のデータ構造を選ぶべきでしょう。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Functional lists are by far the most widely used data structure
@@ -303,14 +586,32 @@ functional list like an array as doing so is inefficient both time-wise and
 memory-wise.\
 
 ")
+")
+#langja("
+#para("\
 
+関数プログラミングにおいて、関数的なリストは最も広く使われるデータ構造です。
+けれども、関数的なリストを配列のように使うべきではありません。
+それは時間効率と空間効率の両面で効果的ではありません。\
 
+")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_list.dats", "on-line") the entirety of the
 code used in this chapter plus some testing code.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で使ったコード全体とテストコードは #mycodelink("chap_list.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"funlist"-->
 
