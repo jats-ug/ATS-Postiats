@@ -14,10 +14,17 @@ Time of Generation: #timestamp()\
 ")
 <chapter
 id="datatypes"
->#title("Datatypes")
+>
+#langeng("
+#title("Datatypes")
+")
+#langja("
+#title("データ型")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para('\
 
 Datatypes are a form of user-defined types for classifying data (or
@@ -25,7 +32,17 @@ values). The support for datatypes and pattern matching in ATS is primarily
 adopted from ML.
 
 ')
+")
+#langja("
+#para('\
 
+データ型は、データ (もしくは値) を分類するためのユーザ定義の型です。
+ATS におけるデータ型とパターンマッチは ML に由来しています。
+
+')
+")
+
+#langeng("
 #para('\
 
 The following code declares a datatype of the name #stacode("weekday") for
@@ -48,7 +65,31 @@ that is, they take no arguments to
 form values (of the type #stacode("weekday")).\
 
 ')
+")
+#langja("
+#para('\
 
+次のコードは、平日を示す値を表わす、名前 #stacode("weekday") のデータ型を宣言しています:
+
+#atscode('\
+datatype weekday =
+  | Monday | Tuesday | Wednesday | Thursday | Friday
+')
+
+ここでは #stacode("weekday") に関連する5つのデータコンストラクタがあり、それらは
+#dyncode("Monday"),
+#dyncode("Tuesday"),
+#dyncode("Wednesday"),
+#dyncode("Thursday"),
+#dyncode("Friday") です。
+
+これらのデータコンストラクタは全て無引数 (nullary) です。
+すなわち、それらは (#stacode("weekday") 型の) 値を作るのに引数を取りません。\
+
+')
+")
+
+#langeng("
 #para('\
 
 Each nullary constructor is represented as a small integer
@@ -78,7 +119,36 @@ the tags for
 #dyncode("Friday")
 are 0, 1, 2, 3, and 4, respectively.
 ')
+")
+#langja("
+#para('\
 
+それぞれの無引数コンストラクタは (例えば 1024 より小さいような) 小さな整数として表現されます。
+次の関数 #dyncode("weekday2int") を使うと、#stacode("weekday") に関連するコンストラクタを表わす整数を調べることができます:
+
+#atscode('\
+//
+staload UN = "prelude/SATS/unsafe.sats"
+//
+fun
+weekday2int
+  (wd: weekday): int = $UN.cast{int}($UN.cast{intptr}(wd))
+//
+')
+
+無引数コンストラクタを表わす小さな整数は、コンストラクタのタグとしばしば呼ばれます。
+
+この場合、
+#dyncode("Monday"),
+#dyncode("Tuesday"),
+#dyncode("Wednesday"),
+#dyncode("Thursday"),
+#dyncode("Friday")
+に対するタグは、それぞれ 0, 1, 2, 3, 4 になります。
+')
+")
+
+#langeng("
 #para('\
 
 Given a nullary constructor #dyncode("foo"), both #dyncode("foo") and
@@ -106,14 +176,51 @@ val () = assertloc (isFriday(Friday()))
 ')
 
 ')
+")
+#langja("
+#para('\
 
+無引数コンストラクタ #dyncode("foo") が与えられたとき、#dyncode("foo")
+でコンストラクトされた値を参照するために、#dyncode("foo") と #dyncode("foo()")
+の両方を使うことができます。
+けれどもこの値にマッチするパターンとして使えるのは #dyncode("foo()") のみです。
+例えば次の関数は、与えられた型 #stacode("weekday") の値がコンストラクタ #dyncode("Friday") で作られたかどうか確認しています:
+
+#atscode('\
+fun
+isFriday(x: weekday): bool =
+  case+ x of Friday() => true | _ => false
+')
+
+パターン #dyncode("Friday()") を #dyncode("Friday") で置き換えられないことに注意してください。
+パターンとして使われると後者は値として使われます。
+一方で、次のアサートは実行時に扱われるので、#dyncode("Friday") と #dyncode("Friday()") は同じ値を指します:
+
+#atscode('\
+val () = assertloc (isFriday(Friday))
+val () = assertloc (isFriday(Friday()))
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 If there is only one constructor associated with a datatype, then
 there is no tag in the representation for values of this datatype.
 
 ')
+")
+#langja("
+#para('\
 
+データ型に関連したコンストラクタが1つだけの場合、このデータ型の値を表わすタグはありません。
+
+')
+")
+
+#langeng("
 #para('\
 
 A datatype is list-like if there are two data constructors associated with
@@ -145,7 +252,36 @@ val () = assertloc (false = $UN.ptr0_get<bool>($UN.cast{ptr}(B(false))))
 ')
 
 ')
+")
+#langja("
+#para('\
 
+データ型に関連する2つのデータコンストラクタとして一方は無引数 (nil-like) でもう一方が無引数でない (cons-like) があるなら、そのデータ型は list-like です。
+例えば、次のように宣言されたデータ型 #stacode("ab") はリスト的です:
+
+#atscode('\
+datatype ab = A of () | B of (bool)
+')
+
+list-like なデータ型の値は特別な方法で表現されます。
+そのデータ型の値が与えられたとき;
+もし nil-like なコンストラクタでコンストラクトされていたら、それは NULL ポインタで表現されます;
+もし cons-like なコンストラクタでコンストラクトされていたら、それはそのコンストラクタに渡された引数全てを含む (ヒープに確保された) タプルで表現されます。
+
+上記の場合、値 #dyncode("A()") は NULL ポインタで表わされ、ブール #dyncode("b") に対する値 #dyncode("B(b)")
+は #dyncode("b") のみを含む (ヒープに確保された) シングルトンタプルとして表わされます。
+この説明は次のコードで簡単に確認できます:
+
+#atscode('\
+val () = assertloc (iseqz($UN.cast{ptr}(A())))
+val () = assertloc (true = $UN.ptr0_get<bool>($UN.cast{ptr}(B(true))))
+val () = assertloc (false = $UN.ptr0_get<bool>($UN.cast{ptr}(B(false))))
+')
+
+')
+")
+
+#langeng("
 #para('\
 
 The following declaration introduces a datatype of the name #stacode("abc"):
@@ -162,7 +298,26 @@ is unary, taking a boolean to form a value (of the type #stacode("abc"));
 to form a value (of the type #stacode("abc")).
 
 ')
+")
+#langja("
+#para('\
 
+次の宣言は名前 #stacode("abc") のデータ型を導入しています:
+
+#atscode('\
+datatype abc =
+  | A of () | B of (bool) | C of (int, double)
+')
+
+#stacode("abc") に関連する3つのコンストラクタは #dyncode("A"), #dyncode("B"), #dyncode("C") です;
+#dyncode("A") は無引数です;
+#dyncode("B") の引数は1つで、(#stacode("abc") 型の) 値を作るためにブールを取ります;
+#dyncode("C") の引数は2つで、(#stacode("abc") 型の) 値を作るために整数と (double 制度の) 浮動小数点数を取ります。
+
+')
+")
+
+#langeng("
 #para('\
 
 In a general case, if a data constructor is n-ary for some positive n, then
@@ -190,7 +345,35 @@ In this case, the tags assigned to #dyncode("A"), #dyncode("B"), and
 #dyncode("C") are 0, 1, and 2, respectively.
 
 ')
+")
+#langja("
+#para('\
 
+一般に、なんらかの正の整数 n についてデータコンストラクタが n
+個の引数を取るなら、コンストラクトされた値であるヒープに確保されたタプルは n+1 個の要素を持ちます。
+このとき最初の1つはコンストラクタに割り当てられたタグで、残りはコンストラクタに渡された引数です。
+例えば、次の関数を使うと #stacode("abc") に関連するコンストラクタに割り当てられたタグを調べることができます:
+
+#atscode('\
+fun
+abc2tag
+(x: abc): int = let
+  val p = $UN.cast{intptr}(x)
+in
+//
+case+ 0 of
+| _ when p < 1024 => $UN.cast{int}(p)
+| _ (*heap-allocated*) => $UN.ptr0_get<int>($UN.cast{ptr}(p))
+//
+end // end of [abc2tag]
+')
+
+この場合、#dyncode("A"), #dyncode("B"), #dyncode("C") に割り当てられたタグはそれぞれ 0, 1, 2 です。
+
+')
+")
+
+#langeng("
 #para('\
 
 Datatypes can be defined recursively. As an example,
@@ -287,15 +470,118 @@ dependent datatypes, and linear datatypes, which will be covered
 elsewhere.
 
 ')
+")
+#langja("
+#para('\
+
+データ型は再帰的に定義できます。
+例えば、次の宣言は再帰的な定義された (算術整数式を表わす) データ型 #stacode("intexp") を導入しています:
+
+#atscode('\
+datatype
+intexp =
+| Int of int
+| Neg of (intexp)
+| Add of (intexp, intexp)
+| Sub of (intexp, intexp)
+')
+
+例えば、#dyncode("(1+2)-3") は #dyncode("Sub(Add(Int(1), Int(2)), Int(3))") のように表現できます。
+別の例として、次のコードは2つの相互再帰的に定義されたデータ型 #stacode("intexp") と #stacode("boolexp")
+(それぞれ整数式とブール式を表わします) を導入しています:
+
+#atscode('\
+datatype
+intexp =
+| Int of int
+| Neg of (intexp)
+| Add of (intexp, intexp)
+| Sub of (intexp, intexp)
+| IfThenElse of (boolexp, intexp, intexp)
+
+and
+boolexp =
+| Bool of bool // constant
+| Not of (boolexp) // negation
+| Less of (intexp, intexp) // Less(x, y): x < y
+| LessEq of (intexp, intexp) // LessEq(x, y): x <= y
+| Conj of (boolexp, boolexp) // Conj(x, y): x /\ y
+| Disj of (boolexp, boolexp) // Disj(x, y): x \/ y
+')
+
+以下コードは、整数式とブール式の評価を表わす2つの相互再帰関数
+#dyncode("eval_intexp") を #dyncode("eval_boolexp") それぞれ実装しています:
+
+#atscode('\
+//
+symintr eval
+//
+extern
+fun eval_intexp : intexp -> int
+extern
+fun eval_boolexp : boolexp -> bool
+//
+overload eval with eval_intexp
+overload eval with eval_boolexp
+//
+(* ****** ****** *)
+//
+implement
+eval_intexp
+  (e0) = (
+//
+case+ e0 of
+| Int (i) => i
+| Neg (e) => ~eval(e)
+| Add (e1, e2) => eval(e1) + eval(e2)
+| Sub (e1, e2) => eval(e1) - eval(e2)
+| IfThenElse
+    (e_test, e_then, e_else) =>
+    if eval(e_test) then eval(e_then) else eval(e_else)
+//
+) (* end of [eval_intexp] *)
+//
+implement
+eval_boolexp
+  (e0) = (
+//
+case+ e0 of
+| Bool (b) => b
+| Not (e) => ~eval(e)
+| Less (e1, e2) => eval(e1) < eval(e2)
+| LessEq (e1, e2) => eval(e1) <= eval(e2)
+| Conj (e1, e2) => eval(e1) && eval(e2)
+| Disj (e1, e2) => eval(e1) || eval(e2)
+//
+) (* end of [eval_boolexp] *)
+//
+(* ****** ****** *)
+')
+
+この章で紹介したデータ型は単純なデータ型です。
+データ型のより進んだ形として、多相データ型, 依存データ型, 線形データ型 があります。
+それらをどこかで紹介することになるでしょう。
+
+')
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_datatypes.dats", "on-line") the entirety of the
 code used in this chapter plus some code for testing.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で使ったコード全体とテストコードは #mycodelink("chap_datatypes.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"datatypes"-->
 
