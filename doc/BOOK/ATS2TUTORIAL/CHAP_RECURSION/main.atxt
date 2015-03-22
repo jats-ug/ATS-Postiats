@@ -51,6 +51,7 @@ ATS において再帰の概念はあちこちに現われます。
 ')
 ")
 
+#langeng("
 #para("\
 
 The keyword #keycode("fun") can be used to initiate the definition of
@@ -98,7 +99,51 @@ refers to the (non-recursive) function being defined, the second one is
 supposed to have been declared previously.
 
 ")
+")
+#langja("
+#para("\
 
+キーワード #keycode("fun") は再帰関数定義の開始に使います。
+例えば、次のコードは再帰関数の定義です:
+
+#atscode('\
+fun
+fact(x: int): int =
+  if x > 0 then x * fact(x-1) else 1
+(* end of [fact] *)
+')
+
+非再帰関数は、それ自身の定義中でそれ自身を使う再帰関数の特殊形です。
+そのため、もちろん非再帰関数の定義の開始に #keycode("fun") を使うこともできます。
+けれども、非再帰として定義されていることを明示的に示す必要があるのであれば、キーワード #keycode("fn") を使うことができます。
+例えば、非再帰関数の定義は次のように与えられます:
+
+#atscode('\
+fn square(x: int): int = x * x
+')
+
+上記の関数は次のような名前とラムダ式を繋ぐ束縛にコンパイラによって変換されます:
+
+#atscode('\
+val square = lam (x: int): int => x * x
+')
+
+別の例として、次のコードでは #dyncode("fact") が二度現われて、2つの別個の関数を差していることに注意してください:
+
+#atscode('\
+fn
+fact(x: int): int =
+  if x > 0 then x * fact(x-1) else 1
+(* end of [fact] *)
+')
+
+最初の (等号の左側にある) #dyncode("fact") 定義済みの (非再帰の)
+関数を参照しており、2番目は以前に宣言されたものを参照しています。
+
+")
+")
+
+#langeng("
 #para("\
 
 A recursive function can also be defined as a recursive value. For
@@ -147,7 +192,55 @@ with a fixed-point expression (or simply fix-expression for short). For instance
 #dyncode("lambda(x:int):int => x+x") can be written as #dyncode("fix _(x:int):int => x+x").
 
 ")
+")
+#langja("
+#para("\
 
+再帰関数は再帰的な値としても定義できます。
+例えば、上記で定義した再帰関数 #dyncode("fact") は次のように定義することもできます:
+
+#atscode('\
+val
+rec
+fact : int -> int =
+lam (x) =>
+  if x > 0 then x * fact(x-1) else 1
+(* end of [fact] *)
+')
+
+このとき、キーワード #keycode("rec") は #dyncode("fact") が再帰的に定義されていることを示しています。
+つまり、それはそれ自身の定義中に現われることができます。
+実際、#dyncode("fact") の前者の定義は後者にコンパイラによって変換されます。
+もちろん、再帰を実装するのに参照を使うこともできます:
+
+#atscode('\
+val
+fact = ref<int->int>($UNSAFE.cast(0))
+val () =
+!fact :=
+(
+  lam (x:int):int => if x > 0 then x * !fact(x-1) else 1
+) (* end of [val] *)
+')
+
+しかし、これは私の推奨するスタイルではありません。
+不動点式として #dyncode("fact") を定義するまた別の方法を紹介します:
+
+#atscode('\
+val
+fact =
+fix f(x: int): int =>
+  if x > 0 then x * f(x-1) else 1
+(* end of [fact] *)
+')
+
+もちろん望むなら、不動点式をラムダ式で置き換えることがいつでも可能です。
+例えば、#dyncode("lambda(x:int):int => x+x") は #dyncode("fix _(x:int):int => x+x") のように書くこともできます。
+
+")
+")
+
+#langeng("
 #para("\
 
 For defining mutually recursive functions, one can simply use the
@@ -182,7 +275,41 @@ definitions of non-recursive functions, but doing so is probably just a
 curiosity (instead of a meaningful practice).\
 
 ")
+")
+#langja("
+#para("\
 
+相互再帰関数を定義するためには、関数定義の連結にキーワード #keycode("and") を使います。
+例えば、次のコードは2つの関数 #dyncode("isevn") と #dyncode("isodd") を相互再帰的に定義しています:
+
+#atscode('\
+fun
+isevn(x: int): bool =
+  if x > 0 then isodd(x-1) else true
+and
+isodd(x: int): bool =
+  if x > 0 then isevn(x-1) else false
+')
+
+読者の推測する通りですが、上記のコードは (2つの相互再帰値を定義するために) 次のような形にコンパイラによって変換されます:
+
+#atscode('\
+val
+rec
+isevn : int -> bool =
+  lam (x) => if x > 0 then isodd(x-1) else true
+and
+isodd : int -> bool =
+  lam (x) => if x > 0 then isevn(x-1) else false
+')
+
+もちろん非再帰関数の定義を連結するのに、キーワード #keycode("and") を使うことはできます。
+しかし、そのような使用はまれでしょう。\
+
+")
+")
+
+#langeng("
 #para("\
 
 Even at this point, I have not presented all of the possible ways to define
@@ -191,7 +318,19 @@ closure-functions in ATS, which may be either recursive or non-recursive.
 I plan to introduce such functions elsewhere in this tutorial.
 
 ")
+")
+#langja("
+#para("\
 
+ここでは、ATS における関数定義の方法全てを紹介しませんでした。
+例えば、ATS ではスタックに確保されたクロージャ関数を定義することもできます。
+そしてこの関数は再帰的にも非再帰的にも定義できるのです。
+このチュートリアルの別の章でそのような関数を紹介するかもしれません。
+
+")
+")
+
+#langeng("
 #para("\
 
 Often, the interface (that is, type) for a function is declared at one
@@ -217,13 +356,47 @@ being defined) can appear in the definition. If it is desirable, one
 may replace #keycode("implement") with #keycode("implmnt").
 
 ")
+")
+#langja("
+#para("\
 
+しばしば、ある場所で関数に対するインターフェイス (すなわち型) を宣言し、そしてその定義 (もしくは実装) を別の場所で与えることがあります。
+例えば、はじめに次のような宣言を導入します:
+
+#atscode('\
+extern fun fact (x: int): int
+')
+
+その後、上記の宣言に一致する #dyncode("fact") を実装することができます:
+
+#atscode('\
+implement
+fact (x) =
+  if x > 0 then x * fact(x-1) else 1
+// end of [fact]
+')
+
+関数定義の開始に #keycode("implement") が使われると、(それ自身を含む) 前に宣言したシンボルがその定義中に現われることができます。
+好ましいなら、#keycode("implement") を #keycode("implmnt") に置き換えることもできます。
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_recursion.dats", "on-line") the entirety of the
 code used in this chapter.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で使ったコード全体は #mycodelink("chap_recursion.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"recursion"-->
 
