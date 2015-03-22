@@ -17,7 +17,7 @@ id="from-genericity-to-late-binding">
 #title("From Genericity to Late-Binding")
 ")
 #langja("
-#title("ジェネリクスから遅延バインディングへ")
+#title("ジェネリックスから遅延バインディングへ")
 ")
 
 <!-- ****** ****** -->
@@ -76,7 +76,7 @@ code for testing is available #mycodelink("CHAP_FNTMPINT/", "on-line").\
 #title("Genericity of Template Implementations")
 ")
 #langja("
-#title("テンプレート実装のジェネリクス")
+#title("テンプレート実装のジェネリックス")
 ")
 
 #langeng("
@@ -179,21 +179,17 @@ implement{a} myprint (x) = print_string "?"
 implement(a) myprint<a> (x) = print_string "?"
 ')
 
-Clearly, the above generic implementation of #dyncode("myprint") is
-unsatisfactory as it outputs no specific information on a given value.  We
-may want to implement #dyncode("myprint") as follows for only values of the
-type #stacode("int"):
+明らかに、上記 #dyncode("myprint") のジェネリックス実装は、与えられた値について特別な情報を何も印字できないという点において十分ではありません。
+型 #stacode("int") の値のみをサポートする #dyncode("myprint") を実装したくなるかもしれません:
 
 #atscode('\
 implement myprint<int> (x) = print_int (x)
 ')
 
-where #dyncode("print_int") is called to print out a given integer. This
-implementation of #dyncode("myprint") is often referred to as a specific
-template implementation due to the template parameter being bound to a
-specific type (that is, #stacode("int") in this case). The following code
-implements #dyncode("myprint") for list-values (that is, values of type
-#stacode("List(T)") for some type T):
+このとき #dyncode("print_int") は与えられた整数を印字します。
+#dyncode("myprint") のこの実装は特殊テンプレート実装としばしば呼ばれます。
+テンプレートパラメータに特別な型 (つまりこの例では #stacode("int")) を割り当てているからです。
+次のコードは、リスト値 (つまりなんらかの型 T に対する型 #stacode("List(T)") の値) のための #dyncode("myprint") を実装しています:
 
 #atscode('\
 implement(a)
