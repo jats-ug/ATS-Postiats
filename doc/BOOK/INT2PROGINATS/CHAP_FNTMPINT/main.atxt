@@ -200,12 +200,10 @@ case+ xs of
     (myprint<a> (x); myprint<List(a)> (xs))
 ')
 
-This implementation of #dyncode("myprint") is often referred to as a
-partially generic template implementation. In order for an instance of
-#dyncode("myprint") to use this implementation, the template parameter for
-the instance must be of the form #stacode("List(T)") for some type T.
-As an example, the following code calls an instance of #dyncode("myprint")
-to print out a list of two integer lists:
+#dyncode("myprint") のこの実装は、しばしば部分的な総称テンプレート実装を呼ばれます。
+この実装を使う #dyncode("myprint") のインスタンスのために、そのインスタンスに対するテンプレートパラメータはなんらかの型
+T において #stacode("List(T)") でなければなりません。
+例えば、次のコードは2つの整数のリストのリストを印字するのに #dyncode("myprint") のインスタンスを呼び出しています:
 
 #atscode('\
 (*
@@ -220,6 +218,7 @@ val ((*void*)) = print_newline((*void*))
 ')#comment("para")
 ")
 
+#langeng("
 #para('\
 
 Implementations of a function template can be ordered according to an
@@ -233,7 +232,21 @@ template instance follows the standard principle of lexical scoping to
 search for the first one that is available for use.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+関数テンプレートの実装はある特定の順序に従って順序付けられます。
+これはジェネリックス順序 (genericity ordering) と呼ばれます:
+もし、ある実装が別の実装のインスタンスであるなら、前者のジェネリックスは後者のジェネリックス以下になります。
+与えられたテンプレートインスタンスをコンパイルするのに必要なテンプレート実装の配置には
+(best-fit ではなく) first-fit 戦略が取られることに注意してください。
+より具体的には、特殊テンレプートインスタンスに対するテンプレート実装の配置では、使用可能な最初の1つを探すのにレキシカルスコープの原理に従っています。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 In practice, there is quite a bit of subtlety in locating a template
@@ -306,8 +319,77 @@ end // end of [myprint2<List(a)>]
 ')
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+実際には、テンプレートインスタンスに対するテンプレート実装の配置にはほんの少し巧妙な点があります。
+#dyncode("myprint2") を次のようなインターフェイスを持つ関数テンプレートとしましょう:
+
+#atscode('\
+fun{a:t@ype} myprint2 (x: a): int
+')
+
+次のコードは #dyncode("myprint2") の部分的な総称テンプレート実装です:
+
+#atscode('\
+//
+implement(a)
+myprint2<List(a)> (xs) =
+case+ xs of
+| list_nil () => ()
+| list_cons (x, xs) =>
+    (myprint<a> (x); 1 + myprint2 (xs))
+//
+')
+
+このテンプレート実装は、実際には予想される共同と違った振舞いをします。
+実装本体で呼び出された #dyncode("myprint2") のインスタンスのテンプレートパラメータは、なんらかの
+(種 #stacode("int") の) 静的な項 N に対する #stacode("list(a, N)") 型になることに注意してください。
+これはどのような型 T に対する #stacode("List(T)") にもマッチしないので、テンプレート #dyncode("myprint2")
+の呼び出されたインスタンスは与えられた #dyncode("myprint2") のテンプレート実装に従ってコンパイルできません。
+この問題は、呼び出される #dyncode("myprint2") のインスタンスに、明示的に型 #stacode("List(a)") をテンプレートパラメータとして渡せば簡単に修正できます:
+
+#atscode('\
+//
+implement(a)
+myprint2<List(a)> (xs) =
+case+ xs of
+| list_nil () => ()
+| list_cons (x, xs) =>
+    (myprint<a> (x); 1 + myprint2<List(a)> (xs))
+//
+')
+
+この例におけるインスタンス #dyncode("myprint2&lt;List(a)&gt;") はしばしば再帰的なインスタンスと呼ばれます。
+一般に、再帰的なインスタンスの使用を #emphasis("避ける") ことは良いプログラミング習慣です。
+例えば、次のような #dyncode("myprint2") に相当する実装は再帰的なインスタンスを使っていません:
+
+#atscode('\
+//
+implement(a)
+myprint2<List(a)>
+  (xs) = let
+//
+fun
+aux
+(xs: List(a)): int =
+//
+case+ xs of
+| list_nil () => 0
+| list_cons (x, xs) => (myprint<a>(x); 1 + aux(xs))
+//
+in
+  aux (xs)
+end // end of [myprint2<List(a)>]
+//
+')
+
+')#comment("para")
+")
 
 
+#langeng("
 #para('\
 
 Please find on-line the file
@@ -315,6 +397,16 @@ Please find on-line the file
 entirety of the code presented in this section plus some testing code.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体とテストコードを含む
+#mycodelink("CHAP_FNTMPINT/myprint.dats", "myprint.dats")
+はオンラインから入手できます。\
+
+')#comment("para")
+")
 
 </sect1><!--id="genericity-of-template-implementations"-->
 
