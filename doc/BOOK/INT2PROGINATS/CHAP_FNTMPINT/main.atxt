@@ -414,8 +414,14 @@ entirety of the code presented in this section plus some testing code.\
 
 <sect1
  id="generic-operations-on-numbers">
+#langeng("
 #title("Example: Generic Operations on Numbers")
+")
+#langja("
+#title("例: 数に対するジェネリックス演算")
+")
 
+#langeng("
 #para("\
 
 There are many types of numbers in ATS. With function templates, we can
@@ -444,7 +450,36 @@ numbers, matrices of floating point complex numbers, etc. This approach is
 clearly far superior to relying on error-prone macros in C.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ATS には数多くの数値型があります。
+関数テンプレートを用いると、数値演算においてコードの共有を向上させることができます。
+例えば、持つ行列の乗法のジェネリックス実装に次のインターフェイスを与えることができます:
+
+#atscode("\
+fun
+{a:t@ype}
+matrix_mul
+  {p,q,r:int}
+(
+  p: int(p)
+, q: int(q)
+, r: int(r)
+, A: &matrix(a, p, q)
+, B: &matrix(a, q, r)
+, C: &matrix(a?, p, r) >> matrix(a, p, r)
+) : void // end of [matrix_mul]
+")
+
+それからこれを使って、整数の行列, 浮動小数点数の行列, 浮動小数点複素数の行列などの行列乗法の実装をすぐに得られます。
+このアプローチは、エラーを招きやすいC言語マクロの使用よりも明確に優れています。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Let us take a look at a concrete example involving generic operations on
@@ -562,7 +597,121 @@ I only list some leading digits of the result:
 gfact<intinf>(100) = 933262154439441526816992388562667[...omitted...]
 ')
 ")
+")
+#langja("
+#para("\
 
+数に対するジェネリックス演算の具体的な例を見てみましょう。
+次のコードは階乗関数の一般的な実装です:
+
+#atscode('\
+//
+extern
+fun fact(n: int): int
+//
+implement
+fact(n) =
+  if n > 0 then n * fact(n-1) else 1
+// end of [fact]
+//
+')
+
+100 に適用されると、#dyncode("fact") は 0 を返すでしょう。
+これは 100 の階乗が 2#sup("32") の倍数になり、型 #stacode("int")
+の整数に対する乗算が 2#sup("32") を法とすることから容易に理解できます。
+この乗法を倍精度の浮動小数点数における乗法に置き換えたいとします。
+これは次のように #dyncode("fact") のわずかな偏見を実装するだけで済みます:
+
+#atscode('\
+//
+extern
+fun factd(n: int): double
+
+implement
+factd(n) =
+  if n > 0 then n * factd(n-1) else 1.0
+// end of [factd]
+//
+')
+
+100 に適用されると、#dyncode("factd") は大きな浮動小数点数を返します。
+明らかに #dyncode("fact") と #dyncode("factd") の実装の間にはコードの重複があります。
+次のような階乗関数のジェネリックス実装を導入することで、この重複をたやすく取り除くことができます。
+
+#atscode('\
+//
+extern
+fun{a:t@ype} gfact(n: int): a
+//
+implement
+{a}(*tmp*)
+gfact(n) = (
+//
+if n > 0
+then gmul_int_val<a>(n, gfact<a>(n-1))
+else gnumber_int<a>(1)
+//
+) (* end of [gfact] *)
+//
+')
+
+ATS でオーバーロードをサポートによって少しきれいにできます。
+#dyncode("gfact") を次のように書き直せます:
+
+#atscode('\
+implement
+{a}(*tmp*)
+gfact(n) = let
+//
+overload * with gmul_int_val
+//
+in
+//
+if n > 0
+then n * gfact<a>(n-1) else gnumber_int<a>(1)
+//
+end (* end of [gfact] *)
+')
+
+これで #dyncode("fact") と #dyncode("factd") は次のように実装できます:
+
+#atscode('\
+//
+implement fact(n) = gfact<int>(n)
+implement factd(n) = gfact<double>(n)
+//
+')
+
+GNU multiple precision arithmetic library (GMPLIB) に基づいて多倍長整数を ATS はサポートしています。
+次のコードは 100 の階乗の正しい値を算出する方法を示しています:
+
+#atscode('\
+//
+staload _(*T*) =
+"{$LIBATSHWXI}/intinf/DATS/intinf_t.dats"
+staload _(*VT*) =
+"{$LIBATSHWXI}/intinf/DATS/intinf_vt.dats"
+//
+staload GINTINF =
+"{$LIBATSHWXI}/intinf/DATS/gintinf_t.dats"
+//
+typedef intinf = $GINTINF.intinf
+overload print with $GINTINF.print_intinf
+//
+val () =
+println! ("gfact<intinf>(100) = ", gfact<intinf>(100))
+//
+')
+
+次のような数値が得られました:
+
+#atscode('\
+gfact<intinf>(100) = 933262154439441526816992388562667[...omitted...]
+')
+")
+")
+
+#langeng("
 #para('\
 
 Please find on-line the file
@@ -570,6 +719,16 @@ Please find on-line the file
 entirety of the code presented in this section plus some testing code.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体とテストコードを含む
+#mycodelink("CHAP_FNTMPINT/gnumber.dats", "gnumber.dats")
+はオンラインから入手できます。\
+
+')#comment("para")
+")
 
 </sect1><!--id="generic-operations-on-numbers"-->
 
