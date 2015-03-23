@@ -736,8 +736,14 @@ entirety of the code presented in this section plus some testing code.\
 
 <sect1
  id="templates-as-a-special-form-of-functors">
+#langeng("
 #title("Templates as a Special Form of Functors")
+")
+#langja("
+#title("ファンクタの特殊形としてのテンプレート")
+")
 
+#langeng("
 #para("\
 
 Many uses of higher-order functions can be readily replaced with function
@@ -801,7 +807,69 @@ for avoiding using a higher-order function like #dyncode("list_map_cloref")
 when doing embedded programming in ATS.
 
 ")
+")
+#langja("
+#para("\
 
+ATS では、高階関数の使用の多くは関数テンプレートによって容易に置き換えできます。
+特に、高階関数は対応する関数テンプレートを元に実装されることもしばしばです。
+実際の例を最初に見てみましょう。
+次のコードは、高階関数テンプレートとしてのリストのマップの一般的な実装です:
+
+#atscode('\
+//
+extern
+fun
+{a:t@ype}
+{b:t@ype}
+list_map_fun{n:nat}
+  (xs: list(a, n), f: a -> b): list_vt(b, n)
+//
+implement
+{a}{b}
+list_map_fun (xs, f) = let
+//
+fun
+aux{n:nat}
+  (xs: list(a, n)): list_vt(b, n) =
+(
+case+ xs of
+| list_nil () => list_vt_nil ()
+| list_cons (x, xs) => list_vt_cons (f(x), aux(xs))
+)
+//
+in
+  aux(xs)
+end // end of [list_map_fun]
+//
+')
+
+ある長さのリストと (無環境の) 関数が与えられたとき、#dyncode("list_map_fun")
+は同じ長さの線形リストを返します。
+不幸にも、リストとクロージャ関数に対して #dyncode("list_map_fun") を呼び出すことはできません。
+もちろん、#dyncode("list_map_fun") の実装を複製することで、次のインターフェイスを持つ
+#dyncode("list_map_fun") の変種を実装することはできます:
+
+#atscode('\
+//
+extern
+fun
+{a:t@ype}
+{b:t@ype}
+list_map_cloref{n:nat}
+  (xs: list(a, n), f: a -<cloref1> b): list_vt(b, n)
+//
+')
+
+#dyncode("list_map_cloref") はリストとクロージャ関数に対して呼び出せますが、#dyncode("list_map_cloref")
+呼び出しに渡されるために実行時に生成されるクロージャ関数は、関数呼び出しが返ると即座にゴミになってしまうでしょう。
+ガベージコレクション (GC) がない場合、そのクロージャを保管していたメモリはリークしてしまいます。
+ATS を使って組み込みプログラミングを行なう際は、#dyncode("list_map_cloref") のような高階関数の使用を避けた方が良いでしょう。
+
+")
+")
+
+#langeng("
 #para('\
 
 A proper way to implement list mapping (as I see it) is given as follows:
@@ -848,7 +916,54 @@ compiling a particular template instance is located through a search
 procedure (that follows the standard principle of lexical scoping).
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+リストのマップを実装する正当な方法は (私の知るかぎり) 次のようなものです:
+
+#atscode('\
+//
+extern
+fun
+{a:t@ype}
+{b:t@ype}
+list_map{n:nat}
+  (xs: list(a, n)): list_vt(b, n)
+//
+extern
+fun
+{a:t@ype}{b:t@ype} list_map$fopr(x: a): b
+//
+implement
+{a}{b}
+list_map (xs) = let
+//
+fun
+aux{n:nat}
+  (xs: list(a, n)): list_vt(b, n) =
+(
+case+ xs of
+| list_nil () => list_vt_nil ()
+| list_cons (x, xs) => list_vt_cons (list_map$fopr<a><b>(x), aux(xs))
+) (* end of [aux] *)
+//
+in
+  aux(xs)
+end // end of [list_map]
+//
+')
+
+関数テンプレート #dyncode("list_map") はファンクタ的 (functorial) と呼ばれるスタイルです:
+#dyncode("list_map") は、1つの関数 #dyncode("list_map$fopr") から成るモジュールに適用する Standard ML のファンクタと考えることができます。
+SML では、それ自身がモジュールであるファンクタのそれぞれの引数はコンストラクトされる必要があり、それから明示的にファンクタに渡されます。
+ATS では、特殊テンプレートインスタンスをコンパイルするために必要なテンプレート実装は検索して配置されます。
+(これはレキシカルスコープの原理に従います。)
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 With #dyncode("list_map"), we can implement both #dyncode("list_map_fun")
@@ -883,7 +998,44 @@ For those who are familiar with functors in SML, the implementation of
 remind them of functor application.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+#dyncode("list_map") を用いて、#dyncode("list_map_fun") と #dyncode("list_map_cloref")
+の両方を次のようにそのまま実装できます:
+
+#atscode('\
+implement
+{a}{b}
+list_map_fun(xs, f) = let
+//
+implement list_map$fopr<a><b> (x) = f(x)
+//
+in
+  list_map<a><b> (xs)
+end // end of [list_map_fun]
+
+(* ****** ****** *)
+
+implement
+{a}{b}
+list_map_cloref(xs, f) = let
+//
+implement list_map$fopr<a><b> (x) = f(x)
+//
+in
+  list_map<a><b> (xs)
+end // end of [list_map_cloref]
+')
+
+SML におけるファンクタとして馴染みのあるように、#dyncode("list_map_fun") と #dyncode("list_map_cloref")
+の実装は明らかにファンクタの適用のそれに似ています。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Please find on-line the file
@@ -891,6 +1043,16 @@ Please find on-line the file
 entirety of the code presented in this section plus some testing code.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体とテストコードを含む
+#mycodelink("CHAP_FNTMPINT/list_map.dats", "list_map.dats")
+ファイルはオンラインから入手できます。\
+
+')#comment("para")
+")
 
 </sect1><!--id="templates-as-a-special-form-of-functors"-->
 
