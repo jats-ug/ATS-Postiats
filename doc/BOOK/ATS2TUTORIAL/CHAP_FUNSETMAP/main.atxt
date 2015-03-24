@@ -291,7 +291,7 @@ section #mycodelink("chap_funsetmap_set.dats", "on-line").
 
 一般的な各種の集合操作は
 #myatscodelink("libats/ML/HATS/myfunset.hats", "libats/ML/HATS/myfunset.hats")
-に見つかります
+に見つかります。
 これらの操作に割り当てられた型を見れば、それらをどのように呼び出すべきなのか理解するのは難しくないでしょう。
 この章で紹介したコード全体は #mycodelink("chap_funsetmap_set.dats", "オンライン") から入手できます。
 
@@ -302,8 +302,14 @@ section #mycodelink("chap_funsetmap_set.dats", "on-line").
 
 <sect1
  id="funsetmap_map">
+#langeng("
 #title("Functional Maps")
+")
+#langja("
+#title("関数的な写像")
+")
 
+#langeng("
 #para("\
 
 Suppose that a map is needed for mapping keys of type
@@ -338,7 +344,41 @@ that overloads the symbol #dyncode("compare"). If this is not the case, one
 needs to implement such a function.
 
 ")
+")
+#langja("
+#para("\
 
+型 #stacode("key_t") のキーから型 #stacode("itm_t") の要素へマップを表わすのに、写像が必要だと考えます。
+次のコードは本質的に、ATSLIB/libats にて平衡木で実装された写像に対する生成と操作のインターフェイスを作っています:
+
+#atscode('\
+staload
+FM = "libats/ML/SATS/funmap.sats"
+//
+local
+//
+typedef
+key = key_t and itm = itm_t
+//
+implement
+$FM.compare_key_key<key_t>(x, y) = compare(x, y)
+//
+in (* in-of-local *)
+
+\#include "libats/ML/HATS/myfunmap.hats"
+
+end // end of [local]
+')
+
+関数的な写像を用いたプログラミングを単純化するためのラッパーである HATS ファイルは
+#myatscodelink("libats/ML/HATS/myfunmap.hats", "オンライン") から入手できます。
+シンボル #dyncode("compare") をオーバーロードする型 #stacode("key_t")の値に対する比較関数があることを、ここでは仮定していることに注意してください。
+存在しない場合、そのような関数を実装する必要があります。
+
+")
+")
+
+#langeng("
 #para("\
 
 Assume that #stacode("key_t") is #stacode("string") and #stacode("itm_t")
@@ -425,7 +465,89 @@ given key is stored in the map being operated on.  The dot-symbol
 excepting for returning the removed item.
 
 ")
+")
+#langja("
+#para("\
 
+#stacode("key_t") が #stacode("string") で #stacode("itm_t") が #stacode("int") であると仮定します。
+コードの次の行では、要素を含まない (整数の) 関数的な写像を生成しています:
+
+#atscode('\
+val mymap = myfunmap_nil()
+')
+
+次の数行では、キー/要素のペアを #dyncode("mymap") に挿入しています:
+
+#atscode('\
+//
+var mymap = mymap
+//
+val-~None_vt() = mymap.insert("a", 0)
+val-~Some_vt(0) = mymap.insert("a", 1)
+//
+val-~None_vt() = mymap.insert("b", 1)
+val-~Some_vt(1) = mymap.insert("b", 2)
+//
+val-~None_vt() = mymap.insert("c", 2)
+val-~Some_vt(2) = mymap.insert("c", 3)
+//
+')
+
+ドット表記 #dyncode(".insert") は関数 #dyncode("myfunmap_insert") によってオーバーロードされています。
+上記コードの最初の行は謎めいて見えるかもしれません:
+その唯一の目的は、#dyncode("myfunmap_insert") への最初の引数として渡される左辺値を生成することです。
+キーと要素が与えられたとき、#dyncode("mymap.insert") はキー/要素ペアを #dyncode("mymap") に挿入します。
+もしそのキーが挿入前の写像 #dyncode("mymap") の定義域であるなら、そのキーに関連する元の要素が返ります。
+そうでない場合、なにも要素は返りません。
+予想されることですが、この時点で #dyncode("mymap") のサイズは 3 になります:
+
+#atscode('\
+val () = assertloc (mymap.size() = 3)
+')
+
+ドット表記 #dyncode(".size") は関数 #dyncode("myfunmap_size") でオーバーロードされています。
+この関数は与えられた写像に保管されたキー/要素のペアの数を返します。
+デバッグのために、与えられた写像中のキー/要素ペアを印字したいと思うかもしれません:
+
+#atscode('\
+//
+val () = fprintln! (stdout_ref, "mymap = ", mymap)
+//
+')
+
+このとき、シンボル #dyncode("fprint") は #dyncode("fprint_mymap") でオーバーロードされています。
+次の2行のコードは、与えられたキーで写像を検索する方法を示しています:
+
+#atscode('\
+val-~None_vt() = mymap.search("")
+val-~Some_vt(1) = mymap.search("a")
+')
+
+The dot-symbol #dyncode(".search") is overloaded with a function of the name #dyncode("myfunmap_search"),
+which returns the item associated with a given key if it is found.
+The next few lines of code remove some key/item pairs from #dyncode("mymap"):
+
+#atscode('\
+//
+val-true = mymap.remove("a")
+val-false = mymap.remove("a")
+//
+val-~Some_vt(2) = mymap.takeout("b")
+val-~Some_vt(3) = mymap.takeout("c")
+//
+')
+
+ドット表記 #dyncode(".remove") は、与えらえれたキーに対応するキー/要素ペアを削除を表わす関数
+#dyncode("myfunmap_remove") でオーバーロードされています。
+もし、キー/要素ペアが削除された場合、この関数は true を返します。
+そうでない場合、操作を行なった写像には与えられたキーに対応するキー/要素ペアが見つからなかったことを表わす false を返します。
+ドット表記 #dyncode(".takeout") は関数 #dyncode("myfunmap_takeout") でオーバーロードされています。
+この関数は、削除した要素を返す点を除いて、#dyncode("myfunmap_remove") と同じです。
+
+")
+")
+
+#langeng("
 #para('\
 
 Various common map operations can be found in
@@ -436,6 +558,16 @@ supposed to be called. Please find the entirety of the code used in this
 section #mycodelink("chap_funsetmap_map.dats", "on-line").
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+一般的な各種の写像操作は #myatscodelink("libats/ML/HATS/myfunmap.hats", "libats/ML/HATS/myfunmap.hats") に見つかります。
+これらの操作に割り当てられた型を見れば、それらをどのように呼び出すべきなのか理解するのは難しくないでしょう。
+この章で紹介したコード全体は #mycodelink("chap_funsetmap_map.dats", "オンライン") から入手できます。
+
+')#comment("para")
+")
 
 </sect1><!--"funsetmap_map"-->
 
