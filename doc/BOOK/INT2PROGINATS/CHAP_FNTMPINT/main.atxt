@@ -1060,8 +1060,14 @@ entirety of the code presented in this section plus some testing code.\
 
 <sect1
  id="template-for-loop-construction">
+#langeng("
 #title("Example: Templates for Loop Construction")
+")
+#langja("
+#title("例: ループ生成のためのテンプレート")
+")
 
+#langeng("
 #para('\
 
 Beginners in functional programming (FP) who have already acquired some
@@ -1072,7 +1078,18 @@ higher-order functions. Let us first see some thorny issues with this
 answer.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+命令型プログラミングに経験がある関数型プログラミング (FP) の初心者は、FP において for ループや while ループを作る方法にしばしば疑問を持ちます。
+一般的な答は、それらは高階関数で置き換えられるので FP ではループを生成する必要はない、というものです。
+はじめに、この答においていくつか困難な問題があることを見てみましょう。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 The following code in C implements a function that returns the sum
@@ -1106,7 +1123,41 @@ where the tail-recursive function #dyncode("loop") is just a translation
 of the for-loop in C.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+次のC言語コードは、自然数 n に適用されると最初の n 個の自然数の合計を返す関数を実装しています:
+
+#atscode('\
+int
+tally (int n) {
+  int i, res;
+  for (i = 0, res = 0; i < n; i += 1) res += i;
+  return res;
+}
+')
+
+この関数 #dyncode("tally") と等価な ATS の関数は次のように与えられます:
+
+#atscode('\
+fun
+tally
+(
+  n: int
+) : int = loop (0, 0) where
+{
+  fun loop (i: int, res: int): int =
+    if i < n then loop (i + 1, res + i) else res
+}
+')
+
+このとき、末尾再帰関数 #dyncode("loop") はC言語の for ループを単純に変換したものです。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 When someone claims that loop constructs can be replaced with higher-order
@@ -1148,7 +1199,48 @@ garbage immediately after the call returns. Compared to #dyncode("tally"),
 #dyncode("tally2") is inefficient both time-wise and memory-wise.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+ループ生成を高階関数で置換できると誰かが指摘するとき、彼等はおそらく次のような関数でループを生成しようとするでしょう:
+
+#atscode('\
+fun
+for_loop
+(
+  count: int, limit: int, fwork: (int) -<cloref1> void
+) : void = (
+if count < limit
+  then (fwork(count); for_loop(count+1, limit, fwork)) else ()
+// end of [if]
+) (* end of [for_loop] *)
+')
+
+例えば、次の関数 #dyncode("tally2") は #dyncode("for_loop") を直接使っています:
+
+#atscode('\
+fun
+tally2
+(
+  n: int
+) : int = let
+  val res = ref<int> (0)
+in
+  for_loop (0, n, lam (i) => !res := !res + i); !res
+end // end of [tally2]
+')
+
+自然数に適用すると #dyncode("tally") と #dyncode("tally2") は同じ結果を返しますが、実行時には異なる挙動をします。
+特に、#dyncode("tally2") 呼び出しは一時的な用途に (永続的な) 参照をヒープに作ります;
+呼び出しが返るとこの参照はすぐにゴミになりさう。
+
+#dyncode("tally") と比較すると #dyncode("tally2") は時間効率と空間効率の両面で非効率です。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 To eliminate the need for reference creation in #dyncode("tally2"), we
@@ -1247,7 +1339,100 @@ the implementation of #dyncode("tally") in C (given at the beginning of
 this section).
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+#dyncode("tally2") における参照の必要性を除去するために、#dyncode("for_loop")
+を次のような関数テンレプレート #dyncode("for_loop2") に変換しましょう:
+
+#atscode('\
+fun{
+env:t@ype
+} for_loop2
+(
+  count: int, limit: int
+, env: &env >> _, fwork: (int, &env >> _) -<cloref1> void
+) : void = (
+if
+count < limit
+then (
+  fwork(count, env); for_loop2<env> (count+1, limit, env, fwork)
+) else ()
+// end of [if]
+) (* end of [for_loop2] *)
+')
+
+さらに #dyncode("tally2") を、#dyncode("for_loop2") を用いて次の #dyncode("tally3") に変換できます:
+
+#atscode('\
+fun
+tally3
+(
+  n: int
+) : int = let
+  var res: int = 0
+in
+  for_loop2<int> (0, n, res, lam (i, res) => res := res + i); res
+end // end of [tally3]
+')
+
+#dyncode("tally3") は #dyncode("tally2") より良いものですが、まだ完全ではありせん。
+#dyncode("tally3") が #dyncode("for_loop2") を呼び出す前に作ったクロージャ関数は、呼び出しが返ると即座にゴミになることは明確です。
+ATS ソースコードから生成されたC言語コードで呼び出されるので、Cコンパイラ (例えば gcc や clang)
+の最適化が実際のクロージャ関数を不要にしてくれることを期待することもできますが、その保証はありません。
+そのような保証を得るために、#dyncode("for_loop2") を次のような関数テンプレート #dyncode("for_loop3") に発展させることができます:
+
+#atscode('\
+fun{
+env:t@ype
+} for_loop3
+(
+  count: int, limit: int, env: &env >> _
+) : void = (
+if
+count < limit
+then (
+  for_loop3$fwork<env>(count, env); for_loop3<env>(count+1, limit, env)
+) else ()
+// end of [if]
+) (* end of [for_loop3] *)
+')
+
+このとき #dyncode("for_loop3$fwork") には次のようなインターフェイスが割り当てられます:
+
+#atscode('\
+fun{
+env:t@ype
+} for_loop3$fwork(count: int, env: &env >> _): void
+')
+
+最終的に #dyncode("tally3") を次のような #dyncode("tally4") に変換できます:
+
+#atscode('\
+fun
+tally4
+(
+  n: int
+) : int = let
+//
+var res: int = 0
+//
+implement
+for_loop3$fwork<int> (i, res) = res := res + i
+//
+in
+  for_loop3<int> (0, n, res); res
+end // end of [tally4]
+')
+
+#command("atsopt") が #dyncode("tally4") をコンパイルして生成したC言語コードを調べれば、そのC言語コードは
+(この章の最初で登場した) C言語による #dyncode("tally") の実装と本質的に等価であることがわかるでしょう。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 By now, the reader probably agrees with me if I say the statement should at
@@ -1258,6 +1443,17 @@ containing the entirety of the code presented in this section plus some
 testing code.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+ここまで読んだ読者は、FP におけるループ生成は高階関数で容易に置き換えられるという主張が著しく不正確であることに同意できるでしょう。
+この章で紹介したコード全体とテストコードを含む
+#mycodelink("CHAP_FNTMPINT/loopcons.dats", "loopcons.dats")
+ファイルはオンラインから入手できます。\
+
+')#comment("para")
+")
 
 </sect1><!--id="template-for-loop-construction"-->
 
