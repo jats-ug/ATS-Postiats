@@ -17,7 +17,7 @@ id="from-genericity-to-late-binding">
 #title("From Genericity to Late-Binding")
 ")
 #langja("
-#title("ジェネリックスから遅延バインディングへ")
+#title("ジェネリックスから遅延束縛へ")
 ")
 
 <!-- ****** ****** -->
@@ -1461,8 +1461,14 @@ testing code.\
 
 <sect1
  id="template-based-support-for-late-binding">
+#langeng("
 #title("Template-Based Support for Late-Binding")
+")
+#langja("
+#title("テンプレートを用いた遅延束縛のサポート")
+")
 
+#langeng("
 #para('\
 
 When asked about the meaning of object-oriented programming (OOP),
@@ -1471,7 +1477,17 @@ and protection and hiding of state-process, and extreme late-binding of all
 things.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+オブジェクト指向プログラミング (OOP) の意味について聞かれたとき、アラン・ケイは彼にとっての
+OOP はメッセージ、状態プロセスの局所的な保持, 保護, 隠蔽と全てに対する極端な遅延束縛 (late-binding) であると答えました。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 In ATS, function templates can provide a highly flexible approach to
@@ -1544,7 +1560,73 @@ number of functions grows large that need to be treated like
 #dyncode("print_int") and #dyncode("print_double").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+ATS では、関数テンプレートは (関数呼び出しの) 遅延束縛に高度に柔軟なアプローチを提供します。
+はじめに、なぜ遅延束縛が魅力的なのか知るために、単純な例を見てみましょう。
+
+次のコードは、整数もしくは (倍精度の) 浮動小数点数を表わすような型である、データ型 #stacode("intfloat") を宣言しています:
+
+#atscode('\
+//
+datatype
+intfloat =
+  INT of int | FLOAT of double
+//
+')
+
+型 #stacode("intfloat") の値を印字するために、次のような #dyncode("print_intfloat") を実装できます:
+
+#atscode('\
+//
+fun
+print_intfloat
+  (x: intfloat): void =
+(
+case+ x of
+| INT(int) => print_int(int)
+| FLOAT(float) => print_double(float)
+)
+//
+')
+
+このとき、#dyncode("print_int") と #dyncode("print_double") は、それぞれ整数と (倍精度の) 浮動小数点数を印字する単相関数です。
+整数と浮動小数点数を印字するにはもちろん数多くの方法があります。
+けれども、#dyncode("print_intfloat") は唯一1つの印字方法しか使えません。
+すなわち #dyncode("print_int") を通じて整数を表わし、#dyncode("print_double") を通じて浮動小数点数を表わすしかありません。
+このような柔軟性の欠如を回避する方法の1つは、次のような高階関数 #dyncode("fprint_intfloat") を定義することです:
+
+#atscode('\
+//
+fun
+fprint_intfloat
+(
+  x: intfloat
+, print_int: int -> void
+, print_double: double -> void
+) : void =
+(
+case+ x of
+| INT(int) => print_int(int)
+| FLOAT(float) => print_double(float)
+)
+//
+')
+
+#dyncode("fprint_intfloat") を用いると、後から #dyncode("print_int") と #dyncode("print_double") の実装を選択できます。
+この点で、高階関数は遅延束縛の一種をサポートしていると言えます。
+けれども、そのような高階関数の使用に問題がないわけではありません。
+基本的に、#dyncode("print_int") を直接もしくは間接的に呼び出すどのような関数も、高階関数になる必要があります。
+#dyncode("print_double") についても同様です。
+#dyncode("print_int") や #dyncode("print_double")
+のように扱う必要がある関数が増えた場合、高階関数を多様するこのプログラミングスタイルは極端に不恰好なものになりえます。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Instead of using higher-order functions, we can rely on template functions
@@ -1630,7 +1712,93 @@ according to the implementations for #dyncode("tprint_int") and #dyncode("tprint
 given between the keywords #keycode("local") and #keycode("in").\
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+高階関数を使用する代わりに、テンプレート関数を使って (関数呼び出しの) 遅延束縛をサポートできます。
+例えば、次のコードは型 #stacode("intfloat") の値を印字するテンプレート関数 #dyncode("tprint_intfloat") を実装しています:
+
+#atscode('\
+//
+extern
+fun{}
+tprint_int(int): void
+extern
+fun{}
+tprint_double(double): void
+extern
+fun{}
+tprint_intfloat(intfloat): void
+//
+(* ****** ****** *)
+//
+implement
+tprint_int<> (x) = print_int(x)
+implement
+tprint_double<> (x) = print_double(x)
+//
+(* ****** ****** *)
+//
+implement
+tprint_intfloat<> (x) =
+(
+case+ x of
+| INT(int) => tprint_int<> (int)
+| FLOAT(float) => tprint_double<> (float)
+)
+//
+')
+
+#dyncode("tprint_int") と #dyncode("tprint_double") のデフォルト実装はそれぞれ
+#dyncode("print_int") と #dyncode("print_double") であることに注意してください。
+予想されることですが、次のコードは2行印字します:
+
+#atscode('\
+//
+val () = (
+  tprint_intfloat<> (INT(0)); print_newline()
+) (* end of [val] *)
+//
+val () = (
+  tprint_intfloat<> (FLOAT(1.0)); print_newline()
+) (* end of [val] *)
+//
+')
+
+このとき、出力される最初の行は文字列 "0" で、次の行は文字列 "1.000000" になります。
+次のコードもまた2行印字します:
+
+#atscode('\
+local
+//
+implement
+tprint_int<> (x) = print! ("INT(", x, ")")
+implement
+tprint_double<> (x) = print! ("FLOAT(", x, ")")
+//
+in (* in-of-local *)
+//
+val () = (
+  tprint_intfloat<> (INT(0)); print_newline()
+) (* end of [val] *)
+//
+val () = (
+  tprint_intfloat<> (FLOAT(1.0)); print_newline()
+) (* end of [val] *)
+//
+end // end of [local]
+')
+
+このとき、出力される最初の行は文字列 "INT(0)" で、次の行は文字列 "FLOAT(1.000000)" になります。
+この後者のケースでは、テンプレートインスタンス #dyncode("tprint_int&lt;&gt;") と #dyncode("tprint_double&lt;&gt;")
+の呼び出しは、キーワード #keycode("local") と #keycode("in") の間で与えられている
+#dyncode("tprint_int") と #dyncode("tprint_double") の実装に従ってコンパイルされます。\
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Please find on-line the file
@@ -1638,6 +1806,16 @@ Please find on-line the file
 entirety of the code presented in this section plus some testing code.\
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+この章で紹介したコード全体とテストコードを含む
+#mycodelink("CHAP_FNTMPINT/intfloat.dats", "intfloat.dats")
+ファイルはオンラインから入手できます。\
+
+')#comment("para")
+")
 
 </sect1><!--id="template-based-support-for-late-binding"-->
 
