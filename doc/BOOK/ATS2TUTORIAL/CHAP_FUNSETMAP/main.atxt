@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_ARRAYREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="funsetmap">
+#langeng("
 #title("Functional Sets and Maps")
+")
+#langja("
+#title("関数的な集合と写像")
+")
 
+#langeng("
 #para("\
 
 Both (finite) sets and (finite) maps are commonly used data structures.
@@ -27,11 +33,30 @@ explicitly and the memory for representing it can only be reclaimed through
 garbage collection (GC).
 
 ")
+")
+#langja("
+#para("\
+
+(有限) 集合と (有限) 写像は一般的に使われるデータ構造です。
+関数的な集合と写像は、それらを生成した後では不変です。
+関数的な集合/写像への挿入や削除は、元の構造を変更せずに、新しい集合/写像をコンストラクトして返します。
+一般に、新しくコンストラクトされた集合/写像とその元は、中身の多くを共有しています。
+関数的な集合/写像は安全に明示的な解放をすることはできず、その表現におけるメモリの回収にはガベージコレクション
+(GC) を使うしかないことに注意してください。
+
+")
+")
 
 <sect1
  id="funsetmap_set">
+#langeng("
 #title("Functional Sets")
+")
+#langja("
+#title("関数的な集合")
+")
 
+#langeng("
 #para("\
 
 Suppose that a set is needed for collecting values of type
@@ -65,7 +90,40 @@ that overloads the symbol #dyncode("compare"). If this is not the case, one
 needs to implement such a function.
 
 ")
+")
+#langja("
+#para("\
 
+型  #stacode("elt_t") の値を収集したいとしましょう。
+次のコードは、ATSLIB/libats での平衡木を用いた集合に対する生成と操作を表わすインターフェイスを本質的に作っています:
+
+#atscode('\
+staload
+FS = "libats/ML/SATS/funset.sats"
+//
+local
+//
+typedef elt = elt_t
+//
+implement
+$FS.compare_elt_elt<elt_t>(x, y) = compare(x, y)
+//
+in (* in-of-local *)
+
+\#include "libats/ML/HATS/myfunset.hats"
+
+end // end of [local]
+')
+
+関数的な集合を用いたプログラミングを単純化するためのラッパーである HATS ファイルは
+#myatscodelink("libats/ML/HATS/myfunset.hats", "オンライン") から入手できます。
+シンボル #dyncode("compare") をオーバーロードする型 #stacode("elt_t") の値に対する比較関数があることを、ここでは仮定していることに注意してください。
+存在しない場合、そのような関数を実装する必要があります。
+
+")
+")
+
+#langeng("
 #para("\
 
 Assume that #stacode("elt_t") is #stacode("int"). The following line
@@ -143,7 +201,80 @@ val-false = myset.remove(1) // not actually removed
 ')
 
 ")
+")
+#langja("
+#para("\
 
+#stacode("elt_t") が #stacode("int") であると仮定します。
+コードの次の行では、要素を含まない (整数の) 関数的な集合を生成しています:
+
+#atscode('\
+val myset = myfunset_nil()
+')
+
+与えられた集合に要素を挿入する関数には次の型が割り当てられます:
+
+#atscode('\
+//
+fun myfunset_insert(xs: &myset >> _, x0: elt): bool
+//
+')
+
+ドット表記 #dyncode(".insert") は関数 #dyncode("myfunset_insert") でオーバーロードされています。
+#dyncode("myfunset_insert") の最初の引数が参照呼び出しであることに注意してください。
+与えられた要素が与えられた集合に挿入される場合、新しく生成された集合が参照呼び出しの引数に保管され、(エラーが発生していないことを表わす)
+#dyncode("false") が返ります。
+そうでない場合、(失敗を表わす) #dyncode("true") が返ります。
+次の数行のコードは、関数的な集合に対する挿入操作を示しています:
+
+#atscode('\
+//
+var myset = myset
+//
+val-false = myset.insert(0) // inserted
+val-(true) = myset.insert(0) // not actually inserted
+val-false = myset.insert(1) // inserted
+val-(true) = myset.insert(1) // not actually inserted
+//
+')
+
+上記コードの最初の行は謎めいて見えるかもしれません:
+その唯一の目的は、#dyncode("myfunset_insert") への最初の引数として渡される左辺値を生成することです。
+
+デバッグのために、与えられた集合中の値を印字したいと思うかもしれません:
+
+#atscode('\
+//
+val () = fprintln! (stdout_ref, "myset = ", myset)
+//
+')
+
+このとき、シンボル #dyncode("fprint") は #dyncode("fprint_myset") でオーバーロードされています。
+与えられた集合から要素を削除する関数には次の型が割り当てられます:
+
+#atscode('\
+//
+fun myfunset_remove(xs: &myset >> _, x0: elt): bool
+//
+')
+
+ドット表記 #dyncode(".remove") は関数 #dyncode("myfunset_remove") でオーバーロードされています。
+#dyncode("myfunset_remove") の最初の引数は参照呼び出しであることに注意してください。
+与えられた集合から与えられた要素を削除する場合、新しく生成された集合が参照呼び出しの引数に保管され、#dyncode("true") が返ります。
+そうでない場合、#dyncode("false") が返ります。
+次の数行のコードは、関数的な集合に対する削除操作を示しています:
+
+#atscode('\
+val-true = myset.remove(0) // removed
+val-false = myset.remove(0) // not actually removed
+val-true = myset.remove(1) // removed
+val-false = myset.remove(1) // not actually removed
+')
+
+")
+")
+
+#langeng("
 #para('\
 
 Various common set operations can be found in
@@ -154,6 +285,18 @@ supposed to be called.  Please find the entirety of the code used in this
 section #mycodelink("chap_funsetmap_set.dats", "on-line").
 
 ')
+")
+#langja("
+#para('\
+
+一般的な各種の集合操作は
+#myatscodelink("libats/ML/HATS/myfunset.hats", "libats/ML/HATS/myfunset.hats")
+に見つかります
+これらの操作に割り当てられた型を見れば、それらをどのように呼び出すべきなのか理解するのは難しくないでしょう。
+この章で紹介したコード全体は #mycodelink("chap_funsetmap_set.dats", "オンライン") から入手できます。
+
+')
+")
 
 </sect1><!--"funsetmap_set"-->
 
