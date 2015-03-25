@@ -1282,8 +1282,7 @@ in
 end // end of [string_find2]
 ")
 
-The interface for the function #dyncode("string_test_at") is given as
-follows:
+関数 #dyncode("string_test_at") のインターフェイスは次のようになります:
 
 #atscode("\
 fun
@@ -1318,7 +1317,7 @@ book.\
 
 文字列を安全に効率的に取り扱うことは、プログラミング言語のデザインにおいて厄介事の一つです。
 またプログラミング言語に関する大量の情報が、文字列の取り扱いに関することであることもしばしばです。
-ATSでは、線形型を使ってC言語スタイル文字列を適切に処理することができます。
+ATS では、線形型を使ってC言語スタイル文字列を適切に処理することができます。
 このトピックはこの本の別の章で紹介します。\
 
 ")#comment("para")
@@ -1940,7 +1939,7 @@ end // end of [isqrt]
 
 <listitem>
 #para("
-#dyncode("search(x, l, r)") が呼び出された時、l * l &lt;= x かつ x &lt;= r * r である。
+#dyncode("search(x, l, r)") が呼び出された時、l * l &lt;= x かつ x &lt;= r * r です。
 ")
 </listitem>
 
