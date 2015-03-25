@@ -40,15 +40,15 @@ task.\
 #langja("
 #para('\
 
-ATSとC言語は全く同じネイティブ/フラット/アンボックスなデータ表現を共有しています。
-結果的に、ATSで実装された関数をC言語から呼び出す際にラップ/アンラップやボックス化/アンボックス化したりする必要はありません。
+ATS とC言語は全く同じネイティブ/フラット/アンボックスなデータ表現を共有しています。
+結果的に、ATS で実装された関数をC言語から呼び出す際にラップ/アンラップやボックス化/アンボックス化したりする必要はありません。
 逆もまた同様です。
 さらにその際の実行時オーバーヘッドもありません。
-おおざっぱにATSはC言語のフロントエンドと考えることができます。
-このフロントエンドは(プログラムの不変条件を記述するための)表現力豊かな型システムと
-(コードの再利用を楽にしてくれる)柔軟なテンプレートシステムを備えているのです。
-とりわけATSは大きな一つのタスクを一貫したインターフェイスのサブタスク群に分解するのにしばしば有効です。
-それらのサブタスクはATSで実装することもできますし、C言語や他の言語で実装することもできます。
+おおざっぱに ATS はC言語のフロントエンドと考えることができます。
+このフロントエンドは (プログラムの不変条件を記述するための) 表現力豊かな型システムと
+(コードの再利用を楽にしてくれる) 柔軟なテンプレートシステムを備えているのです。
+とりわけ ATS は大きな一つのタスクを一貫したインターフェイスのサブタスク群に分解するのにしばしば有効です。
+それらのサブタスクは ATS で実装することもできますし、C言語や他の言語で実装することもできます。
 そうしてそれらを一緒に汲み上げることで元のタスクを構築できるのです。\
 
 ')
@@ -69,10 +69,9 @@ culprit for most of encountered bugs.
 #langja("
 #para('\
 
-期待される通りですが、
-ATSコード中に直接記述されたC言語コードはATSコードに対して行なわれるような厳格な型検査を通りません。
-そのため慎重にATSコードの中にC言語コードを埋め込むことがプログラマに要求されます。
-私個人の経験からは実際のところATSコード中におけるC言語コードがバグの犯人である可能性が非常に高いです。
+期待される通りですが、ATS コード中に直接記述されたC言語コードは ATS コードに対して行なわれるような厳格な型検査を通りません。
+そのため慎重に ATS コードの中にC言語コードを埋め込むことがプログラマに要求されます。
+私個人の経験からは実際のところ ATS コード中におけるC言語コードがバグの犯人である可能性が非常に高いです。
 
 ')
 ")
@@ -119,9 +118,9 @@ the function can be implemented in ATS and called in C or vice versa.\
 #langja("
 #para("\
 
-ATSで宣言された関数にはC言語スタイルのグローバル名が与えれらます。
-その関数はATSコードからもC言語コードからも呼び出すことができます。
-つまり、関数はATSで実装してC言語から呼び出すことができ、その逆もまた可能なのです。\
+ATS で宣言された関数にはC言語スタイルのグローバル名が与えれらます。
+その関数は ATS コードからもC言語コードからも呼び出すことができます。
+つまり、関数は ATS で実装してC言語から呼び出すことができ、その逆もまた可能なのです。\
 
 ")
 ")
@@ -164,13 +163,12 @@ fun fact2 (n: int, res: int): int = "ext\#fact2_in_c"
 ')
 
 最初の関数 #dyncode("fact") はグローバル名を持たないのに対し、
-二番目の関数 #dyncode("fact2") にはグローバル名 #dyncode("fact2_in_c") が割り当てられます。
+2番目の関数 #dyncode("fact2") にはグローバル名 #dyncode("fact2_in_c") が割り当てられます。
 #keycode("ext\#") シンボルは #dyncode("fact2_in_c") をC言語のグローバル関数のように扱います。
 そして #dyncode("extern") キーワードによるプロトタイプ宣言が呼び出される前に必要です。
 もし先の宣言 #keycode("ext\#fact2_in_c") の代わりに #keycode("ext\#") が使われた場合、
-ATSの #dyncode("fact2") 関数へのグローバル名はATSの関数名と同じになります。
-言いかえれば、先の例で #keycode("ext\#") という宣言を書くことは、
-#keycode("ext\#fact2") と書くことと同じです。
+ATS の #dyncode("fact2") 関数へのグローバル名は ATS の関数名と同じになります。
+言いかえれば、先の例で #keycode("ext\#") という宣言を書くことは、#keycode("ext\#fact2") と書くことと同じです。
 
 ")
 ")
@@ -224,8 +222,8 @@ implement fact (n) = fact2 (n, 1)
 ')
 
 この実装をコンパイルするには #dyncode("fact") と #dyncode("fact2") を参照する関数名を、
-ATSコンパイラは生成するC言語コード中に作らなければなりません。
-前者のC言語での関数名はあるルール(名前空間の問題を考慮します)によって決定されます。
+ATS コンパイラは生成するC言語コード中に作らなければなりません。
+前者のC言語での関数名はあるルール (名前空間の問題を考慮します) によって決定されます。
 後者の関数名は単純に #dyncode("fact2_in_c") グローバル名が割り当てられます。
 #dyncode("fact2_in_c") という名前の通り、この関数は次のように直接C言語で実装されていることでしょう:
 
@@ -262,7 +260,7 @@ issued to indicate that #dyncode("fact2_in_c") is implemented repeatedly.\
 #para('\
 
 もし #dyncode("fact2") と #dyncode("fact2_in_c") が両方とも実装されていたら
-(前者はATSで後者はC言語で実装しました)、
+(前者は ATS で後者はC言語で実装しました)、
 #dyncode("fact2_in_c") が二重に実装されていることを示すリンク時エラーが発生するでしょう。\
 
 ')
@@ -329,7 +327,7 @@ extern
 fun fact2 (n: int, res: int): int = "sta\#fact2_in_c"
 ')
 
-このスタイルの宣言すると #dyncode("fact2_in_c") がC言語のstatic関数のように扱われます。
+このスタイルの宣言すると #dyncode("fact2_in_c") がC言語の static 関数のように扱われます。
 しかし実際にはあまり使うことはないでしょう。\
 
 ')
@@ -359,7 +357,7 @@ in C is simply #dyncode("fact2").\
 #langja("
 #para('\
 
-完全を期すために、static関数を宣言する他の方法を紹介します:
+完全を期すために、static 関数を宣言する他の方法を紹介します:
 
 #atscode('\
 static fun fact2 (n: int, res: int): int
@@ -387,7 +385,7 @@ id="external_types_and_values">
 #title("External Types and Values in ATS")
 ")
 #langja("
-#title("ATSにおける外部の型と値")
+#title("ATS における外部の型と値")
 ")
 
 #langeng("
@@ -401,7 +399,7 @@ and values declared in C.
 #langja("
 #para("\
 
-外部の型や値を簡単にATS言語に取り込むことができます。
+外部の型や値を簡単に ATS 言語に取り込むことができます。
 また、それはC言語で宣言された型や値に関連付けさせることができます。
 
 ")
@@ -454,8 +452,8 @@ directly referred to in ATS code.
 #para("\
 
 #stacode("some_type_in_c") とう名前でC言語の型が定義されていると想像してください。
-この型は #stacode('$extype"some_type_in_c"') のようにATS言語から参照することができます。
-例えば次のコードのように、C言語でのいくつかの型をATS言語に取り込んで型定義できます:
+この型は #stacode('$extype"some_type_in_c"') のように ATS 言語から参照することができます。
+例えば次のコードのように、C言語でのいくつかの型を ATS 言語に取り込んで型定義できます:
 
 #atscode('\
 typedef Cint = $extype"int"
@@ -465,9 +463,9 @@ typedef Cint2 = $extype"struct{ int x; int y; }"
 ')
 
 #dyncode("some_value_in_c") という名前のC言語の値があった場合、
-この値を #dyncode('$extval(#stacode('T'), "some_value_in_c")') のようにATSから参照することができます。
-この T はこの値に割り当てるATSの型です。
-例えば次のコードのように、C言語でのいくつかの外部定義の値をATS言語に取り込んでマクロ定義できます:
+この値を #dyncode('$extval(#stacode('T'), "some_value_in_c")') のように ATS から参照することができます。
+この T はこの値に割り当てる ATS の型です。
+例えば次のコードのように、C言語でのいくつかの外部定義の値を ATS 言語に取り込んでマクロ定義できます:
 
 #atscode('\
 macdef NULL = $extype(ptr, "0")
@@ -483,8 +481,8 @@ macdef atol = $extype(string -> lint, "atol")
 macdef atof = $extype(string -> double, "atof")
 ')
 
-C言語の関数を直接参照するために、より適切な方法がATSにはあることに注意してください。
-一般に、ATSで外部定義の値を使う主な用途は、C言語の定数宣言を直接ATSコードに関連付けることです。
+C言語の関数を直接参照するために、より適切な方法が ATS にはあることに注意してください。
+一般に、ATS で外部定義の値を使う主な用途は、C言語の定数宣言を直接 ATS コードに関連付けることです。
 
 ")
 ")
@@ -499,7 +497,7 @@ id="inclusion_of_external_code">
 #title("Inclusion of External Code in ATS")
 ")
 #langja("
-#title("ATSに外部コードを含める")
+#title("ATS に外部コードを含める")
 ")
 
 #langeng("
@@ -540,8 +538,8 @@ then the symbol #keycode("%{$") should be used in place of #keycode("%{").
 #langja("
 #para('\
 
-C言語コード中にアセンブラコードを埋め込むのと同様に、
-ATSコード中にC言語コードを埋め込むことも簡単です。
+C言語コード中にアセンブラコードを埋め込むのと同様に、ATS
+コード中にC言語コードを埋め込むことも簡単です。
 例えば、この章の最初で示した例は、次のような一つのファイルに書くことができます:
 
 #atscode('\
@@ -561,8 +559,8 @@ fact2_in_c (int n, int res)
 %}
 ')#comment("atscode")
 
-ATSコード中にC言語コードを書くためには、
-#keycode("%{") と #keycode("%}") のシンボルで囲まなければなりません。
+ATS コード中にC言語コードを書くためには、#keycode("%{") と #keycode("%}")
+のシンボルで囲まなければなりません。
 本質的には、これら2つのシンボルの間にあるコードは、生成されるC言語コードの不定の位置に配置されます。
 もし囲まれたコードを生成されるC言語コードの先頭に配置したいのであれば、
 #keycode("%{") シンボルの代わりに #keycode("%{^") シンボルを使うべきです。
@@ -607,7 +605,7 @@ id="calling_external_functions">
 #title("Calling External Functions in ATS")
 ")
 #langja("
-#title("ATSにおける外部関数呼び出し")
+#title("ATS における外部関数呼び出し")
 ")
 
 #langeng("
@@ -638,7 +636,7 @@ for the call to be made.
 #langja("
 #para('\
 
-ATSから外部関数を呼び出すことは簡単です。
+ATS から外部関数を呼び出すことは簡単です。
 例えば、次のコードはその典型的な例です:
 
 #atscode('\
@@ -683,7 +681,7 @@ of arguments are the arguments of the called function.
 #langja("
 #para('\
 
-またATSから外部関数を直接呼び出すビルトインのしくみもあります。
+また ATS から外部関数を直接呼び出すビルトインのしくみもあります。
 例えば、次のコードは上記で示したコードと本質的に同じです:
 
 #atscode('\
@@ -729,12 +727,12 @@ who can write C code competently.
 #langja("
 #para("\
 
-おそらく、ATSはコードを書き下すことが簡単なプログラミング言語ではないでしょう。
-ATSは安全な低レイヤープログラミングをサポートするために多くの機能を提供しています。
+おそらく、ATS はコードを書き下すことが簡単なプログラミング言語ではないでしょう。
+ATS は安全な低レイヤープログラミングをサポートするために多くの機能を提供しています。
 プログラマがそれらの機能を学習して使いこなせるようになるまでに、
 長い時間とある程度の努力を費やす必要があるかもしれません。
-この章では、C言語スタイルで書かれたATSコードをいくつか紹介します。
-これは、ATSプログラミングにおける安全ではない機能の典型的な使い方で、
+この章では、C言語スタイルで書かれた ATS コードをいくつか紹介します。
+これは、ATS プログラミングにおける安全ではない機能の典型的な使い方で、
 C言語コードを書き慣れたプログラマにとってなじみ深いプログラミングスタイルです。
 
 ")
@@ -760,12 +758,11 @@ see a concrete example of unsafe C-style programming in ATS.
 
 安全でないC言語スタイルプログラミングが懸命である場合があります。
 ときには単に実行できる実装を手に入れて、バグを見つけて修正するためにテストを信頼しようとするかもしれません。
-ときには安全に関数を実装するATSプログラミングの作法を、熟知していない場合もあるでしょう。
+ときには安全に関数を実装する ATS プログラミングの作法を、熟知していない場合もあるでしょう。
 またそれは単に個人の要望であるかもしれません。
-私自身しばしば安全ではないC言語スタイルのATSプログラミングをすることがありますし、
-ただATSでコードを書きたいのではなく高い生産性が欲しい人にとって、
-それが必要なスキルであることも理解できます。
-安全ではないC言語スタイルのATSプログラミングの具体例を見てみましょう。
+私自身しばしば安全ではないC言語スタイルの ATS プログラミングをすることがありますし、
+ただ ATS でコードを書きたいのではなく高い生産性が欲しい人にとって、それが必要なスキルであることも理解できます。
+安全ではないC言語スタイルの ATS プログラミングの具体例を見てみましょう。
 
 ")
 ")
@@ -888,15 +885,15 @@ C言語になじみのあるプログラマにとって、
 上記の #dyncode("strcmp") の実装は理解しやすいでしょう。
 #myatscodelink("prelude/SATS/unsafe.sats", "unsafe.sats")
 には安全でない関数群が各種宣言されています。
-型Tとポインタpが与えられた時、 #dyncode("ptr0_get&lt;T&gt; (p)")
-はpが指し示す位置に配置されたT型の値を取得します。
+型 T とポインタ p が与えられた時、 #dyncode("ptr0_get&lt;T&gt; (p)")
+は p が指し示す位置に配置された T 型の値を取得します。
 #dyncode("ptr0_get") は本質的に安全ではないことに注意してください。
-実際にpが型Tの値が配置されたメモリ領域を指し示しているかどうか、なんの保証もないのです。
+実際に p が型 T の値が配置されたメモリ領域を指し示しているかどうか、なんの保証もないのです。
 #dyncode("cast") 関数は与えられた値の型を指定した型でキャストします。
 この関数もまた本質的に安全ではありません。
 #myatscodelink("prelude/SATS/pointer.sats", "pointer.sats")
 で宣言されている #dyncode("ptr0_succ") 関数テンプレートは型安全です。
-型Tが与えられた時、pよりも型Tのサイズだけ後ろのポインタを返します。
+型 T が与えられた時、p よりも型 T のサイズだけ後ろのポインタを返します。
 
 ")
 ")
@@ -975,11 +972,11 @@ int strcmp (char *p1, char *p2)
 }
 ')
 
-けれども、C言語スタイルのATSコードは、直接C言語を書くよりもしばしば利点があります。
-例えば、C言語にはサポートがありませんが、ATSは関数テンプレートを直接サポートしています。
+けれども、C言語スタイルの ATS コードは、直接C言語を書くよりもしばしば利点があります。
+例えば、C言語にはサポートがありませんが、ATS は関数テンプレートを直接サポートしています。
 C言語では、複雑なマクロを使った関数テンプレート実装を信頼するしかありません。
 そのようなコードは理解することが困難であるだけでなく周知の通りエラーを誘発します。
-次にATSにおける関数テンプレートの実装を見てみましょう。
+次に ATS における関数テンプレートの実装を見てみましょう。
 これは部分的には型安全ではありません。
 
 ")
@@ -1015,18 +1012,18 @@ fun{a:t@ype}
 array_copy_from_list (A: array0(a), xs: list0(a)): void
 ')
 
-型Tが与えられた時、 #stacode("array0(T)") はポインタpとサイズnを内包するarray0の値を作り、
-そのpは型Tの要素をn個保持するC言語スタイルの配列を指し示します。
+型 T が与えられた時、#stacode("array0(T)") はポインタ p とサイズ n を内包する array0 の値を作り、
+その p は型 T の要素を n 個保持するC言語スタイルの配列を指し示します。
 
 ")
 ")
 
 #para("\
 
-差し当り、 #dyncode("array_copy_from_list(A, xs)") が呼び出されたら、
-リストxsの長さに等しい配列Aのサイズを要求しましょう。
-ATSにおける #dyncode("array_copy_from_list") の実装を次に示します。
-この関数は、 #myatscodelink("prelude/SATS/unsafe.sats", "unsafe.sats")
+差し当り、#dyncode("array_copy_from_list(A, xs)") が呼び出されたら、リスト
+xs の長さに等しい配列Aのサイズを要求しましょう。
+ATS における #dyncode("array_copy_from_list") の実装を次に示します。
+この関数は、#myatscodelink("prelude/SATS/unsafe.sats", "unsafe.sats")
 で宣言されている安全でない関数 #dyncode("ptr0_set") を使っています:
 
 #atscode('\
@@ -1057,14 +1054,13 @@ in
 end // end of [array_copy_from_list]
 ')
 
-型Tとポインタp、そして型Tの値xが与えられた時、
-#dyncode("ptr0_set&lt;T&gt; (p, x)") は値xをpによって指し示された位置に保存します。
+型 T とポインタ p、そして型 T の値 x が与えられた時、
+#dyncode("ptr0_set&lt;T&gt; (p, x)") は値 x を p によって指し示された位置に保存します。
 #dyncode("ptr0_get") と同様に #dyncode("ptr0_set") は本質的に安全ではありません。
-実際にpが型Tの値が配置されたメモリ領域を指し示しているかどうか、
-なんの保証もありません。
+実際に p が型 T の値が配置されたメモリ領域を指し示しているかどうか、なんの保証もありません。
 #myatscodelink("libats/ML/SATS/array0.sats", "array0.sats")
 で宣言されている #dyncode("array0_get_ref")
-関数は与えられたarray0値と関連付けられたC言語スタイルの配列のポインタを返します。
+関数は与えられた array0 値と関連付けられたC言語スタイルの配列のポインタを返します。
 
 ")
 
@@ -1095,7 +1091,7 @@ id="exporting_types_and_values">
 #title("Exporting Types in ATS for Use in C")
 ")
 #langja("
-#title("ATSの型をエクスポートしてC言語から使う")
+#title("ATS の型をエクスポートしてC言語から使う")
 ")
 
 #langeng("
@@ -1126,10 +1122,10 @@ struct {
 #langja("
 #para("\
 
-ATSでは、ATSの型をエクスポートしてC言語から直接使うこともできます。
-次の例では、ATSの #stacode("(int, string)") 型が割り当てられた値のために、
+ATS では、ATS の型をエクスポートしてC言語から直接使うこともできます。
+次の例では、ATS の #stacode("(int, string)") 型が割り当てられた値のために、
 生成されたC言語コード中で #stacode("int_and_string")
-の名前のtypedefが宣言されることを期待しています:
+の名前の typedef が宣言されることを期待しています:
 
 #atscode('\
 extern
@@ -1176,20 +1172,20 @@ constructed with the data constructors #dyncode("cons1") and #dyncode("cons2").
 #langja("
 #para('\
 
-ときどき、ATSにおけるdatatype宣言の値をC言語でコンストラクトしたいことがあります。
-例えば、iが整数でdが倍精度実浮動小数点数であるような
+ときどき、ATS におけるデータ型宣言の値をC言語でコンストラクトしたいことがあります。
+例えば、i が整数で d が倍精度実浮動小数点数であるような
 #dyncode("cons2(i, d)") の値をC言語でコンストラクトしてみましょう。
-#dyncode("cons2") は次で宣言されたdatatype #stacode("abc") に関連したデータコンストラクタです:
+#dyncode("cons2") は次で宣言されたデータ型 #stacode("abc") に関連したデータコンストラクタです:
 
 #atscode('\
 datatype abc =
   | cons1 of int | cons2 of (int, double)
 ')
 
-データコンストラクタを宣言すると必ず対応する(線形の)型コンストラクタが作られます。
+データコンストラクタを宣言すると必ず対応する (線形の) 型コンストラクタが作られます。
 そのコンストラクタには元のデータコンストラクタの名前と文字列
 "_pstruct" を連結した名前が付けられます。
-そのため上記で宣言したdatatype #stacode("abc") の場合は、
+そのため上記で宣言したデータ型 #stacode("abc") の場合は、
 型コンストラクタ #stacode("cons1_pstruct") と #stacode("cons2_pstruct") が作られます。
 これらの型コンストラクタはデータコンストラクタ #dyncode("cons1") と #dyncode("cons2")
 でコンストラクトされるボックス化された値の型を形成するために使われます。
@@ -1249,7 +1245,7 @@ second constructors associated with the datatype #stacode("abc").
 #langja("
 #para('\
 
-次の宣言でATSの #stacode("cons2_pstruct(int, double)") 型が
+次の宣言で ATS の #stacode("cons2_pstruct(int, double)") 型が
 #stacode("cons2_node") の名前でC言語にエクスポートされます:
 
 #atscode('\
@@ -1258,7 +1254,7 @@ vtypedef "cons2_node" = cons2_pstruct(int, double)
 ')
 
 また #dyncode("cons2") データコンストラクタによってコンストラクトされる値のアンボックス部分のために、
-#stacode("cons2_node_") という名前でC言語のtypedefが暗黙のうちに導入されます。
+#stacode("cons2_node_") という名前でC言語の typedef が暗黙のうちに導入されます。
 結果として次のようなC言語コードが生成されるでしょう:
 
 #atscode('\
@@ -1287,8 +1283,8 @@ cons2_make
 } /* end of [cons2_make] */
 ')
 
-#dyncode("cons1") と #dyncode("cons2") のconstructor tagはそれぞれ0と1であることに注意してください。
-#dyncode("cons1") と #dyncode("cons2") は datatype #stacode("abc")
+#dyncode("cons1") と #dyncode("cons2") のコンストラクタタグはそれぞれ0と1であることに注意してください。
+#dyncode("cons1") と #dyncode("cons2") はデータ型 #stacode("abc")
 に関連した1番目と2番目のコンストラクタであることがその理由です。
 
 ')
@@ -1311,8 +1307,8 @@ val-cons2 (1, 2.34) = cons2_make (1, 2.34)
 #langja("
 #para('\
 
-ATS側で #dyncode("cons2_make") にインターフェイスを割り当てることで、
-#dyncode("cons2_make") の挙動が意図したものかどうかチェックできます:
+ATS 側で #dyncode("cons2_make") にインターフェイスを割り当てることで、#dyncode("cons2_make")
+の挙動が意図したものかどうかチェックできます:
 
 #atscode('\
 extern
@@ -1338,10 +1334,9 @@ ATS-values in C directly.
 #langja("
 #para('\
 
-一般に、低レイヤーのシステムプログラミングにおいてプログラミング言語を使うために、
-その言語の低レベルのデータ表現をしっかり理解することはプログラマにとって不可欠です。
-ATSの低レベルデータ表現はC言語の型の項を使って簡単に解釈できます。
-そのため必要であればC言語の中でATSの値を直接コンストラクトし操作することは容易なのです。
+一般に、低レイヤーのシステムプログラミングにおいてプログラミング言語を使うために、その言語の低レベルのデータ表現をしっかり理解することはプログラマにとって不可欠です。
+ATS の低レベルデータ表現はC言語の型の項を使って簡単に解釈できます。
+そのため必要であればC言語の中で ATS の値を直接コンストラクトし操作することは容易なのです。
 
 ')
 ")
@@ -1373,10 +1368,9 @@ related.
 #langja("
 #para('\
 
-組み込みプログラミングにおいて、
-静的なメモリ確保は挙動を予測しにくい動的なメモリ確保よりもしばしば好まれます。
+組み込みプログラミングにおいて、静的なメモリ確保は挙動を予測しにくい動的なメモリ確保よりもしばしば好まれます。
 静的に確保されたメモリにコンストラクトされたリストの例を次に示します。
-この例はまた、ATSとC言語の親和性を実証しています。
+この例はまた、ATS とC言語の親和性を実証しています。
 
 ')
 ")
@@ -1413,11 +1407,9 @@ typedef list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
 #langja("
 #para('\
 
-リストの要素のメモリを静的に確保するためには、
-それぞれのリストの要素にどれぐらいのメモリサイズが必要になるのかC言語コンパイラに報せるために、
-リストの要素の型をまず始めに作る必要があります。
-次のコードでは、ATSにおける #stacode("list_node") 型がボックス化リスト要素であり、
-この型はC言語へ同じ名前でエクスポートされています:
+リストの要素のメモリを静的に確保するためには、それぞれのリストの要素にどれぐらいのメモリサイズが必要になるのかC言語コンパイラに報せるために、リストの要素の型をまず始めに作る必要があります。
+次のコードでは、ATS における #stacode("list_node")
+型がボックス化リスト要素であり、この型はC言語へ同じ名前でエクスポートされています:
 
 #atscode('\
 //
@@ -1430,8 +1422,7 @@ extern vtypedef "list_node" = list_node // exporting [list_node] to C
 
 #stacode("list_node") をC言語へエクスポートすると、アンボックス化リスト要素のための
 typedef #stacode("list_node_") が暗黙的にC言語へ導入されます。
-そのため、ATSにおける次の型 #stacode("list_node_") は、
-アンボックス化リスト要素のために私達が望んだものでしょう:
+そのため、ATS における次の型 #stacode("list_node_") は、アンボックス化リスト要素のために私達が望んだものでしょう:
 
 #atscode('\
 typedef list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
@@ -1545,7 +1536,7 @@ val () = println! ("xs_static = ", xs_static) // 0, 1, 4, 9, 16, ...
 end // end of [local]
 ')#comment("atscode")
 
-#dyncode("loop") の実装は、ATSにおける安全でないC言語スタイルプログラミングを多用しています。
+#dyncode("loop") の実装は、ATS における安全でないC言語スタイルプログラミングを多用しています。
 C言語に馴染んだプログラマであれば、この実装に対応するC言語コードが想像できると思います。\
 
 ')
