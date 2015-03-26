@@ -183,7 +183,7 @@ list_cons : {a:t@ype}{n:nat} (a, list(a, n)) -> list(a, n+1)
 
 型 T と静的な整数 I が与えられた時、
 要素の型が T で長さが I のリストを表現する値は型 #stacode("list(T, I)") です。
-ゆえに、型 #dyncode("list_nil") は長さ0のリストを、
+ゆえに、型 #dyncode("list_nil") は長さ 0 のリストを、
 型 #dyncode("list_cons") は要素と長さ n のリストに適用すると長さ n+1 のリストを作ることを意味しています。
 次のようなより簡潔なスタイルで #stacode("list") を宣言することもできることに注意してください:
 
