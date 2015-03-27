@@ -1012,7 +1012,7 @@ abst@ype E (a:t@ype, x:elt) = a // [x] is an imaginary stamp
 これはしばしば #emphasis("スタンプ化 (stamping)") と呼ばれます。
 それぞれの型 T とスタンプ X について、関連するデータ表現に関する限り #stacode("E(T, x)") は単に T です。
 このスタンプは架空の存在で、仕様の目的にだけ使われます。
-次に抽象 prop 型 #stacode("MUL") と関数テンプレート #dyncode("mul_elt_elt") を導入します:
+次に抽象命題型 #stacode("MUL") と関数テンプレート #dyncode("mul_elt_elt") を導入します:
 
 #atscode("\
 absprop MUL (elt, elt, elt) // abstract mul relation
@@ -1073,7 +1073,7 @@ fastpow_elt_int{x:elt}{n:nat}
 ")
 #langja("
 #para("
-抽象的な累乗関数は、抽象 prop 型 #stacode("MUL") の項ですぐに指定できます:
+抽象的な累乗関数は、抽象命題型 #stacode("MUL") の項ですぐに指定できます:
 
 #atscode("\
 dataprop POW (
