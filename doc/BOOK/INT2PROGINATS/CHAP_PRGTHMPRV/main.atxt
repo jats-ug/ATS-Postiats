@@ -801,7 +801,7 @@ fun ifact2 (n) = let
   fun loop (n, i, r) =
     if n - i > 0 then let
       val r1 = (i+1) * r in loop (n, i+1, r1)
-    end else r
+    end else r // end of [if]
   // end of [loop]
 in
   loop (n, 0, 1)
