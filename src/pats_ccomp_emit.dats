@@ -958,6 +958,13 @@ val hse = tmpvar_get_type (tmp)
 val knd = tmpvar_get_topknd (tmp)
 val isvoid = hisexp_is_void (hse)
 //
+(*
+val () =
+println! ("emit_tmpdec: tmp = ", tmp)
+val () =
+println! ("emit_tmpdec: hse = ", hse)
+*)
+//
 val () =
 if isvoid then emit_text (out, "// ")
 //
@@ -994,8 +1001,12 @@ val () =
 emit_text (out, ", ")
 val () =
 (
-case+ hse.hisexp_node of
-| HSEtyarr (hse_elt, _(*dim*)) => emit_hisexp (out, hse_elt)
+case+
+hse.hisexp_node of
+| HSEtyarr
+  (
+    hse_elt, _(*dim*)
+  ) => emit_hisexp (out, hse_elt)
 | _ (*non-tyarr*) => emit_hisexp (out, hse)
 ) (* end of [val] *)
 } (* end of [then] *)

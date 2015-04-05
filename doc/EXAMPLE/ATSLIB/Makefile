@@ -61,7 +61,7 @@ cleanall:: ; $(RMF) prelude_bool.exe
 
 all:: prelude_char
 prelude_char: prelude_char.exe
-prelude_char.exe: prelude_char_dats.c ;   $(CCOPT) -D_GNU_SOURCE -O2 -I$(PATSHOMEQ) -I$(PATSHOMEQ)/ccomp/runtime -o $@ $<
+prelude_char.exe: prelude_char_dats.c ;   $(CCOPT) -D_GNU_SOURCE -O2     -I$(PATSHOMEQ) -I$(PATSHOMEQ)/ccomp/runtime -DATS_MEMALLOC_LIBC -o $@ $< 
 prelude_char_dats.c: prelude_char.dats ;   $(PATSOPT) -IATS$(PATSHOMEQ)/contrib --output prelude_char_dats.c --dynamic prelude_char.dats
 clean:: ; $(RMF) prelude_char_dats.o
 clean:: ; $(RMF) prelude_char_dats.c
@@ -238,11 +238,19 @@ cleanall:: ; $(RMF) prelude_stream_vt.exe
 
 all:: prelude_gprint
 prelude_gprint: prelude_gprint.exe
-prelude_gprint.exe: prelude_gprint_dats.c ;   $(CCOPT) -D_GNU_SOURCE -O2 -I$(PATSHOMEQ) -I$(PATSHOMEQ)/ccomp/runtime -o $@ $<
+prelude_gprint.exe: prelude_gprint_dats.c ;   $(CCOPT) -D_GNU_SOURCE -O2     -I$(PATSHOMEQ) -I$(PATSHOMEQ)/ccomp/runtime -DATS_MEMALLOC_LIBC -o $@ $< 
 prelude_gprint_dats.c: prelude_gprint.dats ;   $(PATSOPT) -IATS$(PATSHOMEQ)/contrib --output prelude_gprint_dats.c --dynamic prelude_gprint.dats
 clean:: ; $(RMF) prelude_gprint_dats.o
 clean:: ; $(RMF) prelude_gprint_dats.c
 cleanall:: ; $(RMF) prelude_gprint.exe
+
+all:: prelude_tostring
+prelude_tostring: prelude_tostring.exe
+prelude_tostring.exe: prelude_tostring_dats.c ;   $(CCOPT) -D_GNU_SOURCE -O2     -I$(PATSHOMEQ) -I$(PATSHOMEQ)/ccomp/runtime -DATS_MEMALLOC_LIBC -o $@ $< 
+prelude_tostring_dats.c: prelude_tostring.dats ;   $(PATSOPT) -IATS$(PATSHOMEQ)/contrib --output prelude_tostring_dats.c --dynamic prelude_tostring.dats
+clean:: ; $(RMF) prelude_tostring_dats.o
+clean:: ; $(RMF) prelude_tostring_dats.c
+cleanall:: ; $(RMF) prelude_tostring.exe
 
 
 ######

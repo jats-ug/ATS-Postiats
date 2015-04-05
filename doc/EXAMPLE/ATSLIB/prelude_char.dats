@@ -148,6 +148,15 @@ val () = assertloc ('9' - '0' = 9)
 
 (* ****** ****** *)
 
+overload stringify with char2string
+
+(* ****** ****** *)
+
+val () = assertloc("a" = stringify('a'))
+val () = assertloc("\n" = stringify('\n'))
+
+(* ****** ****** *)
+
 implement main0 () = ()
 
 (* ****** ****** *)
