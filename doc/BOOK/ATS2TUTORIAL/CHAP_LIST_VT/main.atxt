@@ -13,15 +13,20 @@ by [atsdoc] from CHAP_ARRAYREF/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="linlist">
+#langeng("
 #title("Linearly Typed Lists")
+")
+#langja("
+#title("線形型のリスト")
+")
 
+#langeng("
 #para("\
 
 A linearly typed list in ATS is also referred to as a linear list, which
 essentially corresponds to a singly-linked list in C. The following linear
 datatype declaration introduces a linear type #stacode("list_vt") for
 linear lists:
-
 #atscode('\
 //
 datavtype
@@ -41,7 +46,31 @@ linear lists can be found in the SATS file
 which is automatically loaded by #command("atsopt").\
 
 ")
+")
+#langja("
+#para("\
 
+ATS における線形型のリストは線形リストとも呼ばれ、本質的にはC言語における片方向リストに対応します。
+次の線形データ型宣言は、線形リストを表わす線形型 #stacode("list_vt") を導入しています:
+#atscode('\
+//
+datavtype
+list_vt(a:vt@ype, int) =
+| list_vt_nil(a, 0) of ()
+| {n:nat}
+  list_vt_cons(a, n+1) of (a, list_vt(a, n))
+//
+')
+
+キーワード #keycode('datavtype') は #keycode('dataviewtype') とも書けることに注意してください。
+(おそらく線形の) 型 T と整数 N が与えられたとき、型 #stacode("list_vt(T,N)") は型 T の要素を持つ長さ N のリストを表わします。
+線形リストに対する様々な関数のインターフェイスが SATS ファイル #myatscodelink("prelude/SATS/list_vt.sats", "prelude/SATS/list_vt.sats") にあります。
+このファイルは #command("atsopt") によって自動的にロードされます。
+
+")
+")
+
+#langeng("
 #para("\
 
 The following function #dyncode("list_vt_length") shows a typical way of
@@ -71,7 +100,34 @@ number N and the types of #dyncode("x") and #dyncode("xs2") are
 required to stay unchanged.
 
 ")
+")
+#langja("
+#para("\
 
+次の関数 #dyncode("list_vt_length") は、読み込みのみ許された線形リストをあつかう典型的な方法を示しています:
+
+#atscode('\
+//
+fun
+{a:vt@ype}
+list_vt_length
+  (xs: !list_vt(a, n)): int(n) =
+(
+case+ xs of
+| list_vt_nil() => 0
+| list_vt_cons(x, xs2) => 1 + list_vt_length<a> (xs2)
+)
+//
+')
+
+#dyncode("xs") が #dyncode("list_vt_nil()") にパターンマッチするとき、#dyncode("xs") の型は #stacode("list_vt(a, 0)") です。
+#dyncode("xs") が #dyncode("list_vt_cons(x, xs2)") にパターンマッチするとき、#dyncode("xs") の型はなんらかの自然数 N について #stacode("list_vt(a, N+1)") で、#dyncode("x") と #dyncode("xs2") の型はそれぞれ #stacode("a") と #stacode("list_vt(a, N)") です。
+#dyncode("x") と #dyncode("xs2") は両方とも値を表わす名前で、それらの型は不変でなければならないことに注意してください。
+
+")
+")
+
+#langeng("
 #para("\
 
 The following function #dyncode("list_vt_foreach") shows a typical way of
@@ -153,7 +209,80 @@ then ys is returned; otherwise, the last node in xs is located and ys is
 stored in the field of the node reserved for the next node.
 
 ")
+")
+#langja("
+#para("\
 
+次の関数 #dyncode("list_vt_foreach") は、線形リストに保管された要素を変更する典型的な方法を示しています:
+
+#atscode('\
+//
+fun
+{a:vt@ype}
+list_vt_foreach
+(
+  xs: !list_vt(a, n)
+, fwork: (&(a) >> _) -<cloref1> void
+) : void =
+(
+case+ xs of
+| list_vt_nil() => ()
+| @list_vt_cons(x, xs2) => (fwork(x); list_vt_foreach<a> (xs2, fwork); fold@(xs))
+)
+//
+')
+
+#dyncode("xs") が #dyncode("@list_vt_cons(x,xs2)") にパターンマッチするとき、#dyncode("xs") の型はなんらかの自然数 N について #stacode("list_vt(a, N+1)")
+で、#dyncode("x") と #dyncode("xs2") の型はそれぞれ #stacode("a") と #stacode("list_vt(a, N)") です。
+#dyncode("x") と #dyncode("xs2") の両方が (左辺値をなす) 値であることに注意してください。
+パターン #dyncode("@list_vt_cons(x,xs2)") ではじまる関数本体の最初では、#dyncode("xs") の型は #stacode("list_vt_cons_unfold(L0, L1, L2)") であると推測されます。
+このとき、その型は #dyncode("list_vt_cons") を呼び出してリストノードを表わす観型で、そのノードは L0 に配置されます。
+さらに #dyncode("list_vt_cons") の2つの引数は L1 と L2 に配置されていて、L1 と L2 に関連した駐観の証明が現在有効な証明として保管されています。
+したがって、左辺値として #dyncode("x") と #dyncode("xs2") はそれぞれアドレス L1 と L2 を持ち、L1 と L2
+に関連した証明である観はそれぞれ #stacode("a@L1") と #stacode("list_vt_cons(a, N)@L2") です。
+関数適用 #dyncode("fold@(xs)") は、L1 と L2 に関連した証明を消費して、#dyncode("xs") を型 #stacode("list_vt(a, N+1)") の値に変化させます。
+#dyncode("xs") の型は、割り当てられていた元と fold が終わった後で異なる可能性があることに注意してください:
+次のコードはそのような例です:
+
+#atscode('\
+//
+fun
+{a:vt@ype}
+list_vt_append
+  {m,n:nat}
+(
+  xs: list_vt(a, m), ys: list_vt(a, n)
+) : list_vt(a, m+n) = let
+//
+fun
+loop{m:nat}
+(
+  xs: &list_vt(a, m) >> list_vt(a, m+n), ys: list_vt(a, n)
+) : void =
+(
+case+ xs of
+| ~list_vt_nil() => (xs := ys)
+| @list_vt_cons(x, xs2) => (loop(xs2, ys); fold@(xs))
+)
+//
+in
+  case+ xs of
+  | ~list_vt_nil () => ys
+  | @list_vt_cons (x, xs2) => (loop(xs2, ys); fold@(xs); xs)
+end // end of [list_vt_append]
+//
+')
+
+パターンの前にあるシンボル #dyncode("~") は以前説明しました。
+#dyncode("list_vt_append") の実装は、C言語における2つの片方向リストの連結の標準的な実装に正確に一致しています:
+2つのリストとして xs と ys を与えます;
+もし xs が空であれば ys が返ります;
+そうでなければ、xs の最後のノードとして配置され、ys はその次として予約されたノードの要素に格納されます。
+
+")
+")
+
+#langeng("
 #para("\
 
 The following function #dyncode("list_vt_free") frees a given linear
@@ -190,13 +319,55 @@ referred to as #dyncode("xs").
 
 
 ")
+")
+#langja("
+#para("\
 
+次の関数 #dyncode("list_vt_free") は、与えられた非線形の要素を含む線形リストを解放します:
+
+#atscode('\
+//
+fun
+{a:vt@ype}
+list_vt_free
+  {n:nat}
+(
+  xs: list_vt(a?, n)
+) : void =
+(
+case+ xs of
+| ~list_vt_nil() => ()
+| ~list_vt_cons(x, xs2) => list_vt_free<a> (xs2)
+)
+//
+')
+
+#dyncode("xs") がパターン #dyncode("~list_vt_nil()") にマッチするとき、#dyncode("xs") の型は、その #dyncode("xs") の型が変更され、#dyncode("xs") がその後では使用できないことを示しています。
+#dyncode("xs") がパターン #dyncode("~list_vt_cons(x,xs2)") にマッチするとき、#dyncode("xs") の型は、その #dyncode("xs") の型が変更され、やはり #dyncode("xs") がその後では使用できないことを示しています。
+後者の場合、リスト #dyncode("xs") の head と tail を表わす2つの値は、それぞれ #dyncode("x") と #dyncode("xs2") として参照できます。
+#dyncode("xs") として参照されるリストの最初のリストノードのメモリを解放していることがわかります。
+
+
+")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_list_vt.dats", "on-line") the entirety of the
 code used in this chapter plus some testing code.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で紹介したコード全体とテストコードは
+#mycodelink("chap_list_vt.dats", "オンライン")
+から入手できます。\
+
+")#comment("para")
+")
 
 </chapter><!--"linlist"-->
 
