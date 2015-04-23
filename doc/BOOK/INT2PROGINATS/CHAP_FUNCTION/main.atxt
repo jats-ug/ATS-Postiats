@@ -1814,10 +1814,10 @@ and Q (n:int): int = if n > 0 then Q(n-1) + n * P(n) else 0
 <sect1
 id="mutual-tail-recursion">
 #langeng("
-#title("Mutual Tail-Recursion")
+#title("Mutually Defined Tail-Recursion")
 ")
 #langja("
-#title("相互末尾再帰")
+#title("相互に定義された末尾再帰")
 ")
 
 #langeng("

@@ -158,7 +158,7 @@ When #dyncode("xs") is matched with the pattern
 #dyncode("xs2") are variables (that are a form of left-values).  At the
 beginning of the body following the pattern
 #dyncode("@list_vt_cons(x,xs2)"), the type of #dyncode("xs") is assumed to
-be #stacode("list_vt_cons_unfold(L0, L1, L2)"), which is a viewtype is for
+be #stacode("list_vt_cons_unfold(L0, L1, L2)"), which is a viewtype for
 a list-node created by a call to #dyncode("list_vt_cons") such that the
 node is located at L0 and the two arguments of #dyncode("list_vt_cons") are
 located at L1 and L2 while the proofs for the at-views associated with L1
@@ -313,7 +313,7 @@ the type of #dyncode("xs") changes to a special one indicating that
 to a special one indicating that #dyncode("xs") is no longer available for
 subsequent use. In the latter case, the two values representing the head
 and tail of the list referred to as #dyncode("xs") can be subsequently
-referred as #dyncode("x") and #dyncode("xs2"), respectively. So what is
+referred to as #dyncode("x") and #dyncode("xs2"), respectively. So what is
 really freed here is the memory for the first list-node in the list
 referred to as #dyncode("xs").
 

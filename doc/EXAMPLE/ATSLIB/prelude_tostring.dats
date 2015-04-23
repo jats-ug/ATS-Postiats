@@ -9,6 +9,19 @@
 //
 (* ****** ****** *)
 
+val () = assertloc("1024" = tostring_val<int>(32*32))
+
+(* ****** ****** *)
+
+val () = assertloc("1024" = tostring_val<uint>(32u*32u))
+
+(* ****** ****** *)
+
+val () = assertloc("true" = tostring_val<bool>(true))
+val () = assertloc("false" = tostring_val<bool>(false))
+
+(* ****** ****** *)
+
 local
 
 implement
@@ -34,7 +47,7 @@ tostrptr_array$beg<> () = "["
 implement
 tostrptr_array$end<> () = "]"
 implement
-tostrptr_array$sep<> () = ","
+tostrptr_array$sep<> () = ";"
 
 in (* in-of-local *)
 //
