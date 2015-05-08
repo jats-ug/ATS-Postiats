@@ -128,7 +128,8 @@ val s2tb_addr: s2rtbas = S2RTBASpre ($SYM.symbol_ADDR)
 val s2tb_char: s2rtbas = S2RTBASpre ($SYM.symbol_CHAR)
 *)
 //
-val s2tb_real: s2rtbas = S2RTBASpre ($SYM.symbol_REAL)
+val s2tb_float: s2rtbas = S2RTBASpre ($SYM.symbol_FLOAT)
+val s2tb_string: s2rtbas = S2RTBASpre ($SYM.symbol_STRING)
 //
 val s2tb_cls
   : s2rtbas = S2RTBASpre ($SYM.symbol_CLS) // for nominal classes
@@ -149,7 +150,8 @@ implement s2rt_addr = S2RTbas s2tb_addr
 implement s2rt_char = S2RTbas s2tb_char
 *)
 //
-implement s2rt_real = S2RTbas s2tb_real
+implement s2rt_float = S2RTbas s2tb_float
+implement s2rt_string = S2RTbas s2tb_string
 //
 implement s2rt_cls = S2RTbas s2tb_cls
 //
@@ -312,15 +314,15 @@ case+ s2t of
 (* ****** ****** *)
 
 implement
-s2rt_is_real (s2t) =
+s2rt_is_float (s2t) =
 (
 case+ s2t of
 | S2RTbas s2tb => (
   case+ s2tb of
-  | S2RTBASpre (sym) => sym = $SYM.symbol_REAL | _ => false
+  | S2RTBASpre (sym) => sym = $SYM.symbol_FLOAT | _ => false
   ) // end of [S2RTbas]
   | _ => false
-) // end of [s2rt_is_real]
+) // end of [s2rt_is_float]
 
 (* ****** ****** *)
 

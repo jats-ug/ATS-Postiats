@@ -332,6 +332,9 @@ case+ s2e0.s2exp_node of
 | S2Eint _ => s2e0
 | S2Eintinf _ => s2e0
 //
+| S2Efloat _ => s2e0
+| S2Estring _ => s2e0
+//
 | S2Ecst _ => s2e0
 //
 | S2Eextype _ => s2e0
@@ -339,11 +342,14 @@ case+ s2e0.s2exp_node of
 //
 | S2Evar (s2v) =>
     s2exp_hnfize_flag_svar (s2e0, s2v, flag)
+  // end of [S2Evar]
+//
 | S2EVar _ => s2e0
+//
 | S2Ehole _ => s2e0
 //
-| S2Edatconptr _ => s2e0
 | S2Edatcontyp _ => s2e0
+| S2Edatconptr _ => s2e0
 //
 | S2Eat _ => s2e0
 | S2Esizeof _ => s2e0
@@ -961,8 +967,9 @@ case s2en10 of
   case+ s2en20 of
   | S2Edatcontyp
       (d2c2, arg2) => (
-    if eq_d2con_d2con (d2c1, d2c2) then
-      s2explst_syneq_exn(arg1, arg2) else $raise(SYNEQexn)
+    if (d2c1 = d2c2)
+      then s2explst_syneq_exn(arg1, arg2)
+      else $raise(SYNEQexn)
     ) // end of [S2Edatcontyp]
   | _ (* non-S2Edatcontyp *) => $raise (SYNEQexn)
   ) (* end of [S2Edatcontyp] *)
@@ -971,7 +978,7 @@ case s2en10 of
   case+ s2en20 of
   | S2Edatconptr
       (d2c2, rt2, _) => (
-    if eq_d2con_d2con (d2c1, d2c2)
+    if (d2c1 = d2c2)
       then s2exp_syneq_exn (rt1, rt2) else $raise(SYNEQexn)
     ) // end of [S2Edatconptr]
   | _ (* non-S2Edatconptr *) => $raise (SYNEQexn)
@@ -1336,6 +1343,29 @@ case+ s2en10 of
     if s2V1 = s2V2 then true else false
   | _ (* non-S2EVar *) => false
   ) (* end of [S2EVar] *)
+//
+| S2Edatcontyp
+    (d2c1, arg1) => (
+  case+ s2en20 of
+  | S2Edatcontyp
+      (d2c2, arg2) => (
+    if (d2c1 = d2c2)
+      then s2explst_syneq_env(env1, env2, arg1, arg2)
+      else false
+    // end of [if]
+    ) // end of [S2Edatcontyp]
+  | _ (* non-S2Edatcontyp *) => false
+  ) (* end of [S2Edatcontyp] *)
+| S2Edatconptr
+    (d2c1, rt1, _) => (
+  case+ s2en20 of
+  | S2Edatconptr
+      (d2c2, rt2, _) => (
+    if (d2c1 = d2c2)
+      then s2exp_syneq_env (env1, env2, rt1, rt2) else false
+    ) // end of [S2Edatconptr]
+  | _ (* non-S2Edatconptr *) => false
+  ) (* end of [S2Edatconptr] *)
 //
 | S2Eeqeq
     (s2e11, s2e12) => (

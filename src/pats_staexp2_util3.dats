@@ -50,10 +50,15 @@ fun aux_s2exp (
 ) : void = let
 in
 //
-case+ s2e0.s2exp_node of
+case+
+s2e0.s2exp_node
+of // case+
 //
 | S2Eint _ => ()
 | S2Eintinf _ => ()
+//
+| S2Efloat _ => ()
+| S2Estring _ => ()
 //
 | S2Ecst _ => ()
 //
@@ -456,6 +461,9 @@ case+ s2e.s2exp_node of
 //
 | S2Eint _ => ()
 | S2Eintinf _ => ()
+//
+| S2Efloat _ => ()
+| S2Estring _ => ()
 //
 | S2Ecst s2c => f_s2cst (s2c)
 //

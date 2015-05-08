@@ -475,22 +475,27 @@ fprint_s0exp (out, x) = let
 in
 //
 case+ x.s0exp_node of
+//
 | S0Eide (id) => {
     val () = prstr "S0Eide("
     val () = fprint_symbol (out, id)
     val () = prstr ")"
   }
-| S0Esqid (sq, id) => {
+//
+| S0Esqid
+    (sq, id) => {
     val () = prstr "S0Esqid("
     val () = fprint_s0taq (out, sq)
     val () = fprint_symbol (out, id)
     val () = prstr ")"
   }
+//
 | S0Eopid (id) => {
     val () = prstr "S0Eopid("
     val () = fprint_symbol (out, id)
     val () = prstr ")"
   }
+//
 | S0Eint (x) => {
     val () = prstr "S0Ei0nt("
     val () = fprint_i0nt (out, x)
@@ -499,6 +504,16 @@ case+ x.s0exp_node of
 | S0Echar (x) => {
     val () = prstr "S0Echar("
     val () = fprint_c0har (out, x)
+    val () = prstr ")"
+  }
+| S0Efloat (x) => {
+    val () = prstr "S0Efloat("
+    val () = fprint_f0loat (out, x)
+    val () = prstr ")"
+  }
+| S0Estring (x) => {
+    val () = prstr "S0Estring("
+    val () = fprint_s0tring (out, x)
     val () = prstr ")"
   }
 //
@@ -864,6 +879,12 @@ case+ x.d0exp_node of
 | D0Ecstsp (x) => {
     val () = prstr "D0Ecstsp("
     val () = fprint_cstsp (out, x)
+    val () = prstr ")"
+  }
+//
+| D0Eliteral (x) => {
+    val () = prstr "D0Eliteral("
+    val () = fprint_d0exp (out, x)
     val () = prstr ")"
   }
 //

@@ -830,6 +830,20 @@ in '{
 (* ****** ****** *)
 
 implement
+s0exp_f0loat (x) = let
+in '{
+  s0exp_loc= x.token_loc, s0exp_node= S0Efloat (x)
+} end // end of [s0exp_f0loat]
+
+implement
+s0exp_s0tring (x) = let
+in '{
+  s0exp_loc= x.token_loc, s0exp_node= S0Estring (x)
+} end // end of [s0exp_string]
+
+(* ****** ****** *)
+
+implement
 s0exp_app (x1, x2) = let
   val loc = x1.s0exp_loc + x2.s0exp_loc
 in '{
@@ -1267,7 +1281,7 @@ in '{
 implement
 p0at_i0de (id) = '{
   p0at_loc= id.i0de_loc, p0at_node= P0Tide id.i0de_sym
-} (* end of [p2at_i0de] *)
+} (* end of [p0at_i0de] *)
 
 implement
 p0at_dqid (ent1, ent2) = let
@@ -1759,6 +1773,19 @@ d0exp_MYFUN (tok) = '{
 (* ****** ****** *)
 
 implement
+d0exp_literal
+  (t_beg, lit, t_end) = let
+//
+val loc =
+  t_beg.token_loc + t_end.token_loc
+//
+in '{
+  d0exp_loc= loc, d0exp_node= D0Eliteral (lit)
+} end // end of [d0exp_literal]
+
+(* ****** ****** *)
+
+implement
 d0exp_extval
 (
   t_beg, _type, rep, t_end
@@ -2109,7 +2136,8 @@ in '{
 (* ****** ****** *)
 
 implement
-d0exp_raise (tok, ent2) = let
+d0exp_raise
+  (tok, ent2) = let
   val loc = tok.token_loc + ent2.d0exp_loc
 in '{
   d0exp_loc= loc, d0exp_node= D0Eraise (ent2)
