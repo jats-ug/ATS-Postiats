@@ -97,7 +97,7 @@ ATS: the former is an integer while the latter is a floating point number
 #dyncode("3.") と #dyncode("31416E-4") は
 #dyncode("3.0") と #dyncode("3.1416") にそれぞれ等価であることに注意してください。
 ここで強調したいことは、ATS において #dyncode("1") と #dyncode("1.0")
-とは全く別の数だということです。
+とは全く別の数だということです:
 前者は整数であるのに対して、後者は (倍精度の) 浮動小数点数なのです。 \
 ")
 ")
@@ -150,7 +150,7 @@ parenthesis), #dyncode("'\\\\{'") (left curly brace), #dyncode("'}'")
 #langja("
 #para('\
 
-一般に他に使われる定数としては文字と文字列があります。
+他に一般に使われる定数としては文字と文字列があります。
 例えば次に示すのは文字の定数です:
 #dyncode("'a'"), #dyncode("'B'"), #dyncode("'\\\\n'") (改行), #dyncode("'\\\\t'") (タブ),
 #dyncode("'\\\\('") (左丸括弧), #dyncode("')'") (右丸括弧),
@@ -306,11 +306,10 @@ first line:\
 
 ATS では  #dyncode("val") はキーワードであることに注意してください。
 またその宣言は val 宣言として分類されます。
-
 概念上、ATS のような値渡し (call-by-value) の言語において実行時に起きることは、
 まずはじめに式 #dyncode("1+2") が値 #dyncode("3") に評価されます。
 次に #dyncode("x") と #dyncode("1+2") の間に束縛ができ、
-#dyncode("x") と #dyncode("3") の間に束縛が #emphasis("決着(finalized)") します。
+#dyncode("x") と #dyncode("3") の間に束縛が #emphasis("決着 (finalized)") します。
 本質的に値渡しとは、
 名前と式の束縛はそれ以降の評価で使われる前に、
 その名前とその式の値の束縛に決着されなければならないことを意味します。
@@ -901,14 +900,14 @@ ATS では他にも多くのプリミティブ型がありますが、少しづ�
 <listitem>
 #para("\
 #stacode("schar"):
-この型はC言語の符号付き文字型に変換されます。 \
+この型はC言語の符号付き文字型 (signed char) に変換されます。 \
 ")
 </listitem>
 
 <listitem>
 #para("\
 #stacode("uchar"):
-この型はC言語の符号無し文字型に変換されます。 \
+この型はC言語の符号無し文字型 (unsigned char) に変換されます。 \
 ")
 </listitem>
 
@@ -922,35 +921,35 @@ ATS では他にも多くのプリミティブ型がありますが、少しづ�
 <listitem>
 #para("\
 #stacode("uint"):
-この型はC言語の符号無し整数型に変換されます。 \
+この型はC言語の符号無し整数型 (unsigned int) に変換されます。 \
 ")
 </listitem>
 
 <listitem>
 #para("\
 #stacode("lint"):
-この型はC言語の長整数型に変換されます。 \
+この型はC言語の長整数型 (long int) に変換されます。 \
 ")
 </listitem>
 
 <listitem>
 #para("\
 #stacode("ulint"):
-この型はC言語の符号無し長整数型に変換されます。 \
+この型はC言語の符号無し長整数型 (unsigned long int) に変換されます。 \
 ")
 </listitem>
 
 <listitem>
 #para("\
 #stacode("llint"):
-この型はC言語の長長整数型に変換されます。 \
+この型はC言語の長長整数型 (long long int) に変換されます。 \
 ")
 </listitem>
 
 <listitem>
 #para("\
 #stacode("ullint"):
-この型はC言語の符号無し長長整数型に変換されます。 \
+この型はC言語の符号無し長長整数型 (unsigned long long int) に変換されます。 \
 ")
 </listitem>
 
