@@ -6,6 +6,30 @@ style="margin-top:8px;padding:8px;"
 
 <hr></hr>
 
+ATS-2015-05-22:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/Q54YTXt8u1g"
+>ATS2-0.1.13 has been released</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-05-16:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/BScZOguFm0Y"
+>ATS2-0.1.12 has been released</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-05-12:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/AmeOXNUZ7Ik"
+>Tetris: ATS+Bacon.js</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
 ATS-2015-04-23:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/WDPiTEkZDZQ"
@@ -119,6 +143,8 @@ by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
 
+<!--
+
 ATS-2015-01-06:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/bT0t5emu8cE"
@@ -142,8 +168,6 @@ ATS-2014-12-19:<br>
 by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
-
-<!--
 
 ATS-2014-12-10:<br>
 <a

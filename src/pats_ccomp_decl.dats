@@ -174,7 +174,9 @@ case+ hid0.hidecl_node of
     (_(*knd*), imp) => let
     val d2c = imp.hiimpdec_cst
     val lvl0 = the_d2varlev_get ()
-    val ((*void*)) = hiimpdec_ccomp (env, lvl0, imp)
+    val ((*void*)) =
+      hiimpdec_ccomp (env, lvl0, imp, 0(*local*))
+    // end of [val]
   in
     primdec_impdec (loc0, imp)
   end // end of [HIDimpdec]
@@ -984,7 +986,7 @@ in (* in of [local] *)
 implement
 hiimpdec_ccomp
 (
-  env, lvl0, imp
+  env, lvl0, imp, knd
 ) = let
 //
 val d2c = imp.hiimpdec_cst
@@ -1020,19 +1022,30 @@ case+ 0 of
     // end of [val]
 *)
 //
-    val () = if istmp then ccompenv_inc_tmplevel (env)
-    val flab = auxmain (env, loc0, d2c, imparg, tmparg, hde_def)
-    val () = if istmp then ccompenv_dec_tmplevel (env)
+    val () =
+      if istmp then ccompenv_inc_tmplevel (env)
+    // end of [val]
+    val flab =
+      auxmain (env, loc0, d2c, imparg, tmparg, hde_def)
+    // end of [val]
+    val () =
+      if istmp then ccompenv_dec_tmplevel (env)
+    // end of [val]
 //
-    val () = if istmp then ccompenv_add_impdec (env, imp)
+    val () = (
+      if knd = 0 then
+        (if istmp then ccompenv_add_impdec (env, imp))
+      // end of [if]
+    ) (* end of [val] *)
 //
     val opt = Some (flab)
+    val ((*void*)) = hiimpdec_set_funlabopt (imp, opt)
     val ((*void*)) =
-      hiimpdec_set_funlabopt (imp, opt)
-    val ((*void*)) =
-    if not(istmp) then
-      $D2E.d2cst_set_funlab (d2c, $UN.cast{dynexp2_funlabopt}(opt))
-    // end of [if] // end of [val]
+    (
+      if not(istmp) then
+        $D2E.d2cst_set_funlab (d2c, $UN.cast{dynexp2_funlabopt}(opt))
+      // end of [if]
+    ) (* end of [val] *)
 //
   in
     // nothing
@@ -1057,7 +1070,7 @@ end // end of [local]
 
 implement
 hiimpdec_ccomp_if
-  (env, lvl0, imp) = let
+  (env, lvl0, imp, knd) = let
 //
 val opt =
   hiimpdec_get_funlabopt (imp)
@@ -1066,7 +1079,7 @@ in
 //
 case+ opt of
 | Some _ => ((*void*))
-| None _ => hiimpdec_ccomp (env, lvl0, imp)
+| None _ => hiimpdec_ccomp (env, lvl0, imp, knd)
 //
 end // end of [hiimpdec_ccomp_if]
 
