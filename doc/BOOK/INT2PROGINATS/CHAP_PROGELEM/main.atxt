@@ -1340,8 +1340,8 @@ val @{ x= theOrigin_x, y= theOrigin_y } = theOrigin
 もし要素全てではなく一部を選択したい場合には、次のようなパターンマッチを使うことができます。
 
 <informalexample><programlisting>
-val @{ x= theOrigin_x, ... } = theOrigin // the x-component only 
-val @{ y= theOrigin_y, ... } = theOrigin // the y-component only 
+val @{ x= theOrigin_x, ... } = theOrigin // x要素のみ
+val @{ y= theOrigin_y, ... } = theOrigin // y要素のみ
 </programlisting></informalexample>
 
 もしもこの文法に混乱するようであれば、ドット表記を使うことをおすすめします。
