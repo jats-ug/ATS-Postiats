@@ -117,7 +117,6 @@ that terminates at the end of the current line.\
 C や Java 言語を知っているプログラマにとっては、
 #dyncode("main") の役目は C や Java における同じ名前の関数と本質的に同等であると言えるでしょう。
 #dyncode("implement") キーワードは既に別の箇所でインターフェイスが宣言された関数の実装を作成します。
-
 次に示す ATS のソースコードは #dyncode("main0") に対するインターフェイスの宣言です。
 
 #atscode("\
@@ -373,7 +372,7 @@ cleanall:: clean
 #atscode('\
 \#\#\#\#\#\#
 \#
-\# インストール環境によっては以下のように読みかえる必要があります。
+\# インストール環境によっては以下のように読みかえる必要があります:
 \#
 \# atscc -> patscc
 \# atsopt -> patsopt
