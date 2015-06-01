@@ -2360,7 +2360,7 @@ end // end of [rtfind]
 
 整数から整数への関数が与えられた時、
 #dyncode("rtfind") は関数の根となるような最初の自然数を探します。
-例えば、 #dyncode("rtfind") を多項式の関数 #dyncode("lam x => x * x - x + 110") に呼び出すと
+例えば、 #dyncode("rtfind") を多項式の関数 #dyncode("lam x => x * x - x - 110") に呼び出すと
 #dyncode("11") が返ります。
 もし根を持たない関数に適用されると、 #dyncode("rtfind") は無限ループすることに注意してください。
 ")#comment("para")
