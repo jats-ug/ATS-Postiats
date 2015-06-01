@@ -1584,7 +1584,7 @@ lemma_unicity
 ) : EQ (t1, t2) // end of [lemma_unicity]
 ")
 
-#stacode("EQ") は次のデータ命題宣言で導入されている prop コンストラクタです:
+#stacode("EQ") は次のデータ命題宣言で導入されている命題コンストラクタです:
 
 #atscode("\
 dataprop EQ (tree, tree) =

@@ -264,7 +264,7 @@ a:t@ype
 
 型 #stacode("list(list(T,n),m)") のリスト #dyncode("xss") が与えられた時、
 #dyncode("list_concat(xss)") はペア #dyncode("(pf | res)") を返します。
-このペアの中で、自然数 #stacode("p") があるとき #dyncode("pf") は prop 型 #stacode("MUL(m,n,p)") の証明で、
+このペアの中で、自然数 #stacode("p") があるとき #dyncode("pf") は命題型 #stacode("MUL(m,n,p)") の証明で、
 #dyncode("res") は型 #stacode("list(T,p)") のリストです。
 この記号バー (|) は証明と値を分離するために使われます。
 別の言い方をすると、#dyncode("pf") は等式 #stacode("p=m*n") の証拠となります。
