@@ -344,6 +344,14 @@ c3nstr_solve_itmlst_disj
 , s3is: s3itmlst, s3iss: s3itmlstlst, unsolved: &uint, err: &int
 ) : int(*status*) // end of [c3nstr_solve_itmlst_disj]
 
+extern
+fun
+c3nstr_solve_solverify
+(
+  loc0: location, env: &s2vbcfenv, s2e_prop: s2exp, err: &int
+) : int(*status*)
+// end of [c3nstr_solve_solverify]
+
 (* ****** ****** *)
 
 extern
@@ -403,9 +411,11 @@ c3nstr_solve_errmsg
   (c3t, unsolved) = let
 //
 val loc0 = c3t.c3nstr_loc
-val c3tknd = c3t.c3nstr_kind
+val c3tk = c3t.c3nstr_kind
 //
-fn prerr_c3nstr_if (
+fun
+prerr_c3nstr_if
+(
   unsolved: uint, c3t: c3nstr
 ) : void =
   if (unsolved = 0u) then (prerr ": "; prerr_c3nstr c3t)
@@ -413,8 +423,8 @@ fn prerr_c3nstr_if (
 //
 in
 //
-case+ c3tknd of
-| C3NSTRKmain() =>
+case+ c3tk of
+| C3TKmain((*void*)) =>
   (
     if unsolved = 0u
       then let
@@ -428,7 +438,7 @@ case+ c3tknd of
       else 0 // this errmsg has already been reported
     // end of [if]
   ) (* end of [C3STRKmain] *)
-| C3NSTRKcase_exhaustiveness
+| C3TKcase_exhaustiveness
     (casknd, p2tcs) => let
     val () =
     prerr_case_exhaustiveness_errmsg (loc0, casknd, p2tcs)
@@ -437,77 +447,85 @@ case+ c3tknd of
     | CK_case () => 1 (*warning*)
     | CK_case_pos () => 0 (*error*)
     | CK_case_neg () => 0 (*deadcode*)
-  end // end of [C3NSTRKcase_exhaustiveness]
+  end // end of [C3TKcase_exhaustiveness]
 //
-| C3NSTRKtermet_isnat
+| C3TKtermet_isnat
     () => 0 where {
     val () =
     prerr_error3_loc (loc0)
-    val () =
-    prerr ": unsolved constraint for termination metric being welfounded"
+    val () = prerr
+    (
+      ": unsolved constraint for termetric being well-founded"
+    ) (* end of [val] *)
     val () =
     prerr_c3nstr_if (unsolved, c3t)
     val () = prerr_newline ((*void*))
-  } // end of [C3NSTRKtermet_isnat]
-| C3NSTRKtermet_isdec
+  } // end of [C3TKtermet_isnat]
+| C3TKtermet_isdec
     () => 0 where {
-    val () =
-    prerr_error3_loc (loc0)
-    val () =
-    prerr ": unsolved constraint for termination metric being decreasing"
+    val () = prerr_error3_loc (loc0)
+    val () = prerr
+    (
+      ": unsolved constraint for termetric being strictly decreasing"
+    ) (* end of [val] *)
     val () =
     prerr_c3nstr_if (unsolved, c3t)
     val () = prerr_newline ((*void*))
   } // end of [C3STRKmetric_dec]
 //
-| C3NSTRKsome_fin _ =>
+| C3TKsome_fin _ =>
     (0) where {
-    val () =
-    prerr_error3_loc (loc0)
-    val () =
-    prerrln! ": unsolved constraint for var preservation"
-  } (* end of [C3NSTRKsome_fin] *)
-| C3NSTRKsome_lvar _ =>
+    val () = prerr_error3_loc (loc0)
+    val ((*void*)) =
+      prerrln! ": unsolved constraint for var preservation"
+  } (* end of [C3TKsome_fin] *)
+| C3TKsome_lvar _ =>
     (0) where {
-    val () =
-    prerr_error3_loc (loc0)
-    val () =
-    prerrln! ": unsolved constraint for lvar preservation"
-  } (* end of [C3NSTRKsome_lvar] *)
-| C3NSTRKsome_vbox _ =>
+    val () = prerr_error3_loc (loc0)
+    val ((*void*)) =
+      prerrln! ": unsolved constraint for lvar preservation"
+  } (* end of [C3TKsome_lvar] *)
+| C3TKsome_vbox _ =>
     (0) where {
-    val () =
-    prerr_error3_loc (loc0)
-    val () =
-    prerrln! ": unsolved constraint for vbox preservation"
-  } (* end of [C3NSTRKsome_vbox] *)
+    val () = prerr_error3_loc (loc0)
+    val ((*void*)) = 
+      prerrln! ": unsolved constraint for vbox preservation"
+  } (* end of [C3TKsome_vbox] *)
 //
-| C3NSTRKlstate
+| C3TKlstate
     () => 0 where {
     val () =
     prerr_error3_loc (loc0)
     val () = prerrln! ": unsolved constraint for lstate merging"
-  } // end of [C3NSTRKlstate]
-| C3NSTRKlstate_var
+  } // end of [C3TKlstate]
+| C3TKlstate_var
     (d2v) => 0 where {
     val () =
     prerr_error3_loc (loc0)
     val () =
     prerrln! (": unsolved constraint for merging the lstate of [", d2v, "]")
-  } // end of [C3NSTRKlstate_var]
+  } // end of [C3TKlstate_var]
 //
-| C3NSTRKloop
-    (knd) => 0 where {
+| C3TKloop(knd) =>
+    (0) where {
     val () =
     prerr_error3_loc (loc0)
     val () =
     if knd < 0 then prerr ": unsolved constraint for loop(enter)"
     val () =
-    if knd = 0 then prerr ": unsolved constraint for loop(exit)"
+    if knd = 0 then prerr ": unsolved constraint for loop(break)"
     val () =
     if knd > 0 then prerr ": unsolved constraint for loop(continue)"
     val () = prerr_newline ((*void*))
-  } // end of [C3STRKloop]
+  } (* end of [C3TKloop] *)
+//
+| C3TKsolverify() =>
+    (0) where {
+    val () =
+    prerr_error3_loc (loc0)
+    val () =
+    prerrln! ": the constraint is expected to be verified externally."
+  } (* end of [C3TKsolver] *)
 //
 end // end of [c3nstr_solve_errmsg]
 
@@ -528,7 +546,8 @@ println! ("c3nstr_solve_main: c3t = ", c3t)
 //
 *)
 //
-var status: int = (
+var
+status: int = (
 //
 // ~1: solved; 0: unsolved
 //
@@ -538,9 +557,12 @@ of // case+
 | C3NSTRprop s2p =>
     c3nstr_solve_prop (loc0, env, s2p, err)
   // end of [C3NSTRprop]
-| C3NSTRitmlst s3is =>
+| C3NSTRitmlst(s3is) =>
     c3nstr_solve_itmlst (loc0, env, s3is, unsolved, err)
   // end of [C3NSTRitmlst]
+//
+| C3NSTRsolverify(s2e_prop) => 
+    c3nstr_solve_solverify (loc0, env, s2e_prop, err)
 //
 ) : int // end of [val]
 //
@@ -603,17 +625,16 @@ end // end of [val]
 in
 //
 case+ s3is of
-| list_nil
-    ((*solved*)) => ~1
-| list_cons
-    (s3i, s3is) => (
+| list_nil() => ~1
+| list_cons(s3i, s3is) =>
+  (
   case+ s3i of
-  | S3ITMsvar (s2v) => let
+  | S3ITMsvar(s2v) => let
       val () = s2vbcfenv_add_svar (env, s2v)
     in
-      c3nstr_solve_itmlst (loc0, env, s3is, unsolved, err)
+      c3nstr_solve_itmlst(loc0, env, s3is, unsolved, err)
     end // end of [S3ITMsvar]
-  | S3ITMhypo (h3p) => let
+  | S3ITMhypo(h3p) => let
       val s3p = s3exp_make_h3ypo (env, h3p)
       val () = (
         case+ s3p of
@@ -629,26 +650,41 @@ case+ s3is of
             // nothing
           end // end of [S3Eerr]
         | _ (*non-S3Eerr*) => let
-            val s3p = s3exp_lintize (env, s3p) in s2vbcfenv_add_sbexp (env, s3p)
+            val s3p = s3exp_lintize(env, s3p) in s2vbcfenv_add_sbexp (env, s3p)
           end // end of [_]
       ) : void // end of [val]
     in
-      c3nstr_solve_itmlst (loc0, env, s3is, unsolved, err)
+      c3nstr_solve_itmlst(loc0, env, s3is, unsolved, err)
     end // end of [S3ITMhypo]
-  | S3ITMsVar (s2V) =>
-      c3nstr_solve_itmlst (loc0, env, s3is, unsolved, err)
-  | S3ITMcnstr c3t =>
-      c3nstr_solve_itmlst_cnstr (loc0, env, s3is, c3t, unsolved, err)
-  | S3ITMcnstr_ref (ctr) => let
+  | S3ITMsVar(s2V) =>
+      c3nstr_solve_itmlst(loc0, env, s3is, unsolved, err)
+  | S3ITMcnstr(c3t) =>
+      c3nstr_solve_itmlst_cnstr(loc0, env, s3is, c3t, unsolved, err)
+  | S3ITMcnstr_ref(ctr) => let
       val ref = ctr.c3nstroptref_ref
     in
       case+ !ref of
-      | Some c3t =>
-          c3nstr_solve_itmlst_cnstr (loc0, env, s3is, c3t, unsolved, err)
       | None () => ~1(*solved*)
+      | Some c3t =>
+          c3nstr_solve_itmlst_cnstr(loc0, env, s3is, c3t, unsolved, err)
+        // end of [Some]
     end // end of [S3ITMcnstr_ref]
-  | S3ITMdisj (s3iss_disj) =>
-      c3nstr_solve_itmlst_disj (loc0, env, s3is, s3iss_disj, unsolved, err)
+  | S3ITMdisj(s3iss_disj) =>
+      c3nstr_solve_itmlst_disj(loc0, env, s3is, s3iss_disj, unsolved, err)
+//
+  | S3ITMsolassert(s2e_prop) => let
+(*
+      val () =
+      print! "c3nstr_solve_itmlst"
+      val () =
+      println!
+        (": S3ITMsolassert: s2e_prop = ", s2e_prop)
+      // end of [val]
+*)
+    in
+      c3nstr_solve_itmlst(loc0, env, s3is, unsolved, err)
+    end // end of [S3ITMsolassert]
+//
   ) (* end of [list_cons] *)
 //
 end // end of [c3nstr_solve_itmlst]
@@ -712,6 +748,23 @@ end // end of [c3nstr_solve_itmlst_disj]
 (* ****** ****** *)
 
 implement
+c3nstr_solve_solverify
+  (loc0, env, s2e_prop, err) = let
+//
+(*
+val () =
+println!
+  ("c3nstr_solve_solverify: s2e_prop = ", s2e_prop)
+// end of [val]
+*)
+//
+in
+  0(*unsolved*)
+end // end of [c3nstr_solve_solverify]
+
+(* ****** ****** *)
+
+implement
 c3nstr_ats2_solve (c3t) = let
 (*
 //
@@ -737,9 +790,10 @@ case+ 0 of
 | _ when
     unsolved = 0u => let
 (*
-    val () = (
-      prerr "typechecking is finished successfully!"; prerr_newline ()
-    ) (* end of [val] *)
+    val () =
+    prerrln!
+      ("typechecking is finished successfully!")
+    // end of [val]
 *)
   in
     // nothing
@@ -748,15 +802,19 @@ case+ 0 of
   {
     val () = prerr "typechecking has failed"
     val () =
-    if unsolved <= 1u then prerr ": there is one unsolved constraint"
+    if unsolved <= 1u
+      then prerr ": there is one unsolved constraint"
+    // end of [if]
     val () =
-    if unsolved >= 2u then prerr ": there are some unsolved constraints"
-    val () = (
-      prerr ": please inspect the above reported error message(s) for information."
+    if unsolved >= 2u
+      then prerr ": there are some unsolved constraints"
+    // end of [if]
+    val () =
+    prerrln! (
+      ": please inspect the above reported error message(s) for information."
     ) (* end of [val] *)
-    val () = prerr_newline ()
-    val () = $ERR.abort {void} ()
-  } (* end of [_] *)
+    val () = $ERR.abort{void}()
+  } (* end of [_ when unsolved > 0] *)
 //
 end // end of [c3nstr_ats2_solve]
 

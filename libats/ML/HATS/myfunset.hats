@@ -245,6 +245,14 @@ myfunset_tabulate_cloref
   n: int(n), fopr: (natLt(n)) -<cloref1> elt
 ) : myset // end of [myfunset_tabulate_cloref]
 //
+extern
+fun
+myfunset_tabulate_method
+  {n:nat}
+  (n: int(n)) (fopr: (natLt(n)) -<cloref1> elt): myset
+//
+overload .tabulate with myfunset_tabulate_method
+//
 (* ****** ****** *)
 //
 extern
@@ -419,20 +427,24 @@ implement
 {res}(*tmp*)
 myfunset_foldleft_method
   (xs0, tres) =
-  lam (int, fopr) => myfunset_foldleft_cloref<res> (xs0, int, fopr)
+  lam (int, fopr) =>
+  myfunset_foldleft_cloref<res> (xs0, int, fopr)
 //
 (* ****** ****** *)
 //
 implement
 myfunset_tabulate_cloref
-  (n, fopr) =
-  funset_tabulate_cloref<elt>(n, fopr)
+  (n, fopr) = funset_tabulate_cloref<elt>(n, fopr)
+//
+implement
+myfunset_tabulate_method
+  (n) = lam(fopr) => myfunset_tabulate_cloref(n, fopr)
 //
 (* ****** ****** *)
 //
 implement
 myfunset_listize
-  (xs) = g1ofg0(funset_listize<elt>(xs))
+  (xs) = g1ofg0_list(funset_listize<elt>(xs))
 //
 (* ****** ****** *)
 

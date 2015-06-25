@@ -77,6 +77,26 @@ in
 end // end of [gflist_vt_length]
 
 (* ****** ****** *)
+//
+implement
+{a}(*tmp*)
+gflist_vt_snoc
+  {xs}{x0}(xs, x0) = let
+//
+val (pfapp | res) =
+  gflist_vt_append<a> (xs, gflist_vt_sing(x0))
+//
+extern
+praxi
+lemma :
+{xsx:ilist}
+APPEND(xs, ilist_sing(x0), xsx) -> SNOC(xs, x0, xsx)
+//
+in
+  (lemma(pfapp) | res)
+end // end of [gflist_vt_snoc]
+
+(* ****** ****** *)
 
 implement
 {a}(*tmp*)
@@ -178,23 +198,30 @@ a:vt0p
 
 (* ****** ****** *)
 
-absprop UNION (
+absprop
+UNION (
   ys1: ilist, ys2: ilist, res: ilist
-) // end of [absprop]
+) (* end of [absprop] *)
+
+(* ****** ****** *)
 
 extern
-prfun union_commute
+prfun
+union_commute
   {ys1,ys2:ilist} {ys:ilist}
   (pf: UNION (ys1, ys2, ys)): UNION (ys2, ys1, ys)
 // end of [union_commute]
 
 extern
-prfun union_nil1 {ys:ilist} (): UNION (ilist_nil, ys, ys)
+prfun
+union_nil1 {ys:ilist} (): UNION (ilist_nil, ys, ys)
 extern
-prfun union_nil2 {ys:ilist} (): UNION (ys, ilist_nil, ys)
+prfun
+union_nil2 {ys:ilist} (): UNION (ys, ilist_nil, ys)
 
 extern
-prfun union_cons1
+prfun
+union_cons1
   {y:int}
   {ys1,ys2:ilist}
   {ys:ilist} (
@@ -203,7 +230,8 @@ prfun union_cons1
 // end of [union_cons1]
 
 extern
-prfun union_cons2
+prfun
+union_cons2
   {y:int}
   {ys1,ys2:ilist}
   {ys:ilist} (
@@ -212,7 +240,8 @@ prfun union_cons2
 // end of [union_cons2]
 
 extern
-prfun isord_union_cons
+prfun
+isord_union_cons
   {y1,y2:int | y1 <= y2}
   {ys1,ys2:ilist} {ys:ilist} (
   pf1: ISORD (ilist_cons (y1, ys1))
@@ -225,9 +254,9 @@ prfun isord_union_cons
 
 fun{
 a:vt0p
-} merge {
-  ys1,ys2:ilist
-} (
+} merge
+  {ys1,ys2:ilist}
+(
   pf1ord: ISORD (ys1)
 , pf2ord: ISORD (ys2)
 | ys1: gflist_vt (a, ys1), ys2: gflist_vt (a, ys2)
@@ -287,8 +316,8 @@ prfun sort_nilsing
 fun{
 a:vt0p
 } msort
-  {xs:ilist}
-{n:nat} .<n>. (
+  {xs:ilist}{n:nat} .<n>.
+(
   pflen: LENGTH (xs, n)
 | xs: gflist_vt (a, xs), n: int n
 ) : [ys:ilist] (
@@ -309,12 +338,27 @@ if n >= 2 then let
   val (pf2srt | ys2) = msort (pf2len | xs2, n-n2)
   prval (pf2ord, pf2perm) = sort_elim (pf2srt)
   val (pfuni, pford | ()) = merge (pf1ord, pf2ord | ys1, ys2, xs)
-  prval pfperm = lemma (pfapp, pf1perm, pf2perm, pfuni) where {
-    extern prfun lemma {xs1,xs2:ilist} {xs:ilist} {ys1,ys2:ilist} {ys:ilist} (
-      pfapp: APPEND (xs1, xs2, xs), pf1: PERMUTE (xs1, ys1), pf2: PERMUTE (xs2, ys2), pf4: UNION (ys1, ys2, ys)
-    ) : PERMUTE (xs, ys)
-  } // end of [prval]
+//
+  prval
+  pfperm =
+  lemma
+  (
+    pfapp, pf1perm, pf2perm, pfuni
+  ) where
+  {
+    extern
+    prfun
+    lemma
+    {xs1,xs2:ilist}{xs:ilist}
+    {ys1,ys2:ilist}{ys:ilist}
+    (
+      APPEND (xs1, xs2, xs)
+    , PERMUTE (xs1, ys1), PERMUTE (xs2, ys2), UNION (ys1, ys2, ys)
+    ) : PERMUTE (xs, ys) // end of [lemma]
+  } (* end of [where] *) // end of [prval]
+//
   prval pfsrt = sort_make (pford, pfperm)
+//
 in
   (pfsrt | xs)
 end else

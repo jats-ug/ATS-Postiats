@@ -28,13 +28,13 @@
 (* ****** ****** *)
 
 (* Author: Hongwei Xi *)
-(* Authoremail: gmhwxi AT gmail DOT com *)
+(* Authoremail: gmhwxiATgmailDOTcom *)
 (* Start time: August, 2013 *)
 
 (* ****** ****** *)
 
 #define
-ATS_PACKNAME "ATSLIB.libats.funset_avltree"
+ATS_PACKNAME "ATSLIB.libats.funmap_avltree"
 #define
 ATS_DYNLOADFLAG 0 // no need for dynloading at run-time
 
@@ -586,7 +586,7 @@ case+ t0 of
         // end of [if]
       end // end of [sgn > 0]
     | _ (* sgn = 0 *) => let
-        val () = res := true // fould
+        val () = res := true // found
         val () = res2 := x
         prval () = opt_some{itm}(res2)
       in

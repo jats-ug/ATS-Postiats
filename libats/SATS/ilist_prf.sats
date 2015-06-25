@@ -47,7 +47,7 @@ datasort ilist =
 
 (* ****** ****** *)
 
-stadef ilist_sing (x:int): ilist = ilist_cons (x, ilist_nil)
+stadef ilist_sing (x:int) = ilist_cons (x, ilist_nil)
 
 (* ****** ****** *)
 
@@ -138,8 +138,12 @@ SNOC (ilist, int, ilist) =
     SNOCcons (ilist_cons (x0, xs1), x, ilist_cons (x0, xs2)) of SNOC (xs1, x, xs2)
 // end of [SNOC]
 
-prfun snoc_istot {xs:ilist} {x:int} (): [xsx:ilist] SNOC (xs, x, xsx)
-prfun snoc_isfun {xs:ilist} {x:int}
+(* ****** ****** *)
+
+prfun
+snoc_istot{xs:ilist}{x:int} (): [xsx:ilist] SNOC (xs, x, xsx)
+prfun
+snoc_isfun{xs:ilist}{x:int}
   {xsx1,xsx2:ilist} (pf1: SNOC (xs, x, xsx1), pf2: SNOC (xs, x, xsx2)): ILISTEQ (xsx1, xsx2)
 // end of [snoc_isfun]
 
@@ -161,27 +165,38 @@ APPEND (ilist, ilist, ilist) =
     APPENDcons (ilist_cons (x, xs), ys, ilist_cons (x, zs)) of APPEND (xs, ys, zs)
 // end of [APPEND]
 
-prfun append_istot
-  {xs,ys:ilist} (): [zs:ilist] APPEND (xs, ys, zs)
-prfun append_isfun {xs,ys:ilist} {zs1,zs2:ilist}
-  (pf1: APPEND (xs, ys, zs1), pf2: APPEND (xs, ys, zs2)): ILISTEQ (zs1, zs2)
-
+(* ****** ****** *)
+//
+prfun
+append_istot
+  {xs,ys:ilist}(): [zs:ilist] APPEND(xs, ys, zs)
+prfun
+append_isfun
+  {xs,ys:ilist}{zs1,zs2:ilist}
+  (pf1: APPEND(xs, ys, zs1), pf2: APPEND(xs, ys, zs2)): ILISTEQ(zs1, zs2)
+//
 (* ****** ****** *)
 (*
 // HX-2012-12-13: proven
 *)
-prfun append_unit_left
-  {xs:ilist} (): APPEND (ilist_nil, xs, xs)
-prfun append_unit_right
-  {xs:ilist} (): APPEND (xs, ilist_nil, xs)
+prfun
+append_unit_left
+  {xs:ilist}(): APPEND (ilist_nil, xs, xs)
+prfun
+append_unit_right
+  {xs:ilist}(): APPEND (xs, ilist_nil, xs)
+
+(* ****** ****** *)
 
 (*
 // HX-2012-12-17: proven
 *)
 prfun
 append_sing
-  {x:int}{xs:ilist}
-  (): APPEND (ilist_sing(x), xs, ilist_cons (x, xs))
+{x:int}{xs:ilist}
+(
+// argumentless
+) : APPEND (ilist_sing(x), xs, ilist_cons (x, xs))
 // end of [append_sing]
 
 (* ****** ****** *)
@@ -193,8 +208,11 @@ lemma_append_length
   {xs1,xs2:ilist}
   {xs:ilist}
   {n1,n2:int} (
-  pf: APPEND (xs1, xs2, xs), pf1len: LENGTH (xs1, n1), pf2len: LENGTH (xs2, n2)
+  pf: APPEND (xs1, xs2, xs)
+, pf1len: LENGTH (xs1, n1), pf2len: LENGTH (xs2, n2)
 ) : LENGTH (xs, n1+n2) // end of [lemma_append_length]
+
+(* ****** ****** *)
 
 (*
 // HX-2012-12-13: proven
@@ -205,9 +223,12 @@ lemma_append_snoc
   {x:int}
   {xs2:ilist}
   {xs1x:ilist}
-  {xs:ilist} (
-  pf1: APPEND (xs1, ilist_cons (x, xs2), xs), pf2: SNOC (xs1, x, xs1x)
-) : APPEND (xs1x, xs2, xs) // end of [lemma_append_snoc]
+  {res:ilist}
+(
+  pf1: APPEND(xs1, ilist_cons(x, xs2), res), pf2: SNOC (xs1, x, xs1x)
+) : APPEND (xs1x, xs2, res) // end-of-prfun
+
+(* ****** ****** *)
 
 (*
 // HX-2012-12-14: proven
@@ -216,7 +237,8 @@ prfun
 lemma_append_assoc
   {xs1,xs2,xs3:ilist}
   {xs12,xs23:ilist}
-  {xs12_3,xs1_23:ilist} (
+  {xs12_3,xs1_23:ilist}
+(
   pf12: APPEND (xs1, xs2, xs12), pf23: APPEND (xs2, xs3, xs23)
 , pf12_3: APPEND (xs12, xs3, xs12_3), pf1_23: APPEND (xs1, xs23, xs1_23)
 ) : ILISTEQ (xs12_3, xs1_23) // end of [lemma_append_assoc]
@@ -224,7 +246,7 @@ lemma_append_assoc
 (* ****** ****** *)
 
 dataprop
-REVAPP (ilist, ilist, ilist) =
+REVAPP(ilist, ilist, ilist) =
   | {ys:ilist}
     REVAPPnil (ilist_nil, ys, ys) of ()
   | {x:int}{xs:ilist}{ys:ilist}{zs:ilist}

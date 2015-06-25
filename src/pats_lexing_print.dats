@@ -151,7 +151,12 @@ fprint_token
   | T_VIEWAT () => fprintf (out, "VIEWAT()", @()) // view@
 //
   | T_DLRARRPSZ () => fprintf (out, "DLRARRPSZ()", @())
+//
+  | T_DLRSOLASSERT () => fprintf (out, "DLRSOLASSERT()", @())
+  | T_DLRSOLVERIFY () => fprintf (out, "DLRSOLVERIFY()", @())
+//
   | T_DLRDELAY (x) => fprintf (out, "DLRDELAY(%i)", @(x))
+//
   | T_DLREFFMASK () => fprintf (out, "DLREFFMASK()", @())
   | T_DLREFFMASK_ARG (x) => fprintf (out, "DLREFFMASK(%i)", @(x))
 //

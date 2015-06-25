@@ -191,6 +191,10 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 
 (* ****** ****** *)
 
+#packfilename("libats_gflist.dats")
+
+(* ****** ****** *)
+
 #packfilename("libats_bitvec.dats")
 
 (* ****** ****** *)
@@ -221,6 +225,7 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 #packfilename("libats_funset_avltree.dats")
 #packfilename("libats_funmap_list.dats")
 #packfilename("libats_funmap_avltree.dats")
+#packfilename("libats_funmap_rbtree.dats")
 #packfilename("libats_fundeque_fngtree.dats")
 #packfilename("libats_funralist_nested.dats")
 
@@ -262,6 +267,13 @@ The ATSHOME/doc/EXAMPLE/ATSLIB\
 
 #packfilename("libats_ML_funset.dats")
 #packfilename("libats_ML_funmap.dats")
+#packfilename("libats_ML_myfunset.dats")
+#packfilename("libats_ML_myfunmap.dats")
+
+(* ****** ****** *)
+
+#packfilename("libats_ML_hashtblref.dats")
+#packfilename("libats_ML_myhashtblref.dats")
 
 (* ****** ****** *)
 
