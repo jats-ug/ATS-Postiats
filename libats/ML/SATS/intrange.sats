@@ -107,12 +107,23 @@ overload .foldleft with intrange_foldleft_method
 //
 fun{a:t0p}
 int_list_map_cloref
-  (n: int, f: cfun(int, a)): list0(a)
+  (n: intGte(0), f: cfun(int, a)): list0(a)
 fun{a:t0p}
 int_list_map_method
-  (n: int, TYPE(a))(f: cfun(int, a)): list0(a)
+  (n: intGte(0), TYPE(a))(f: cfun(int, a)): list0(a)
 //
 overload .list_map with int_list_map_method
+//
+(* ****** ****** *)
+//
+fun{a:t0p}
+int_array_map_cloref
+  (n: intGte(0), f: cfun(size_t, a)): array0(a)
+fun{a:t0p}
+int_array_map_method
+  (n: intGte(0), TYPE(a))(f: cfun(size_t, a)): array0(a)
+//
+overload .array_map with int_array_map_method
 //
 (* ****** ****** *)
 //

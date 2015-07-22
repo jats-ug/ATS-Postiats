@@ -483,7 +483,7 @@ HX: VERSION-0.1.12 released on Saturday, May 16, 2015
 *)
 #define PATS_MAJOR_VERSION 0
 #define PATS_MINOR_VERSION 2
-#define PATS_MICRO_VERSION 1
+#define PATS_MICRO_VERSION 2
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -819,6 +819,7 @@ val () = pervasive_load (PATSHOME, "prelude/SATS/intrange.sats")
 //
 val () = pervasive_load (PATSHOME, "prelude/SATS/gorder.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/gnumber.sats")
+val () = pervasive_load (PATSHOME, "prelude/SATS/grandom.sats")
 //
 (*
 //

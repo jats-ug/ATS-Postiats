@@ -1226,7 +1226,7 @@ tlcalopt =
 //
 val isret =
 (
-  if tlcalopt > 0 then tmpvar_isret (tmpret) else false
+  if tlcalopt > 0 then tmpvar_isret(tmpret) else false
 ) : bool // end of [val]
 //
 (*
@@ -1330,7 +1330,7 @@ if added = 0 then let
   val ins = instr_fcall (loc0, tmpret, pmv_fun, hse_fun, pmvs_arg)
 in
   instrseq_add (res, ins)
-end // end of [if]
+end // end of [then] // end of [if]
 //
 in
   // nothing

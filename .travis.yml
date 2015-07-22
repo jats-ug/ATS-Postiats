@@ -2,6 +2,7 @@ os:
   - osx
   - linux
 sudo: required
+#sudo: false
 before_install:
   - date
   - cd ${HOME}

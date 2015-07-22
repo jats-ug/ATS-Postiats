@@ -342,20 +342,26 @@ fun swap_boxed{a,b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 ")
 
 The type variables #stacode("a") and #stacode("b") are often referred as
-static arguments while #dyncode("xy") is a dynamic argument. Here is some code
-that makes use of the polymorphic function #dyncode("swap_boxed"):
+static arguments while #dyncode("xy") is a dynamic argument. For example,
+the following code makes use of the polymorphic function #dyncode("swap_boxed"):
 
 #atscode('\
-val AB = ("A", "B")
-val BA1 = swap_boxed{string,string} (AB)
+val AB = (box("A"), box("B"))
+val BA1 = swap_boxed{boxstr,boxstr} (AB)
 val BA2 = swap_boxed (AB) // omitting type arguments may be fine
 ')
 
-If #stacode("swap_boxed") is called on a pair of the type (T1, T2) for some
-types T1 and T2, both T1 and T2 are required to be boxed. Otherwise, a
-type-error is reported. For instance, calling #dyncode("swap_boxed") on
-#dyncode("(0, 1)") yields a type-error as the type #dyncode("int") is not
-boxed.\
+where the type #stacode("boxstr") is an explicitly boxed version of
+#stacode("string") that is defined as #stacode("boxed(string)").
+Internally, there is really no difference between #stacode("string") and
+#stacode("boxed(string)").  If #dyncode("swap_boxed") is called on a pair
+of the type (T1, T2) for some types T1 and T2, both T1 and T2 are required
+to be boxed. Otherwise, a type-error is reported. For example, calling
+#dyncode("swap_boxed") on #dyncode("(0, 1)") yields a type-error as the
+type #stacode("int") is not boxed. One may be attempted to form a boxed
+integer like #dyncode("box(0)"), but doing so leads to a type-error as
+there is no assumption made about the size of an integer value of the type
+#stacode("int") in ATS.
 
 ")#comment("para")
 ")
@@ -418,13 +424,13 @@ shown in the following style of implementation of a polymorphic function:
 #atscode('\
 fun swap2_boxed{a:type}{b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 
-val AB = ("A", "B")
+val AB = (box("A"), box("B"))
 val BA1 = swap2_boxed (AB) // both static arguments to be synthesized
 val BA2 = swap2_boxed{...} (AB) // both static arguments to be synthesized
-val BA3 = swap2_boxed{..}{string} (AB) // 1st static argument to be synthesized
-val BA4 = swap2_boxed{string}{..} (AB) // 2nd static argument to be synthesized
+val BA3 = swap2_boxed{..}{boxstr} (AB) // 1st static argument to be synthesized
+val BA4 = swap2_boxed{boxstr}{..} (AB) // 2nd static argument to be synthesized
 val BA5 = swap2_boxed{..}{..} (AB) // both static arguments to be synthesized
-val BA6 = swap2_boxed{string}{string} (AB) // both static arguments are provided
+val BA6 = swap2_boxed{boxstr}{boxstr} (AB) // both static arguments are provided
 ')
 
 The special syntax #stacode("{..}") indicates to the typechecker that the
@@ -921,7 +927,7 @@ Reverse-Appending: #dyncode("list0_reverse_append")
 #langeng("
 #para("\
 
-Given two lists xs and ys of the type #dyncode("list0(T)") for some type T,
+Given two lists xs and ys of the type #stacode("list0(T)") for some type T,
 #dyncode("list0_reverse_append(xs, ys)") returns a list that is the
 concatenation of the reverse of xs and ys:
 
@@ -1227,10 +1233,10 @@ list0_foldright
 #langeng("
 #para("\
 
-Given two lists xs and ys of the types #stacode("list0(T1)") and
-#stacode("list0(T2)") for some types T1 and T2, respectively,
-#dyncode("list0_zip(xs, ys)") returns a list zs of the type #stacode("list0
-@(T1, T2)"):
+Given two lists xs and ys of the types #stacode("list0(T1)")
+and #stacode("list0(T2)") for some types T1 and T2, respectively,
+#dyncode("list0_zip(xs, ys)") returns a list zs of the type
+#stacode("list0(@(T1, T2))"):
 
 #atscode("\
 fun{

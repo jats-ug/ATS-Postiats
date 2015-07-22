@@ -47,9 +47,16 @@ staload "./pats_basics.sats"
 
 (* ****** ****** *)
 
-staload LOC = "./pats_location.sats"
-overload print with $LOC.print_location
+staload
+GLOB = "./pats_global.sats"
 
+(* ****** ****** *)
+//
+staload
+LOC = "./pats_location.sats"
+overload
+print with $LOC.print_location
+//
 (* ****** ****** *)
 //
 staload "./pats_staexp2.sats"
@@ -57,7 +64,11 @@ staload "./pats_staexp2.sats"
 staload D2E = "./pats_dynexp2.sats"
 //
 typedef d2cst = $D2E.d2cst
-typedef dynexp2_funlabopt = $D2E.funlabopt
+//
+typedef
+dynexp2_funlabopt = $D2E.funlabopt
+//
+overload print with $D2E.print_d2var
 //
 (* ****** ****** *)
 
@@ -454,8 +465,16 @@ case+ hfds of
     ((*void*)) => list_nil ()
 | list_cons
     (hfd, hfds) => let
+//
     val loc = hfd.hifundec_loc
     val d2v = hfd.hifundec_var
+//
+(*
+    val () =
+    println! ("auxinit: loc = ", loc)
+    val () =
+    println! ("auxinit: d2v = ", d2v)
+*)
 //
     val () =
       $D2E.d2var_set_level (d2v, lvl0)
@@ -577,7 +596,14 @@ hifundeclst_ccomp
   env, lvl0, knd, decarg, hfds
 ) = let
 //
-val isfnx = funkind_is_mutailrec(knd)
+val
+tlcalopt =
+  $GLOB.the_CCOMPATS_tlcalopt_get()
+val isfnx =
+(
+if tlcalopt > 0
+  then funkind_is_mutailrec(knd) else false
+) : bool // end of [val]
 //
 val i0 = (if isfnx then 1 else 0): int
 //
@@ -675,7 +701,8 @@ end // end of [local]
 
 local
 
-fun auxinit
+fun
+auxinit
   {n:nat} .<n>.
 (
   env: !ccompenv
