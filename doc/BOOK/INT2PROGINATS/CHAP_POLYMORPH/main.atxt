@@ -377,19 +377,24 @@ fun swap_boxed{a,b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 ")
 
 型変数 #stacode("a") と #stacode("b") はしばしば静的引数と呼ばれ、 #dyncode("xy") は動的引数と呼ばれます。
-次のコードは多相関数 #dyncode("swap_boxed") を使っています:
+例えば、次のコードは多相関数 #dyncode("swap_boxed") を使っています:
 
 #atscode('\
-val AB = ("A", "B")
-val BA1 = swap_boxed{string,string} (AB)
+val AB = (box("A"), box("B"))
+val BA1 = swap_boxed{boxstr,boxstr} (AB)
 val BA2 = swap_boxed (AB) // omitting type arguments may be fine
 ')
 
-もし型 T1 と T2 が与えられ #stacode("swap_boxed") をタプル型 (T1, T2) に対して呼び出した場合、T1
-と T2 はボックス化されていなければなりません。
-そうでなければ型エラーが発生します。
-例えば #dyncode("swap_boxed") を #dyncode("(0, 1)") に呼び出すと、型 #dyncode("int")
-がボックス化されていないことを示す型エラーが起きます。\
+このとき #stacode("boxstr") は明示的にボックス化された #stacode("string")
+で、#stacode("boxed(string)") のように定義されます。
+内部的には #stacode("string") と #stacode("boxed(string)") の間に違いはありません。
+もし #dyncode("swap_boxed") がなんらかの型 T1 と T2 に関する型 (T1, T2)
+のペアに呼び出された場合、T1 と T2 の両方がボックス化されていることが要求されます。
+さもなければ、型エラーになります。
+例えば、#dyncode("swap_boxed") を #dyncode("(0, 1)") に呼び出すと、型
+#stacode("int") がボックス化されていないという型エラーが発生します。
+#dyncode("box(0)") のようなボックス化された整数を作ろうとするかもしれませんが、これは型エラーになります。
+ATS における型 #stacode("int") の整数値のサイズについて、何も前提がないからです。
 
 ")#comment("para")
 ")
@@ -448,13 +453,13 @@ rest of static arguments should all be synthesized.\
 #atscode('\
 fun swap2_boxed{a:type}{b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 
-val AB = ("A", "B")
+val AB = (box("A"), box("B"))
 val BA1 = swap2_boxed (AB) // both static arguments to be synthesized
 val BA2 = swap2_boxed{...} (AB) // both static arguments to be synthesized
-val BA3 = swap2_boxed{..}{string} (AB) // 1st static argument to be synthesized
-val BA4 = swap2_boxed{string}{..} (AB) // 2nd static argument to be synthesized
+val BA3 = swap2_boxed{..}{boxstr} (AB) // 1st static argument to be synthesized
+val BA4 = swap2_boxed{boxstr}{..} (AB) // 2nd static argument to be synthesized
 val BA5 = swap2_boxed{..}{..} (AB) // both static arguments to be synthesized
-val BA6 = swap2_boxed{string}{string} (AB) // both static arguments are provided
+val BA6 = swap2_boxed{boxstr}{boxstr} (AB) // both static arguments are provided
 ')
 
 特殊構文 #stacode("{..}") はこの適用に含まれる静的引数が推論されるべきであることを型検査器に指示します。
@@ -954,7 +959,7 @@ tail-recursive.\
 #langja("
 #para("\
 
-型 T と型 #dyncode("list0(T)") の2つのリスト xs と ys が与えられた時、#dyncode("list0_reverse_append(xs, ys)") は xs と ys の逆順を連結したリストを返します:
+型 T と型 #stacode("list0(T)") の2つのリスト xs と ys が与えられた時、#dyncode("list0_reverse_append(xs, ys)") は xs と ys の逆順を連結したリストを返します:
 
 #atscode("\
 fun{
