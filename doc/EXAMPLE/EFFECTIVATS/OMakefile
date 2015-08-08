@@ -1,30 +1,30 @@
 PUBLISH_PATH    = $(HOME)/doc/jats-ug.github.io/doc/ATS2/EXAMPLE/EFFECTIVATS
 CHAP_ATXT_FILES = $(glob */*.atxt)
-CHAP_DIRS       = $(dirname $(CHAP_ATXT_FILES))
+CHAP_ATXT_DIRS  = $(dirname $(CHAP_ATXT_FILES))
 CHAP_PHP_FILES  = $(glob */*.php)
 CHAP_PHP_DIRS   = $(dirname $(CHAP_PHP_FILES))
-CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES)) \
+#CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES))
+CHAP_HTML_FILES = $(addsuffix /index.html, $(CHAP_ATXT_DIRS)) \
 		  $(addsuffixes .html, $(filter-out html.php, $(split _, $(CHAP_PHP_FILES))))
 
 .PHONY: all clean publish
 .DEFAULT: all
 all: $(CHAP_HTML_FILES)
 
-.SUBDIRS: $(CHAP_DIRS)
-	%.html: %.atxt
+.SUBDIRS: $(CHAP_ATXT_DIRS)
+	index.html: main.atxt
 		make $@
 
 .SUBDIRS: $(CHAP_PHP_DIRS)
-	%.html: %_html.php
+	main.html: main_html.php
 		make $@
 
 publish: all
 	rm -rf $(PUBLISH_PATH)
 	mkdir -p $(PUBLISH_PATH)
-	cd $(PUBLISH_PATH) && mkdir -p $(CHAP_DIRS) $(CHAP_PHP_DIRS)
+	cd $(PUBLISH_PATH) && mkdir -p $(CHAP_ATXT_DIRS) $(CHAP_PHP_DIRS)
 	foreach(i, $(CHAP_HTML_FILES))
 		cp $(i) $(PUBLISH_PATH)/$(i)
 
 clean:
-	rm -f */main.html */main_atxt.dats */main_atxt.txt
 	make cleanall
