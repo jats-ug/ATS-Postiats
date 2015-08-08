@@ -21,10 +21,12 @@
 
 <h1>
 #langeng("
-Effective ATS: Sorting Linear Lists
+Effective ATS:<br>
+Sorting Linear Lists
 ")
 #langja("
-Effective ATS: 線形リストのソート
+Effective ATS:<br>
+線形リストのソート
 ")
 </h1>
 

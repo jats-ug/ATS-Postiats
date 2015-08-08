@@ -108,7 +108,7 @@ end // end of [comarg_parse]
 
 implement
 comarglst_parse
-  {n} (argc, argv) = let
+  {n}(argc, argv) = let
 //
 vtypedef
 arglst(n:int) = list_vt(comarg, n)
@@ -151,24 +151,27 @@ end // end of [comarglst_parse]
 (* ****** ****** *)
 
 implement
-comarg_warning (str) = {
-  val () = prerr ("warning(ATS)")
-  val () = prerr (": unrecognized command line argument [")
-  val () = prerr (str)
-  val () = prerr ("] is ignored.")
-  val () = prerr_newline ()
+comarg_warning
+  (str) = {
+//
+val () = prerr ("warning(ATS)")
+val () = prerr (": unrecognized command line argument [")
+val () = prerr (str)
+val () = prerr ("] is ignored.")
+val () = prerr_newline ((*void*))
+//
 } (* end of [comarg_warning] *)
 
 (* ****** ****** *)
 
 implement
-is_DATS_flag (flg) = 
-  if strncmp (flg, "-DATS", 5) = 0 then true else false
+is_DATS_flag (flag) = 
+  if strncmp (flag, "-DATS", 5) = 0 then true else false
 // end of [is_DATS_flag]
 
 implement
-is_IATS_flag (flg) = 
-  if strncmp (flg, "-IATS", 5) = 0 then true else false
+is_IATS_flag (flag) = 
+  if strncmp (flag, "-IATS", 5) = 0 then true else false
 // end of [is_IATS_flag]
 
 (* ****** ****** *)
@@ -212,7 +215,7 @@ implement
 process_DATS_def
   (def) = let
 //
-val def = string1_of_string (def)
+val def = string1_of_string(def)
 //
 (*
 val () =
@@ -220,12 +223,12 @@ val () =
 *)
 //
 val opt =
-  $PAR.parse_from_string (def, $PAR.p_datsdef)
+  $PAR.parse_from_string_parser(def, $PAR.p_datsdef)
 //
 in
 //
 case+ opt of
-| ~Some_vt (def) => let
+| ~Some_vt(def) => let
     val+$SYN.DATSDEF(key, opt) = def
     val e1xp = (
       case+ opt of
@@ -235,7 +238,7 @@ case+ opt of
   in
     $TRENV1.the_e1xpenv_addperv (key, e1xp)
   end // end of [Some_vt]
-| ~None_vt ((*void*)) => let
+| ~None_vt((*void*)) => let
     val () =
     prerr ("patsopt: error(0)")
     val () =
@@ -253,7 +256,8 @@ end // end of [process_DATS_def]
 // HX: [ppush] means permanent push
 //
 implement
-process_IATS_dir (dir) = let
+process_IATS_dir
+  (dir) = let
 //
 val () = $FIL.the_pathlst_ppush (dir)
 val () = $GLOB.the_IATS_dirlst_ppush (dir)
@@ -273,13 +277,26 @@ getenv (name: string): Stropt = "getenv"
 in (* in-of-local *)
 
 implement
-process_ATSPKGRELOCROOT () = let
+process_ATSPKGRELOCROOT
+ ((*void*)) = let
 //
-val opt = get () where
+val
+opt =
+get() where
 {
-  extern fun get (): Stropt = "mac#patsopt_ATSPKGRELOCROOT_get"
-} // end of [where] // end of [val]
-val issome = stropt_is_some (opt)
+//
+extern
+fun
+get
+(
+// argless
+) : Stropt =
+  "mac#patsopt_ATSPKGRELOCROOT_get"
+// end of [extern]
+//
+} (* where *) // end of [val]
+val
+issome = stropt_is_some (opt)
 //
 val def = (
 //
@@ -287,18 +304,23 @@ if
 issome
 then stropt_unsome (opt)
 else let
-  val user = getenv ("USER")
-  val issome = stropt_is_some (user)
-  val user =
-  (
-    if issome
-      then stropt_unsome(user) else "$USER"
-    // end of [if]
-  ) : string // end of [val]
-  val
-  ATSPKGRELOCROOT =
-    sprintf("/tmp/.ATSPKGRELOCROOT-%s", @(user))
-  // end of [val]
+//
+val
+user = getenv ("USER")
+val
+issome = stropt_is_some (user)
+val
+user = (
+//
+if issome
+  then stropt_unsome(user) else "$USER"
+//
+) : string // end of [val]
+val
+ATSPKGRELOCROOT =
+  sprintf("/tmp/.ATSPKGRELOCROOT-%s", @(user))
+// end of [val]
+//
 in
   string_of_strptr(ATSPKGRELOCROOT)
 end // end of [else]
@@ -307,11 +329,16 @@ end // end of [else]
 //
 (*
 val () =
-println! ("process_ATSPKGRELOCROOT: def = ", def)
+println!
+(
+  "process_ATSPKGRELOCROOT: def = ", def
+) (* end of [val] *)
 *)
 //
-val key = $SYM.symbol_ATSPKGRELOCROOT
-val e1xp = e1xp_string ($LOC.location_dummy, def)
+val key =
+  $SYM.symbol_ATSPKGRELOCROOT
+val e1xp =
+  e1xp_string ($LOC.location_dummy, def)
 //
 in
   $TRENV1.the_e1xpenv_addperv (key, e1xp)

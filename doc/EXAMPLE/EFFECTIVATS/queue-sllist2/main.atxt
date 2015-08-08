@@ -21,10 +21,12 @@
 
 <h1>
 #langeng("
-Effective ATS: An Amortized Implementation of Queues
+Effective ATS:<br>
+An Amortized Queue Implementation
 ")
 #langja("
-Effective ATS: キューの償却実装
+Effective ATS:<br>
+キューの償却実装
 ")
 </h1>
 

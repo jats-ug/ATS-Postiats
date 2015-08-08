@@ -21,10 +21,12 @@
 
 <h1>
 #langeng("
-Effective ATS: Inter-Process Communication based on Redis
+Effective ATS:<br>
+Inter-Process Communication based on Redis
 ")
 #langja("
-Effective ATS: Redis を用いたプロセス間通信
+Effective ATS:<br>
+Redis を用いたプロセス間通信
 ")
 </h1>
 

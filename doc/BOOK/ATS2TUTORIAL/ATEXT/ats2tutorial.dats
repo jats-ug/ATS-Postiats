@@ -68,8 +68,11 @@ macdef langja (x) = ignorestr ,(x)
 
 (* ****** ****** *)
 
-fun timestamp
-  (): atext = let
+fun
+timestamp
+(
+// argless
+) : atext = let
   var time = $TIME.time_get ()
   val (fpf | x) = $TIME.ctime (time)
   val x1 = sprintf ("%s", @($UN.castvwtp1{string}(x)))
@@ -187,30 +190,55 @@ end // end of [atscodefil]
 end // end of [local]
 
 (* ****** ****** *)
+
+fun
+ulink
+(
+  link: string, name: string
+) : atext = let
+  val res = sprintf ("<ulink url=\"%s\">%s</ulink>", @(link, name))
+in
+  atext_strptr (res)
+end // end of [ulink]
+      
+(* ****** ****** *)
 //
 #define
 MYCODEROOT
-"http://ats-lang.sourceforge.net/DOCUMENT"
+"https://github.com/ats-lang/ats-lang.github.io/blob/master/DOCUMENT"
+#define
+MYATSCODEROOT
+"https://github.com/ats-lang/ats-lang.github.io/blob/master/DOCUMENT/ATS-Postiats"
 //
 (* ****** ****** *)
 
-fun mycodelink (
-  codepath: string, linkname: string
+fun
+mycodelink
+(
+  path: string, link: string
 ) : atext = let
-  val res = sprintf (
-    "<ulink url=\"%s/ATS2TUTORIAL/CODE/%s\">%s</ulink>", @(MYCODEROOT, codepath, linkname)
-  ) // end of [val]
-  val res = string_of_strptr (res)
+//
+val
+res =
+sprintf
+(
+  "<ulink url=\"%s/ATS2TUTORIAL/CODE/%s\">%s</ulink>", @(MYCODEROOT, path, link)
+) (* end of [val] *)
+//
+val res = string_of_strptr (res)
+//
 in
   atext_strcst (res)
 end // end of [mycodelink]
 
-fun myatscodelink (
+fun
+myatscodelink
+(
   codepath: string, linkname: string
 ) : atext = let
-  val res = sprintf (
-    "<ulink url=\"%s/ATS-Postiats/%s\">%s</ulink>", @(MYCODEROOT, codepath, linkname)
-  ) // end of [val]
+  val
+  res =
+  sprintf("<ulink url=\"%s/%s\">%s</ulink>", @(MYATSCODEROOT, codepath, linkname))
   val res = string_of_strptr (res)
 in
   atext_strcst (res)
