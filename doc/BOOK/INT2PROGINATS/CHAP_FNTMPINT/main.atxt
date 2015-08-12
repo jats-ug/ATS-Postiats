@@ -46,7 +46,7 @@ ATS における関数テンプレートのサポートは ATS のデザイン�
 それは (妥当性の面で) とても柔軟で、必要になる実行時オーバーヘッドは最小のものです。
 ATSPRE (つまり ATSLIB/prelude) と ATSLIB/libats の両方はテンプレートに基いていて、#command("atsopt")
 によって吐き出されるC言語コードが ATS ソースコード中のテンプレート実体を実装するためにそれらのライブラリにおけるテンプレートは使われます。
-リンクする ATS のライブラリファイル (#filename("libatslib.a") and #filename("libatslib.so")) は最小のものです。
+リンクする ATS のライブラリファイル (#filename("libatslib.a") と #filename("libatslib.so")) は最小のものです。
 それらは ATS ソースコードを実行バイナリにコンパイルするのに不要なことさえあります。
 
 ')#comment("para")
