@@ -6,7 +6,11 @@
 <author>
 <firstname>Hongwei</firstname>
 <surname>Xi</surname>
-<affiliation><address><email>gmhwxiATgmailDOTcom</email></address></affiliation>
+<affiliation>
+<address>
+ATS Trustful Software, Inc.
+</address>
+</affiliation>
 </author>
 </authorgroup>
 
@@ -24,6 +28,12 @@
 翻訳に参加するには
 <ulink url="https://github.com/jats-ug/translate/blob/master/Manual/index.md">ATS2公式マニュアルの日本語訳</ulink>
 を参照してください。
+</para>
+<para>
+プログラミング言語としての ATS は豊かな構文と機能を両立しています。
+この本では ATS の中心となる機能を読者に解説します。
+それらは基本的な関数型プログラミング、単純な型、(再帰的に定義された) データ型、多相型、依存型、線形型、定理証明、定理証明によるプログラミング (PwTP)、そしてテンプレートを使ったプログラミングなどです。
+一般的なプログラミングに馴染みのある読者を仮定してませんが、この本は相当のプログラミング経験のない読者には少し難しいかもしれません。
 </para>
 </abstract>
 
