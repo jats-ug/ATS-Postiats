@@ -105,9 +105,9 @@ comarglst (n: int) = list_vt (comarg, n)
 datatype
 waitkind =
   | WTKnone of ()
+  | WTKoutput of () // -o ...
   | WTKinput_sta of () // -s ...
   | WTKinput_dyn of () // -d ...
-  | WTKoutput of () // -o ...
   | WTKdefine of () // -DATS ...
   | WTKinclude of () // -IATS ...
 // end of [waitkind]
@@ -199,19 +199,19 @@ end // end of [cmdstate_set_outchan_basename]
 
 (* ****** ****** *)
 
-fn isinpwait
-  (state: cmdstate): bool =
-  case+ state.waitkind of
-  | WTKinput_sta () => true
-  | WTKinput_dyn () => true
-  | _ => false
-// end of [isinpwait]
-
 fn isoutwait
   (state: cmdstate): bool =
   case+ state.waitkind of
   | WTKoutput () => true | _ => false
 // end of [isoutwait]
+
+fn isinpwait
+  (state: cmdstate): bool =
+  case+ state.waitkind of
+  | WTKinput_sta () => true
+  | WTKinput_dyn () => true
+  | _ (*non-WTKinput*) => false
+// end of [isinpwait]
 
 fn isdatswait
   (state: cmdstate): bool =
@@ -255,6 +255,8 @@ in
   // nothing
 end // end of [pats2xhtml_level1_state_fileref]
 
+(* ****** ****** *)
+
 fun
 pats2xhtml_level1_state_basename
 (
@@ -292,31 +294,35 @@ end // end of [pats2xhtml_level1_state_basename]
 
 (* ****** ****** *)
 
-fn pats2xhtml_usage
+fn
+pats2xhtml_usage
   (cmd: string): void = {
-  val () = printf
-    ("usage: %s <command> ... <command>\n\n", @(cmd))
-  val () = printf
-    ("where each <command> is of one of the following forms:\n\n", @())
-  val () = printf
-    ("  -o <filename> : output into <filename>\n", @())
-  val () = printf
-    ("  --output <filename> : output into <filename>\n", @())
-  val () = printf
-    ("  -s <filename> : for processing static <filename>\n", @())
-  val () = printf
-    ("  --static <filename> : for processing static <filename>\n", @())
-  val () = printf
-    ("  -d <filename> : for processing dynamic <filename>\n", @())
-  val () = printf
-    ("  --dynamic <filename> : for processing dynamic <filename>\n", @())
-  val () = printf
-    ("  --embedded : for outputing xhtml code to be embedded\n", @())
-  val () = printf
-    ("  -h : for printing out this help usage\n", @())
-  val () = printf
-    ("  --help : for printing out this help usage\n", @())
-} // end of [pats2xhtml_usage]
+//
+val () =
+printf("usage: %s <command> ... <command>\n\n", @(cmd))
+val () =
+printf("where each <command> is of one of the following forms:\n\n", @())
+//
+val () =
+printf("  -o <filename> : output into <filename>\n", @())
+val () =
+printf("  --output <filename> : output into <filename>\n", @())
+val () =
+printf("  -s <filename> : for processing static <filename>\n", @())
+val () =
+printf("  --static <filename> : for processing static <filename>\n", @())
+val () =
+printf("  -d <filename> : for processing dynamic <filename>\n", @())
+val () =
+printf("  --dynamic <filename> : for processing dynamic <filename>\n", @())
+val () =
+printf("  --embedded : for outputing xhtml code to be embedded\n", @())
+val () =
+printf("  -h : for printing out this help usage\n", @())
+val () =
+printf("  --help : for printing out this help usage\n", @())
+//
+} (* end of [pats2xhtml_usage] *)
 
 (* ****** ****** *)
 
@@ -378,7 +384,7 @@ in
 //
 case+ arg of
 //
-| _ when isinpwait (state) => let
+| _ when isinpwait(state) => let
 //
 // HX: the [inpwait] state stays unchanged
 //
@@ -397,7 +403,7 @@ case+ arg of
       end (* end of [_] *)
   end // end of [_ when isinpwait]
 //
-| _ when isoutwait (state) => let
+| _ when isoutwait(state) => let
     val () = state.waitkind := WTKnone ()
     val COMARGkey (_, fname) = arg
     val () = cmdstate_set_outchan_basename (state, fname)
@@ -405,7 +411,7 @@ case+ arg of
     process_cmdline (state, arglst)
   end // end of [_ when isoutwait]
 //
-| _ when isdatswait (state) => let
+| _ when isdatswait(state) => let
     val () = state.waitkind := WTKnone ()
     val COMARGkey (_, def) = arg
     val () = process_DATS_def (def)
@@ -413,7 +419,7 @@ case+ arg of
     process_cmdline (state, arglst)
   end // end of [_ when isdatswait]
 //
-| _ when isiatswait (state) => let
+| _ when isiatswait(state) => let
     val () = state.waitkind := WTKnone ()
     val COMARGkey (_, dir) = arg
     val () = process_IATS_dir (dir)
@@ -446,23 +452,23 @@ val () = (
 //
 case+ key of
 //
+| "-o" => {
+    val () = state.waitkind := WTKoutput ()
+  } (* -o *)
+//
 | "-s" => {
     val () = state.ninputfile := 0
     val () = state.waitkind := WTKinput_sta
-  }
+  } (* -s *)
 | "-d" => {
     val () = state.ninputfile := 0
     val () = state.waitkind := WTKinput_dyn
-  }
-//
-| "-o" => {
-    val () = state.waitkind := WTKoutput ()
-  }
+  } (* -d *)
 //
 | "-h" => {
     val () = state.waitkind := WTKnone ()
     val () = pats2xhtml_usage ("pats2xhtml")
-  }
+  } (* -h *)
 //
 | _ when
     is_DATS_flag (key) => let
@@ -479,7 +485,7 @@ case+ key of
     in
       // nothing
     end // end of [if]
-  end
+  end // is_DATS_flag
 | _ when
     is_IATS_flag (key) => let
     val dir = IATS_extract (key)
@@ -495,7 +501,7 @@ case+ key of
     in
       // nothing
     end // end of [if]
-  end
+  end // is_IATS_flag
 | _ (*unrecognized*) => comarg_warning (key)
 //
 ) : void // end of [val]
@@ -516,13 +522,13 @@ val () = (
 //
 case+ key of
 //
+| "--output" =>
+    state.waitkind := WTKoutput ()
+//
 | "--static" =>
     state.waitkind := WTKinput_sta
 | "--dynamic" =>
     state.waitkind := WTKinput_dyn
-//
-| "--output" =>
-    state.waitkind := WTKoutput ()
 //
 | "--embedded" => state.standalone := false
 | "--help" => let
@@ -542,7 +548,7 @@ in
 end // end of [process_cmdline2_COMARGkey2]
 
 (* ****** ****** *)
-
+//
 dynload "src/pats_global.dats"
 dynload "src/pats_errmsg.dats"
 dynload "src/pats_effect.dats"
@@ -550,12 +556,15 @@ dynload "src/pats_symmap.dats"
 dynload "src/pats_symenv.dats"
 dynload "src/pats_comarg.dats"
 dynload "src/pats_staexp1.dats"
+dynload "src/pats_staexp1_print.dats"
+dynload "src/pats_dynexp1.dats"
+dynload "src/pats_dynexp1_print.dats"
 dynload "src/pats_trans1_env.dats"
 dynload "src/pats_e1xpval.dats"
 dynload "src/pats_e1xpval_error.dats"
 dynload "src/pats_trans1_e0xp.dats"
 dynload "src/pats_trans1_error.dats"
-
+//
 (* ****** ****** *)
 
 dynload "libatsynmark/dynloadall.dats"
