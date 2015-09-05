@@ -685,14 +685,6 @@ out a linear proof from a record and then putting it back into the record
 can be automatically performed by the typechecker of ATS.
 
 ')
-
-#para('\
-
-The very ability to explain within ATS programming features such as closure
-function is a convincing indication of the expressiveness of the type
-system of ATS.
-
-')
 ")
 #langja("
 #para('\
@@ -723,9 +715,16 @@ a:t@ype}{b:t@ype
   pclo: !cloptr (a, b, l), x: a
 ) : b = let
   val p = pclo.1
-  prval pf = pclo.0 // take out pf: ((&env, a) -> b, env) @ l
+(*
+//
+// taking out pf: ((&env, a) -> b, env) @ l
+//
+*)
+  prval pf = pclo.0
   val res = !p.0 (!p.1, x)
-  prval () = pclo.0 := pf // put the proof pf back
+(*
+  prval () = pclo.0 := pf // putting the proof pf back
+*)
 in
   res
 end // end of [cloptr]
@@ -734,6 +733,23 @@ end // end of [cloptr]
 p のデリファレンスが型検査を通すために、#dyncode("pclo")
 内の線形の証明がはじめに取り出されることに注意してください。
 そして #dyncode("pclo") の型が元の位置に復帰されて返ります。
+このレコードからの線形証明の取り出しとレコードへの復帰は ATS の型検査器によって自動的に行なわれます。
+
+')
+")
+
+#langeng("
+#para('\
+
+The very ability to explain within ATS programming features such as closure
+function is a convincing indication of the expressiveness of the type
+system of ATS.
+
+')
+")
+#langja("
+#para('\
+
 クロージャ関数のような ATS プログラミングの機能を説明する能力は、ATS の型システムの表現力の説得力ある証拠です。
 
 ')
