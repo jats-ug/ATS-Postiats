@@ -64,28 +64,36 @@ typedef symbol = $SYM.symbol
 typedef symbolopt = $SYM.symbolopt
 
 (* ****** ****** *)
-
+//
 staload
 SYN = "./pats_syntax.sats"
+//
+typedef i0de = $SYN.i0de
+typedef i0delst = $SYN.i0delst
+//
 typedef i0nt = $SYN.i0nt
 typedef c0har = $SYN.c0har
 typedef f0loat = $SYN.f0loat
 typedef s0tring = $SYN.s0tring
+//
 typedef l0ab = $SYN.l0ab
 typedef dl0abeled (a:type) = $SYN.dl0abeled (a)
+//
 typedef dcstextdef = $SYN.dcstextdef
 typedef macsynkind = $SYN.macsynkind
-
+//
 (* ****** ****** *)
-
+//
 staload
 S1E = "./pats_staexp1.sats"
-typedef e1xp = $S1E.e1xp
-typedef s1exp = $S1E.s1exp
 staload
 D1E = "./pats_dynexp1.sats"
+//
+typedef e1xp = $S1E.e1xp
+typedef e1xplst = $S1E.e1xplst
+typedef s1exp = $S1E.s1exp
 typedef d1exp = $D1E.d1exp
-
+//
 (* ****** ****** *)
 
 staload "./pats_staexp2.sats"
@@ -265,6 +273,8 @@ fun d2cst_is_static (d2c: d2cst): bool // static
 fun d2cst_is_fundec (d2c: d2cst): bool // fun declaration
 fun d2cst_is_valdec (d2c: d2cst): bool // val declaration
 fun d2cst_is_castfn (d2c: d2cst): bool // castfn declaration
+//
+fun d2cst_is_tmpcst (d2c: d2cst): bool // template?
 //
 fun d2cst_is_mainats (d2c: d2cst): bool // a [mainats] fun
 //
@@ -741,11 +751,13 @@ d2ecl_node =
   | D2Cnone of () // for something already erased
   | D2Clist of d2eclist // for list of declarations
 //
-  | D2Csymintr of ($SYN.i0delst)
-  | D2Csymelim of ($SYN.i0delst) // for temporary use
+  | D2Csymintr of (i0delst)
+  | D2Csymelim of (i0delst) // for temporary use
   | D2Coverload of // symbol overloading
-      ($SYN.i0de, int(*pval*), d2itmopt) // [None] indicates error
+      (i0de, int(*pval*), d2itmopt) // [None] indicates error
     // end of [D2Coverload]
+//
+  | D2Ccodegen of (int(*knd*), e1xplst)
 //
   | D2Cstacsts of s2cstlst // for [stacst] declarations
   | D2Cstacons of
@@ -846,8 +858,9 @@ and d2exp_node =
   | D2Efreeat of (* freeing at a given address *)
       (s2exparglst, d2exp)
 //
-  | D2Etmpid of (* template instantiation *)
-      (d2exp(*id*), t2mpmarglst)
+  | D2Etmpid of
+      (d2exp(*id*), t2mpmarglst) // tmpcst/tmpvar instantiation
+    // end of [D2Etmpid]
 //
   | D2Elet of (d2eclist, d2exp) // let-expression
   | D2Ewhere of (d2exp, d2eclist) // where-expression
@@ -1739,68 +1752,107 @@ fun prv2ardec_make
 //
 (* ****** ****** *)
 
-fun d2ecl_none (loc: location): d2ecl
-fun d2ecl_list (loc: location, xs: d2eclist): d2ecl
+fun d2ecl_none(loc: location): d2ecl
+fun d2ecl_list(loc: location, xs: d2eclist): d2ecl
 
-fun d2ecl_symintr
-  (loc: location, ids: $SYN.i0delst): d2ecl
-fun d2ecl_symelim
-  (loc: location, ids: $SYN.i0delst): d2ecl
-fun d2ecl_overload
-  (loc: location, id: $SYN.i0de, pval: int, opt: d2itmopt): d2ecl
-// end of [d2ecl_overload]
-
-fun d2ecl_stacsts (loc: location, s2cs: s2cstlst): d2ecl
-fun d2ecl_stacons (loc: location, knd: int, s2cs: s2cstlst): d2ecl
+(* ****** ****** *)
+//
+fun
+d2ecl_symintr(loc: location, ids: i0delst): d2ecl
+fun
+d2ecl_symelim(loc: location, ids: i0delst): d2ecl
+//
+(* ****** ****** *)
+//
+fun
+d2ecl_overload
+(
+  loc: location, id: i0de, pval: int, opt: d2itmopt
+) : d2ecl // end of [d2ecl_overload]
+//
+(* ****** ****** *)
+//
+fun
+d2ecl_codegen
+  (loc: location, knd: int, e1xps: e1xplst): d2ecl
+//
+(* ****** ****** *)
+//
+fun
+d2ecl_stacsts
+  (loc: location, s2cs: s2cstlst): d2ecl
+//
+fun
+d2ecl_stacons
+  (loc: location, knd: int, s2cs: s2cstlst): d2ecl
+//
 (*
 fun d2ecl_stavars (loc: location, xs: s2tavarlst): d2ecl
 *)
+//
+(* ****** ****** *)
 
 fun d2ecl_saspdec (loc: location, dec: s2aspdec): d2ecl
 
-fun d2ecl_extype
+(* ****** ****** *)
+//
+fun
+d2ecl_extype
   (loc: location, name: string, def: s2exp): d2ecl
-fun d2ecl_extvar
+//
+fun
+d2ecl_extvar
   (loc: location, name: string, def: d2exp): d2ecl
-fun d2ecl_extcode
+//
+fun
+d2ecl_extcode
   (loc: location, knd: int, pos: int, code: string): d2ecl
 // end of [d2ecl_extcode]
-
-fun d2ecl_datdecs
+//
+(* ****** ****** *)
+//
+fun
+d2ecl_datdecs
 (
   loc: location, knd: int, s2cs: s2cstlst
 ) : d2ecl // end of [d2ecl_datdecs]
-fun d2ecl_exndecs (loc: location, d2cs: d2conlst): d2ecl
-
-fun d2ecl_dcstdecs
+//
+fun
+d2ecl_exndecs (loc: location, d2cs: d2conlst): d2ecl
+//
+fun
+d2ecl_dcstdecs
 (
   loc: location, knd: int, dck: dcstkind, d2cs: d2cstlst
 ) : d2ecl // end of [d2ecl_dcstdecs]
-
+//
 (* ****** ****** *)
-
-fun d2ecl_fundecs
+//
+fun
+d2ecl_fundecs
 (
   loc: location, knd: funkind, decarg: s2qualst, f2ds: f2undeclst
 ) : d2ecl // end of [d2ecl_fundecs]
-
+//
 (* ****** ****** *)
-
-fun d2ecl_valdecs
+//
+fun
+d2ecl_valdecs
 (
   loc: location, knd: valkind, v2ds: v2aldeclst
 ) : d2ecl // end of [d2ecl_valdecs]
-
-fun d2ecl_valdecs_rec
+//
+fun
+d2ecl_valdecs_rec
 (
   loc: location, knd: valkind, v2ds: v2aldeclst
 ) : d2ecl // end of [d2ecl_valdecs_rec]
-
+//
 (* ****** ****** *)
-
+//
 fun d2ecl_vardecs (loc: location, v2ds: v2ardeclst): d2ecl
 fun d2ecl_prvardecs (loc: location, v2ds: prv2ardeclst): d2ecl
-
+//
 (* ****** ****** *)
 
 fun d2ecl_impdec
@@ -1814,28 +1866,32 @@ fun d2ecl_include
 // end of [d2ecl_include]
 
 (* ****** ****** *)
-
-fun d2ecl_staload
+//
+fun
+d2ecl_staload
 (
   loc: location
 , idopt: symbolopt, cfil: filename
 , ldflag: int, fenv: filenv, loaded: int
 ) : d2ecl // end-of-fun
-
-fun d2ecl_staloadloc
+//
+fun
+d2ecl_staloadloc
 (
   loc: location
 , pfil: filename, nspace: symbol, fenv: filenv
 ) : d2ecl // end-of-fun
-
+//
 (* ****** ****** *)
 
-fun d2ecl_dynload (loc: location, fil: filename): d2ecl
+fun
+d2ecl_dynload (loc: location, fil: filename): d2ecl
 
 (* ****** ****** *)
-
-fun d2ecl_local (loc: location, ds1: d2eclist, ds2: d2eclist): d2ecl
-
+//
+fun d2ecl_local
+  (loc: location, ds1: d2eclist, ds2: d2eclist): d2ecl
+//
 (* ****** ****** *)
 
 fun d2ecl_errdec (loc: location): d2ecl

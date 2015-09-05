@@ -228,19 +228,21 @@ d1exp_tr_dqid
   d1e0: d1exp, dq: d0ynq, id: symbol
 ) : d2exp = let
 //
-fun auxerr (
+fun
+auxerr (
   d1e0: d1exp, dq: d0ynq, id: symbol
 ) : void = {
   val () =
     prerr_error2_loc (d1e0.d1exp_loc)
   // end of [val]
-  val () = filprerr_ifdebug "d1exp_tr_dqid"
-  val () = prerr ": the dynamic identifier ["
+  val () =
+    filprerr_ifdebug "d1exp_tr_dqid"
+  val () =
+    prerr ": the dynamic identifier ["
   val () = prerr_dqid (dq, id)
-  val () = prerr "] is unrecognized."
-  val () = prerr_newline ()
-  val () = the_trans2errlst_add (T2E_d1exp_tr (d1e0))
-} // end of [auxerr]
+  val () = prerrln! "] is unrecognized."
+  val () = the_trans2errlst_add (T2E_d1exp_tr(d1e0))
+} (* end of [auxerr] *)
 //
 val loc0 = d1e0.d1exp_loc
 val ans0 = the_d2expenv_find_qua (dq, id)
@@ -289,15 +291,16 @@ case+ ans0 of
     end // end of [D2ITEMmacvar]
 //
 (*
-  | _ => let
+  | _ (*rest-of-d2itm*) => let
       val () = (
         print "d1exp_tr_dqid: d2i0 = "; print_d2itm d2i0; print_newline ()
       ) // end of [val]
       val () = auxerr (d1e0, dq, id)
     in
       d2exp_err (loc0)
-    end // end of [_]
+    end // end of [_(*rest-of-d2itm*)]
 *)
+//
   ) // end of [Some_vt]
 | ~None_vt () => let
     val () = auxerr (d1e0, dq, id) in d2exp_errexp (loc0)
@@ -1405,17 +1408,27 @@ in
 case+
 d1e0.d1exp_node of
 //
-| D1Eide (id) =>
-    d1exp_tr_dqid (d1e0, $SYN.the_d0ynq_none, id)
-  // end of [D1Eide]
-| D1Edqid (dq, id) => d1exp_tr_dqid (d1e0, dq, id)
+| D1Eide
+    (id) => let
+    val dq = $SYN.the_d0ynq_none
+  in
+    d1exp_tr_dqid (d1e0, dq, id)
+  end // end of [D1Eide]
+| D1Edqid
+    (dq, id) =>
+    d1exp_tr_dqid (d1e0, dq, id)
 //
 | D1Eint (i) => d2exp_int (loc0, i)
-| D1Eintrep (rep) => d2exp_intrep (loc0, rep)
+| D1Eintrep
+    (rep) => d2exp_intrep (loc0, rep)
+//
 | D1Ebool (b) => d2exp_bool (loc0, b)
 | D1Echar (c) => d2exp_char (loc0, c)
-| D1Efloat (rep) => d2exp_float (loc0, rep)
-| D1Estring (s) => d2exp_string (loc0, s)
+//
+| D1Efloat
+    (rep) => d2exp_float (loc0, rep)
+| D1Estring
+    (str) => d2exp_string (loc0, str)
 //
 | D1Ei0nt (x) => d2exp_i0nt (loc0, x)
 | D1Ec0har (x) => d2exp_c0har (loc0, x)
@@ -2005,6 +2018,124 @@ d1l0.d1lab_node of
 | D1LABind (ind) => d2lab_ind (loc0, d1explst_tr (ind))
 //
 end // end of [d1lab_tr]
+
+(* ****** ****** *)
+//
+// HX: it is declared in [pats_trans3_env.sats]
+//
+extern
+fun
+s2exp_tmp_instantiate_tmpmarglst
+(
+  s2f: s2exp
+, locarg: loc_t, s2qs: s2qualst, t2mas: t2mpmarglst, err: &int
+) : (s2exp(*res*), t2mpmarglst) = "ext#patsopt_s2exp_tmp_instantiate_tmpmarglst"
+//
+implement
+S1Ed2ctype_tr(d2ctp) = let
+//
+val d2e0 =
+  d1exp_tr($UN.cast{d1exp}(d2ctp))
+//
+fun
+auxerr_cst
+(
+  d2c: d2cst
+) :<cloref1> void =
+{
+  val () =
+  prerr_error2_loc (d2e0.d2exp_loc)
+  val () = filprerr_ifdebug "S1Ed2ctype_tr"
+  val () =
+  prerrln! (": the dynamic constant [", d2c, "] should be instantiated.")
+  val () = the_trans2errlst_add (T2E_S1Ed2ctype_tr(d2ctp))
+}
+//
+fun
+auxerr1_tmpid
+(
+  d2e_id: d2exp
+) :<cloref1> void =
+{
+  val () =
+  prerr_error2_loc (d2e_id.d2exp_loc)
+  val () = filprerr_ifdebug "S1Ed2ctype_tr"
+  val () =
+  prerrln! (": a declared dynamic constant is expected instead of [", d2e_id, "].")
+}
+fun
+auxerr2_tmpid
+(
+  d2e_id: d2exp, d2c: d2cst
+) :<cloref1> void =
+{
+  val () =
+  prerr_error2_loc (d2e_id.d2exp_loc)
+  val () = filprerr_ifdebug "S1Ed2ctype_tr"
+  val () =
+  prerrln! (": the dynamic constant [", d2c, "] is required to be be fully instantiated.")
+  val () = the_trans2errlst_add (T2E_S1Ed2ctype_tr(d2ctp))
+}
+//
+in
+//
+case+
+d2e0.d2exp_node
+of (* cast+ *)
+//
+| D2Ecst(d2c) => let
+    val
+    istmp = d2cst_is_tmpcst(d2c)
+    val () =
+    if istmp then auxerr_cst(d2c)
+  in
+    d2cst_get_type(d2c)
+  end // end of [D2Ecst]
+//
+| D2Etmpid
+    (d2e_id, t2mas) => (
+    case+
+    d2e_id.d2exp_node
+    of (* case+ *)
+    | D2Ecst (d2c) => let
+        val
+        loc0 = d2e0.d2exp_loc
+        val
+        locarg =
+        $LOC.location_rightmost(loc0)
+        val s2e = d2cst_get_type(d2c)
+        val s2qs = d2cst_get_decarg (d2c)
+        val s2e_d2c = d2cst_get_type (d2c)
+//
+        var err: int = 0
+        val (s2e_tmp, t2mas2) =
+        s2exp_tmp_instantiate_tmpmarglst(s2e_d2c, locarg, s2qs, t2mas, err)
+//
+        val sgn =
+        list_length_compare(t2mas, t2mas2)
+        val ((*check*)) =
+        if sgn < 0 then auxerr2_tmpid(d2e_id, d2c) // partial instantiation
+//
+      in
+        s2e_tmp
+      end // end of [D2Ecst]
+    | _ (*non-D2Ecst*) => let
+        val () = auxerr1_tmpid(d2e_id) in s2exp_s2rt_err()
+      end // end of [non-D2Ecst]
+  ) (* end of [D2Etmpid] *)
+//
+| _(*rest-of-d2exp*) => let
+    val () =
+    prerr_error2_loc (d2e0.d2exp_loc)
+    val () = filprerr_ifdebug "S1Ed2ctype_tr"
+    val () =
+    println! (": [$d2ctype] can only be applied to a declared dynamic constant.")
+    val () = the_trans2errlst_add (T2E_S1Ed2ctype_tr(d2ctp))
+  in
+    s2exp_s2rt_err((*error*))
+  end // end of [rest-d2exp]
+//
+end // end of [S1Ed2ctype_tr]
 
 (* ****** ****** *)
 

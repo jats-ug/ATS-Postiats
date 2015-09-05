@@ -46,14 +46,18 @@ staload "./pats_dynexp1.sats"
 //
 datatype
 trans1err =
+//
   | T1E_prec_tr of (i0de)
   | T1E_e0xp_tr of (e0xp)
   | T1E_s0rt_tr of (s0rt)
   | T1E_s0exp_tr of (s0exp)
-  | T1E_d0cstdec_tr of (d0cstdec)
+//
   | T1E_p0at_tr of (p0at)
-  | T1E_termination_metric_check of (location)
   | T1E_d0exp_tr of (d0exp)
+//
+  | T1E_d0cstdec_tr of (d0cstdec)
+  | T1E_termet_check of (location)
+//
   | T1E_i0nclude_tr of (d0ecl) // file for inclusion is not available
   | T1E_s0taload_tr of (d0ecl) // file for staloading is not available
   | T1E_d0ynload_tr of (d0ecl) // file for dynloading is not available
@@ -123,6 +127,10 @@ fun s0qualst_tr (xs: s0qualst): s1qualst
 fun s0qualstlst_tr (xs: s0qualstlst): s1qualstlst
 
 fun witht0ype_tr (x: witht0ype): witht1ype
+
+(* ****** ****** *)
+
+fun S0Ed2ctype_tr (x: S0Ed2ctype): S1Ed2ctype
 
 (* ****** ****** *)
 
@@ -208,15 +216,20 @@ fun d0expopt_tr (xs: d0expopt): d1expopt
 
 fun labd0exp_tr (x: labd0exp): labd1exp
 
-fun d0exp_tr_lams_dyn
+(* ****** ****** *)
+
+fun termet_check
+  (loc: location, is_met: bool, oefc: effcstopt): void
+// end of [termet_check]
+
+(* ****** ****** *)
+
+fun
+d0exp_tr_lams_dyn
 (
   knd : int, locopt : Option(location), fcopt : fcopt, lin : int
 , args : f0arglst, res : s0expopt, efcopt : effcstopt, body : d0exp
 ) : d1exp // end of [d0exp_lams_dyn_tr]
-
-fun termination_metric_check
-  (loc: location, is_met: bool, oefc: effcstopt): void
-// end of [termination_metric_check]
 
 (* ****** ****** *)
 //

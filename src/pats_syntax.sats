@@ -36,18 +36,20 @@
 staload "./pats_basics.sats"
 
 (* ****** ****** *)
-
+//
 staload
 LOC = "./pats_location.sats"
 typedef location = $LOC.location
+//
 staload LEX = "./pats_lexing.sats"
 typedef token = $LEX.token
 typedef tokenopt = Option (token)
+//
 staload SYM = "./pats_symbol.sats"
 typedef symbol = $SYM.symbol
 typedef symbolist = $SYM.symbolist
 typedef symbolopt = $SYM.symbolopt
-
+//
 (* ****** ****** *)
 
 staload
@@ -81,7 +83,7 @@ srpifkind =
 // end of [srpifkind]
 
 (* ****** ****** *)
-
+//
 datatype
 macsynkind =
   | MSKencode of ()
@@ -89,11 +91,11 @@ macsynkind =
 // HX: cross-stage persistence:
   | MSKxstage of () // = decode(lift(.))
 // end of [macsynkind]
-
+//
 fun print_macsynkind (x: macsynkind): void
 fun prerr_macsynkind (x: macsynkind): void
 fun fprint_macsynkind : fprint_type (macsynkind)
-
+//
 (* ****** ****** *)
 
 (*
@@ -266,20 +268,30 @@ d0ynq_node =
 *)
 // end of [d0ynq_node]
 
-typedef d0ynq = '{
-  d0ynq_loc= location, d0ynq_node= d0ynq_node
-} // end of [d0ynq]
+(* ****** ****** *)
 
-val the_d0ynq_none : d0ynq
-fun d0ynq_none (loc: location): d0ynq
+typedef
+d0ynq = '{
+  d0ynq_loc= location, d0ynq_node= d0ynq_node
+} (* end of [d0ynq] *)
+
+(* ****** ****** *)
+//
+val
+the_d0ynq_none : d0ynq
+fun
+d0ynq_none(loc: location): d0ynq
+//
 fun d0ynq_symdot
   (ent1: i0de, tok2: token): d0ynq
 fun d0ynq_symcolon
   (ent1: i0de, tok2: token): d0ynq
 fun d0ynq_symdotcolon
   (ent1: i0de, ent2: i0de, ent3: token): d0ynq
-
+//
 fun d0ynq_is_none (q: d0ynq): bool
+//
+(* ****** ****** *)
 
 fun print_d0ynq (x: d0ynq): void
 fun prerr_d0ynq (x: d0ynq): void
@@ -328,7 +340,7 @@ fun fprint_f0xty : fprint_type (f0xty)
 
 datatype
 e0xpactkind =
-  | E0XPACTassert | E0XPACTerror | E0XPACTprint
+  | E0XPACTprint | E0XPACTerror | E0XPACTassert
 // end of [e0xpactkind]
 
 fun fprint_e0xpactkind : fprint_type (e0xpactkind)
@@ -544,9 +556,18 @@ fun sp0at_cstr
 // end of [sp0at_cstr]
 
 (* ****** ****** *)
+//
+// HX-2015-08:
+// for placeholding
+//
+abstype
+S0Ed2ctype_type = ptr
+typedef
+S0Ed2ctype = S0Ed2ctype_type
+//
+(* ****** ****** *)
 
-datatype
-s0exp_node =
+datatype s0exp_node =
 //
   | S0Eide of symbol
   | S0Esqid of (s0taq, symbol) // qualified
@@ -566,18 +587,25 @@ s0exp_node =
   | S0Eimp of e0fftaglst // decorated implication
 //
   | S0Elist of s0explst
-  | S0Elist2 of (s0explst (*prop/view*), s0explst (*type/viewtype*))
+  | S0Elist2 of
+      (s0explst(*prop/view*), s0explst(*type/vtype*))
+    // end of [S0Elist2]
 //
-  | S0Etyarr of (* array type *)
+  | S0Etyarr of
       (s0exp (*element*), s0explst (*dimension*))
+    // end of [S0Etyarr]
   | S0Etytup of (int (*knd*), int (*npf*), s0explst)
   | S0Etyrec of (int (*knd*), int (*npf*), labs0explst)
   | S0Etyrec_ext of (string(*name*), int (*npf*), labs0explst)
 //
   | S0Euni of s0qualst // universal quantifiers
-  | S0Eexi of (int(*funres*), s0qualst) // existential quantifiers
+  | S0Eexi of
+      (int(*funres*), s0qualst) // existential quantifiers
+    // end of [S2Eexi]
 //
-  | S0Eann of (s0exp, s0rt)
+  | S0Eann of (s0exp, s0rt(*ann*)) // sort-ascribed staexps
+//
+  | S0Ed2ctype of (S0Ed2ctype(*d0exp*)) // $d2ctype(d2c/tmpcst)
 // end of [s0exp_node]
 
 and s0rtext_node =
@@ -648,25 +676,46 @@ fun s0exp_i0de (_: i0de): s0exp
 fun s0exp_sqid (sq: s0taq, id: i0de): s0exp
 fun s0exp_opid (_1: token, _2: i0de): s0exp
 
+(* ****** ****** *)
+//
 fun s0exp_i0nt (_: i0nt): s0exp
 fun s0exp_c0har (_: c0har): s0exp
-
+//
 fun s0exp_f0loat (_: f0loat): s0exp
 fun s0exp_s0tring (_: s0tring): s0exp
+//
+(* ****** ****** *)
 
 fun s0exp_app (_1: s0exp, _2: s0exp): s0exp
 
-fun s0exp_imp
-  (t_beg: token, _: e0fftaglst, t_end: token): s0exp
-fun s0exp_imp_nil (t: token): s0exp
+(* ****** ****** *)
+
+fun
+s0exp_imp
+(
+  t_beg: token, _: e0fftaglst, t_end: token
+) : s0exp // end of [s0exp_imp]
+fun
+s0exp_imp_nil (tok: token): s0exp
+
+(* ****** ****** *)
 
 fun s0exp_tkname (str: token): s0exp
-fun s0exp_extype (_1: token, _2: token, xs: s0explst): s0exp
-fun s0exp_extkind (_1: token, _2: token, xs: s0explst): s0exp
+
+(* ****** ****** *)
+
+fun s0exp_extype
+  (_1: token, _2: token, xs: s0explst): s0exp
+fun s0exp_extkind
+  (_1: token, _2: token, xs: s0explst): s0exp
+
+(* ****** ****** *)
 
 fun s0exp_lams (
   _1: token, _2: s0marglst, _3: s0rtopt, _4: s0exp
 ) : s0exp // end of [s0exp_lam]
+
+(* ****** ****** *)
 
 fun s0exp_list (
   t_beg: token, xs: s0explst, t_end: token
@@ -675,31 +724,59 @@ fun s0exp_list2 (
   t_beg: token, xs1: s0explst, xs2: s0explst, t_end: token
 ) : s0exp // end of [s0exp_list2]
 
+(* ****** ****** *)
+
 fun s0exp_tyarr
   (t_beg: token, elt: s0exp, ind: s0arrdim): s0exp
 // end of [s0exp_tyarr]
 
-fun s0exp_tytup (
-  knd: int, t_beg: token, npf: int, ent2: s0explst, t_end: token
+(* ****** ****** *)
+
+fun
+s0exp_tytup
+(
+  knd: int
+, t_beg: token, npf: int, ent2: s0explst, t_end: token
 ) : s0exp // end of [s0exp_tytup]
 
-fun s0exp_tyrec (
-  knd: int, t_beg: token, npf: int, ent2: labs0explst, t_end: token
+(* ****** ****** *)
+
+fun
+s0exp_tyrec
+(
+  knd: int
+, t_beg: token, npf: int, ent2: labs0explst, t_end: token
 ) : s0exp // end of [s0exp_tyrec]
 
-fun s0exp_tyrec_ext (
-  name: string, t_beg: token, npf: int, ent2: labs0explst, t_end: token
+fun
+s0exp_tyrec_ext
+(
+  name: string
+, t_beg: token, npf: int, ent2: labs0explst, t_end: token
 ) : s0exp // end of [s0exp_tyrec_ext]
 
-fun s0exp_uni (
+(* ****** ****** *)
+
+fun
+s0exp_uni (
   t_beg: token, xs: s0qualst, t_end: token
 ) : s0exp // end of [s0exp_uni]
-
-fun s0exp_exi (
+fun
+s0exp_exi (
   funres: int, t_beg: token, xs: s0qualst, t_end: token
 ) : s0exp // end of [s0exp_uni]
 
-fun s0exp_ann (_1: s0exp, _2: s0rt): s0exp
+(* ****** ****** *)
+
+fun s0exp_ann (s0e: s0exp, s0t: s0rt): s0exp
+
+(* ****** ****** *)
+//
+fun
+s0exp_d2ctype
+  (t_beg: token, d2ctp: S0Ed2ctype, t_end: token): s0exp
+//
+(* ****** ****** *)
 
 fun fprint_s0exp : fprint_type (s0exp)
 fun fprint_s0explst : fprint_type (s0explst)
@@ -1130,16 +1207,20 @@ fun p0at_err (loc: location): p0at // HX: indicating syntax-error
 fun fprint_p0at : fprint_type (p0at)
 
 (* ****** ****** *)
-
-fun labp0at_norm (l: l0ab, p: p0at): labp0at
+//
+fun
+labp0at_norm
+  (lab: l0ab, p: p0at): labp0at
+//
 fun labp0at_omit (tok: token): labp0at
-
+//
 fun fprint_labp0at : fprint_type (labp0at)
-
+//
 (* ****** ****** *)
 
 datatype i0mparg =
-  | I0MPARG_sarglst of s0arglst | I0MPARG_svararglst of s0vararglst
+  | I0MPARG_sarglst of s0arglst
+  | I0MPARG_svararglst of s0vararglst
 // end of [i0mparg]
 
 fun i0mparg_sarglst_none (): i0mparg
@@ -1152,96 +1233,113 @@ fun i0mparg_sarglst_some
 fun i0mparg_svararglst (arg: s0vararglst): i0mparg
 
 (* ****** ****** *)
-
+//
 typedef
 t0mpmarg = '{
   t0mpmarg_loc= location, t0mpmarg_arg= s0explst
-} // end of [t0mpmarg]
-
-typedef t0mpmarglst = List (t0mpmarg)
-
+} (* end of [t0mpmarg] *)
+//
+typedef
+t0mpmarglst = List (t0mpmarg)
+//
 fun t0mpmarg_make (tok: token, arg: s0explst): t0mpmarg
-
+//
 (* ****** ****** *)
-
+//
 typedef
 impqi0de = '{
   impqi0de_loc= location
 , impqi0de_qua= d0ynq
 , impqi0de_sym= symbol
 , impqi0de_arg= t0mpmarglst
-} // end of [impqi0de]
-
-fun impqi0de_make_none (qid: dqi0de): impqi0de
-fun impqi0de_make_some
+} (* end of [impqi0de] *)
+//
+fun
+impqi0de_make_none (qid: dqi0de): impqi0de
+fun
+impqi0de_make_some
   (qid: dqi0de, args: t0mpmarglst, t_gt: token): impqi0de
 // end of [impqi0de_make_some]
-
+//
 (* ****** ****** *)
-
+//
 datatype
 f0arg_node =
   | F0ARGdyn of p0at
-  | F0ARGsta1 of s0qualst | F0ARGsta2 of s0vararg
-  | F0ARGmet of s0explst
+  | F0ARGsta1 of s0qualst
+  | F0ARGsta2 of s0vararg
+  | F0ARGmet3 of s0explst
 // end of [f0arg_node]
-
+//
 typedef
 f0arg = '{
   f0arg_loc= location, f0arg_node= f0arg_node
-} // end of [f0arg]
-
+} (* end of [f0arg] *)
+//
 typedef f0arglst = List (f0arg)
-viewtypedef f0arglst_vt = List_vt (f0arg)
-
+vtypedef f0arglst_vt = List_vt (f0arg)
+//
+(* ****** ****** *)
+//
 fun f0arg_dyn (x: p0at): f0arg
-
-fun f0arg_sta1
-  (t_beg: token, qua: s0qualst, t_end: token): f0arg
-// end of [f0arg_sta1]
-fun f0arg_sta2
-  (t_beg: token, arg: s0vararg, t_end: token): f0arg
-// end of [f0arg_sta2]
-
+//
+fun
+f0arg_sta1
+(
+  t_beg: token, qua: s0qualst, t_end: token
+) : f0arg // end of [f0arg_sta1]
+fun
+f0arg_sta2
+(
+  t_beg: token, arg: s0vararg, t_end: token
+) : f0arg // end of [f0arg_sta2]
+//
 fun f0arg_met
   (t_beg: token, xs: s0explst, t_end: token): f0arg
 // end of [f0arg_met]
+//
 fun f0arg_met_nil (tok: token): f0arg
-
+//
 (* ****** ****** *)
-
-typedef s0elop = '{
+//
+typedef
+s0elop = '{
   s0elop_loc= location
 , s0elop_knd= int // 0/1 : (.)/(->)
-} // end of [s0elop]
-
+} (* end of [s0elop] *)
+//
 fun s0elop_make_dot (tok: token): s0elop
 fun s0elop_make_minusgt (tok: token): s0elop
-
+//
 (* ****** ****** *)
-
+//
 typedef
 i0nvarg = '{
   i0nvarg_loc= location
 , i0nvarg_sym= symbol
 , i0nvarg_typ= s0expopt
-} // end of [i0nvarg]
-
+} (* end of [i0nvarg] *)
+//
 typedef i0nvarglst = List i0nvarg
-
-fun i0nvarg_make (id: i0de, opt: s0expopt): i0nvarg
+//
+fun
+i0nvarg_make (id: i0de, opt: s0expopt): i0nvarg
+//
+(* ****** ****** *)
 
 typedef
 i0nvresstate = '{
   i0nvresstate_loc= location
 , i0nvresstate_qua= s0qualstopt
 , i0nvresstate_arg= i0nvarglst
-} // end of [i0nvresstate]
+} (* end of [i0nvresstate] *)
 
 fun i0nvresstate_make_none (loc: location): i0nvresstate
 fun i0nvresstate_make_some (
   t_beg: token, qua: s0qualstopt, arg: i0nvarglst, t_end: token
 ) : i0nvresstate // end of [i0nvresstate_make_some]
+
+(* ****** ****** *)
 
 typedef
 loopi0nv = '{
@@ -1270,13 +1368,15 @@ d0ecl_node =
   | D0Cfixity of (f0xty, i0delst)
   | D0Cnonfix of (i0delst) // absolving fixity status
 //
-  | D0Csymintr of (i0delst) // introducing symbols for overloading
-  | D0Csymelim of (i0delst) // eliminating symbols for overloading
+  | D0Csymintr of (i0delst) // symbols for overloading
+  | D0Csymelim of (i0delst) // eliminating overloading symbols
   | D0Coverload of (i0de, dqi0de, int(*pval*)) // overloading
 //
   | D0Ce0xpdef of (symbol, e0xpopt)
   | D0Ce0xpundef of (symbol) (* undefinition *)
-  | D0Ce0xpact of (e0xpactkind, e0xp)
+  | D0Ce0xpact of (e0xpactkind, e0xp) // HX: assert, error, print, ...
+//
+  | D0Ccodegen of (int(*level*), e0xplst)
 //
   | D0Cdatsrts of d0atsrtdeclst (* datasorts *)
   | D0Csrtdefs of s0rtdeflst (* sort definition *)
@@ -1331,19 +1431,21 @@ d0ecl_node =
 //
   | D0Crequire of (filename(*pfil*), string(*path*)) // HX: for pkgreloc
 //
-  | D0Cdynload of (filename(*pfil*), string(*path*)) // HX: dynloading(*initialization*)
+  | D0Cdynload of (filename(*pfil*), string(*path*)) // HX: dynloading(*initization*)
 //
-  | D0Clocal of (d0eclist, d0eclist)
-  | D0Cguadecl of (srpifkind, guad0ecl)
+  | D0Clocal of (d0eclist, d0eclist) // HX: local ... in ... end
+  | D0Cguadecl of (srpifkind, guad0ecl) // HX: guarded declarations
 // end of [d0ecl_node]
 
-and staloadarg =
+and
+staloadarg =
   | STLDfname of (location, string) // staload "..."
   | STLDnspace of (location, string) // staload $...
   | STLDdeclist of (location, d0eclist) // staload { ... }
 // end of [staloadarg]
 
-and guad0ecl_node =
+and
+guad0ecl_node =
   | GD0Cone of (e0xp, d0eclist)
   | GD0Ctwo of (e0xp, d0eclist, d0eclist)
   | GD0Ccons of (e0xp, d0eclist, srpifkind, guad0ecl_node)
@@ -1351,16 +1453,19 @@ and guad0ecl_node =
 
 and d0exp_node =
 //
-  | D0Eide of symbol // dynamic identifiers
-  | D0Edqid of (d0ynq, symbol) // qualified dynamic identifiers
-  | D0Eopid of symbol // dynamic op identifiers
+  | D0Eide of symbol // dynamic ids
+  | D0Edqid of
+      (d0ynq, symbol) // qualified dynamic ids
+    // end of [D0Edqid]
 //
-  | D0Eidext of symbol // dynamic external identifiers
+  | D0Eopid of symbol // dynamic operator ids
 //
-  | D0Eint of i0nt
-  | D0Echar of c0har
-  | D0Efloat of f0loat
-  | D0Estring of s0tring
+  | D0Eidext of symbol // dynamic external ids
+//
+  | D0Eint of i0nt // integers
+  | D0Echar of c0har // characters
+  | D0Efloat of f0loat // floats
+  | D0Estring of s0tring // strings
 //
   | D0Eempty of ()
 //
@@ -1384,7 +1489,7 @@ and d0exp_node =
 //
   | D0Elet of (d0eclist, d0exp) // dynamic let-expression
   | D0Edeclseq of d0eclist // = let [d0eclist] in (*nothing*) end
-  | D0Ewhere of (d0exp, d0eclist)
+  | D0Ewhere of (d0exp, d0eclist) // dynamic where-expression
 //
   | D0Eapp of (d0exp, d0exp) // functional application
 //
@@ -1722,21 +1827,27 @@ fun d0exp_list (
 ) : d0exp // end of [d0exp_list]
 
 (* ****** ****** *)
-
-fun d0exp_ifhead (
+//
+fun
+d0exp_ifhead (
   hd: ifhead, _cond: d0exp, _then: d0exp, _else: d0expopt
 ) : d0exp // end of [d0exp_ifhead]
-fun d0exp_sifhead (
+fun
+d0exp_sifhead (
   hd: sifhead, _cond: s0exp, _then: d0exp, _else: d0exp
 ) : d0exp // end of [d0exp_sifhead]
-
-fun d0exp_casehead
+//
+(* ****** ****** *)
+//
+fun
+d0exp_casehead
   (hd: casehead, d0e: d0exp, t_of: token, c0ls: c0laulst): d0exp
 // end of [d0exp_casehead]
-fun d0exp_scasehead
+fun
+d0exp_scasehead
   (hd: scasehead, s0e: s0exp, t_of: token, c0ls: sc0laulst): d0exp
 // end of [d0exp_scasehead]
-
+//
 (* ****** ****** *)
 
 fun
@@ -2027,12 +2138,18 @@ fun d0ecl_include (knd: int, _1: token, _2: token): d0ecl
 fun d0ecl_symintr (_1: token, _2: i0delst): d0ecl
 fun d0ecl_symelim (_1: token, _2: i0delst): d0ecl
 //
-fun d0ecl_e0xpdef (_1: token, _2: i0de, _3: e0xpopt): d0ecl
-fun d0ecl_e0xpundef (_1: token, _2: i0de): d0ecl // HX: undefining
+fun
+d0ecl_e0xpdef
+  (_1: token, _2: i0de, _3: e0xpopt): d0ecl // #define
+fun
+d0ecl_e0xpundef(_1: token, _2: i0de): d0ecl // HX: #undef
 //
-fun d0ecl_e0xpact_assert (_1: token, _2: e0xp): d0ecl
-fun d0ecl_e0xpact_error (_1: token, _2: e0xp): d0ecl
 fun d0ecl_e0xpact_print (_1: token, _2: e0xp): d0ecl
+fun d0ecl_e0xpact_error (_1: token, _2: e0xp): d0ecl
+fun d0ecl_e0xpact_assert (_1: token, _2: e0xp): d0ecl
+//
+fun d0ecl_codegen2
+  (tok_beg: token, xs: e0xplst, tok_end: token): d0ecl
 //
 fun d0ecl_datsrts (_1: token, _2: d0atsrtdeclst): d0ecl
 fun d0ecl_srtdefs (_1: token, _2: s0rtdeflst): d0ecl
@@ -2071,8 +2188,8 @@ d0ecl_overload
   tok: token, id: i0de, dqid: dqi0de, opt: i0ntopt
 ) : d0ecl // end-of-fun
 //
-fun d0ecl_classdec
-  (t: token, id: i0de, sup: s0expopt): d0ecl
+fun
+d0ecl_classdec(t: token, id: i0de, sup: s0expopt): d0ecl
 //
 fun d0ecl_extype
   (tok: token, name: s0tring, s0e: s0exp): d0ecl

@@ -121,8 +121,8 @@ parerr_node =
   | PE_funarrow
   | PE_colonwith
 //
-  | PE_atme0xp
   | PE_e0xp
+  | PE_atme0xp
 //
   | PE_s0rt
   | PE_atms0rt
@@ -475,24 +475,28 @@ fun popt_fun
 
 (* ****** ****** *)
 
-dataviewtype
+datavtype
 synent2 (
   a1: viewtype, a2:viewtype
 ) = SYNENT2 (a1, a2) of (a1, a2)
 
-fun pseq2_fun
+fun
+pseq2_fun
   {a1,a2:type} (
   buf: &tokbuf
 , bt: int, err: &int
 , f1: parser (a1), f2: parser (a2)
 ) : synent2 (a1, a2)
 
-dataviewtype
+(* ****** ****** *)
+
+datavtype
 synent3 (
   a1: viewtype, a2:viewtype, a3:viewtype
 ) = SYNENT3 (a1, a2, a3) of (a1, a2, a3)
 
-fun pseq3_fun
+fun
+pseq3_fun
   {a1,a2,a3:type} (
   buf: &tokbuf
 , bt: int, err: &int
@@ -501,7 +505,8 @@ fun pseq3_fun
 
 (* ****** ****** *)
 
-fun ptest_fun
+fun
+ptest_fun
   {a:type} (
   buf: &tokbuf, f: parser (a), ent: &synent? >> synent
 ) : bool // end of [ptest_fun]
@@ -534,6 +539,8 @@ pif_fun
   buf: &tokbuf
 , bt: int, err: &int, f: parser (a), err0: int
 ) : (a) // end of [pif_fun]
+
+(* ****** ****** *)
 
 fun
 ptokwrap_fun
@@ -579,6 +586,10 @@ fun p_extnamopt : parser (s0tringopt)
 (* ****** ****** *)
 
 fun p_e0xp : parser (e0xp)
+fun p_e0xpseq : parser (e0xplst)
+
+(* ****** ****** *)
+
 fun p_datsdef : parser (datsdef)
 
 (* ****** ****** *)
@@ -616,12 +627,17 @@ fun p_eqs0expopt : parser (s0expopt) // EQ s0exp
 fun p_ofs0expopt : parser (s0expopt) // OF s0exp
 fun p_colons0expopt : parser (s0expopt) // OF s0exp
 //
-// quantifier-like multi-argument
+(*
+HX: argument type
+*)
+fun p_a0typ : parser (a0typ)
 //
+(*
+HX:
+quantifier-like multi-argument
+*)
 fun p_q0marg : parser (q0marg)
 fun p_q0margseq : parser (q0marglst)
-//
-fun p_a0typ : parser (a0typ) // argument type
 //
 fun p_e0xndec : parser (e0xndec)
 fun p_d0atconseq : parser (d0atconlst)
@@ -659,6 +675,10 @@ fun p_d0expsemiseq : parser (d0explst)
 //
 fun p_c0lauseq : parser (c0laulst) // pattern-matching clauses
 fun p_sc0lauseq : parser (sc0laulst) // static pattern-matching clauses
+
+(* ****** ****** *)
+
+fun p_S0Ed2ctype : parser (d0exp)
 
 (* ****** ****** *)
 

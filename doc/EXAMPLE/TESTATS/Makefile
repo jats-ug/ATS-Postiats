@@ -267,6 +267,36 @@ cleanall:: ; $(RMF) withtype
 
 ######
 
+CPF=cp -f
+
+######
+#
+all:: \
+d2ctype
+d2ctype: \
+d2ctype.dats ; \
+$(PATSCC2) -cleanaft -DATS_MEMALLOC_LIBC -o $@ $<
+regress:: d2ctype ; ./$<
+cleanall:: ; $(RMF) d2ctype
+#
+######
+#
+all:: \
+codegen2
+codegen2: \
+codegen2.dats \
+codegen2_out.dats ; \
+$(PATSCC2) -cleanaft -o $@ codegen2_test.dats -DATS_MEMALLOC_LIBC
+regress:: codegen2 ; ./$<
+cleanall:: ; $(RMF) codegen2
+#
+codegen2_out.dats: \
+codegen2.dats; $(PATSOPT) --output-a $@ --codegen-2 -d codegen2.dats
+#
+cleanall:: ; $(RMF) codegen2_out.dats
+#
+######
+
 testall:: all
 testall:: regress
 testall:: cleanall

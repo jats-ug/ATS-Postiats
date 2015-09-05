@@ -150,12 +150,11 @@ fprint_token
   | T_FREEAT () => fprintf (out, "FREEAT()", @()) // free@
   | T_VIEWAT () => fprintf (out, "VIEWAT()", @()) // view@
 //
+  | T_DLRDELAY (x) => fprintf (out, "DLRDELAY(%i)", @(x))
+//
   | T_DLRARRPSZ () => fprintf (out, "DLRARRPSZ()", @())
 //
-  | T_DLRSOLASSERT () => fprintf (out, "DLRSOLASSERT()", @())
-  | T_DLRSOLVERIFY () => fprintf (out, "DLRSOLVERIFY()", @())
-//
-  | T_DLRDELAY (x) => fprintf (out, "DLRDELAY(%i)", @(x))
+  | T_DLRD2CTYPE () => fprintf (out, "DLRD2CTYPE()", @())
 //
   | T_DLREFFMASK () => fprintf (out, "DLREFFMASK()", @())
   | T_DLREFFMASK_ARG (x) => fprintf (out, "DLREFFMASK(%i)", @(x))
@@ -190,6 +189,9 @@ fprint_token
 //
   | T_DLRTEMPENVER () => fprintf (out, "DLRTEMPENVER()", @())
 //
+  | T_DLRSOLASSERT () => fprintf (out, "DLRSOLASSERT()", @())
+  | T_DLRSOLVERIFY () => fprintf (out, "DLRSOLVERIFY()", @())
+//
   | T_SRPASSERT () => fprintf (out, "SRPASSERT()", @())
   | T_SRPDEFINE () => fprintf (out, "SRPDEFINE()", @())
   | T_SRPELIF () => fprintf (out, "SRPELIF()", @())
@@ -205,6 +207,9 @@ fprint_token
   | T_SRPPRINT () => fprintf (out, "SRPPRINT()", @())
   | T_SRPTHEN () => fprintf (out, "SRPTHEN()", @())
   | T_SRPUNDEF () => fprintf (out, "SRPUNDEF()", @())
+//
+  | T_SRPCODEGEN2 () => fprintf (out, "SRPCODEGEN2()", @())
+  | T_SRPCODEGEN3 () => fprintf (out, "SRPCODEGEN2()", @())
 //
   | T_IDENT_alp (x) => fprintf (out, "IDENT_alp(%s)", @(x))
   | T_IDENT_sym (x) => fprintf (out, "IDENT_sym(%s)", @(x))

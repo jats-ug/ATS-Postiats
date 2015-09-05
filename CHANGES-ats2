@@ -1,3 +1,29 @@
+0.2.3
+
+This is the 26th release of ATS2, the successor of the
+ATS programming language. The compiler for ATS2 is given
+the name ATS/Positats, ATS2/Postiats or simply Postiats.
+
+The official website for ATS is:
+
+http://www.ats-lang.org
+
+ATS-Postiats is hosted at github:
+
+https://github.com/githwxi/ATS-Postiats
+
+Major releases of ATS2 are available at:
+
+https://sourceforge.net/projects/ats2-lang/
+
+Major releases of external packages for ATS2 are available at:
+
+https://sourceforge.net/projects/ats2-lang-contrib/
+
+Here is a list of major additions and changes since the last release:
+
+######
+
 0.2.2
 
 This is the 25th release of ATS2, the successor of the ATS
@@ -30,6 +56,8 @@ Here is a list of major additions and changes since the last release:
 5. Adding the_s2rtdatmap to the jsonization of generated constraints
    (for listing the inductively defined sorts used in the constraints)
 6. Supporting tail-call optimization for static function templates
+7. Supporting #codegen2 for datcon, datcontag, and fprint
+8. Supporting the use of $d2ctype for taking the type of a dynamic constant
 
 ######
 
