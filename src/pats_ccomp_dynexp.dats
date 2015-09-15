@@ -56,7 +56,7 @@ prerr_FILENAME<> () = prerr "pats_ccomp_dynexp"
 (* ****** ****** *)
 //
 staload
-GLOB = "./pats_global.sats"
+GLOBAL = "./pats_global.sats"
 //  
 (* ****** ****** *)
 
@@ -334,7 +334,7 @@ case+ hde0.hidexp_node of
 //
 | HDElet (hids, hde_scope) => let
 //
-    val (pfpush | ()) = ccompenv_push (env)
+    val (pfpush|()) = ccompenv_push (env)
 //
     val pmds = hideclist_ccomp (env, hids)
     val ins_push = instr_letpush (loc0, pmds)
@@ -345,7 +345,7 @@ case+ hde0.hidexp_node of
     val ins_pop = instr_letpop (loc0)
     val () = instrseq_add (res, ins_pop)
 //
-    val ((*void*)) = ccompenv_pop (pfpush | env)
+    val ((*popped*)) = ccompenv_pop (pfpush | env)
 //
   in
     pmv_scope
@@ -1222,7 +1222,7 @@ var added: int = 0
 //
 val
 tlcalopt =
-  $GLOB.the_CCOMPATS_tlcalopt_get()
+  $GLOBAL.the_CCOMPATS_tlcalopt_get()
 //
 val isret =
 (

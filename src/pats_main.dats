@@ -647,7 +647,7 @@ out_old of
 | OUTCHANref _ => ()
 //
 | OUTCHANptr (filp) => let
-    val _err = $STDIO.fclose0_err (filp) in (*nothing*)
+    val err = $STDIO.fclose0_err (filp) in (*nothing*)
   end // end of [OUTCHANptr]
 //
 end // end of [cmdstate_set_outchan]
@@ -655,30 +655,38 @@ end // end of [cmdstate_set_outchan]
 (* ****** ****** *)
 
 fn isinpwait
-  (state: cmdstate): bool =
-  case+ state.waitkind of
-  | WTKinput_sta () => true
-  | WTKinput_dyn () => true
-  | _ (*non-input*) => false
-// end of [isinpwait]
+(
+  state: cmdstate
+) : bool =
+(
+case+
+state.waitkind
+of // case+
+ | WTKinput_sta() => true
+ | WTKinput_dyn() => true
+ | _ (*non-WTKinput*) => false
+) // end of [isinpwait]
 
 fn isoutwait
   (state: cmdstate): bool =
-  case+ state.waitkind of
-  | WTKoutput () => true | _ => false
-// end of [isoutwait]
+(
+case+ state.waitkind of
+  | WTKoutput () => true | _(*non-WTKoutput*) => false
+) (* end of [isoutwait] *)
 
 fn isdatswait
   (state: cmdstate): bool =
-  case+ state.waitkind of
-  | WTKdefine () => true | _ => false
-// end of [isdatswait]
+(
+case+ state.waitkind of
+  | WTKdefine () => true | _(*non-WTKdefine*) => false
+) (* end of [isdatswait] *)
 
 fn isiatswait
   (state: cmdstate): bool =
-  case+ state.waitkind of
-  | WTKinclude () => true | _ => false
-// end of [isiatswait]
+(
+case+ state.waitkind of
+| WTKinclude () => true | _(*non-WTKinclude*) => false
+) (* end of [isiatswait] *)
 
 (* ****** ****** *)
 
@@ -689,20 +697,26 @@ theOutFilename
   : Stropt = stropt_none
 //
 val (pf0 | ()) =
-  vbox_make_view_ptr{Stropt}(view@ (theOutFilename) | &theOutFilename)
+  vbox_make_view_ptr{Stropt}(view@(theOutFilename) | &theOutFilename)
 // end of [val]
 
-in // in of [local]
+in (* in-of-local *)
 
-fn theOutFilename_get
-  (): Stropt = out where {
+fn
+theOutFilename_get
+(
+// argless
+) : Stropt = out where
+{
   prval vbox pf = pf0
   val out = theOutFilename
   val () = theOutFilename := stropt_none
 } // end of [theOutFilename_get]
 
-fn theOutFilename_set
-  (name: Stropt) = () where {
+fn
+theOutFilename_set
+ (name: Stropt) = () where
+{
   prval vbox pf = pf0
   val () = theOutFilename := name
 } // end of [theOutFilename_set]
@@ -721,17 +735,22 @@ fn fixity_load
   val filename =
     $FIL.filename_make (given, given, fullname)
 //
-  val (pffil | ()) = 
-    $FIL.the_filenamelst_push (filename)
-  val d0cs = parse_from_filename_toplevel (0(*sta*), filename)
-  val () = $FIL.the_filenamelst_pop (pffil | (*none*))
+  val (
+    pffil | ()
+  ) = $FIL.the_filenamelst_push(filename)
+  val d0cs =
+    parse_from_filename_toplevel(0(*sta*), filename)
+  val ((*popped*)) =
+    $FIL.the_filenamelst_pop(pffil | (*none*))
 //
   val (
     pfenv | ()
-  ) = $TRENV1.the_fxtyenv_push_nil ()
+  ) = $TRENV1.the_fxtyenv_push_nil((*void*))
   val d1cs = $TRANS1.d0eclist_tr_errck (d0cs)
-  val fxtymap = $TRENV1.the_fxtyenv_pop (pfenv | (*none*))
-  val () = $TRENV1.the_fxtyenv_pervasive_joinwth (fxtymap)
+  val fxtymap =
+    $TRENV1.the_fxtyenv_pop (pfenv | (*none*))
+  val ((*joined*)) =
+    $TRENV1.the_fxtyenv_pervasive_joinwth (fxtymap)
 (*
   val () = begin
     print "[fixity_load] is finished."; print_newline ()
@@ -762,29 +781,35 @@ val fullname = string_of_strptr (fullname)
 val filename =
   $FIL.filename_make (given, given, fullname)
 //
-val (pfpush | ()) = 
-  $FIL.the_filenamelst_push (filename)
+val (pfpush|()) = 
+  $FIL.the_filenamelst_push(filename)
 val d0cs =
-  parse_from_filename_toplevel (0(*sta*), filename)
-val () = $FIL.the_filenamelst_pop (pfpush | (*none*))
+  parse_from_filename_toplevel(0(*sta*), filename)
+val ((*popped*)) =
+  $FIL.the_filenamelst_pop(pfpush | (*none*))
 //
-val () = $TRENV1.the_EXTERN_PREFIX_set ("atspre_")
-val () = $GLOB.the_PACKNAME_set_name ("ATSLIB.prelude")
+val PACKNAME = "ATSLIB.prelude"
+val ((*default*)) =
+  $GLOB.the_PACKNAME_set_name(PACKNAME)
+val ((*default*)) =
+  $TRENV1.the_EXTERN_PREFIX_set("atspre_")
 //
 val (pfenv | ()) =
-  $TRENV1.the_trans1_env_push ((*void*))
-val d1cs = $TRANS1.d0eclist_tr_errck (d0cs)
-val () = $TRENV1.the_trans1_env_pop (pfenv | (*none*))
+  $TRENV1.the_trans1_env_push((*void*))
+val d1cs = $TRANS1.d0eclist_tr_errck(d0cs)
+val ((*popped*)) =
+  $TRENV1.the_trans1_env_pop(pfenv | (*none*))
 //
 val (pfenv | ()) =
-  $TRENV2.the_trans2_env_push ((*void*))
-val d2cs = $TRANS2.d1eclist_tr_errck (d1cs)
-val () = $TRENV2.the_trans2_env_pervasive_joinwth (pfenv | filename, d2cs)
+  $TRENV2.the_trans2_env_push((*void*))
+val d2cs = $TRANS2.d1eclist_tr_errck(d1cs)
+val ((*joined*)) =
+  $TRENV2.the_trans2_env_pervasive_joinwth(pfenv | filename, d2cs)
 //
-val () = $GLOB.the_PACKNAME_set_none ()
-val () = $TRENV1.the_EXTERN_PREFIX_set_none ()
+val ((*reset*)) = $GLOB.the_PACKNAME_set_none()
+val ((*reset*)) = $TRENV1.the_EXTERN_PREFIX_set_none()
 //
-} // end of [pervasive_load]
+} (* end of [pervasive_load] *)
 
 (* ****** ****** *)
 

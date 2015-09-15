@@ -22,6 +22,26 @@ https://sourceforge.net/projects/ats2-lang-contrib/
 
 Here is a list of major additions and changes since the last release:
 
+1. Enforcing that the definition of each declared function be
+   lam-abstract. For instanct, the following code results in an
+   error during compilation:
+   fun fact = fix f(n:int): int => if n > 0 then n*f(n-1) else 1
+2. Supporting the use of locally defined templates:
+   local fun foo(): int = 0 in fun{} foo2() = foo() + 1 end
+   local fun{} foo(): int = 0 in fun{} foo2() = foo() + 1 end
+3. Changing some names:
+   _ATS_CCOMP_HEADER_NONE -> _ATS_CCOMP_HEADER_NONE_
+   _ATS_CCOMP_PRELUDE_NONE -> _ATS_CCOMP_PRELUDE_NONE_
+   _ATS_CCOMP_PRELUDE_USER -> _ATS_CCOMP_PRELUDE_USER_
+   _ATS_CCOMP_PRELUDE_USER2 -> _ATS_CCOMP_PRELUDE_USER2_
+   _ATS_CCOMP_RUNTIME_NONE -> _ATS_CCOMP_RUNTIME_NONE_
+   _ATS_CCOMP_EXCEPTION_NONE -> _ATS_CCOMP_EXCEPTION_NONE_
+   _ATS_CCOMP_RUNTIME_TRYWITH_NONE -> _ATS_CCOMP_RUNTIME_TRYWITH_NONE_
+4. Moving libatsynmark to utils/libatsynmark
+5. Fixing an issue that causes crash due to compiling atstyvar_type.
+   See hitype_tyvar_test in [pats_ccomp_hitype] for more information.
+6. Changing the keyword 'require' to '#require' (for atspkgreloc)
+
 ######
 
 0.2.2
