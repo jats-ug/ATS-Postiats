@@ -29,7 +29,7 @@ HTML_JA/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
 preface.db: preface.atxt
 	$(ATSDOC) --outcode preface_atxt.dats -i preface.atxt > preface_atxt.txt
 	$(ATSCC) -D_ATS_GCATS -I$(PATSHOME)/src -IATS $(PATSHOMEQ) -IATS $(ATSHOMEQ) \
-	  -o preface.exe preface_atxt.dats -L$(PATSHOME)/libatsynmark -latsynmark -latsdoc
+	  -o preface.exe preface_atxt.dats -L$(PATSHOME)/utils/libatsynmark -latsynmark -latsdoc
 	./preface.exe > $@
 	rm -f preface.exe preface_atxt.dats preface_atxt.txt
 
@@ -38,7 +38,7 @@ preface.db: preface.atxt
 		$(ATSDOC) --outcode $(replacesuffixes .atxt, _atxt.dats, $<) -i $< > $(replacesuffixes .atxt, _atxt.txt, $<)
 		$(ATSCC) -D_ATS_GCATS -I$(PATSHOME)/src -IATS $(PATSHOMEQ) -IATS $(ATSHOMEQ) \
 		  -o $(removesuffix $<) $(replacesuffixes .atxt, _atxt.dats, $<) \
-		  -L$(PATSHOME)/libatsynmark -latsynmark -latsdoc
+		  -L$(PATSHOME)/utils/libatsynmark -latsynmark -latsdoc
 		./$(removesuffix $<) > $@
 		rm -f $(replacesuffixes .atxt, _atxt.dats, $<) $(replacesuffixes .atxt, _atxt.txt, $<) $(removesuffix $<)
 
