@@ -624,16 +624,31 @@ chanpos1_recv
 (* ****** ****** *)
 ')</pre>
 
+#langeng("
 Note that #dyncode("chmsg_parse") is a function template for
 unmarshalling: It is called to turn the marshalled representation of a
 value into the value itself.
 
 </p>
+")
+#langja("
+#dyncode("chmsg_parse") はアンマーシャル化 (unmarshalling) を表わす関数テンプレートであることに注意してください:
+それは値のマーシャル化された表現をその値自身に戻すために呼び出されます。
 
+</p>
+")
+
+#langeng("
 <p>
 A simple demo based on the code for #dyncode("P") and #dyncode("Q") is
-available <a href="./introxmpl1_demo.html">on-line</a>. The entirety
+available <a href=\"./introxmpl1_demo.html\">on-line</a>. The entirety
 of the code for this demo can be found in four files of the following names:
+")
+#langja("
+<p>
+#dyncode("P") と #dyncode("Q") のコードを使った単純なデモが <a href=\"./introxmpl1_demo.html\">オンライン</a> から入手できます。
+このデモコードの全体は次の名前の4つのファイルから成り立ちます:
+")
 
 <pre>
 introxmpl1_demo.html
@@ -642,6 +657,7 @@ introxmpl1_client.dats
 introxmpl1_server.dats
 </pre>
 
+#langeng("
 In the file #filename("introxmpl1_prctl.sats"), the protocol for
 communincations between the client (browser) and the server
 (web-worker) is formally represented as a session type. As can be
@@ -657,10 +673,29 @@ strongly encourage the reader to use the provided Makefile to build
 the demo on his/her own.
 
 </p>
+")
+#langja("
+ファイル #filename("introxmpl1_prctl.sats") では、クライアント(ブラウザ)とサーバ(web-worker)の間における通信プロトコルがセッション型を用いて形式的に表現されています。
+予想されるように、このファイルはは #filename("introxmpl1_client.dats") と #filename("introxmpl1_server.dats") の両方に静的にロードされます。
+(#filename("introxmpl1_client.dats") における) クライアントコードは #dyncode("P") のコードに基づいていますが、いくつかの有意な修正を含んでおり、GUI を扱うために Bacon.js を使います。
+他方では、(#filename("introxmpl1_client.dats") における) サーバコードは #dyncode("Q") のコードに直接基づいており、事実上修正はありません。
+与えられた Makefile を使って独自のデモを作ることを読者に勧めます。
+
+</p>
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by <a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>.
+")
+#langja("
+この記事は
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>
+によって書かれ、
+<a href=\"http://jats-ug.metasepi.org/\">Japan ATS User Group</a>
+によって翻訳されています。
+")
 
 </body>
 </html>
