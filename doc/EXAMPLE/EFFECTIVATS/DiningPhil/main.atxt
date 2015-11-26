@@ -347,13 +347,13 @@ use the command [kill] to remove all of the deadlocked processes.
 
 #langeng("
 This article is written by
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
 ")
 #langja("
 この記事は
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
 によって書かれ、
-<a href="http://jats-ug.metasepi.org/">Japan ATS User Group</a>
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
 によって翻訳されています。
 ")
 

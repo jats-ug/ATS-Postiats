@@ -399,19 +399,19 @@ respectively.
 
 #langeng("
 For more on array-based stack implementation, please see:
-<a href="http://www.ats-lang.org/LIBRARY/libats/SATS/stkarray.sats">stkarray.sats</a>
+#ahref("http://www.ats-lang.org/LIBRARY/libats/SATS/stkarray.sats", "stkarray.sats")
 ,
-<a href="http://www.ats-lang.org/LIBRARY/libats/DATS/stkarray.dats">stkarray.dats</a>
+#ahref("http://www.ats-lang.org/LIBRARY/libats/DATS/stkarray.dats", "stkarray.dats")
 , and
-<a href="http://www.ats-lang.org/LIBRARY/libats/CATS/stkarray.cats">stkarray.cats</a>.
+#ahref("http://www.ats-lang.org/LIBRARY/libats/CATS/stkarray.cats", "stkarray.cats").
 ")
 #langja("
 配列を用いたスタック実装についての詳細は
-<a href="http://www.ats-lang.org/LIBRARY/libats/SATS/stkarray.sats">stkarray.sats</a>
+#ahref("http://www.ats-lang.org/LIBRARY/libats/SATS/stkarray.sats", "stkarray.sats")
 ,
-<a href="http://www.ats-lang.org/LIBRARY/libats/DATS/stkarray.dats">stkarray.dats</a>
+#ahref("http://www.ats-lang.org/LIBRARY/libats/DATS/stkarray.dats", "stkarray.dats")
 ,
-<a href="http://www.ats-lang.org/LIBRARY/libats/CATS/stkarray.cats">stkarray.cats</a>
+#ahref("http://www.ats-lang.org/LIBRARY/libats/CATS/stkarray.cats", "stkarray.cats")
 から入手できます。
 ")
 
@@ -504,13 +504,13 @@ written in the postfix-notation is coded.
 
 #langeng("
 This article is written by
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
 ")
 #langja("
 この記事は
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
 によって書かれ、
-<a href="http://jats-ug.metasepi.org/">Japan ATS User Group</a>
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
 によって翻訳されています。
 ")
 

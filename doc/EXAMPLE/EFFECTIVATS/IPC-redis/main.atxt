@@ -33,13 +33,13 @@ Redis を用いたプロセス間通信
 #langeng("
 In this article, I present a straightforward example of inter-process
 communication based on the NOSQL
-<a href="http://redis.io">redis</a>.  The
+#ahref("http://redis.io", "redis").  The
 primary purpose of this example is to show a concrete case where redis
 functions are directly called inside ATS code.
 ")
 #langja("
 この記事では、NOSQL
-<a href="http://redis.io">redis</a>
+#ahref("http://redis.io", "redis")
 を用いたプロセス間通信の素直な例を紹介します。
 この例の主な目的は redis の関数を ATS コードの中から直接呼び出す具体例を示すことです。
 ")
@@ -318,13 +318,13 @@ lines.
 
 #langeng("
 This article is written by
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
 ")
 #langja("
 この記事は
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
 によって書かれ、
-<a href="http://jats-ug.metasepi.org/">Japan ATS User Group</a>
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
 によって翻訳されています。
 ")
 

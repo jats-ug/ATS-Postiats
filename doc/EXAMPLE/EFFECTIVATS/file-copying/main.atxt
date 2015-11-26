@@ -215,7 +215,7 @@ functions [readch] and [writech], which adds a layer to shield system calls
 would recommend highly and repeatedly. What seems really unfortunate to me
 is that popular books on systems programming
 (e.g.
-<a href="http://www.apuebook.com/">APUE</a>
+#ahref("http://www.apuebook.com/", "APUE")
 ) often do very little, if at all, to advocate this very useful programming style!
 ")
 #langja("
@@ -227,7 +227,7 @@ is that popular books on systems programming
 このプログラミングスタイルを私は何度も繰り返し強く提言してきました。
 私にとって非常に残念なことですが、たとえシステムプログラミングに関する著名な本
 (例:
-<a href="http://www.apuebook.com/">APUE</a>
+#ahref("http://www.apuebook.com/", "APUE")
 )
 がこの有用なプログラミングスタイルを推奨していなかったとしてもです!
 ")
@@ -488,13 +488,13 @@ loop 関数が終了することに注意してください。
 
 #langeng("
 This article is written by
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
 ")
 #langja("
 この記事は
-<a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>
+#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
 によって書かれ、
-<a href="http://jats-ug.metasepi.org/">Japan ATS User Group</a>
+#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
 によって翻訳されています。
 ")
 
