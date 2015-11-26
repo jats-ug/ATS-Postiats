@@ -112,4 +112,20 @@ macdef langja (x) = ignorestr ,(x)
 
 (* ****** ****** *)
 
+fn stacode
+  (x: string): atext = let
+  val _beg = atext_strcst"<span style=\"color: #0000F0;\">"
+  val _end = atext_strcst"</span>"
+in
+  atext_apptxt3 (_beg, atext_strsub(x), _end)
+end // end of [stacode]
+
+fn dyncode
+  (x: string): atext = let
+  val _beg = atext_strcst"<span style=\"color: #F00000;\">"
+  val _end = atext_strcst"</span>"
+in
+  atext_apptxt3 (_beg, atext_strsub(x), _end)
+end // end of [dyncode]
+
 (* end of [atextfun.hats] *)
