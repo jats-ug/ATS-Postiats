@@ -290,6 +290,7 @@ is overloaded with both of these functions.
 </p>
 ")
 
+#langeng("
 <p>
 The functions for sending and receiving can be based
 on either synchronous or asynchronous communication. Calling these
@@ -299,10 +300,26 @@ value available for the call to return. For asynchronous communication,
 calling #dyncode("channpos_send") may block the caller if there is no
 more room available for buffering.
 </p>
+")
+#langja("
+<p>
+送受信のための関数は同期もしくは非同期どちらの通信にも基づくことができます。
+これらの関数呼び出しは呼び出し元のブロックを引き起すかもしれません。
+例えば、#dyncode("channpos_recv") 呼び出しは、その呼び出しが返す値がなければ、ブロックするでしょう。
+非同期通信では、#dyncode("channpos_send") 呼び出しは、バッファに空きがなければ、呼び出し元をブロックするかもしれなせん。
+</p>
+")
 
+#langeng("
 <p>
 The programs for the processes P and Q can be implemented as follows:
 </p>
+")
+#langja("
+<p>
+プロセス P と Q を表わすプログラムは次のように実装できます:
+</p>
+")
 
 <pre
 class="patsyntax">
@@ -337,11 +354,19 @@ Q (
 (* ****** ****** *)
 ')</pre>
 
+#langeng("
 <p>
 But how a channel can be created in the first place? The answer
 to this question depends on the underlying support for distributed
 programming. For instance, we may be able to introduce the following
 function #dyncode("channel_create") for creating a channel:
+")
+#langja("
+<p>
+しかしそもそもチャネルはどうやって作れば良いのでしょうか？
+その答は分散プログラミングをどのようにサポートするかに依存しています。
+例えば、チャネルの生成に次のような関数 #dyncode("channel_create") を導入できるでしょう:
+")
 
 <pre
 class="patsyntax">
@@ -351,16 +376,29 @@ channeg_create{ss:type}
   (fserv: chanpos(ss) -<lincloptr1> void): channeg(ss)
 ')</pre>
 
+#langeng("
 The basic idea here is to spawn a thread (by executing the linear
 closure-function #dyncode("fserv")) that works on the postive end of
 the newly created channel and then returns the negative end of the
 channel to the caller.
 </p>
+")
+#langja("
+ここでの基本的なアイデアは(線形クロージャ関数 #dyncode("fserv") の実行で)スレッドを生成することです。
+そのスレッドは新たに生成されたチャネルの正の終端で動作し、それからそのチャネルの負の終端が呼び出し元に返されます。
+</p>
+")
 
 <h2>
+#langeng("
 Session-typed channels based on web-workers
+")
+#langja("
+web-workerに基づいたセッション型チャネル
+")
 </h2>
 
+#langeng("
 <p>
 In the rest of this article, I will give a concrete presentation of
 session-typed channels that are implemented based on web-workers.  For
@@ -377,10 +415,27 @@ address this issue by building an interface for programming
 session-typed channels that is of CPS-style (where CPS stands for
 continuation-passing style).
 </p>
+")
+#langja("
+<p>
+この記事の残りでは、web-workerに基づいて実装されたセッション型チャネルの具体例を示します。
+web-workerに馴染みのない読者にとって、読む前に何らかのプログラミングの例を学ぶのは良いアイデアかもしれません。
+本質的に、web-workerはメッセージパッシングによってウェブブラウザと通信する、バックグランド実行されたスレッドです。
+次に示す ATS コードは (Patsopt と Atscc2js で) JS コードにコンパイルされ、ウェブブラウザ (クライアント) と web-worker (サーバ) で実行するように意図されています。
+JS (より正確にはそのランタイム) はシングルスレッドなので、無期限に呼び出し元をブロックさせるような関数 (例: #dyncode("chanpos_recv")) をサポートできません。
+この問題に対処するために、継続渡し (CPS: Continuation-passing) スタイルのセッション型チャネルをプログラミングするためのインターフェイスを構築します。
+</p>
+")
 
+#langeng("
 <p>
 Let us first see the types assigned to the functions for closing
 channels:
+")
+#langja("
+<p>
+はじめにチャネルを閉じる関数に割り当てられた型を見てみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -396,14 +451,28 @@ fun channeg1_close(channeg_nil): void
 //
 ')</pre>
 
+#langeng("
 Clearly, everything is standard here, and there is really no surprise at all.
 
 </p>
+")
+#langja("
+明確に、全ては一般的なもので、おどろくべきことはありません。
 
+</p>
+")
+
+#langeng("
 <p>
 
 Let us next see the types assigned to the functions for sending and receiving
 on channels:
+")
+#langja("
+<p>
+
+次にチャネルに対する送受信を行なう関数に割り当てられた型を見てみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -452,6 +521,7 @@ channeg1_send
 //
 ')</pre>
 
+#langeng("
 Given a type T, the type #stacode("chmsg(T)") is for the marshalled
 representation of a value of the type T. The type assigned to the
 function #dyncode("chanpos1_send") indicates that the function takes
@@ -466,11 +536,31 @@ to the functions #dyncode("channeg1_send") and
 #dyncode("channeg1_recv") can be explained similarly.
 
 </p>
+")
+#langja("
+型 T が与えられたとき、型 #stacode("chmsg(T)") は型 T の値のマーシャル化 (marshalled) された表現を表わします。
+関数 #dyncode("chanpos1_send") に割り当てられた型はその関数が次の3つの引数を取ることを示しています:
+それらは正のチャネル、(送信される)値、そして継続です;
+その値がそのチャネルに渡された後、そのチャネルには継続が渡されます。
+また、関数 #dyncode("chanpos1_recv") に割り当てられた型はその関数が次の2つの引数を取ることを示しています:
+それらは正のチャネルと継続です;
+その値のマーシャル化された表現を受信した後、そのチャネルとマーシャル化された表現は継続に渡されます。
+関数 #dyncode("channeg1_send") と #dyncode("channeg1_recv") に割り当てられた型は同様に説明できます。
 
+</p>
+")
+
+#langeng("
 <p>
 
 The above functions #dyncode("P") and #dyncode("Q") can now be implemented
 as follows:
+")
+#langja("
+<p>
+
+上記の関数 #dyncode("P") と #dyncode("Q") は次のように実装できます:
+")
 
 <pre
 class="patsyntax">
