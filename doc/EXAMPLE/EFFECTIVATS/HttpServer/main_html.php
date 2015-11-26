@@ -372,12 +372,12 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 
 <p>
 <!--
-The implementation of [myserver_process_request] reads into a
+The implementation of [myserver_process_request] reads from a
 buffer whatever is sent by the client; it generates an HTML page
 containing the content of the buffer plus a time stamp and then
 sends the page to the client.
 -->
-[myserver_process_request] の実装は、クライアントから送信されたデータをバッファに読み込みます。そして、そのバッファの内容とタイムスタンプを含む HTML ページを生成し、そのページをクライアントに送信します。
+[myserver_process_request] の実装は、クライアントから送信されたデータをバッファから読み込みます。そして、そのバッファの内容とタイムスタンプを含む HTML ページを生成し、そのページをクライアントに送信します。
 </p>
 
 <h2>

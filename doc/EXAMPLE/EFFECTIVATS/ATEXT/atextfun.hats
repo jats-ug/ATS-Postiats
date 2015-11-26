@@ -4,15 +4,21 @@
 // for writing EFFECTIVATS series
 //
 (* ****** ****** *)
-
-dynload "libatsdoc/dynloadall.dats"
-dynload "libatsynmark/dynloadall.dats"
-
+//
+dynload
+"libatsdoc/dynloadall.dats"
+dynload
+"utils/libatsynmark/dynloadall.dats"
+//
 (* ****** ****** *)
 //
 staload
 "libatsdoc/SATS/libatsdoc_atext.sats"
 //
+(* ****** ****** *)
+
+#include "utils/atsdoc/HATS/xhtmlatxt.hats"
+
 (* ****** ****** *)
 
 fun
@@ -39,11 +45,19 @@ patscode_style
 ") (* end of [patscode_style] *)
 
 (* ****** ****** *)
+//
+fun
+filename
+(
+  x: string
+) : atext = xmltagging("tt", x)
+//
+(* ****** ****** *)
 
 local
 //
 staload
-"libatsynmark/SATS/libatsynmark.sats"
+"utils/libatsynmark/SATS/libatsynmark.sats"
 //
 in (* in of [local] *)
 

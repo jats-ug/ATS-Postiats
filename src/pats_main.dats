@@ -32,13 +32,15 @@
 // Start Time: March, 2011
 //
 (* ****** ****** *)
-
+//
 staload
-UN = "prelude/SATS/unsafe.sats"
-
+UN =
+"prelude/SATS/unsafe.sats"
+//
 (* ****** ****** *)
 
-staload STDIO = "libc/SATS/stdio.sats"
+staload
+STDIO = "libc/SATS/stdio.sats"
 
 (* ****** ****** *)
 
@@ -131,10 +133,10 @@ staload
 CNSTR3 = "./pats_constraint3.sats"
 
 (* ****** ****** *)
-
+//
 staload "./pats_histaexp.sats"
 staload "./pats_hidynexp.sats"
-
+//
 (* ****** ****** *)
 
 staload TYER = "./pats_typerase.sats"
@@ -143,6 +145,15 @@ staload TYER = "./pats_typerase.sats"
 
 staload CCOMP = "./pats_ccomp.sats"
 
+(* ****** ****** *)
+//
+// HX-2015-10-02:
+//
+#define
+ATS_DYNLOADFLAG 0 // manual dynloading
+#define
+ATS_DYNLOADFUN_NAME "libatsopt_dynloadall"
+//
 (* ****** ****** *)
 //
 dynload "pats_error.dats"
@@ -432,20 +443,29 @@ in
 //
 fprintln! (out, "Usage: ", cmdname, " <command> ... <command>\n");
 fprintln! (out, "where a <command> is of one of the following forms:\n");
+//
 fprintln! (out, "  -h (for printing out this help usage)");
 fprintln! (out, "  --help (for printing out this help usage)");
+//
 fprintln! (out, "  -v (for printing out the version)");
 fprintln! (out, "  --version (for printing out the version)");
+//
 fprintln! (out, "  -s filenames (for compiling (many) static <filenames>)");
 fprintln! (out, "  --static filenames (for compiling (many) static <filenames>)");
+//
 fprintln! (out, "  -d filenames (for compiling (many) dynamic <filenames>)");
 fprintln! (out, "  --dynamic filenames (for compiling (many) dynamic <filenames>)");
+//
 fprintln! (out, "  -o filename (output into <filename>)");
 fprintln! (out, "  --output filename (output into <filename>)");
 fprintln! (out, "  --output-w filename (output-write into <filename>)");
 fprintln! (out, "  --output-a filename (output-append into <filename>)");
+//
+fprintln! (out, "  -cc (for compiling into C)");
 fprintln! (out, "  -tc (for typechecking only)");
+fprintln! (out, "  --compile (for compiling into C)");
 fprintln! (out, "  --typecheck (for typechecking only)");
+//
 (*
 fprintln! (out, "  -dep (for generating information on file dependencices)");
 *)
@@ -454,15 +474,22 @@ fprintln! (out, "  --depgen (for generating information on file dependencices)")
 fprintln! (out, "  -tag (for generating tagging information on syntactic entities)");
 *)
 fprintln! (out, "  --taggen (for generating tagging information on syntactic entities)");
+//
 fprintln! (out, "  --gline (for generating line pragma information in target code)");
+//
 fprintln! (out, "  --debug (for enabling the generation of more informative error messages)");
 fprintln! (out, "  --debug2 (for enabling the generation of debugging information in target code)");
+//
 fprintln! (out, "  --pkgreloc (for generating a script to help relocate packages in need)");
+//
 fprintln! (out, "  --codegen-2 (for outputing code generated from level-2 syntax)");
 fprintln! (out, "  --jsonize-2 (for outputing code in JSON based on level-2 syntax)");
+//
 fprintln! (out, "  --tlcalopt-disable (for disabling tail-call optimization)");
+//
 fprintln! (out, "  --constraint-export (for exporting constraints in JSON format)");
 fprintln! (out, "  --constraint-ignore (for entirely ignoring constraint-solving)");
+//
 fprint_newline (out);
 //
 end // end of [patsopt_usage]
@@ -498,11 +525,19 @@ HX: VERSION-0.1.13 released on Friday, May 22, 2015
 HX: VERSION-0.2.0 released on Tuesday, June 9, 2015
 HX: VERSION-0.2.1 released on Sunday, July 12, 2015
 HX: VERSION-0.2.2 released on Saturday, August 29, 2015
+HX: VERSION-0.2.3 released on Tuesday, September 22, 2015
 //
 *)
-#define PATS_MAJOR_VERSION 0
-#define PATS_MINOR_VERSION 2
-#define PATS_MICRO_VERSION 3
+//
+#define
+PATS_MAJOR_VERSION 0
+#define
+PATS_MINOR_VERSION 2
+#define
+PATS_MICRO_VERSION 5
+//
+#define PATS_COPYRIGHT "Copyright (c) 2011-2015 Hongwei Xi"
+//
 (*
 //
 // HX-2011-04-27: this is supported in Postiats:
@@ -516,15 +551,21 @@ HX: VERSION-0.2.2 released on Saturday, August 29, 2015
 //
 extern
 fun
-patsopt_version (out: FILEref): void
+patsopt_version
+  (out: FILEref): void =
+  "ext#libatsopt_patsopt_version"
 //
 implement
-patsopt_version (out) =
+patsopt_version(out) =
 {
-  val () = fprintf (out
-, "ATS/Postiats version %i.%i.%i with Copyright (c) 2011-2015 Hongwei Xi\n"
-, @(PATS_MAJOR_VERSION, PATS_MINOR_VERSION, PATS_MICRO_VERSION)
-  ) // end of [fprintf]
+//
+val () =
+fprintf
+( out
+, "ATS/Postiats version %i.%i.%i with %s\n"
+, @(PATS_MAJOR_VERSION, PATS_MINOR_VERSION, PATS_MICRO_VERSION, PATS_COPYRIGHT)
+) (* end of [fprintf] *)
+//
 } (* end of [patsopt_version] *)
 //
 (* ****** ****** *)
@@ -617,16 +658,19 @@ val (pfopt | filp) =
 //
 in
 //
-if filp > null then let
+if
+filp > null
+then let
   prval Some_v (pf) = pfopt
   val filr = $UN.castvwtp_trans {FILEref} @(pf | filp)
 in
   OUTCHANptr (filr)
-end else let
+end // end of [then]
+else let
   prval None_v () = pfopt
 in
   OUTCHANref (stderr_ref)
-end // end of [if]
+end // end of [else]
 //
 end // end of [outchan_make_path]
 
@@ -724,9 +768,16 @@ theOutFilename_set
 end // end of [local]
 
 (* ****** ****** *)
-
-fn fixity_load
-  (PATSHOME: string): void = let
+//
+extern
+fun
+the_fixity_load
+  (PATSHOME: string): void =
+  "ext#libatsopt_the_fixity_load"
+//
+implement
+the_fixity_load
+  (PATSHOME) = let
 //
   val given = "prelude/fixity.ats"
   val fullname =
@@ -761,12 +812,17 @@ in
 end // end of [fixity_load]
 
 (* ****** ****** *)
-
+//
+extern
 fun
 pervasive_load
 (
   PATSHOME: string, given: string
-) : void = {
+) : void = "ext#libatsopt_pervasive_load"
+//
+implement
+pervasive_load
+  (PATSHOME, given) = {
 //
 (*
 val () = (
@@ -812,19 +868,33 @@ val ((*reset*)) = $TRENV1.the_EXTERN_PREFIX_set_none()
 } (* end of [pervasive_load] *)
 
 (* ****** ****** *)
-
+//
+// HX-2015-10-05:
+// For use in libatsopt
+//
+extern
 fun
-prelude_load
+the_prelude_load
 (
   PATSHOME: string
-) : void = {
+) : void =
+  "ext#libatsopt_the_prelude_load"
 //
-val () = fixity_load (PATSHOME)
+implement
+the_prelude_load
+  (PATSHOME) = {
 //
-val () = pervasive_load (PATSHOME, "prelude/basics_pre.sats")
-val () = pervasive_load (PATSHOME, "prelude/basics_sta.sats")
-val () = pervasive_load (PATSHOME, "prelude/basics_dyn.sats")
-val () = pervasive_load (PATSHOME, "prelude/basics_gen.sats")
+val () =
+  the_fixity_load (PATSHOME)
+//
+val () =
+  pervasive_load (PATSHOME, "prelude/basics_pre.sats")
+val () =
+  pervasive_load (PATSHOME, "prelude/basics_sta.sats")
+val () =
+  pervasive_load (PATSHOME, "prelude/basics_dyn.sats")
+val () =
+  pervasive_load (PATSHOME, "prelude/basics_gen.sats")
 //
 val () = pervasive_load (PATSHOME, "prelude/macrodef.sats")
 //
@@ -843,12 +913,12 @@ val () =
 val () = pervasive_load (PATSHOME, "prelude/SATS/integer.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/pointer.sats")
 //
-val () = pervasive_load (PATSHOME, "prelude/SATS/integer_ptr.sats")
-val () = pervasive_load (PATSHOME, "prelude/SATS/integer_fixed.sats")
-//
 val () = pervasive_load (PATSHOME, "prelude/SATS/bool.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/char.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/float.sats")
+//
+val () = pervasive_load (PATSHOME, "prelude/SATS/integer_ptr.sats")
+val () = pervasive_load (PATSHOME, "prelude/SATS/integer_fixed.sats")
 //
 val () = pervasive_load (PATSHOME, "prelude/SATS/memory.sats")
 //
@@ -911,28 +981,48 @@ val () = pervasive_load (PATSHOME, "prelude/SATS/giterator.sats")
 val () = pervasive_load (PATSHOME, "prelude/SATS/fcontainer.sats")
 *)
 //
-} // end of [prelude_load]
+} (* end of [the_prelude_load] *)
 
 (* ****** ****** *)
-
+//
+// HX-2015-10-05:
+// For use in libatsopt
+//
+extern
 fun
-prelude_load_if
+the_prelude_load_if
 (
   PATSHOME: string, flag: &int
 ) : void =
-  if flag = 0 then let
-    val () = flag := 1 in prelude_load (PATSHOME)
-  end else () // end of [if]
-// end of [prelude_load_if]
+  "ext#libatsopt_the_prelude_load_if"
+//
+implement
+the_prelude_load_if
+  (PATSHOME, flag) =
+(
+//
+if flag = 0 then let
+  val () = flag := 1 in the_prelude_load (PATSHOME)
+end else () // end of [if]
+//
+) (* end of [the_prelude_load_if] *)
 
 (* ****** ****** *)
 //
 extern
-fun do_depgen
-  (state: &cmdstate, given: string, d0cs: d0eclist): void
+fun
+do_depgen
+(
+  state: &cmdstate
+, given: string, d0cs: d0eclist
+) : void // end of [do_depgen]
 extern
-fun do_taggen
-  (state: &cmdstate, given: string, d0cs: d0eclist): void
+fun
+do_taggen
+(
+  state: &cmdstate
+, given: string, d0cs: d0eclist
+) : void // end of [do_taggen]
 //
 implement
 do_depgen
@@ -1124,7 +1214,9 @@ do_transfinal2
 
 implement
 do_trans1
-  (state, given, d0cs) = let
+(
+  state, given, d0cs
+) = let
 //
 val d1cs =
   $TRANS1.d0eclist_tr_errck (d0cs)
@@ -1183,24 +1275,31 @@ do_trans123
 ) = d3cs where {
 //
 val d2cs =
-  do_trans12 (state, given, d0cs)
+  do_trans12(state, given, d0cs)
 //
 val () =
-  $TRENV3.the_trans3_env_initialize ()
-val d3cs =
-  $TRANS3.d2eclist_tr_errck (d2cs)
+  $TRENV3.the_trans3_env_initialize()
+//
+val d3cs = $TRANS3.d2eclist_tr_errck(d2cs)
 //
 (*
-val () = {
-  val () = print "do_trans123: the_s3itmlst =\n"
-  val () = $TRENV3.fprint_the_s3itmlst (stdout_ref)
-  val () = print_newline ()
+val () =
+{
+//
+  val () =
+  print "do_trans123: the_s3itmlst =\n"
+  val () =
+  $TRENV3.fprint_the_s3itmlst (stdout_ref)
+  val ((*void*)) = print_newline ((*void*))
+//
 } (* end of [val] *)
 *)
 //
 val () = 
 {
-val flag = state.cnstrsolveflag
+//
+val flag =
+  state.cnstrsolveflag
 val c3t0 =
   $TRENV3.the_trans3_finget_constraint ()
 // end of [val]
@@ -1211,7 +1310,7 @@ if
 flag = 0
 then {
   val () = $CNSTR3.c3nstr_ats2_solve (c3t0)
-} (* end of [if] *)
+} (* end of [then] *)
 //
 ) (* end of [val] *)
 //
@@ -1222,7 +1321,7 @@ then {
   val filr =
     outchan_get_filr (state.outchan)
   val () = $CNSTR3.c3nstr_export (filr, c3t0)
-} (* end of [if] *)
+} (* end of [then] *)
 //
 } (* end of [val] *)
 //
@@ -1301,7 +1400,7 @@ case+ 0 of
   {
     val d3cs = do_trans123 (state, given, d0cs)
   } (* end of [when ...] *)
-| _ => let
+| _ (*compilation*) => let
     val () = state.olevel := 1 // there is output
     val hids = do_trans1234 (state, given, d0cs)
     val outfil = outchan_get_filr (state.outchan)
@@ -1455,13 +1554,14 @@ case+ arglst of
     case+ 0 of
     | _ when
         stadyn >= 0 => {
-        val PATSHOME = state.PATSHOME
-        val () =
-        prelude_load_if (
-          PATSHOME, state.preludeflag // loading once
-        ) // end of [val]
 //
-        val () = state.infil := $FIL.filename_stdin
+        val () =
+        state.infil := $FIL.filename_stdin
+//
+        val () =
+        the_prelude_load_if
+          (state.PATSHOME, state.preludeflag)
+        // end of [val]
 //
         val () =
         if stadyn >= 1
@@ -1475,7 +1575,7 @@ case+ arglst of
         val istaggen = state.taggen > 0
         val () = if istaggen then istrans := false
 //
-        val given = "<STDIN>"
+        val given = "__STDIN__"
 //
         val () =
           if isdepgen then do_depgen (state, given, d0cs)
@@ -1484,6 +1584,10 @@ case+ arglst of
           if istaggen then do_taggen (state, given, d0cs)
         // end of [val]
 //
+        val () =
+          if istrans then
+            $FIL.the_filenamelst_ppush($FIL.filename_stdin)
+          // end of [if]
         val () =
           if istrans then do_transfinal2 (state, given, d0cs)
         // end of [val]
@@ -1514,8 +1618,10 @@ case+ arg of
 //
 // HX: the [inpwait] state stays unchanged
 //
-    val stadyn =
+    val
+    stadyn =
       waitkind_get_stadyn (state.waitkind)
+    // end of [val]
     val nif = state.ninpfile
   in
     case+ arg of
@@ -1526,9 +1632,14 @@ case+ arg of
         (2, key) when nif > 0 =>
         process_cmdline2_COMARGkey2 (state, arglst, key)
     | COMARGkey (_, given) => let
-        val PATSHOME = state.PATSHOME
-        val () = state.ninpfile := state.ninpfile + 1
-        val () = prelude_load_if (PATSHOME, state.preludeflag)
+//
+        val () =
+        state.ninpfile := state.ninpfile+1
+//
+        val () =
+        the_prelude_load_if
+          (state.PATSHOME, state.preludeflag)
+        // end of [val]
 //
         val () =
         if stadyn >= 1
@@ -1638,6 +1749,7 @@ case+ key of
   in
   end // end of [-d]
 //
+| "-cc" => (state.typecheckflag := 0)
 | "-tc" => (state.typecheckflag := 1)
 //
 | "-dep" => (state.depgen := 1) | "-tag" => (state.taggen := 1)
@@ -1705,6 +1817,11 @@ val () =
 (
 case+ key of
 //
+| "--help" =>
+  patsopt_usage
+    (stdout_ref, state.comarg0)
+  // end of [--help]
+//
 | "--output" =>
     state.waitkind := WTKoutput ()
 | "--output-w" => {
@@ -1723,6 +1840,7 @@ case+ key of
     val () = state.waitkind := WTKinput_dyn
   } // end of [--dynamic]
 //
+| "--compile" => (state.typecheckflag := 0)
 | "--typecheck" => (state.typecheckflag := 1)
 //
 | "--gline" => {
@@ -1733,6 +1851,7 @@ case+ key of
     val () = debug_flag_set (1) // in pats_basics
   } // end of [--debug] // more informative error messages
 | "--debug2" => {
+    val () = debug_flag_set (1)
     val () = $GLOB.the_DEBUGATS_dbgflag_set (1)
   } // end of [--debug2] // debugging info in generated code
 //
@@ -1761,12 +1880,9 @@ case+ key of
     val () = state.cnstrsolveflag := ~1
   }
 //
-| "--help" =>
-    patsopt_usage (stdout_ref, state.comarg0)
-//
 | "--version" => patsopt_version (stdout_ref)
 //
-| _ => comarg_warning (key) // unrecognized key
+| _ (*unrecognized*) => comarg_warning (key)
 //
 ) : void // end of [val]
 //
@@ -1779,8 +1895,10 @@ end // end of [process_cmdline2_COMARGkey2]
 extern
 fun
 patsopt_main
-  {n:int | n > 0}
-  (argc: int(n), argc: &(@[string][n])): void
+  {n:pos}
+(
+  argc: int(n), argc: &(@[string][n])
+) : void = "ext#libatsopt_patsopt_main"
 //
 (* ****** ****** *)
 
@@ -1793,38 +1911,53 @@ val () =
 set () where
 { 
   extern
-  fun set (): void = "mac#patsopt_PATSHOME_set"
+  fun set (): void
+    = "mac#patsopt_PATSHOME_set"
+  // end of [fun]
 } // end of [where] // end of [val]
 val () =
 set () where
 {
   extern
-  fun set (): void = "mac#patsopt_PATSHOMERELOC_set"
+  fun set (): void
+    = "mac#patsopt_PATSHOMERELOC_set"
+  // end of [fun]
 } // end of [where] // end of [val]
 //
 val () =
 set () where
 { 
   extern
-  fun set (): void = "mac#patsopt_ATSPKGRELOCROOT_set"
+  fun set (): void
+    = "mac#patsopt_ATSPKGRELOCROOT_set"
+  // end of [fun]
 } // end of [where] // end of [val]
 //
 val
 PATSHOME = let
-  val opt = get () where
-  {
-    extern fun get (): Stropt = "mac#patsopt_PATSHOME_get"
-  } (* end of [where] *)
-  val issome = stropt_is_some (opt)
+//
+val opt = get () where
+{
+  extern
+  fun get (): Stropt = "mac#patsopt_PATSHOME_get"
+} (* end of [where] *)
+val issome = stropt_is_some (opt)
+//
 in
-  if issome
-    then stropt_unsome(opt)
-    else let
-      val () = prerrln! ("The environment variable PATSHOME is undefined!")
-    in
-      $ERR.abort ()
-    end (* end of [else] *)
-  // end of [if]
+//
+if
+issome
+then stropt_unsome(opt)
+else let
+  val () =
+  prerrln!
+  (
+    "The environment variable PATSHOME is undefined!"
+  ) (* end of [val] *)
+in
+  $ERR.abort ((*exit*))
+end (* end of [else] *)
+//
 end : string // end of [val]
 //
 // for the run-time and atslib
@@ -1887,6 +2020,9 @@ val () = if state.nerror > 0 then $ERR.abort{void}()
 //
 (* ****** ****** *)
 //
+#ifndef
+PATSOPT_MAIN_NONE
+//
 implement
 main (argc, argv) =
 (
@@ -1897,6 +2033,8 @@ then patsopt_main (argc, argv)
 else prerrln! ("Hello from ATS2(ATS/Postiats)!")
 // end of [if]
 ) (* end of [main] *)
+//
+#endif // ifndef(PATSOPT_MAIN_NONE)
 //
 (* ****** ****** *)
 

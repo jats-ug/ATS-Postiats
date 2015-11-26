@@ -127,15 +127,17 @@ val () = emit_text (out, "#include \"prelude/CATS/pointer.cats\"\n")
 //
 val () = emit_text (out, "#include \"prelude/CATS/bool.cats\"\n")
 val () = emit_text (out, "#include \"prelude/CATS/char.cats\"\n")
+val () = emit_text (out, "#include \"prelude/CATS/float.cats\"\n")
 val () = emit_text (out, "#include \"prelude/CATS/integer_ptr.cats\"\n")
 val () = emit_text (out, "#include \"prelude/CATS/integer_fixed.cats\"\n")
-val () = emit_text (out, "#include \"prelude/CATS/float.cats\"\n")
 //
 val () = emit_text (out, "#include \"prelude/CATS/memory.cats\"\n")
 //
 val () = emit_text (out, "#include \"prelude/CATS/string.cats\"\n")
 val () = emit_text (out, "#include \"prelude/CATS/strptr.cats\"\n")
 //
+val () = emit_text (out, "//\n")
+val () = emit_text (out, "#include \"prelude/CATS/fprintf.cats\"\n")
 val () = emit_text (out, "//\n")
 val () = emit_text (out, "#include \"prelude/CATS/filebas.cats\"\n")
 //
@@ -805,7 +807,8 @@ the_tmpdeclst_stringize
 (
 ) = tostring_fprint<int>
 (
-  "postiats_tmpdeclst_", lam (out, _) => emit_the_tmpdeclst (out), 0
+  "postiats_tmpdeclst_"
+, lam (out, _) => emit_the_tmpdeclst (out), 0
 ) // end of [the_tmpdeclst_stringize]
 
 fun
@@ -813,7 +816,8 @@ the_primdeclst_stringize
 (
 ) = tostring_fprint<int>
 (
-  "postiats_primdeclst_", lam (out, _) => emit_the_primdeclst (out), 0
+  "postiats_primdeclst_"
+, lam (out, _) => emit_the_primdeclst (out), 0
 ) // end of [the_funlablst_stringize]
 
 fun

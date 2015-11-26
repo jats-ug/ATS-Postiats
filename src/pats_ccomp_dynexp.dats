@@ -123,10 +123,12 @@ val opt = ccompenv_find_vbindmapall (env, d2v)
 //
 in
 case+ opt of
-| ~Some_vt (pmv) =>
-    d2var_ccomp_some (env, loc0, hse0, d2v, pmv)
-| ~None_vt () =>
-    primval_err (loc0, hse0) // HX-2013-04: deadcode?!
+| ~Some_vt(pmv) =>
+    d2var_ccomp_some(env, loc0, hse0, d2v, pmv)
+  // end of [Some_vt]
+| ~None_vt((*void*)) =>
+    primval_error (loc0, hse0) // HX-2013-04: deadcode?!
+  // end of [None_vt]
 //
 end // end of [d2var_ccomp]
 
@@ -415,7 +417,7 @@ case+ hde0.hidexp_node of
       (": [sif] is not supported after proof-erasure.")
     // end of [val]
   in
-    primval_err (loc0, hse0)
+    primval_error (loc0, hse0)
   end (* end of [HDEsif] *)
 //
 | _(*unspported*) => let
@@ -1636,11 +1638,13 @@ auxlst
 //
 case+ hdes_elt of
 | list_cons _ => let
-    val pmvs_elt = hidexplst_ccompv (env, res, hdes_elt)
+    val
+    pmvs_elt =
+    hidexplst_ccompv (env, res, hdes_elt)
   in
     auxlst2 (env, res, arrp, hse_elt, pmvs_elt, asz, pmvs_elt)
   end // end of [list_cons]
-| list_nil ((*void*)) => () // HX: uninitialized array
+| list_nil((*void*)) => () // HX: uninitized array
 //
 ) (* end of [auxlst] *)
 

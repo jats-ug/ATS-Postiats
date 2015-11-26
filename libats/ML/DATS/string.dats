@@ -84,6 +84,11 @@ macdef
 prelude_string_tabulate = string_tabulate
 //
 macdef
+prelude_string_forall = string_forall
+macdef
+prelude_string_iforall = string_iforall
+//
+macdef
 prelude_string_foreach = string_foreach
 //
 (* ****** ****** *)
@@ -215,20 +220,59 @@ end // end of [string_tabulate]
 (* ****** ****** *)
 
 implement
-string_foreach (str, f) = let
+string_forall
+  (str, f) = let
 //
 val str = g1ofg0_string(str)
 //
-implement{env}
-string_foreach$cont (c, env) = true
-implement{env}
-string_foreach$fwork (c, env) = f (c)
-val _(*n*) = prelude_string_foreach (str)
+implement
+string_forall$pred<> (c) = f(c)
+//
+in
+  prelude_string_forall (str)
+end // end of [string_forall]
+
+implement
+string_iforall
+  (str, f) = let
+//
+val str = g1ofg0_string(str)
+//
+implement
+string_iforall$pred<> (i, c) = f(i, c)
+//
+in
+  prelude_string_iforall (str)
+end // end of [string_iforall]
+
+(* ****** ****** *)
+
+implement
+string_foreach
+  (str, f) = let
+//
+val str = g1ofg0_string(str)
+//
+implement(env)
+string_foreach$cont<env> (c, env) = true
+implement(env)
+string_foreach$fwork<env> (c, env) = f(c)
+//
+val _(*nchar*) = prelude_string_foreach (str)
 //
 in
   // nothing
 end // end of [string_foreach]
 
+(* ****** ****** *)
+//
+implement{}
+string_forall_method(x) = lam(f) => string_forall (x, f)
+implement{}
+string_iforall_method(x) = lam(f) => string_iforall (x, f)
+implement{}
+string_foreach_method(x) = lam(f) => string_foreach (x, f)
+//
 (* ****** ****** *)
 
 (* end of [string.dats] *)

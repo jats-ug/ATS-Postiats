@@ -5,6 +5,22 @@ style="margin-top:8px;padding:8px;"
 <h2 style="display:inline;">What is new?</h2>
 
 <hr></hr>
+  
+ATS-2015-10-29:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/ppvsAqwe2Ag"
+>ATS books in pdf format</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-09-20:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/RGsACNPKvL4"
+>Using codegen2-directives</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
 
 ATS-2015-03-31:<br>
 <a
@@ -59,6 +75,8 @@ Section "Genericity of template implementations" is added.<br>
 by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
+
+<!--
 
 ATS-2015-02-10:<br>
 <a

@@ -645,7 +645,7 @@ and primval_node =
   | PMVtmpltcstmat of (d2cst, t2mpmarglst, tmpcstmat) // for matched template constants
   | PMVtmpltvarmat of (d2var, t2mpmarglst, tmpvarmat) // for matched template variables
 //
-  | PMVerr of ()
+  | PMVerror of ()
 // end of [primval_node]
 
 and primlab_node =
@@ -1011,7 +1011,7 @@ fun primval_tmpltvarmat
 
 (* ****** ****** *)
 
-fun primval_err (loc: loc_t, hse: hisexp): primval
+fun primval_error (loc: loc_t, hse: hisexp): primval
 
 (* ****** ****** *)
 
@@ -1771,18 +1771,20 @@ fun ccompenv_add_vbindmapenv (env: !ccompenv, d2v: d2var, pmv: primval): void
 fun ccompenv_find_vbindmapenv (env: !ccompenv, d2v: d2var): Option_vt (primval)
 //
 (* ****** ****** *)
-
-absview ccompenv_push_v
-
-fun ccompenv_push
+//
+absview
+ccompenv_push_v
+//
+fun
+ccompenv_push
   (env: !ccompenv): (ccompenv_push_v | void)
-
+//
 fun ccompenv_pop
   (pfpush: ccompenv_push_v | env: !ccompenv): void
-
+//
 fun ccompenv_localjoin
   (pf1: ccompenv_push_v, pf2: ccompenv_push_v | env: !ccompenv): void
-
+//
 (* ****** ****** *)
 
 fun ccompenv_add_vbindmapall
@@ -1977,11 +1979,11 @@ fun hifundeclst_ccomp
 (* ****** ****** *)
 
 fun hidecl_ccomp
-  (env: !ccompenv, hdc: hidecl): primdec
+  (env: !ccompenv, hid: hidecl): primdec
 fun hideclist_ccomp
-  (env: !ccompenv, hdcs: hideclist): primdeclst
+  (env: !ccompenv, hids: hideclist): primdeclst
 
-fun hideclist_ccomp0 (hdcs: hideclist): primdeclst
+fun hideclist_ccomp0 (hids: hideclist): primdeclst
 
 (* ****** ****** *)
 //
@@ -2368,7 +2370,7 @@ fun the_toplevel_getref_primdeclst (): Ptr1
 
 fun ccomp_main
 (
-  out: FILEref, flag: int, infil: filename, hdcs: hideclist
+  out: FILEref, flag: int, infil: filename, hids: hideclist
 ) : void // end of [ccomp_main]
 
 (* ****** ****** *)

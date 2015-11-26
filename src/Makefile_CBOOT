@@ -16,6 +16,10 @@ CCOMP=$(CC)
 # LDFLAGS=
 #
 ######
+
+CFLAGS += -I. -I./ccomp/runtime
+
+######
 #
 # This is fixed:
 #
@@ -321,14 +325,29 @@ OBJECTSstadyn := $(OBJECTSsta) $(OBJECTSdyn)
 ######
 #
 patsopt: \
-  pats_main_dats.o $(OBJECTSstadyn) \
-  prelude_libats.o libc_libats.o libats_libats.o $(gcats_o) ; \
-  $(CCOMP) -O2 -I. $(GCFLAG) -o $@ ccomp/runtime/ats_prelude.c $^ $(LDFLAGS) $(LIBGMP) $(LIBGC)
+pats_main_dats.o \
+$(OBJECTSstadyn) \
+prelude_libats.o \
+libc_libats.o libats_libats.o ; \
+$(CCOMP) -O2 -I. $(GCFLAG) -o $@ \
+  ccomp/runtime/ats_prelude.c $^ $(gcats_o) $(LDFLAGS) $(LIBGMP) $(LIBGC)
 #
 ######
 #
-%_sats.o: %_sats.c ; $(CCOMP) -O2 -I. -I./ccomp/runtime $(CFLAGS) -c -o $@ $<
-%_dats.o: %_dats.c ; $(CCOMP) -O2 -I. -I./ccomp/runtime $(CFLAGS) -c -o $@ $<
+AR=ar
+MV=mv
+#
+libatsopt: \
+pats_main_dats.o \
+$(OBJECTSstadyn) \
+prelude_libats.o \
+libc_libats.o libats_libats.o ; \
+$(AR) -r libatsopt.a $^ $(gcats_o) && $(MV) -f libatsopt.a $(PATSHOME)/utils/libatsopt/.
+#
+######
+#
+%_sats.o: %_sats.c ; $(CCOMP) -O2 $(CFLAGS) -c -o $@ $<
+%_dats.o: %_dats.c ; $(CCOMP) -O2 $(CFLAGS) -c -o $@ $<
 #
 ######
 
@@ -362,10 +381,13 @@ PRELUDE_OBJECTS := \
   prelude_DATS_ptrarr_dats.o \
   prelude_DATS_unsafe_dats.o \
 
+######
+#
+prelude_%.o: \
+prelude/%.c ; $(CCOMP) $(CFLAGS) -c -o $@ $<
+#
 prelude_libats.o: $(PRELUDE_OBJECTS) ; ld -r -o $@ $^
-
-prelude_%.o: prelude/%.c ; $(CCOMP) -I. -I./ccomp/runtime -c -o $@ $<
-
+#
 ######
 
 LIBC_OBJECTS := \
@@ -389,10 +411,10 @@ endif
 
 ######
 #
-libc_libats.o: $(LIBC_OBJECTS) ; ld -r -o $@ $^
+libc_%.o: \
+libc/%.c ; $(CCOMP) $(CFLAGS) -c -o $@ $<
 #
-libc_%.o : libc/%.c ; \
-  $(CCOMP) -I. -I./ccomp/runtime $(CFLAGS) -c -o $@ $<
+libc_libats.o: $(LIBC_OBJECTS) ; ld -r -o $@ $^
 #
 ######
 
@@ -418,10 +440,10 @@ LIBATS_OBJECTS := \
 
 ######
 #
-libats_libats.o: $(LIBATS_OBJECTS) ; ld -r -o $@ $^
+libats_%.o: \
+libats/%.c ; $(CCOMP) $(CFLAGS) -c -o $@ $<
 #
-libats_%.o : libats/%.c ; \
-  $(CCOMP) -I. -I./ccomp/runtime $(CFLAGS) -c -o $@ $<
+libats_libats.o: $(LIBATS_OBJECTS) ; ld -r -o $@ $^
 #
 ######
 #

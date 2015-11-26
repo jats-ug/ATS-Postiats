@@ -27,6 +27,13 @@ all:: pats2xhtml
 
 ######
 
+CBOOT:: ; $(CPF) pats_*_sats.c CBOOT
+CBOOT:: ; $(CPF) pats_*_dats.c CBOOT
+CBOOT:: ; $(CPF) pats2xhtml_sats.c CBOOT
+CBOOT:: ; $(CPF) pats2xhtml_*_dats.c CBOOT
+
+######
+
 OBJECTS := \
   pats_utils_sats.o \
   pats_utils_dats.o \
@@ -89,6 +96,7 @@ cleanall:: ; $(RMF) pats2xhtml
 ##
 ######
 
+CPF=cp -f
 RMF=rm -f
 
 ######

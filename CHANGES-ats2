@@ -1,3 +1,78 @@
+0.2.5
+
+This is the 28th release of ATS2, the successor of the
+ATS programming language. The compiler for ATS2 is given
+the name ATS/Positats, ATS2/Postiats or simply Postiats.
+
+The official website for ATS is:
+
+http://www.ats-lang.org
+
+ATS-Postiats is hosted at github:
+
+https://github.com/githwxi/ATS-Postiats
+
+Major releases of ATS2 are available at:
+
+https://sourceforge.net/projects/ats2-lang/
+
+Major releases of external packages for ATS2 are available at:
+
+https://sourceforge.net/projects/ats2-lang-contrib/
+
+Here is a list of major additions and changes since the last release:
+
+1. With libatscc2js(JS), Atscc2js can now run entirely inside the
+   browser.
+2. Patsopt(JS) and Atscc2js(JS) have been combined to allow one to
+   try ATS entirely in one's browser (running only client-side JS).
+3. Treating the following form as a value: let ... in aValue end
+   (where aValue is assumed to be a value).
+4. WebWorker-based support for session types in libatscc2js/Worker/channel
+
+######
+
+0.2.4
+
+This is the 27th release of ATS2, the successor of the
+ATS programming language. The compiler for ATS2 is given
+the name ATS/Positats, ATS2/Postiats or simply Postiats.
+
+The official website for ATS is:
+
+http://www.ats-lang.org
+
+ATS-Postiats is hosted at github:
+
+https://github.com/githwxi/ATS-Postiats
+
+Major releases of ATS2 are available at:
+
+https://sourceforge.net/projects/ats2-lang/
+
+Major releases of external packages for ATS2 are available at:
+
+https://sourceforge.net/projects/ats2-lang-contrib/
+
+Here is a list of major additions and changes since the last release:
+
+1. Fixing a bug due to abstract types being given the 'empty' name.
+2. Adding libats/theGetters
+3. Fixing a bug in ATS-extsolve (involving the s2rtdatmap generation)
+4. Fixing a minor parsing bug in CATS-parsemit
+5. Adding libatsopt, the library version of patsopt; see utils/libatsopt
+6. Adding some ifdef-guards:
+   ATS_EXTERN_DEF__ for guarding the definition of ATSextern()
+   ATS_STATIC_DEF__ for guarding the definition of ATSstatic()
+   ATS_INLINE_DEF__ for guarding the definition of ATSinline()
+7. Adding some examples to illustrate a way of using ATS+Emscripten
+8. Supporting evaluated expressions (of the form %(...)) in statics
+9. Generally improving libatscc2js and libatscc2erl
+10. With libatsopt(JS), Patsopt can now run entirely inside the browser.
+11. Adding char2int1 and fixing add_bool_bool and mul_bool_bool
+
+######
+
 0.2.3
 
 This is the 26th release of ATS2, the successor of the
@@ -26,9 +101,16 @@ Here is a list of major additions and changes since the last release:
    lam-abstract. For instanct, the following code results in an
    error during compilation:
    fun fact = fix f(n:int): int => if n > 0 then n*f(n-1) else 1
+   Of course, one can always have:
+   val fact = fix f(n:int): int => if n > 0 then n*f(n-1) else 1
+(*
+//
+// HX-2015-09-15: This is re-implemented:
+//
 2. Supporting the use of locally defined templates:
    local fun foo(): int = 0 in fun{} foo2() = foo() + 1 end
    local fun{} foo(): int = 0 in fun{} foo2() = foo() + 1 end
+*)
 3. Changing some names:
    _ATS_CCOMP_HEADER_NONE -> _ATS_CCOMP_HEADER_NONE_
    _ATS_CCOMP_PRELUDE_NONE -> _ATS_CCOMP_PRELUDE_NONE_
@@ -41,6 +123,10 @@ Here is a list of major additions and changes since the last release:
 5. Fixing an issue that causes crash due to compiling atstyvar_type.
    See hitype_tyvar_test in [pats_ccomp_hitype] for more information.
 6. Changing the keyword 'require' to '#require' (for atspkgreloc)
+7. Adding into ATSPRE string/string_forall and string/string_iforall
+8. Reorganizing:
+   moving the fprint-functions in prelude into prelude/fprintf.cats
+9. Fixing a bug in CATS-parsemit (that affects parsing #if(0) ... #endif)
 
 ######
 

@@ -6,6 +6,60 @@ style="margin-top:8px;padding:8px;"
 
 <hr></hr>
 
+ATS-2015-11-06:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/XPcUBz_iRzI"
+>Try ATS in your browser</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-11-03:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/77NVS0vITz4"
+>Running Atscc2js in the browser</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-10-28:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/K1C4bSp82OI"
+>ATS2-0.2.4 has been released</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-10-24:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/7sPhq63X8-4"
+>Running Patsopt in the browser</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+ATS-2015-09-22:<br>
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/vO0h2ezMV3E"
+>ATS2-0.2.3 has been released</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/RGsACNPKvL4"
+>Using codegen2-directives</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
+<a
+ href="https://groups.google.com/forum/#!topic/ats-lang-users/jUhIh_tDTZM"
+>RFTP: Session types in ATS</a><br>
+by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
+
+<hr></hr>
+
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/3XXa-18GLOc"
 >Slides for learning ATS/LF</a><br>
@@ -92,6 +146,8 @@ by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
 
+<!--
+
 ATS-2015-05-16:<br>
 <a
  href="https://groups.google.com/forum/#!topic/ats-lang-users/BScZOguFm0Y"
@@ -156,8 +212,6 @@ ATS-2015-03-12:<br>
 by <a href="http://www.cs.bu.edu/~hwxi">Hongwei Xi</a>
 
 <hr></hr>
-
-<!--
 
 ATS-2015-02-27:<br>
 <a

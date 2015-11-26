@@ -57,7 +57,9 @@ cleanall:: ; $(RMF) quicksort_list_vt
 
 ######
 #
-PATS2XHTML=$(PATSHOMEQ)/bin/pats2xhtml
+PATS2XHTML=\
+$(PATSHOMEQ)/bin/pats2xhtml
+#
 %_sats.html: %.sats ; $(PATS2XHTML) -o $@ -s $<
 %_dats.html: %.dats ; $(PATS2XHTML) -o $@ -d $<
 #
@@ -74,7 +76,7 @@ main.exe: \
   $(ATSCC) \
   -IATS $(PATSHOME) -IATS $(ATSHOME) \
   -I$(PATSHOME)/src -D_ATS_GCATS -o $@ $< \
-  -L$(PATSHOME)/libatsynmark -latsynmark -latsdoc
+  -L$(PATSHOME)/utils/libatsynmark -latsynmark -latsdoc
 
 main_atxt.dats: \
   main.atxt; $(ATSDOC) --outcode $@ -i main.atxt > main_atxt.txt

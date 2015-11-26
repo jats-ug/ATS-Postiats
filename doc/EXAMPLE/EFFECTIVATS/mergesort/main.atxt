@@ -142,7 +142,7 @@ and their functionalities are briefly explained below:
 Even for someone who is unfamiliar with the syntax of ATS, it is probably
 fair to say that the above specification-like implementation of [mergesort] is
 often preferrable to a description of mergesort in English or other natural
-langauges.
+languages.
 ")
 #langja("
 ATS の構文に不慣れな読者を考えても、おそらく上記の [mergesort]
