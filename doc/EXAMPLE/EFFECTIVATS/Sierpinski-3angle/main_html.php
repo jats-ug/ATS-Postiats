@@ -181,36 +181,55 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 I do not plan to go over the JS code in detail.  Essentially, it locates a
 canvas identified by the string "Patsoptaas-Evaluate-canvas". The
 implementation of [drawFrame] paints the entire canvas with blue and
 yellow, alternately. The entirety of the code presented so far is stored in
 <u>Sierpinski-3angle-part.dats</u>, which can be readily tested
 <a href="http://www.ats-lang.org/SERVER/MYCODE/Patsoptaas_serve.php?mycode_url=https://raw.githubusercontent.com/githwxi/ATS-Postiats/master/doc/EXAMPLE/EFFECTIVATS/Sierpinski-3angle/Sierpinski-3angle-part.dats">on-line</a>.
+-->
+ここでは JS コードの詳細を解説しません。
+このコードは本質的に、文字列 "Patsoptaas-Evaluate-canvas" によって指定されたキャンバスを配置します。
+[drawFrame] の実装は、キャンバス全体に青色と黄色を交互に描画します。
+これまで示したコードの全体は <u>Sierpinski-3angle-part.dats</u> から入手できます。
+このコードは <a href="http://www.ats-lang.org/SERVER/MYCODE/Patsoptaas_serve.php?mycode_url=https://raw.githubusercontent.com/githwxi/ATS-Postiats/master/doc/EXAMPLE/EFFECTIVATS/Sierpinski-3angle/Sierpinski-3angle-part.dats">オンライン</a> ですぐにテストできます。
 </p>
 
 <h2>
+<!--
 Drawing Sierpinski triangles
+-->
+シェルピンスキーの三角形を描く
 </h2>
 
 <p>
+<!--
 The reader can take a look at an animated drawing of Sierpinski triangles
 <a href="http://www.ats-lang.org/SERVER/MYCODE/Patsoptaas_serve.php?mycode_url=https://raw.githubusercontent.com/githwxi/ATS-Postiats-contrib/master/projects/SMALL/JSmydraw/Sierpinski_3angle/Sierpinski_3angle_php.dats">on-line</a>.
+-->
+読者は、シェルピンスキーの三角形の描画アニメーションを <a href="http://www.ats-lang.org/SERVER/MYCODE/Patsoptaas_serve.php?mycode_url=https://raw.githubusercontent.com/githwxi/ATS-Postiats-contrib/master/projects/SMALL/JSmydraw/Sierpinski_3angle/Sierpinski_3angle_php.dats">オンライン</a> で確認できます。
 </p>
 
 <p>
+<!--
 Given a natural number, a Sierpinski triangle at level n can be defined
 inductively on n. A regular triangle is regarded as a Sierpinski triangle
 at level 0. For a positive number n, a triangle ABC is a Sierpinski
 triangle at level n if the three triangles APR, PBQ, and RQC are Sierpinski
 triangles at level n-1, where P, Q, and R are the midpoints of the three
 sides AB, BC and CA, respectively.
+-->
+1つの自然数が与えられたとき、レベル n のシェルピンスキーの三角形は n における帰納的に定義できます。レベル 0 のシェルピンスキーの三角形は1つの正三角形です。正の数 n において、APR, PBQ, PQC の3つの三角形がレベル n-1 のシェルピンスキーの三角形ならば、三角形 ABC はレベル n におけるシェルピンスキーの三角形です。このとき、P, Q, R はそれぞれ、3辺 AB, BC, CA の中点です。
 </p>
 
 <p>
+<!--
 Let us introduce an abstract type [color] for colors
 and use [BLUE] and [YELLOW] to refer to two colors defined in JS
 of the same names:
+-->
+色を表わす抽象型 [color] と、JS において同様の名前で定義された2つの色を表わす [BLUE] と [YELLOW] を導入しましょう。
 </p>
 
 <?php
@@ -226,9 +245,12 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Following is the interface of a function [drawTriangle],
 which is called to draw a triangle ABC filled with a given
 color:
+-->
+ 次のコードは、与えられた色で塗り潰された三角形 ABC を描画するために呼び出される関数 [drawTriangle] のインターフェイスです:
 </p>
 
 <?php
@@ -249,9 +271,12 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 Let us introduce another function [drawSTriangle]
 for drawing a Sierpinski triangle filled with a given color
 and then implement it based on the function [drawTriangle]:
+-->
+与えられば色でシェルピンスキーの三角形を描画する別の関数 [drawSTriangle] を導入しましょう。この関数を [drawTriangle] を使って実装します:
 </p>
 
 <?php
@@ -302,7 +327,10 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 The function [drawFrame] can be implemented as follows:
+-->
+関数 [drawFrame] は次のように実装できます:
 </p>
 
 <?php
@@ -340,6 +368,7 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 After the canvas for drawing is located, three points A, B and C are
 choosen on the canvas to be the vertices of a Sierpinski triangle. The
 x-y-coordinates of A can be obtained by calling [theAx_get] and
@@ -348,6 +377,8 @@ can be obtained similarly. The function [theLevel_getinc] is called to
 yield the level of the Sierpinski triangle to be drawn. Please find all
 the details in the following JS code, which also includes an implementation
 of [drawTriangle]:
+-->
+描画するキャンバスを配置した後、そのキャンバス上にシェルピンスキーの三角形の頂点となる3つの点 A, B, C が選ばれます。JS で実装された [theAx_get] と [theAy_get] を呼び出すことで、A の xy 座標を取得できます。B と C の xy 座標についても同様に取得できます。関数 [theLevel_getinc] を使って、描画されるべきシェルピンスキーの三角形のレベルを得ます。[drawTriangle] の実装を含む JS コード側の詳細については次を見てください:
 </p>
 
 <?php
@@ -410,6 +441,7 @@ atslangweb_pats2xhtmlize_dynamic($mycode);
 ?><!--php-->
 
 <p>
+<!--
 The entirety of the code for this implementation of
 an animated drawing of Sierpinski triangles is stored in
 <u>Sierpinski-3angle-final.dats</u>, which can be readily tested
@@ -419,6 +451,12 @@ Of course, it is also possible to use <u>patsopt</u> to compile
 <u>atscc2js</u> to compile the C code into some JS code. Please
 find the related details in the provided Makefile. There is a file
 <u>Sierpinski-3angle.html</u> available for testing the generated JS code.
+-->
+このシェルピンスキーの三角形のアニメーション描画実装のコード全体は <u>Sierpinski-3angle-final.dats</u> から入手でき、また <a href="http://www.ats-lang.org/SERVER/MYCODE/Patsoptaas_serve.php?mycode_url=https://raw.githubusercontent.com/githwxi/ATS-Postiats/master/doc/EXAMPLE/EFFECTIVATS/Sierpinski-3angle/Sierpinski-3angle-final.dats">オンライン</a> 上で容易にテストできます。
+もちろん、<u>Sierpinski-3angle-final.dats</u> をなんらかのC言語コードにコンパイルするために <u>patsopt</u> を使うこともできます。
+その後、<u>atscc2js</u> を使って、そのC言語コードを JS コードにコンパイルすることもできます。
+このコンパイル手順詳細は Makefile から知ることができます。
+生成された JS コードは <u>Sierpinski-3angle.html</u> から入手できます。
 </p>
 
 <hr size="2">
