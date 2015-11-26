@@ -646,7 +646,7 @@ of the code for this demo can be found in four files of the following names:
 ")
 #langja("
 <p>
-#dyncode("P") と #dyncode("Q") のコードを使った単純なデモが <a href=\"./introxmpl1_demo.html\">オンライン</a> から入手できます。
+#dyncode("P") と #dyncode("Q") のコードを使った単純なデモが <a href=\"http://ats-lang.sourceforge.net/EXAMPLE/EFFECTIVATS/ssntyped-channels-1/introxmpl1_demo.html\">オンライン</a> から入手できます。
 このデモコードの全体は次の名前の4つのファイルから成り立ちます:
 ")
 
