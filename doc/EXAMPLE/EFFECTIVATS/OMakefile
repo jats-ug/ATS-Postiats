@@ -4,7 +4,7 @@ CHAP_ATXT_DIRS  = $(dirname $(CHAP_ATXT_FILES))
 CHAP_PHP_FILES  = $(glob */*.php)
 CHAP_PHP_DIRS   = $(dirname $(CHAP_PHP_FILES))
 #CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES))
-CHAP_HTML_FILES = $(addsuffix /index.html, $(CHAP_ATXT_DIRS)) \
+CHAP_HTML_FILES = $(addsuffix /main.html, $(CHAP_ATXT_DIRS)) \
 		  $(addsuffixes .html, $(filter-out html.php, $(split _, $(CHAP_PHP_FILES))))
 
 .PHONY: all clean publish
@@ -12,7 +12,7 @@ CHAP_HTML_FILES = $(addsuffix /index.html, $(CHAP_ATXT_DIRS)) \
 all: $(CHAP_HTML_FILES)
 
 .SUBDIRS: $(CHAP_ATXT_DIRS)
-	index.html: main.atxt
+	main.html: main.atxt
 		make $@
 
 .SUBDIRS: $(CHAP_PHP_DIRS)
