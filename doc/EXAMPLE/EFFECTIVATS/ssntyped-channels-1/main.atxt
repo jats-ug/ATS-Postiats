@@ -9,26 +9,49 @@
 <meta
  http-equiv="content-type"
  content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-ssntyped-channels-introduction</title>
+")
+#langja("
+<title>EFFECTIVATS: セッション型チャネル入門</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS:<br>
 Session-typed Channels:<br>
 A Brief Introduction
+")
+#langja("
+Effective ATS:<br>
+セッション型チャネル:<br>
+概要入門
+")
 </h1>
 
 <p>
+#langeng("
 In this article, I present a brief introduction to session types.
+")
+#langja("
+この記事では、セッション型に対する簡単な入門を示します。
+")
 </p>
 
 <h2>
+#langeng("
 Basics on session-typed channels
+")
+#langja("
+セッション型チャネルの基礎
+")
 </h2>
 
+#langeng("
 <p>
 In broad terms, a (dyadic) session is a sequence of interactions between
 two concurrently running processes, and a session type is a form of type
@@ -36,6 +59,14 @@ for specifying (or classifying) such interactions. As an example, let us
 assume that two processes P and Q are connected via a bidirectional
 channel. From the perspective of P, the channel may be specified by a term
 sequence of the following form: </p>
+")
+#langja("
+<p>
+広義の用語では、(動的な)セッションとは2つの並行実行されたプロセスの間における相互作用の列です。
+またセッション型とはそのような相互作用を特定する(もしくはは分類する)型です。
+例えば、2つのプロセス P と Q が双方向チャネルによって接続されていると仮定してみましょう。
+P の視点から見ると、そのチャネルは次のような項の列によって特定できます: </p>
+")
 
 <pre
 class="patsyntax">
@@ -43,12 +74,20 @@ class="patsyntax">
 typedef P_ssn = chsnd(int)::chsnd(int)::chrcv(bool)::chnil
 ')</pre>
 
+#langeng("
 <p>
 which means that an integer is to be sent, another integer is to be
 sent, a boolean is to be received, and finally the channel is to be
 closed.  Clearly, from the perspective of Q, the channel should be
 specified by the following term sequence:
 </p>
+")
+#langja("
+<p>
+これは、1つの整数が送信しと、もう1つの整数が送信し、真理値が受信し、そして最後にそのチャネルが閉じることを意味しています。
+Q の視点から見ると、次の項の列によってそのチャネルが特定されるべきであることは明確です:
+</p>
+")
 
 <pre
 class="patsyntax">
@@ -56,13 +95,22 @@ class="patsyntax">
 typedef Q_ssn = chrcv(int)::chrcv(int)::chsnd(bool)::chnil
 ')</pre>
 
+#langeng("
 <p>
 which means precisely the dual of what the previous term sequence
 does.  We may think of P as a client who sends two integers to the
 server Q and then receives from Q either true or false depending on
 whether or not the first sent integer is less than the second one.
 </p>
+")
+#langja("
+<p>
+これは前の項の列が行なっていたことと正確に対 (dual) になっていることを意味しています。
+P を、サーバ Q へ2つの整数を送信し、Q から最初に送られた整数が二番目の整数より小さいかどうかに依存して真もしくは偽を受信するような、クライアントであると考えることもできます。
+</p>
+")
 
+#langeng("
 <p>
 There are two endpoints in a channel: a positive end and a negative end;
 the end held by the server is positive and the end held by the client is
@@ -71,6 +119,15 @@ negative. We introduce two abstract types #stacode("chanpos") and
 respectively, where a positive (negative) channel refers to the positive
 (negative) end of a channel:
 </p>
+")
+#langja("
+<p>
+チャネルには2つの終点 (endpoints) があり: それは正の終端 (positive end) と負の終端 (negative end) です;
+サーバによって保持される終端は正であり、クライアントによって保持される終端は負です。
+正のチャネルと負のチャネルを表わすような、2つの抽象型 #stacode("chanpos") と #stacode("channeg") をそれぞれ導入しましょう。
+このとき正の(負の)チャネルは、チャネルの正の(負の)終端を参照しています:
+</p>
+")
 
 <pre
 class="patsyntax">
@@ -79,6 +136,7 @@ absvtype chanpos(ssn:type) // absvtype means linear abstype in ATS
 absvtype channeg(ssn:type) // absvtype means linear abstype in ATS
 ')</pre>
 
+#langeng("
 <p>
 For instance, the end of the channel held by P is assigned the
 type #stacode("channeg(Q_ssn)") (not #stacode("channeg(P_ssn)")) and
@@ -86,10 +144,24 @@ the end of the channel held by Q is assigned the type #stacode("chanpos(Q_ssn)")
 So the interpretation of a session type is given based on the view of the
 positive end (that is, the server).
 </p>
+")
+#langja("
+<p>
+例えば、P によって保持されたチャネルの終端には型 #stacode("channeg(Q_ssn)") (#stacode("channeg(P_ssn)") ではありません) が割り当てられ、Q によって保持されたチャネルの終端には型 #stacode("chanpos(Q_ssn)") が割り当てられます。
+セッション型の相互作用は、正の終端 (すなわちサーバになります) の観 (view) に基づいて与えられます。
+</p>
+")
 
+#langeng("
 <p>
 The functions for sending data on channels are given the following types:
 </p>
+")
+#langja("
+<p>
+チャネル上にデータを送る関数は次のような型になります:
+</p>
+")
 
 <pre
 class="patsyntax">
@@ -114,16 +186,31 @@ overload channel_send with channeg_recv
 //
 ')</pre>
 
+#langeng("
 <p>
 Note that #dyncode("chanpos_send") is for sending a value on a positive
 channel while #dyncode("channeg_recv") is for sending a value on a
 negative channel. For convenience, the symbol #dyncode("channel_send") is
 overloaded with both of these functions.
 </p>
+")
+#langja("
+<p>
+#dyncode("chanpos_send") は正のチャネルに値を送るための関数であり、#dyncode("channeg_recv") は負のチャネルに値を送るための関数であることに注意してください。
+便宜上、#dyncode("channel_send") シンボルがこれらの2つの関数でオーバロードされています。
+</p>
+")
 
+#langeng("
 <p>
 The functions for receiving data sent on channels are given the following types:
 </p>
+")
+#langja("
+<p>
+チャネル上に送信されたデータを受信する関数は次の型になります:
+</p>
+")
 
 <pre
 class="patsyntax">
@@ -144,16 +231,31 @@ overload channel_recv with channeg_send
 //
 ')</pre>
 
+#langeng("
 <p>
 Note that #dyncode("chanpos_recv") is for receiving a value on a positive
 channel while #dyncode("channeg_send") is for receiving a value on a
 negative channel. For convenience, the symbol #dyncode("channel_recv") is
 overloaded with both of these functions.
 </p>
+")
+#langja("
+<p>
+#dyncode("chanpos_recv") は正のチャネルからの値の受信を表わし、#dyncode("channeg_send") は負のチャネルからの値の受信を表わすことに注意してください。
+便宜上、#dyncode("channel_recv") シンボルがこれらの2つの関数でオーバロードされています。
+</p>
+")
 
+#langeng("
 <p>
 The functions for closing channels are given the following types:
 </p>
+")
+#langja("
+<p>
+チャネルを閉じる関数は次の型になりります:
+</p>
+")
 
 <pre
 class="patsyntax">
@@ -169,6 +271,7 @@ overload channel_close with channeg_nil_close
 //
 ')</pre>
 
+#langeng("
 <p>
 Note that #dyncode("chanpos_nil_wait") is for closing a positive
 channel while #dyncode("channeg_nil_close") is for closing a negative
@@ -178,6 +281,14 @@ to #dyncode("channeg_nil_close") on (the negative end of) the same
 channel arrives.  For convenience, the symbol #dyncode("channel_close")
 is overloaded with both of these functions.
 </p>
+")
+#langja("
+<p>
+#dyncode("chanpos_nil_wait") は正のチャネルを閉じ、#dyncode("channeg_nil_close") は負のチャネルを閉じることに注意してください。
+さらに具体的に言うと、チャネルの正の終端に #dyncode("chanpos_nil_wait") を呼び出すと、同じチャネルの負の終端に #dyncode("channeg_nil_close") を呼び出しによるメッセージの到着を待ち合わせます。
+便宜上、#dyncode("channel_close") シンボルがこれらの2つの関数でオーバロードされています。
+</p>
+")
 
 <p>
 The functions for sending and receiving can be based
