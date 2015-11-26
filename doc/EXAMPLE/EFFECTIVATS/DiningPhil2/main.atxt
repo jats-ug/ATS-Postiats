@@ -364,13 +364,13 @@ ATS ソースコードをコンパイルして実行コードにする Makefile 
 
 #langeng("
 This article is written by
-#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>.
 ")
 #langja("
 この記事は
-#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>
 によって書かれ、
-#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+<a href=\"http://jats-ug.metasepi.org/\">Japan ATS User Group</a>
 によって翻訳されています。
 ")
 

@@ -402,12 +402,12 @@ How should [wcmap] be implemented?
 #langeng("
 The following code gives a straightforward hashtable-based implementation
 of [wcmap]. Some details on various hashtable-functions can be found
-#ahref("http://www.ats-lang.org/LIBRARY/libats/ML/hashtblref.html", "on-line").
+<a href=\"http://www.ats-lang.org/LIBRARY/libats/ML/hashtblref.html\">on-line</a>.
 ")
 #langja("
 次のコードは [wcmap] の素直な hashtable-based 実装です。
 様々な hashtable 関数の詳細を
-#ahref("http://www.ats-lang.org/LIBRARY/libats/ML/hashtblref.html", "オンライン")
+<a href=\"http://www.ats-lang.org/LIBRARY/libats/ML/hashtblref.html\">オンライン</a>
 で見つけることができます。
 ")
 
@@ -720,7 +720,7 @@ A program is considered a memory-clean implementation if all the
 dynamically allocated memory is freed immediately before the termination of
 the program. For instance, if you
 use
-#ahref("http://valgrind.org", "valgrind")
+<a href=\"http://valgrind.org\">valgrind</a>
 to monitor an execution of
 this program, then the gathered statics should indicate that no leak is
 ever possible.
@@ -729,7 +729,7 @@ ever possible.
 もし全ての動的に確保されたメモリがプログラムが終了する前に直ちに解放されるなら、そのプログラムはメモリクリーン
 (memory-clean) な実装であると考えられます。
 例えば、もしあなたが
-#ahref("http://valgrind.org", "valgrind")
+<a href=\"http://valgrind.org\">valgrind</a>
 を使ってこのプログラムの実行を測定したなら、
 その測定結果はいかなるリークも発生する可能性がないことを示すでしょう。
 ")
@@ -751,13 +751,13 @@ entirety of the modified version. Also, there is a Makefile for compiling it.
 
 #langeng("
 This article is written by
-#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi").
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>.
 ")
 #langja("
 この記事は
-#ahref("http://www.cs.bu.edu/~hwxi/", "Hongwei Xi")
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>
 によって書かれ、
-#ahref("http://jats-ug.metasepi.org/", "Japan ATS User Group")
+<a href=\"http://jats-ug.metasepi.org/\">Japan ATS User Group</a>
 によって翻訳されています。
 ")
 
