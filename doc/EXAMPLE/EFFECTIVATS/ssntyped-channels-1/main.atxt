@@ -63,7 +63,7 @@ sequence of the following form: </p>
 #langja("
 <p>
 広義の用語では、(動的な)セッションとは2つの並行実行されたプロセスの間における相互作用の列です。
-またセッション型とはそのような相互作用を特定する(もしくはは分類する)型です。
+またセッション型とはそのような相互作用を特定する(もしくは分類する)型です。
 例えば、2つのプロセス P と Q が双方向チャネルによって接続されていると仮定してみましょう。
 P の視点から見ると、そのチャネルは次のような項の列によって特定できます: </p>
 ")
@@ -676,7 +676,7 @@ the demo on his/her own.
 ")
 #langja("
 ファイル #filename("introxmpl1_prctl.sats") では、クライアント(ブラウザ)とサーバ(web-worker)の間における通信プロトコルがセッション型を用いて形式的に表現されています。
-予想されるように、このファイルはは #filename("introxmpl1_client.dats") と #filename("introxmpl1_server.dats") の両方に静的にロードされます。
+予想されるように、このファイルは #filename("introxmpl1_client.dats") と #filename("introxmpl1_server.dats") の両方に静的にロードされます。
 (#filename("introxmpl1_client.dats") における) クライアントコードは #dyncode("P") のコードに基づいていますが、いくつかの有意な修正を含んでおり、GUI を扱うために Bacon.js を使います。
 他方では、(#filename("introxmpl1_client.dats") における) サーバコードは #dyncode("Q") のコードに直接基づいており、事実上修正はありません。
 与えられた Makefile を使って独自のデモを作ることを読者に勧めます。

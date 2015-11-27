@@ -206,7 +206,7 @@ list_optcons
 記号 #stacode("bool2int") は #dyncode("true") と #dyncode("false") をそれぞれ 1 と 0 に変換する ATS
 におけるビルトインの静的な関数です。
 ここで注目すべきなのは、#dyncode("list_optcons") の最初の引数が線形であり、#dyncode("list_optcons")
-呼び出しが返ると消費され、それが占有していたメモリはは回収されるということです。
+呼び出しが返ると消費され、それが占有していたメモリは回収されるということです。
 
 ')
 ")

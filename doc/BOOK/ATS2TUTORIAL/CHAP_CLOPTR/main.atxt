@@ -141,7 +141,7 @@ something safer but it would make programming more curbersome.
 #langja("
 #para('\
 
-#dyncode("list_map_cloptr") の典型的な使用例はは次のようになります:
+#dyncode("list_map_cloptr") の典型的な使用例は次のようになります:
 
 #atscode('\
 fun foo{n:int}
