@@ -314,7 +314,7 @@ introduced proof function should be treated as an assertion and no
 implementation for it is expected.
 ")
 #langja("
-[ptr0_set] は、メモリ位置に関連した (at-view の) 証明なしに、(第2引数の) 値を (第1引数の) 
+[ptr0_set] は、メモリ位置に関連した (駐観 (at-view) の) 証明なしに、(第2引数の) 値を (第1引数の)
 与えらえたメモリ位置に書き込むことに注意してください。
 別の言い方をすると、[ptr0_set] はC言語が行なうのと正確に同じ方法で、メモリ更新を実行します。
 また型検査を通る実装を可能にするために、証明関数 [__assert]
@@ -333,7 +333,7 @@ sole purpose of making the implementation of [stkarray_takeout] pass
 typechecking.
 ")
 #langja("
-[stkarray_takeout] の次の実装は、メモリ位置に関連した (at-view の) 証明なしに与えられたポインタから読み出す、[ptr0_get] を使用しています。
+[stkarray_takeout] の次の実装は、メモリ位置に関連した (駐観の) 証明なしに与えられたポインタから読み出す、[ptr0_get] を使用しています。
 また [stkarray_insert] の実装と同じく、型検査を通る [stkarray_takeout] の実装を作るために、証明関数は表明として扱われています。
 ")
 
