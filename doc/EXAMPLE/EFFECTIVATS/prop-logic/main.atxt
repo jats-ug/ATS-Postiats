@@ -9,32 +9,59 @@
 <meta
  http-equiv="content-type"
  content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-prop-logic</title>
+")
+#langja("
+<title>EFFECTIVATS: 命題をエンコードする</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS:<br>
 Encoding Propositional Logic
+")
+#langja("
+Effective ATS:<br>
+命題をエンコードする
+")
 </h1>
 
 <p>
+#langeng("
 In this article, I present a direct encoding of propositional
 logic in ATS, illustrating through examples a simple form of
 formalized theorem-proving. For the entirety of the code used
 in this presentation, please see the files #filename("prop-logic.sats")
 and #filename("prop-logic.dats").
+")
+#langja("
+この記事では、形式的な定理証明の例を通じて、ATS で命題を直接エンコードする方法を示します。
+この記事で使うコード全体は、ファイル #filename("prop-logic.sats") と #filename("prop-logic.dats") を見てください。
+")
 </p>
 
 <h2>
+#langeng("
 Encoding Truth Values
+")
+#langja("
+真理値をエンコードする
+")
 </h2>
 
 <p>
+#langeng("
 The truth values are
 encoded as abstract props #stacode("PTRUE") and #stacode("PFALSE"):
+")
+#langja("
+真理値は抽象命題 #stacode("PTRUE") と #stacode("PFALSE") としてエンコードされます:
+")
 
 <pre
 class="patsyntax">
@@ -43,7 +70,12 @@ absprop PTRUE // for true
 absprop PFALSE // for false
 ')</pre>
 
+#langeng("
 There is one introduction rule but no elimination rule for #stacode("true"):
+")
+#langja("
+#stacode("true") に対しては、1つ導入 (introduction) 規則があり、除去 (elimination) 規則はありません:
+")
 
 <pre
 class="patsyntax">
@@ -51,7 +83,12 @@ class="patsyntax">
 praxi true_intr((*void*)): PTRUE
 ')</pre>
 
+#langeng("
 There is no introduction rule but one elimination rule for #stacode("false"):
+")
+#langja("
+#stacode("false") に対しては、導入規則はありませんが、1つの除去規則があります:
+")
 
 <pre
 class="patsyntax">
@@ -59,17 +96,32 @@ class="patsyntax">
 praxi false_elim{A:prop}(pf: PFALSE): A
 ')</pre>
 
+#langeng("
 Clearly, the rule #dyncode("false_elim") states that any proposition can be
 derived from a proof of #stacode("false").
+")
+#langja("
+明確に、規則 #dyncode("false_elim") は #stacode("false") の証明からはどのような命題も導けることを示しています。
+")
 </p>
 
 <h2>
+#langeng("
 Encoding Negation
+")
+#langja("
+否定 (negation) をエンコードする
+")
 </h2>
 
 <p>
+#langeng("
 Given a proposition #stacode("A"), we use #stacode("PNEG(A)") for
 the negation of #stacode("A"):
+")
+#langja("
+明細 #stacode("A") が与えられたとき、#stacode("A") を否定するのに #stacode("PNEG(A)") を使います。
+")
 
 <pre
 class="patsyntax">
@@ -78,8 +130,14 @@ absprop PNEG(A: prop) // for negation
 propdef ~(A: prop) = PNEG(A) // shorthand
 ')</pre>
 
+#langeng("
 For convenience, #stacode("~A") can be written for #stacode("PNEG(A)").
 There is one introduction rule and one elimination rule for negation:
+")
+#langja("
+便宜上、#stacode("PNEG(A)") は #stacode("~A") と書くこともできます。
+否定に対して、1つの導入規則と1つの除去規則があります:
+")
 
 <pre
 class="patsyntax">
@@ -88,21 +146,32 @@ praxi neg_intr{A:prop}(fpf: A -> PFALSE): ~A
 praxi neg_elim{A:prop}(pf1: ~A, pf2: A): PFALSE
 ')</pre>
 
+#langeng("
 Essentially, #dyncode("neg_intr") means that #stacode("~A") is
 derivable if any proof of #stacode("A") can be used to build a proof
 of #stacode("false"). As for elimination of negation,
 #dyncode("neg_elim") states that a proof of #stacode("false") can be
 built on the top of a proof of #stacode("~A") and a proof of
 #stacode("A").
+")
+#langja("
+本質的に #dyncode("neg_intr") は、もし #stacode("A") のどのような証明も #stacode("false") の証明の構築に使えるなら、#stacode("~A") が導出できることを意味しています。
+否定の除去として #dyncode("neg_elim") は、証明 #stacode("~A") と #stacode("A") の上に #stacode("false") の証明が構築できることを示しています。
+")
 
 </p>
 
 <p>
 
+#langeng("
 By combining #dyncode("neg_elim") and #dyncode("false_elim"), we
 obtain the following rule stating that any proposition #stacode("B")
 can be derived from a proof of #stacode("A") and a proof of
 #stacode("~A"):
+")
+#langja("
+#dyncode("neg_elim") と #dyncode("false_elim") を合成することで、証明 #stacode("A") と #stacode("~A") からどのような命題 #stacode("B") も導出できることを示す次の規則が得られます:
+")
 
 <pre
 class="patsyntax">
@@ -118,12 +187,22 @@ neg_elim2
 </p>
 
 <h2>
+#langeng("
 Encoding Conjunction
+")
+#langja("
+論理積 (conjunction) をエンコードする
+")
 </h2>
 
 <p>
+#langeng("
 Given two propositions #stacode("A") and #stacode("B"), we use #stacode("PCONJ(A, B)") for
 the conjunction of #stacode("A") and #stacode("B"):
+")
+#langja("
+2つの命題 #stacode("A") と #stacode("B") が与えられたとき、#stacode("A") と #stacode("B") の論理積を表わすのに #stacode("PCONJ(A, B)") を使います:
+")
 
 <pre
 class="patsyntax">
@@ -133,9 +212,15 @@ PCONJ(A: prop, B: prop)
 propdef &&(A: prop, B: prop) = PCONJ(A, B) // shorthand
 ')</pre>
 
+#langeng("
 For convenience, #stacode("A && B") can be written for
 #stacode("PCONJ(A, B)").  There are one introduction rule and two
 elimination rules associated with conjunction:
+")
+#langja("
+便宜上、#stacode("PCONJ(A, B)") は #stacode("A && B") と書くこともできます。
+論理積に関連して、1つの導入規則と2つの除去規則があります:
+")
 
 <pre
 class="patsyntax">
@@ -152,7 +237,12 @@ conj_elim_r{A,B:prop} : (A && B) -> B
 //
 ')</pre>
 
+#langeng("
 As an example, a proof is given below showing that conjunction is commutative:
+")
+#langja("
+例として、次の証明は論理積が可換であることを示しています:
+")
 
 <pre
 class="patsyntax">
@@ -168,12 +258,22 @@ conj_commute
 </p>
 
 <h2>
+#langeng("
 Encoding Disjunction
+")
+#langja("
+論理和 (disjunction) をエンコードする
+")
 </h2>
 
 <p>
+#langeng("
 Given two propositions #stacode("A") and #stacode("B"), we use #stacode("PDISJ(A, B)") for
 the disjunction of #stacode("A") and #stacode("B"):
+")
+#langja("
+2つの命題 #stacode("A") と #stacode("B") が与えられたとき、#stacode("A") と #stacode("B") の論理和を表わすのに #stacode("PDISJ(A, B)") を使います:
+")
 
 <pre
 class="patsyntax">
@@ -187,9 +287,15 @@ propdef ||(A: prop, B: prop) = PDISJ(A, B)
 //
 ')</pre>
 
+#langeng("
 For convenience, #stacode("A || B") can be written for
 #stacode("PDISJ(A, B)").  As an example, a proof is given below
 showing that disjunction is commutative:
+")
+#langja("
+便宜上、#stacode("PDISJ(A, B)") は #stacode("A || B") と書くこともできます。
+例として、次の証明は論理和が可換であることを示しています:
+")
 
 <pre
 class="patsyntax">
@@ -204,11 +310,17 @@ disj_commute
 //
 ')</pre>
 
+#langeng("
 The two constructors #dyncode("disj_intr_l") and
 #dyncode("disj_intr_r") associated with #stacode("PDISJ") correspond
 to the two introduction rules associated with disjunction, and the
 following function #dyncode("disj_elim") encodes the elimination rule
 associated with disjunction:
+")
+#langja("
+#stacode("PDISJ") に関連した2つのコンストラクタ #dyncode("disj_intr_l") と #dyncode("disj_intr_r") は論理和に関連する2つの導入規則に対応しています。
+そして次の関数 #dyncode("disj_elim") は論理和に関連した除去規則をエンコードしています:
+")
 
 <pre
 class="patsyntax">
@@ -223,8 +335,13 @@ disj_elim{A,B:prop}{C:prop}
 //
 ')</pre>
 
+#langeng("
 As another example, the following code implements a proof function
 showing that conjunction can be distributed over disjunction:
+")
+#langja("
+別の例として、次のコードは論理積が論理和に対して分配法則を満たすことを示す証明関数を実装しています:
+")
 
 <pre
 class="patsyntax">
@@ -255,13 +372,23 @@ end // end of [conj_disj_distribute]
 </p>
 
 <h2>
+#langeng("
 Encoding Implication
+")
+#langja("
+論理包含 (implication) をエンコードする
+")
 </h2>
 
 <p>
+#langeng("
 Given two propositions #stacode("A")
 and #stacode("B"), we use #stacode("PIMPL(A, B)") for
 the implication of #stacode("B") from #stacode("A"):
+")
+#langja("
+2つの命題 #stacode("A") と #stacode("B") が与えられたとき、#stacode("A") から #stacode("B") への論理包含を表わすのに #stacode("PIMPL(A, B)") を使います:
+")
 
 <pre
 class="patsyntax">
@@ -275,9 +402,15 @@ propdef ->>(A: prop, B: prop) = PIMPL(A, B)
 //
 ')</pre>
 
+#langeng("
 For convenience, #stacode("A <tt>-&gt;&gt;</tt> B") can be written
 for #stacode("PIMPL(A, B)").  There is one introduction rule and one
 elimination rule for implication:
+")
+#langja("
+便宜上、#stacode("PIMPL(A, B)") は #stacode("A <tt>-&gt;&gt;</tt> B") と書くこともできます。
+論理包含に対して、1つの導入規則と1つの除去規則があります:
+")
 
 <pre
 class="patsyntax">
@@ -291,14 +424,24 @@ impl_elim{A,B:prop}(pf1: A ->> B, pf2: A): B
 //
 ')</pre>
 
+#langeng("
 Essentially, #stacode("A") implying #stacode("B") is interpreted as a
 function of the type #stacode("A <tt>-&gt;</tt> B").\
+")
+#langja("
+本質的に、#stacode("A") から #stacode("B") への論理包含は型 #stacode("A <tt>-&gt;</tt> B") の関数として解釈されます。\
+")
 
 </p>
 
 <p>
+#langeng("
 As an example, a proof
 #stacode("(A <tt>-&gt;&gt;</tt> (B <tt>-&gt;&gt;</tt> C)) <tt>-&gt;&gt;</tt> ((A <tt>-&gt;&gt;</tt> B) <tt>-&gt;&gt;</tt> (A <tt>-&gt;&gt;</tt> C))") is given as follows:
+")
+#langja("
+例として、証明 #stacode("(A <tt>-&gt;&gt;</tt> (B <tt>-&gt;&gt;</tt> C)) <tt>-&gt;&gt;</tt> ((A <tt>-&gt;&gt;</tt> B) <tt>-&gt;&gt;</tt> (A <tt>-&gt;&gt;</tt> C))") は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -323,13 +466,23 @@ impl_intr(
 </p>
 
 <h2>
+#langeng("
 Encoding Equivalence
+")
+#langja("
+同値 (equivalence) をエンコードする
+")
 </h2>
 
 <p>
+#langeng("
 Given two propositions #stacode("A")
 and #stacode("B"), we use #stacode("PEQUIV(A, B)") for the
 (propositional) equivalence between #stacode("A") and #stacode("B"):
+")
+#langja("
+2つの命題 #stacode("A") と #stacode("B") が与えられたとき、#stacode("A") と #stacode("B") が(命題として)同値であることを表わすのに #stacode("PEQUIV(A, B)") を使います:
+")
 
 <pre
 class="patsyntax">
@@ -339,9 +492,15 @@ PEQUIV(A: prop, B: prop)
 propdef == (A: prop, B: prop) = PEQUIV(A, B)
 ')</pre>
 
+#langeng("
 For convenience, #stacode("A == B") can be written for
 #stacode("PEQUIV(A, B)").  There is one introduction rule and two
 elimination rules for propositional equivalence:
+")
+#langja("
+便宜上、#stacode("PEQUIV(A, B)") は #stacode("A == B") と書くこともできます。
+命題的な同値に対して、1つの導入規則と2つの除去規則があります:
+")
 
 <pre
 class="patsyntax">
@@ -360,11 +519,21 @@ equiv_elim_r{A,B:prop}(pf: A == B): B ->> A
 </p>
 
 <h2>
+#langeng("
 The Law of Double Negation
+")
+#langja("
+二重否定律
+")
 </h2>
 
 <p>
+#langeng("
 The law of double negation can be encoded as follows:
+")
+#langja("
+二重否定律は次のようにエンコードできます:
+")
 <pre
 class="patsyntax">
 #pats2xhtml_sats('praxi LDN{A:prop}(~(~A)): A')
@@ -372,11 +541,21 @@ class="patsyntax">
 </p>
 
 <h2>
+#langeng("
 The Law of Excluded Middle
+")
+#langja("
+排中律
+")
 </h2>
 
 <p>
+#langeng("
 The law of excluded middle can be encoded as follows:
+")
+#langja("
+排中律は次のようにエンコードできます:
+")
 <pre
 class="patsyntax">
 #pats2xhtml_sats('praxi LEM{A:prop}((*void*)): A || ~A')
@@ -384,11 +563,21 @@ class="patsyntax">
 </p>
 
 <h2>
+#langeng("
 Peirce's Law
+")
+#langja("
+パースの法則
+")
 </h2>
 
 <p>
+#langeng("
 Peirce's law can be encoded as follows:
+")
+#langja("
+パースの法則は次のようにエンコードできます:
+")
 <pre
 class="patsyntax">
 #pats2xhtml_sats('\
@@ -396,13 +585,28 @@ praxi
 Peirce{P,Q:prop}((*void*)): ((P ->> Q) ->> P) ->> P
 ')</pre>
 
+#langeng("
 This law of Peirce is equivalent to LEM, and it can be seen as a
 variant of LEM expressed only in terms of the implicative logic
 connective.  </p>
+")
+#langja("
+このパースの法則は LEM と等価で、論理含意を結合した項でのみで示された LEM である見なすことができます。  </p>
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>.
+")
+#langja("
+この記事は
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>
+によって書かれ、
+<a href=\"http://jats-ug.metasepi.org/\">Japan ATS User Group</a>
+によって翻訳されています。
+")
 
 </body>
 </html>
