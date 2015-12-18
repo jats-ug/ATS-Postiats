@@ -641,7 +641,7 @@ value into the value itself.
 #langeng("
 <p>
 A simple demo based on the code for #dyncode("P") and #dyncode("Q") is
-available <a href="./introxmpl1.html">on-line</a>. The entirety of the
+available <a href=\"./introxmpl1.html\">on-line</a>. The entirety of the
 code for this demo can be found in four files of the following names:
 ")
 #langja("
