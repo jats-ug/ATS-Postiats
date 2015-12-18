@@ -25,6 +25,19 @@ introxmpl1_server_dats_.js
 #
 ######
 #
+main.exe: \
+  main_atxt.dats ; \
+  $(ATSCC) \
+  -IATS $(PATSHOME) -IATS $(ATSHOME) \
+  -I$(PATSHOME)/src -D_ATS_GCATS -o $@ $< \
+  -L$(PATSHOME)/utils/libatsynmark -latsynmark -latsdoc
+#
+main_atxt.dats: \
+  main.atxt; $(ATSDOC) --outcode $@ -i main.atxt > main_atxt.txt
+main.html: main.exe ; ./main.exe > $@
+#
+######
+#
 introxmpl1_client_dats.c: \
   introxmpl1_client.dats; $(PATSOPT) -o $@ -d $<
 introxmpl1_client_dats.js: \
@@ -40,27 +53,15 @@ introxmpl1_server_dats_.js: \
 #
 ######
 #
-main.exe: \
-  main_atxt.dats ; \
-  $(ATSCC) \
-  -IATS $(PATSHOME) -IATS $(ATSHOME) \
-  -I$(PATSHOME)/src -D_ATS_GCATS -o $@ $< \
-  -L$(PATSHOME)/utils/libatsynmark -latsynmark -latsdoc
-#
-main_atxt.dats: \
-  main.atxt; $(ATSDOC) --outcode $@ -i main.atxt > main_atxt.txt
-main.html: main.exe ; ./main.exe > $@
-#
-######
-
 upload_main: \
   main.html ; scp $^ \
   ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/ssntyped-channels-1/.
+#
 upload_dats_js: \
   introxmpl1_client_dats.js \
   introxmpl1_server_dats_.js ; scp $^ \
   ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/ssntyped-channels-1/.
-
+#
 ######
 
 CAT=cat

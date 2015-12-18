@@ -14,10 +14,6 @@ ATS_DYNLOADNAME "introxmpl1_client_initize"
   
 (* ****** ****** *)
 
-staload "libats/ML/SATS/basis.sats"
-
-(* ****** ****** *)
-
 staload UN = "prelude/SATS/unsafe.sats"
 
 (* ****** ****** *)
@@ -248,7 +244,7 @@ val fwork1 = lam(x) =<cloref1> fwork1(x)
 //
 in
   $extfcall(void, "theAction_fwork01_set", fwork0, fwork1)
-end // end of [P1]
+end // end of [P]
 //
 and
 theResult_process

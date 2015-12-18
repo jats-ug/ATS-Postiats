@@ -37,7 +37,8 @@
   
 (* ****** ****** *)
   
-staload UN = "prelude/SATS/unsafe.sats"
+staload
+UN = "prelude/SATS/unsafe.sats"
 
 (* ****** ****** *)
 
@@ -50,7 +51,8 @@ implement
 {a}(*tmp*)
 list0_make_sing (x) =
   list0_cons{a}(x, list0_nil)
-implement{a}
+implement
+{a}(*tmp*)
 list0_make_pair (x1, x2) =
   list0_cons{a}(x1, list0_cons{a}(x2, list0_nil))
 //
@@ -83,7 +85,8 @@ end // end of [list0_make_elt]
 
 (* ****** ****** *)
 
-implement{}
+implement
+{}(*tmp*)
 list0_make_intrange_lr
   (l, r) = let
   val d = (
@@ -93,7 +96,10 @@ in
   $effmask_exn (list0_make_intrange_lrd (l, r, d))
 end // end of [list0_make_intrange_lr]
 
-implement{}
+(* ****** ****** *)
+
+implement
+{}(*tmp*)
 list0_make_intrange_lrd
   (l, r, d) = let
 //
@@ -168,64 +174,71 @@ list0_make_arrpsz
 // end of [list0_make_arrpsz]
 
 (* ****** ****** *)
-
+//
 implement
 {a}(*tmp*)
-print_list0 (xs) = fprint_list0<a> (stdout_ref, xs)
+print_list0(xs) = fprint_list0<a> (stdout_ref, xs)
 implement
 {a}(*tmp*)
-prerr_list0 (xs) = fprint_list0<a> (stderr_ref, xs)
-
+prerr_list0(xs) = fprint_list0<a> (stderr_ref, xs)
+//
 implement
 {a}(*tmp*)
-fprint_list0 (out, xs) = fprint_list<a> (out, g1ofg0(xs))
-
+fprint_list0(out, xs) = fprint_list<a> (out, g1ofg0(xs))
+//
 implement
 {a}(*tmp*)
-fprint_list0_sep (out, xs, sep) = let
+fprint_list0_sep
+  (out, xs, sep) = let
   val xs = g1ofg0(xs) in fprint_list_sep<a> (out, xs, sep)
 end // end of [fprint_list0_sep]
-
+//
 (* ****** ****** *)
-
+//
 (*
 //
-// HX: they have been declared as macros:
+// HX: these have been declared as macros:
 //
 implement
 {a}(*tmp*)
 list0_sing (x) = list0_cons{a}(x, list0_nil)
 implement
 {a}(*tmp*)
-list0_pair (x1, x2) = list0_cons{a}(x1, list0_cons{a}(x2, list0_nil))
+list0_pair (x1, x2) =
+  list0_cons{a}(x1, list0_cons{a}(x2, list0_nil))
+//
 *)
-
+//
 (* ****** ****** *)
 
 implement
 {a}(*tmp*)
-list0_is_nil (xs) = (
-  case+ xs of
-  | list0_cons _ => false | list0_nil () => true
-) // end of [list0_is_nil]
+list0_is_nil(xs) = (
+//
+case+ xs of
+| list0_cons _ => false | list0_nil() => true
+//
+) (* end of [list0_is_nil] *)
 
 implement
 {a}(*tmp*)
-list0_is_cons (xs) = (
-  case+ xs of
-  | list0_cons _ => true | list0_nil () => false
-) // end of [list0_is_cons]
+list0_is_cons(xs) = (
+//
+case+ xs of
+| list0_cons _ => true | list0_nil() => false
+//
+) (* end of [list0_is_cons] *)
 
 (* ****** ****** *)
-
+//
 implement
 {a}(*tmp*)
-list0_is_empty (xs) = list0_is_nil<a> (xs)
-
+list0_is_empty(xs) = list0_is_nil<a> (xs)
+//
 implement
 {a}(*tmp*)
-list0_isnot_empty (xs) = list0_is_cons<a> (xs)
-
+list0_isnot_empty(xs) = list0_is_cons<a> (xs)
+//
 (* ****** ****** *)
 
 implement
@@ -233,9 +246,14 @@ implement
 list0_head_exn
   (xs) = let
 in
-  case+ xs of
-  | list0_cons (x, _) => x
-  | list0_nil _ => $raise ListSubscriptExn()
+//
+case+ xs of
+| list0_cons
+    (x, _) => (x)
+  // list0_cons
+| list0_nil _ =>
+    $raise ListSubscriptExn()
+  // list0_nil
 end // end of [list0_head_exn]
 
 implement
@@ -245,36 +263,45 @@ list0_head_opt
 in
 //
 case+ xs of
-| list0_nil () => None_vt()
-| list0_cons (x, _) => Some_vt{a}(x)
+| list0_nil() => None_vt()
+| list0_cons(x, _) => Some_vt{a}(x)
 //
 end // end of [list0_head_opt]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_tail_exn
   (xs) = let
 in
-  case+ xs of
-  | list0_cons (_, xs) => xs
-  | list0_nil _ => $raise ListSubscriptExn()
+//
+case+ xs of
+| list0_cons
+    (_, xs) => (xs)
+  // list0_cons
+| list0_nil _ =>
+    $raise ListSubscriptExn()
+  // list0_nil
+//
 end // end of [list0_tail_exn]
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_tail_opt
   (xs) = let
 in
 //
 case+ xs of
-| list0_nil () => None_vt()
-| list0_cons (_, xs) => Some_vt{list0(a)}(xs)
+| list0_nil() => None_vt()
+| list0_cons(_, xs) => Some_vt{list0(a)}(xs)
 //
 end // end of [list0_tail_opt]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_last_exn
   (xs) = let
 //
@@ -288,7 +315,8 @@ case+ xs of
 //
 end // end of [list0_last_exn]
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_last_opt
   (xs) = let
 //
@@ -325,19 +353,24 @@ end // end of [loop]
 
 in (* in of [local] *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_nth_exn
   (xs, i) = let
 //
 val i = g1ofg0_int (i)
 //
 in
-  if i >= 0 then
-    loop<a> (xs, i) else $raise ListSubscriptExn()
-  // end of [if]
+//
+if
+i >= 0
+then loop<a> (xs, i)
+else $raise ListSubscriptExn()
+//
 end // end of [list0_nth_exn]
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_nth_opt
   (xs, i) = let
 //
@@ -345,24 +378,30 @@ val i = g1ofg0(i)
 //
 in
 //
-if i >= 0 then (
-  $effmask_exn (
-    try Some_vt{a}(loop<a> (xs, i)) with ~ListSubscriptExn() => None_vt()
-  ) // end of [$effmask_exn]
-) else None_vt () // end of [if]
+if
+i >= 0
+then (
+$effmask_exn
+(
+  try Some_vt{a}(loop<a>(xs, i)) with ~ListSubscriptExn() => None_vt()
+) (* $effmask_exn *)
+) else None_vt((*void*))
 //
 end // end of [list0_nth_opt]
 
 end // end of [local]
 
 (* ****** ****** *)
-
-implement{a}
-list0_get_at_exn (xs, i) = list0_nth_exn (xs, i)
-
+//
+implement
+{a}(*tmp*)
+list0_get_at_exn
+  (xs, i) = list0_nth_exn (xs, i)
+//
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_insert_at_exn
   (xs, i, x0) = let
 //
@@ -371,28 +410,33 @@ fun aux {i:nat} .<i>. (
 ) :<!exn> list0 a = let
 in
 //
-if i > 0 then
-(
-  case+ xs of
-  | list0_cons (x, xs) =>
-    (
-      list0_cons{a}(x, aux (xs, i-1, x0))
-    )
-  | list0_nil () => $raise ListSubscriptExn()
+if
+i > 0
+then (
+//
+case+ xs of
+| list0_cons
+    (x, xs) =>
+  (
+    list0_cons{a}(x, aux (xs, i-1, x0))
+  )
+| list0_nil() => $raise ListSubscriptExn()
+//
 ) else (
   list0_cons{a}(x0, xs)
 ) (* end of [if] *)
 //
 end // end of [aux]
 //
-val i = g1ofg0_int (i)
+val i = g1ofg0_int(i)
 //
 in
-  if i >= 0 then
-    aux (xs, i, x0)
-  else
-    $raise IllegalArgExn("list0_insert_at_exn:i")
-  // end of [if]
+//
+if
+i >= 0
+then aux (xs, i, x0)
+else $raise IllegalArgExn("list0_insert_at_exn:i")
+//
 end // end of [list0_insert_at_exn]
 
 (* ****** ****** *)
@@ -428,7 +472,8 @@ end // end of [auxlst]
 
 in (* in of [local] *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_remove_at_exn
   (xs, i) = let
 //
@@ -438,77 +483,109 @@ val i = g1ofg0_int (i)
 in
 $effmask_wrt
 (
-  if i >= 0 then
-    auxlst<a> (xs, i, x0)
-  else (
-    $raise IllegalArgExn("list0_remove_at_exn:i")
-  ) // end of [if]
+if
+i >= 0
+then
+  auxlst<a> (xs, i, x0)
+else (
+  $raise IllegalArgExn("list0_remove_at_exn:i")
+) (* end of [else] *)
 )
 end // end of [list0_remove_at_exn]
 
-implement{a}
+(* ****** ****** *)
+
+implement
+{a}(*tmp*)
 list0_takeout_at_exn
   (xs, i, x0) = let
 //
 val i = g1ofg0_int (i)
 //
-extern praxi __assert : (&a? >> a) -<prf> void
+extern
+praxi __assert : (&a? >> a) -<prf> void
 //
 in
-(
-  if i >= 0 then
-    auxlst<a> (xs, i, x0)
-  else let
-    prval () = __assert (x0)
-  in
-    $raise IllegalArgExn("list0_takeout_at_exn:i")
-  end // end of [if]
-)
+//
+if i >= 0 then
+  auxlst<a> (xs, i, x0)
+else let
+  prval () = __assert (x0)
+in
+  $raise IllegalArgExn("list0_takeout_at_exn:i")
+end // end of [if]
+//
 end // end of [list0_takeout_at_exn]
 
 end // end of [local]
 
 (* ****** ****** *)
-
-implement{a}
-list0_length (xs) = list_length<a> (g1ofg0(xs))
-
+//
+implement
+{a}(*tmp*)
+list0_length(xs) =
+  list_length<a> (g1ofg0(xs))
+//
 (* ****** ****** *)
 
-implement{a}
-list0_append (xs, ys) = let
+implement
+{a}(*tmp*)
+list0_append(xs, ys) = let
+  val xs = g1ofg0(xs)
+  and ys = g1ofg0(ys)
 in
-  list0_of_list (list_append<a> (g1ofg0(xs), g1ofg0(ys)))
+  list0_of_list(list_append<a> (xs, ys))
 end // end of [list0_append]
 
 (* ****** ****** *)
 
-implement{a}
-list0_reverse (xs) =
+implement
+{a}(*tmp*)
+list0_extend(xs, x) = let
+  val xs = g1ofg0(xs)
+  val xs_x =
+    $effmask_wrt(list_extend<a> (xs, x))
+  // end of [val]
+in
+  list0_of_list_vt(xs_x)
+end // end of [list0_extend]
+
+(* ****** ****** *)
+
+implement
+{a}(*tmp*)
+list0_reverse(xs) =
   list0_reverse_append<a> (xs, list0_nil)
 // end of [list0_reverse]
 
-implement{a}
-list0_reverse_append (xs, ys) = let
-  val xs = g1ofg0(xs) and ys = g1ofg0(ys)
+implement
+{a}(*tmp*)
+list0_reverse_append
+  (xs, ys) = let
+  val xs = g1ofg0(xs)
+  and ys = g1ofg0(ys)
 in
   list0_of_list (list_reverse_append<a> (xs, ys))
 end // end of [list0_reverse_append]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_concat
   (xss) = let
   typedef xss = List(List(a))
-  val ys = $effmask_wrt (list_concat<a> ($UN.cast{xss}(xss)))
+  val ys =
+    $effmask_wrt (list_concat<a> ($UN.cast{xss}(xss)))
+  // end of [val]
 in
   list0_of_list_vt (ys)
 end // end of [list0_concat]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_take_exn
   (xs, i) = let
 //
@@ -527,7 +604,10 @@ in
   // end of [if]
 end // end of [list0_take_exn]
 
-implement{a}
+(* ****** ****** *)
+
+implement
+{a}(*tmp*)
 list0_drop_exn
   (xs, i) = let
 //
@@ -543,13 +623,16 @@ in
 end // end of [list0_drop_exn]
 
 (* ****** ****** *)
-
-implement{a}
-list0_app (xs, f) = list0_foreach (xs, f)
-
+//
+implement
+{a}(*tmp*)
+list0_app
+  (xs, f) = list0_foreach (xs, f)
+//
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_foreach (xs, f) = let
 in
   case+ xs of
@@ -558,7 +641,10 @@ in
   | list0_nil () => ()
 end // end of [list0_foreach]
 
-implement{a}
+(* ****** ****** *)
+
+implement
+{a}(*tmp*)
 list0_iforeach
   (xs, f) = let
   fun loop (
@@ -665,7 +751,8 @@ end // end of [list0_foldright]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_exists (xs, p) = let
 in
   case+ xs of
@@ -691,7 +778,8 @@ end // end of [list0_exists2]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_forall (xs, p) = let
 in
   case+ xs of
@@ -733,7 +821,8 @@ end // end of [list0_forall2_eq]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_equal
   (xs1, xs2, eqfn) =
   case+ (xs1, xs2) of
@@ -978,7 +1067,8 @@ end // end of [list0_filter]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_tabulate
   (n, f) = let
 //
@@ -998,7 +1088,8 @@ end // end of [list0_tabulate]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_tabulate_opt
   (n, f) = res where
 {
@@ -1081,7 +1172,8 @@ end // end of [list0_crosswith]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_quicksort (xs, cmp) = let
 //
 implement
@@ -1095,7 +1187,8 @@ end // end of [list0_quicksort]
 
 (* ****** ****** *)
 
-implement{a}
+implement
+{a}(*tmp*)
 list0_mergesort (xs, cmp) = let
 //
 implement

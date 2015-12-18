@@ -53,14 +53,14 @@
 /*
 extern
 fun _stringbuf_pow2min
-  (sizeGte(1), size_t): sizeGte(1) = "ext#%"
+  (sizeGte(1), size_t): sizeGte(1) = "mac#%"
 implement
 _stringbuf_pow2min (s1, s2) =
   if s1 >= s2
     then s1 else _stringbuf_pow2min (s1+s1, s2)
   // end of [if]
 */
-extern
+ATSinline()
 atstype_size
 atslib__stringbuf_pow2min
 (
