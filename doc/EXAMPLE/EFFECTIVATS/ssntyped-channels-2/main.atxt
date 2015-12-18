@@ -235,7 +235,7 @@ The session combinators #dyncode("chanpos1_session_nil") and
 list constructors:
 ")
 #langja("
-セッションコンビネータ #dyncode("chanpos1_session_nil") と #dyncode("chanpos1_session_cons") は次の標準のコンストラクタになります:
+セッションコンビネータ #dyncode("chanpos1_session_nil") と #dyncode("chanpos1_session_cons") は次のような標準のコンストラクタになります:
 ")
 </p>
 
@@ -255,16 +255,28 @@ chanpos1_session_cons
 //
 ')</pre>
 
+#langeng("
 <p>
 As indicated by the types, #dyncode("chanpos1_session_nil") is
 called to form an empty session and #dyncode("chanpos1_session_cons")
 to combine a singleton session with a (general) session.  </p>
+")
+#langja("
+<p>
+型の示すところでは、#dyncode("chanpos1_session_nil") は空のセッションを作るために呼び出され、#dyncode("chanpos1_session_cons") はシングルトンセッションと(一般の)セッションを合成するために呼び出されます。  </p>
+")
 
+#langeng("
 <p> Please study the code in #filename("introxmpl1_server.dats") to
 see how the session constructed by calling #dyncode("Q_session") can
 be executed. The following code implements a client-session
 #dyncode("P_session") that corresponds to the server-session
 #dyncode("Q_session"): </p>
+")
+#langja("
+<p> #dyncode("Q_session") を呼び出して構築されたセッションがどのように実行されるのか、#filename("introxmpl1_server.dats") のコードを読んでください。
+次のコードは、サーバセッション #dyncode("Q_session") に対応するクライアントセッション #dyncode("P_session") を実装しています: </p>
+")
 
 <pre
 class="patsyntax">
@@ -298,17 +310,29 @@ end // end of [P_session]
 ')</pre>
 
 <p>
+#langeng("
 However, the session constructed by calling #dyncode("P_session") is
 not suitable for being used directly as it ignores GUI issues. Please
 study the code in #filename("introxmpl1_client.dats") for details on
 handling GUI issues.
+")
+#langja("
+けれども、#dyncode("P_session") を呼び出して構築されたセッションは、GUI の課題を無視しているので、直接の使用には適しません。
+GUI に関する課題の扱いの詳細については、#filename("introxmpl1_client.dats") のコードを読んでください。
+")
 </p>
 
 <p>
+#langeng("
 A simple demo based on the code for #dyncode("P_session") and
 #dyncode("Q_session") is available
-<a href="./introxmpl1.html">on-line</a>. The entirety of the code
+<a href=\"./introxmpl1.html\">on-line</a>. The entirety of the code
 for this demo can be found in four files of the following names:
+")
+#langja("
+#dyncode("P_session") と #dyncode("Q_session") のコードに基づいた単純なデモが <a href=\"http://ats-lang.sourceforge.net/EXAMPLE/EFFECTIVATS/ssntyped-channels-2/introxmpl1.html\">オンライン</a> から入手できます。
+このデモのコード全体は次の名前の4つのファイルから成っています:
+")
 
 <pre>
 introxmpl1.html
@@ -317,21 +341,42 @@ introxmpl1_client.dats
 introxmpl1_server.dats
 </pre>
 
+#langeng("
 I strongly encourage the reader to use the provided Makefile to build
 the demo on his/her own.
+")
+#langja("
+与えられた Makefile を使って独自のデモを作ることを、読者に強くおすすめします。
+")
 </p>
 
 <h2>
+#langeng("
 Various Session Combinators
+")
+#langja("
+様々なセッションコンビネータ
+")
 </h2>
 
+#langeng("
 Some commonly used session combinators are briefly mentioned as follows.
+")
+#langja("
+一般に使われるセッションコンビネータを次に示します。
+")
 
 <h3>
+#langeng("
 Joining Sessions: ssappend
+")
+#langja("
+セッションの合流: ssappend
+")
 </h3>
 
 <p>
+#langeng("
 Given two session types #stacode("ss1") and #stacode("ss2"),
 #stacode("ssappend(ss1, ss2)") is a session type for specifying a
 session that is the concatenation of one specified by #stacode("ss1")
@@ -339,6 +384,11 @@ and another one by #stacode("ss2"). The following functions
 #dyncode("chanpos1_session_append") and
 #dyncode("channeg1_session_append") can be called to join
 server-sessions and client-sessions, respectively:
+")
+#langja("
+2つのセッション型 #stacode("ss1") と #stacode("ss2") が与えられたとき、#stacode("ssappend(ss1, ss2)") は #stacode("ss1") と #stacode("ss2") の連結を表わすセッション型です。
+サーバセッションとクライアントセッションを合成するためには、それぞれ次の関数 #dyncode("chanpos1_session_append") と #dyncode("channeg1_session_append") を呼び出します:
+")
 </p>
 
 <pre
