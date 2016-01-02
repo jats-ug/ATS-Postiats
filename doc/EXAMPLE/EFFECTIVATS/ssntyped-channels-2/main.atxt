@@ -414,89 +414,175 @@ channeg1_session_append
 ')</pre>
 
 <h3>
+#langeng("
 Server-selected Session : sschoose_disj
+")
+#langja("
+選択されたサーバセッション : sschoose_disj
+")
 </h3>
 
 <p>
+#langeng("
 Given two session types #stacode("ss0") and #stacode("ss1") the
 session type #stacode("sschoose_disj(ss0,ss1)") is for classifying a
 session that can behave like one classified by either #stacode("ss0")
 or #stacode("ss1"); the choice as to whether it is classified by
 #stacode("ss0") or #stacode("ss1") is determined by the server.
+")
+#langja("
+2つのセッション型 #stacode("ss0") と #stacode("ss1") が与えられたとき、セッション型 #stacode("sschoose_disj(ss0,ss1)") は #stacode("ss0") もしくは #stacode("ss1") によって分類されるようなセッションを分類します;
+#stacode("ss0") もしくは #stacode("ss1") の選択はサーバによって決定されます。
+")
 </p>
 
 <h3>
+#langeng("
 Client-selected Session : sschoose_conj
+")
+#langja("
+選択されたクライアントセッション : sschoose_conj
+")
 </h3>
 
 <p>
+#langeng("
 Given two session types #stacode("ss0") and #stacode("ss1") the
 session type #stacode("sschoose_conj(ss0,ss1)") is for classifying a
 session that can behave like one classified by either #stacode("ss0")
 or #stacode("ss1"); the choice as to whether it is classified by
 #stacode("ss0") or #stacode("ss1") is determined by the client.
+")
+#langja("
+2つのセッション型 #stacode("ss0") と #stacode("ss1") が与えられたとき、セッション型 #stacode("sschoose_conj(ss0,ss1)") は #stacode("ss0") もしくは #stacode("ss1") によって分類されるようなセッションを分類します;
+#stacode("ss0") もしくは #stacode("ss1") の選択はクライアントによって決定されます。 
+")
 </p>
 
 <h3>
+#langeng("
 Server-Optional Session : ssoption_disj
+")
+#langja("
+オプショナルなサーバセッション : ssoption_disj
+")
 </h3>
 
 <p>
+#langeng("
 Given a session type #stacode("ss"), the session type
 #stacode("ssoption_disj(ss)") is essentially the same as
 #stacode("sschoose_disj(ss, chnil)").
+")
+#langja("
+セッション型 #stacode("ss") が与えられたとき、セッション型 #stacode("ssoption_disj(ss)") は #stacode("sschoose_disj(ss, chnil)") と本質的に同じです。
+")
 </p>
 
 <h3>
+#langeng("
 Client-Optional Session : ssoption_conj
+")
+#langja("
+オプショナルなクライアントセッション : ssoption_conj
+")
 </h3>
 
 <p>
+#langeng("
 Given a session type #stacode("ss"), the session type
 #stacode("ssoption_conj(ss)") is essentially the same as
 #stacode("sschoose_conj(ss, chnil)").
+")
+#langja("
+セッション型 #stacode("ss") が与えられたとき、セッション型 #stacode("ssoption_conj(ss)") は #stacode("sschoose_conj(ss, chnil)") と本質的に同じです。
+")
 </p>
 
 <h3>
+#langeng("
 Server-Repeated Session : ssrepeat_disj
+")
+#langja("
+繰り返されたサーバセッション : ssrepeat_disj
+")
 </h3>
 
 <p>
+#langeng("
 Given a session type #stacode("ss"), the session type
 #stacode("ssrepeat_disj(ss)") is for classifying one that repeats a
 session classified by #stacode("ss"); the choice is made by the
 server as to whether repetition should continue.
+")
+#langja("
+セッション型 #stacode("ss") が与えられたとき、セッション型 #stacode("ssrepeat_disj(ss)") はセッション #stacode("ss") を繰り返すようなセッションを分類します;
+繰り返しが続くかどうかはサーバによって選択されます。
+")
 </p>
 
 <h3>
+#langeng("
 Client-Repeated Session : ssrepeat_conj
+")
+#langja("
+繰り返されたクライントセッション : ssrepeat_conj
+")
 </h3>
 
 <p>
+#langeng("
 Given a session type #stacode("ss"), the session type
 #stacode("ssrepeat_conj(ss)") is for classifying one that repeats a
 session classified by #stacode("ss"); the choice is made by the
 client as to whether repetition should continue.
+")
+#langja("
+セッション型 #stacode("ss") が与えられたとき、セッション型 #stacode("ssrepeat_conj(ss)") はセッション #stacode("ss") を繰り返すようなセッションを分類します;
+繰り返しが続くかどうかはクライアントによって選択されます。
+")
 </p>
 
 <h2>
+#langeng("
 A Service for Multiplication Test
+")
+#langja("
+乗算テストのサービス
+")
 </h2>
 
 <p>
+#langeng("
 As an example for demonstrating certain typical use of session
 combinators, I present as follows the construction of a service for
 testing one's ability to do multiplication mentally.  Please click <a
-href="./multest.html">here</a> to give the service a try.  </p>
+href=\"./multest.html\">here</a> to give the service a try.  </p>
+")
+#langja("
+セッションコンビネータを使った典型的なデモとして、乗算を行なう能力をテストするサービスを次に示します。
+このサービスを試すには <a href=\"http://ats-lang.sourceforge.net/EXAMPLE/EFFECTIVATS/ssntyped-channels-2/multest.html\">ここ</a> をクリックしてください。  </p>
+")
 
 <h3>
+#langeng("
 Login Session
+")
+#langja("
+ログインセッション
+")
 </h3>
 
 <p>
+#langeng("
 To use the service, one needs to first perform login.
 The session type for classifying the login session is
 given as follows:
+")
+#langja("
+このサービスを使うためには、最初にログインする必要があります。
+ログインセッションを分類するセンション型は次のようになります:
+")
 <pre
 class="patsyntax">
 #pats2xhtml_sats('\
@@ -504,8 +590,13 @@ typedef
 ss_login = chrcv(string)::ss_pass_try
 ')</pre>
 
+#langeng("
 where the session type #stacode("ss_pass_try") is defined
 below:
+")
+#langja("
+このとき、セッション型 #stacode("ss_pass_try") は以下のように定義されます:
+")
 
 <pre
 class="patsyntax">
@@ -517,6 +608,7 @@ typedef
 ss_pass_try = ssrepeat_disj(ss_pass)
 ')</pre>
 
+#langeng("
 During the login session, the server receives a string (representing
 the ID of the user) and enters a session for password-checking; one
 round of password-checking involves receiving a string (password) from
@@ -524,16 +616,33 @@ the user and sending the result of checking to the user; the service
 may initiate another round of password-checking if the current round
 fails (that is, the boolean value #dyncode("false") is sent to the
 user).
+")
+#langja("
+ログインセッションの最中では、サーバは (ユーザのIDを表わす) 文字列を受け取り、パスワードチェックするセッションに入ります;
+パスワードチェックではユーザから (パスワードである) 文字列を受け取り、チェックした結果をユーザに送信します;
+もし現在の試行が失敗したら (つまり真理値 #dyncode("false") がユーザに送信されます) 、このサービスはもう一つのパスワードチェックをはじめるでしょう。
+")
 </p>
 
 <h3>
+#langeng("
 Answer-Checking Session
+")
+#langja("
+応答チェックセッション
+")
 </h3>
 
 <p>
+#langeng("
 Checking the received answer to a given question is essentially the
 same as password-checking, and the session type #stacode("ss_answer_try")
 is for classifying such a session is given as follows:
+")
+#langja("
+受信した与えらえた質問への応答をチェックするのは、本質的にパスワードチェックと同じです。
+セッション型 #stacode("ss_answer_try") は次のようなセッションです:
+")
 
 <pre
 class="patsyntax">
@@ -545,17 +654,32 @@ typedef
 ss_answer_try = ssrepeat_disj(ss_answer)
 ')</pre>
 
+#langeng("
 Like password-checking, the server may request the user to send another
 answer if the current given answer is incorrect.
+")
+#langja("
+パスワードチェックのように、もし現状の応答が正しくない場合サーバは別の応答を送信するようにユーザに要請します。
+")
 </p>
 
 
 <h3>
+#langeng("
 Session for a Single Test
+")
+#langja("
+1つのテストを表わすセッション
+")
 </h3>
 
 <p>
+#langeng("
 The session type for a single round of test is given as follows:
+")
+#langja("
+一度のテスト試行を表わすセッション型は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -565,16 +689,31 @@ ss_test_one =
 chsnd(int)::chsnd(int)::ss_answer_try
 ')</pre>
 
+#langeng("
 Essentially, the server sends two integers (generated randomly) to the
 client and then enters the answer-checking session described above.
+")
+#langja("
+本質的に、このサーバは (ランダムに生成された) 2つの整数をクライアントに送信し、それから上記で説明した応答チェックセッションに入ります。
+")
 </p>
 
 <h3>
+#langeng("
 Session for Repeated Tests
+")
+#langja("
+繰り返されたテストを表わすセッション
+")
 </h3>
 
 <p>
+#langeng("
 The session type for repeated rounds of tests is given as follows:
+")
+#langja("
+テスト試行の繰り返しを表わすセッション型は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -583,17 +722,32 @@ typedef
 ss_test_loop = ssrepeat_conj(ss_test_one)
 ')</pre>
 
+#langeng("
 Notice that the client decides wether a fresh round of test should
 take place.
+")
+#langja("
+このクライアントはフレッシュなテスト試行が行なわれなければならないことを表わしていることに注意してください。
+")
 </p>
 
 <h3>
+#langeng("
 Session for Multiplication Test
+")
+#langja("
+乗算テストのセッション
+")
 </h3>
 
 <p>
+#langeng("
 Finally, the session type #stacode("ss_multest") for the overall session
 is given as follows:
+")
+#langja("
+最後に、全体のセッションを表わすセッション型 #stacode("ss_multest") は次のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -603,8 +757,13 @@ ss_multest =
 ssappend(ss_login, ss_test_loop_opt)
 ')</pre>
 
+#langeng("
 where the session type #stacode("ss_test_loop_opt") (for a server-optional
 session) is given below:
+")
+#langja("
+このとき、(オプショナルなサーバセッションを表わす) セッション型 #stacode("ss_test_loop_opt") は以下のようになります:
+")
 
 <pre
 class="patsyntax">
@@ -613,9 +772,15 @@ typedef
 ss_test_loop_opt = ssoption_disj(ss_test_loop)
 ')</pre>
 
+#langeng("
 Essentially, the overall session starts with the login session
 described above; whether the session for repeated tests follows
 depends on whether the login session succeeds or fails.
+")
+#langja("
+本質的に全体のセッションは上記で解説したログインセッションから開始します;
+繰り返されたテストを表わすセッションが続くかどうかは、ログインセッションの成否に依存しています。
+")
 </p>
 
 <h3>
