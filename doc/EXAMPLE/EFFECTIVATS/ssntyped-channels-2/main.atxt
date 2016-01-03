@@ -784,14 +784,26 @@ depends on whether the login session succeeds or fails.
 </p>
 
 <h3>
+#langeng("
 Implementing State-carrying Sessions
+")
+#langja("
+状態を取り回すセッションを実装する
+")
 </h3>
 
 <p>
+#langeng("
 A state-carrying session carries a state represented as a (possibly
 extensible) record with mutable fields, and the carried state is meant
 to be updated during the execution of the session. Let us see a concrete
 example given as follows:
+")
+#langja("
+状態を取り回すセッションは (ひょっとすると伸縮する) 可変のフィールドを持つレコードとして表わされる状態を取り回します。
+そしてその取り回された状態はセッションの実行中に更新されることを意図しています。
+次に具体例を見てみましょう:
+")
 
 <pre
 class="patsyntax">
@@ -839,16 +851,27 @@ in
 end // end of [f_ss_pass]
 ')</pre>
 
+#langeng("
 Applying to a state (which is just a reference to a record), the
 function #dyncode("f_ss_pass") returns a state-carrying server-session
 classified by the session type #stacode("ss_pass").  Note that
 #dyncode("pass_check") sets the field #dyncode("pass_result") of the
 carried state to #dyncode("true") if the received password passes
 checking.
+")
+#langja("
+関数 #dyncode("f_ss_pass") は、(レコードへの参照である) 状態に適用すると、セッション型 #stacode("ss_pass") の状態を取り回すサーバセッションを返します。
+受け取ったパスワードのチェックに通った場合、#dyncode("pass_check") は取り回した状態のフィールド #dyncode("pass_result") を #dyncode("true") に設定することに注意してください。
+")
 </p>
 
 <p>
+#langeng("
 The following function #dyncode("f_ss_pass_try") builds on the top of #dyncode("f_ss_pass"):
+")
+#langja("
+次の関数 #dyncode("f_ss_pass_try") は #dyncode("f_ss_pass") の上に構築されています:
+")
 
 <pre
 class="patsyntax">
@@ -884,18 +907,29 @@ in
 end // end of [f_ss_pass_try]
 ')</pre>
 
+#langeng("
 The session returned by a call to #dyncode("f_ss_pass_try") allows the
 client to try at most 3 times to supply a valid password. Note that
 the function template #dyncode("chanpos1_repeat_disj$choose") is
 called inside the session combinator
 #dyncode("chanpos1_session_repeat_disj") to determine whether the given
 session needs to be repeated.
+")
+#langja("
+#dyncode("f_ss_pass_try") 呼び出しで返るセッションは有効なパスワードを提供するために、最大3回の試行をクライントに許可します。
+与えられたセッションが繰り返される必要があるかどうか判定するために、セッションコンビネータ #dyncode("chanpos1_session_repeat_disj") の中から関数テンプレート #dyncode("chanpos1_repeat_disj$choose") が呼び出されることに注意してください。
+")
 </p>
 
 
 <p>
-The entire code for this <a href="./multest.html">demo</a> can be found
+#langeng("
+The entire code for this <a href=\"./multest.html\">demo</a> can be found
 in four files of the following names:
+")
+#langja("
+この <a href=\"http://ats-lang.sourceforge.net/EXAMPLE/EFFECTIVATS/ssntyped-channels-2/multest.html\">デモ</a> のコード全体は次の名前の4つのファイルから成ります:
+")
 
 <pre>
 multest.html
@@ -904,12 +938,18 @@ multest_client.dats // client-session
 multest_server.dats // server-session
 </pre>
 
+#langeng("
 The implementation of server-session in
 #filename("multest_server.dats") is largely straightforward while the
 implementation of client-session in #filename("multest_client.dats")
 is more involved due to the need for handling certain GUI issues.  For
 those interested in studying session types and session combinators
 in more depth, the following links should be helpful:
+")
+#langja("
+#filename("multest_server.dats") におけるサーバセッションの実装は素直なものですが、GUI を扱う必要があるために #filename("multest_client.dats") におけるクライアントセッションの実装はより複雑です。
+セッション型とセッションコンビネータをより詳しく学習したい場合には、次のリンクが助けになるでしょう:
+")
 
 <ul>
 <li>
@@ -920,8 +960,13 @@ in more depth, the following links should be helpful:
 </li>
 </ul>
 
+#langeng("
 Naturally, one should expect that session combinators can be further lifted to higher forms of
 combinators (e.g., those for combining services together conveniently).
+")
+#langja("
+必然的に、セッションコンビネータは (例えばサービスを合成するような) より高位のコンビネータにさらに持ち上げることができるのは予想できるでしょう。
+")
 
 </p>
 
