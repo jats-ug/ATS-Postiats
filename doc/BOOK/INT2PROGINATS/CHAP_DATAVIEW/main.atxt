@@ -856,9 +856,8 @@ vtypedef strptr(l:addr, n:int) = (strbuf_v(l, n) | ptr(l))
 ')
 
 すると位置 L に保管された長さ N のC言語文字列には型 #stacode("strptr(L, N)") を割り当てることができます。
-)").
 
-')
+')#comment("para")
 ")
 
 #langeng("
@@ -1099,7 +1098,6 @@ Please find the entirety of the above presented code
 #para('\
 
 上記で示したコード全体は #mycodelink("CHAP_DATAVIEW/strbuf.dats", "オンライン") から入手できます。
-).
 
 ')#comment("para")
 ")
@@ -1646,7 +1644,8 @@ slist_ptr_reverse
   return res ;
 } // end of [slist_ptr_reverse]
 ')
-')
+
+')#comment("para")
 ")
 
 #langeng("
@@ -1683,7 +1682,7 @@ with dataviews in ATS.
 
 <!-- ****** ****** -->
 
-<sect1 id="view-changes">
+<sect1 id=""view-changes">
 #langeng("
 #title("Proof Functions for View-Changes")
 ")
