@@ -223,7 +223,7 @@ following type:
 ")
 
 #atscode('\
-{l:addr} (T? @ l | ptr (l)) -> (T @ l | void)
+{l:addr} (T? @ l | ptr (l), T) -> (T @ l | void)
 ')
 
 #langeng("

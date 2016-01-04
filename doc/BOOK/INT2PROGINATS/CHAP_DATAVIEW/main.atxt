@@ -813,16 +813,295 @@ id="linear_strings">
 
 The following dataview #stacode("strbuf_v") captures the notion of a
 string in C, which consisits a sequence of non-null characters followed by the
-null character.
+null character:
 
+#atscode('\
+dataview
+strbuf_v(addr, int) =
+  | {l:addr}
+    strbuf_v_nil(l, 0) of (char(0) @ l)
+  | {l:addr}{n:nat}
+    strbuf_v_cons(l, n+1) of (charNZ @ l, strbuf_v(l+sizeof(char), n))
 ')
+
+Let us define a linear type #stacode("strptr") as follows:
+
+#atscode('\
+vtypedef strptr(l:addr, n:int) = (strbuf_v(l, n) | ptr(l))
+')
+
+Then a C-string of length N that is stored at location L can be assigned
+the type #stacode("strptr(L, N)").
+
+')#comment("para")
 ")
 #langja("
 #para('\
 
-次のデータ観 #stacode("strbuf_v") はC言語文字列の概念を補足しています。C言語文字列は NULL 文字で終端する非 NULL 文字の列から成り立っています。
+次のデータ観 #stacode("strbuf_v") はC言語文字列の概念を補足しています。C言語文字列は NULL 文字で終端する非 NULL 文字の列から成り立っています:
+
+#atscode('\
+dataview
+strbuf_v(addr, int) =
+  | {l:addr}
+    strbuf_v_nil(l, 0) of (char(0) @ l)
+  | {l:addr}{n:nat}
+    strbuf_v_cons(l, n+1) of (charNZ @ l, strbuf_v(l+sizeof(char), n))
+')
+
+線形型 #stacode("strptr") を次のように定義してみましょう:
+
+#atscode('\
+vtypedef strptr(l:addr, n:int) = (strbuf_v(l, n) | ptr(l))
+')
+
+すると位置 L に保管された長さ N のC言語文字列には型 #stacode("strptr(L, N)") を割り当てることができます。
+)").
 
 ')
+")
+
+#langeng("
+#para('\
+
+Given a C-string, one can always access its first character; if the
+character is null, then the C-string is empty; if it is not, then the
+C-string is non-empty. The following implementation of
+#dyncode("strptr_is_nil") precisely follows this simple way of testing
+whether a C-string is empty or not:
+
+#atscode('\
+//
+fun
+strptr_is_nil
+  {l:addr}{n:int}
+(
+  str: !strptr(l, n)
+) : bool(n==0) = let
+//
+  prval
+  (pf_at, fpf) =
+    strbuf_v_getfst(str.0)
+  // prval
+  val c0 = !(str.1)
+  prval () = str.0 := fpf(pf_at)
+in
+  iseqz(c0) // testing whether [c0] is null
+end // end of [strptr_is_nil]
+//
+')
+
+where the proof function #dyncode("strbuf_v_getfst")
+is declared and implemented as follows:
+
+#atscode('\
+extern
+prfun
+strbuf_v_getfst
+  {l:addr}{n:int}
+(
+  pf: strbuf_v(l, n)
+) : [
+  c:int | (c==0 && n==0) || (c != 0 && n > 0)
+] (char(c) @ l, char(c) @ l -<lin,prf> strbuf_v(l, n))
+
+(* ****** ****** *)
+
+primplmnt
+strbuf_v_getfst
+  (pf) =
+(
+case+ pf of
+| strbuf_v_nil(pf_at) => #[.. | (pf_at, llam(pf_at) => strbuf_v_nil(pf_at))]
+| strbuf_v_cons(pf_at, pf2) => #[.. | (pf_at, llam(pf_at) => strbuf_v_cons(pf_at, pf2))]
+)
+')
+
+')#comment("para")
+")
+#langja("
+#para('\
+
+C言語文字列が与えられたとき、その最初の文字には常にアクセスできます;
+もしその文字が NULL であった場合、そのC言語文字列は空です;
+もしその文字が NULL でなかった場合、そのC言語文字列は空ではありません。
+#dyncode("strptr_is_nil") の次の実装は、C言語文字列が空か空でないかを判定するこの単純な方法を正確に実装しています:
+
+#atscode('\
+//
+fun
+strptr_is_nil
+  {l:addr}{n:int}
+(
+  str: !strptr(l, n)
+) : bool(n==0) = let
+//
+  prval
+  (pf_at, fpf) =
+    strbuf_v_getfst(str.0)
+  // prval
+  val c0 = !(str.1)
+  prval () = str.0 := fpf(pf_at)
+in
+  iseqz(c0) // testing whether [c0] is null
+end // end of [strptr_is_nil]
+//
+')
+
+このとき、証明関数 #dyncode("strbuf_v_getfst") は次のように宣言され実装されます:
+
+#atscode('\
+extern
+prfun
+strbuf_v_getfst
+  {l:addr}{n:int}
+(
+  pf: strbuf_v(l, n)
+) : [
+  c:int | (c==0 && n==0) || (c != 0 && n > 0)
+] (char(c) @ l, char(c) @ l -<lin,prf> strbuf_v(l, n))
+
+(* ****** ****** *)
+
+primplmnt
+strbuf_v_getfst
+  (pf) =
+(
+case+ pf of
+| strbuf_v_nil(pf_at) => #[.. | (pf_at, llam(pf_at) => strbuf_v_nil(pf_at))]
+| strbuf_v_cons(pf_at, pf2) => #[.. | (pf_at, llam(pf_at) => strbuf_v_cons(pf_at, pf2))]
+)
+')
+
+')#comment("para")
+")
+
+#langeng("
+#para('\
+
+The following implementation gives another example of handling the dataview
+#stacode("strbuf_v"):
+
+#atscode('\
+fun
+strptr_length
+  {l:addr}{n:int}
+(
+  str: !strptr(l, n)
+) : size_t(n) = let
+//
+fun
+loop
+{l:addr}
+{i,j:int}
+(
+  pf: !strbuf_v(l, i)
+| p0: ptr(l), j: size_t(j)
+) : size_t(i+j) = let
+//
+prval
+[c:int]
+(pf_at, fpf) = strbuf_v_getfst(pf)
+//
+val c0 = !p0
+//
+prval ((*return*)) = pf := fpf(pf_at)
+//
+in
+//
+if
+iseqz(c0)
+then j
+else res where
+{
+  prval
+  strbuf_v_cons(pf_at, pf2) = pf
+  val res = loop(pf2 | ptr_succ<char>(p0), succ(j))
+  prval ((*folded*)) = pf := strbuf_v_cons(pf_at, pf2)
+} (* end of [else] *)
+//
+end // end of [loop]
+//
+in
+  loop(str.0 | str.1, i2sz(0))
+end // end of [strptr_length]  
+')
+
+Clearly, the implemented function of #dyncode("strptr_length") computes the
+length of a given C-string.
+
+')#comment("para")
+")
+#langja("
+#para('\
+
+次の実装はデータ観 #stacode("strbuf_v") を扱う別の例です:
+
+#atscode('\
+fun
+strptr_length
+  {l:addr}{n:int}
+(
+  str: !strptr(l, n)
+) : size_t(n) = let
+//
+fun
+loop
+{l:addr}
+{i,j:int}
+(
+  pf: !strbuf_v(l, i)
+| p0: ptr(l), j: size_t(j)
+) : size_t(i+j) = let
+//
+prval
+[c:int]
+(pf_at, fpf) = strbuf_v_getfst(pf)
+//
+val c0 = !p0
+//
+prval ((*return*)) = pf := fpf(pf_at)
+//
+in
+//
+if
+iseqz(c0)
+then j
+else res where
+{
+  prval
+  strbuf_v_cons(pf_at, pf2) = pf
+  val res = loop(pf2 | ptr_succ<char>(p0), succ(j))
+  prval ((*folded*)) = pf := strbuf_v_cons(pf_at, pf2)
+} (* end of [else] *)
+//
+end // end of [loop]
+//
+in
+  loop(str.0 | str.1, i2sz(0))
+end // end of [strptr_length]  
+')
+
+明確に、実装された関数 #dyncode("strptr_length") は与えられたC言語文字列の長さを計算します。
+
+')#comment("para")
+")
+
+#langeng("
+#para('\
+
+Please find the entirety of the above presented code
+#mycodelink("CHAP_DATAVIEW/strbuf.dats", "on-line").
+
+')#comment("para")
+")
+#langja("
+#para('\
+
+上記で示したコード全体は #mycodelink("CHAP_DATAVIEW/strbuf.dats", "オンライン") から入手できます。
+).
+
+')#comment("para")
 ")
 
 </sect1>#comment("sect1/id=linear_strings")
@@ -864,7 +1143,15 @@ There are two proof constructors #dyncode("slseg_v_nil") and
 #dyncode("slseg_v_cons") associated with #stacode("slseg_v"), which are
 assigned the following types:
 
+#atscode('\
+slseg_v_nil :
+  {a:t@ype}{l:addr} () -> slseg_v (a, l, l, 0)
+slseg_v_cons :
+  {a:t@ype}{l_fst:agz}{l_nxt,l_end:addr}{n:nat}
+  ((a, ptr l_nxt) @ l_fst, slseg_v (a, l_nxt, l_end, n)) -> slseg_v (a, l_fst, l_end, n+1)
 ')
+
+')#comment("para")
 ")
 #langja("
 #para('\
@@ -890,9 +1177,6 @@ slseg_v (
 #stacode("slseg_v") に関連する2つの証明コンストラクタ #dyncode("slseg_v_nil") と #dyncode("slseg_v_cons")
 があり、それらに割り当てられた型は次のようになります:
 
-')
-")
-
 #atscode('\
 slseg_v_nil :
   {a:t@ype}{l:addr} () -> slseg_v (a, l, l, 0)
@@ -900,6 +1184,8 @@ slseg_v_cons :
   {a:t@ype}{l_fst:agz}{l_nxt,l_end:addr}{n:nat}
   ((a, ptr l_nxt) @ l_fst, slseg_v (a, l_nxt, l_end, n)) -> slseg_v (a, l_fst, l_end, n+1)
 ')
+
+')#comment("para")
 
 #langeng("
 #para('\
@@ -911,7 +1197,13 @@ containing N elements of the type T that starts at L1 and finishes at L2.
 In the case where L2 is the null pointer, then the list segment is considered
 a list as is formally defined below:
 
+#atscode('\
+viewdef slist_v
+  (a:t@ype, l:addr, n:int) = slseg_v (a, l, null, n)
+// end of [slist_v]
 ')
+
+')#comment("para")
 ")
 #langja("
 #para('\
@@ -921,14 +1213,14 @@ a list as is formally defined below:
 個の要素を含む片方向リストの部分を表わします。
 L2 が NULL ポインタである場合、このリスト部分は次に形式的に定義されるリストと考えられます:
 
-')
-")
-
 #atscode('\
 viewdef slist_v
   (a:t@ype, l:addr, n:int) = slseg_v (a, l, null, n)
 // end of [slist_v]
 ')
+
+')#comment("para")
+")
 
 #langeng("
 #para('\
@@ -938,15 +1230,20 @@ Given a type T, a pointer pointing to L plus a proof of the view
 same as a pointer to a struct of the following declared type
 #stacode("slist_struct") in C:
 
+#atscode('\
+typedef
+struct slist {
+  T data ; /* [T] matches the corresponding type in ATS */
+  struct slist *next ; /* pointing to the tail of the list */
+} slist_struct ;
 ')
+
+')#comment("para")
 ")
 #langja("
 #para('\
 
 型 T が与えられた時、L を指すポインタと自然数 N について観 #stacode("slist_v(T, L, N)") の証明は、C言語において次に宣言された構造体型 #stacode("slist_struct") へのポインタと本質的に同じです:
-
-')
-")
 
 #atscode('\
 typedef
@@ -955,6 +1252,9 @@ struct slist {
   struct slist *next ; /* pointing to the tail of the list */
 } slist_struct ;
 ')
+
+')#comment("para")
+")
 
 #langeng("
 #para('\
@@ -993,7 +1293,15 @@ given singly-linked list. Note that the inner function #dyncode("loop") is
 tail-recursive. The above implementation of #dyncode("slist_ptr_length")
 essentially corresponds to the following implementation in C:
 
+#atscode('\
+int slist_ptr_length (slist_struct *p) {
+  int res = 0 ;
+  while (p != NULL) { res = res + 1 ; p = p->next ; }
+  return res ;
+} // end of [slist_ptr_length]
 ')
+
+')#comment("para")
 ")
 #langja("
 #para('\
@@ -1031,9 +1339,6 @@ end // end of [slist_ptr_length]
 内部の関数 #dyncode("loop") が末尾再帰であることに注意してください。
 #dyncode("slist_ptr_length") の上記の実装はC言語における次の実装と本質的に一致します:
 
-')
-")
-
 #atscode('\
 int slist_ptr_length (slist_struct *p) {
   int res = 0 ;
@@ -1041,6 +1346,9 @@ int slist_ptr_length (slist_struct *p) {
   return res ;
 } // end of [slist_ptr_length]
 ')
+
+')#comment("para")
+")
 
 #langeng("
 #para('\
@@ -1093,7 +1401,7 @@ slist_ptr_reverse (slist_struct *p)
 } // end of [slist_ptr_reverse]
 ')
 
-')
+')#comment("para")
 ")
 #langja("
 #para('\
@@ -1143,7 +1451,7 @@ slist_ptr_reverse (slist_struct *p)
 } // end of [slist_ptr_reverse]
 ')
 
-')
+')#comment("para")
 ")
 
 #langeng("
@@ -1170,35 +1478,6 @@ by #dyncode("p") is first found and its field of the name #dyncode("next")
 then replaced with #dyncode("q").  This implementation of
 #dyncode("slist_ptr_append") in C can be translated directly into to
 the following one in ATS:
-
-')
-")
-#langja("
-#para('\
-
-また別の例を見てみましょう。
-様々なリストにおいてリストの連結は共通した操作です。
-ここで、まずはじめにC言語でリストの連結を実装してみましょう:
-
-#atscode('\
-slist_struct*
-slist_ptr_append
-  (slist_struct *p, slist_struct *q) {
-  slist_struct *p1 = p ;
-  if (p1 == NULL) return q ;
-  while (p1->next != NULL) p1 = p1->next ; p1->next = q ;
-  return p ;
-} // end of [slist_ptr_append]
-')
-
-素直なアルゴリズムです。
-もし #dyncode("p") が NULL だった場合、#dyncode("q") が返されます。
-そうでなければ、はじめに #dyncode("p") で指し示されたリストの最後のノードを見つけて、
-そのノードの #dyncode("next") フィールドは #dyncode("q") に置換されます。
-C言語における #dyncode("slist_ptr_append") のこの実装は、次のような ATS の実装に直接変換できます:
-
-')
-")
 
 #atscode('\
 fn{a:t@ype}
@@ -1241,6 +1520,76 @@ in
 end // end of [slist_ptr_append]
 ')
 
+')#comment("para")
+")
+#langja("
+#para('\
+
+また別の例を見てみましょう。
+様々なリストにおいてリストの連結は共通した操作です。
+ここで、まずはじめにC言語でリストの連結を実装してみましょう:
+
+#atscode('\
+slist_struct*
+slist_ptr_append
+  (slist_struct *p, slist_struct *q) {
+  slist_struct *p1 = p ;
+  if (p1 == NULL) return q ;
+  while (p1->next != NULL) p1 = p1->next ; p1->next = q ;
+  return p ;
+} // end of [slist_ptr_append]
+')
+
+素直なアルゴリズムです。
+もし #dyncode("p") が NULL だった場合、#dyncode("q") が返されます。
+そうでなければ、はじめに #dyncode("p") で指し示されたリストの最後のノードを見つけて、
+そのノードの #dyncode("next") フィールドは #dyncode("q") に置換されます。
+C言語における #dyncode("slist_ptr_append") のこの実装は、次のような ATS の実装に直接変換できます:
+
+#atscode('\
+fn{a:t@ype}
+slist_ptr_append
+  {l1,l2:addr}{n1,n2:nat}
+(
+  pf1lst: slist_v (a, l1, n1)
+, pf2lst: slist_v (a, l2, n2)
+| p1: ptr l1, p2: ptr l2
+) : [l:addr] (slist_v (a, l, n1+n2) | ptr l) = let
+  fun loop
+    {n1,n2:nat}
+    {l1,l2:addr | l1 > null} .<n1>. (
+    pf1lst: slist_v (a, l1, n1)
+  , pf2lst: slist_v (a, l2, n2)
+  | p1: ptr l1, p2: ptr l2
+  ) : (slist_v (a, l1, n1+n2) | void) = let
+    prval slseg_v_cons (pf1at, pf1lst) = pf1lst
+    val p1_nxt = !p1.1
+  in
+    if p1_nxt > 0 then let
+      val (pflst | ()) = loop (pf1lst, pf2lst | p1_nxt, p2)
+    in
+      (slseg_v_cons (pf1at, pflst) | ())
+    end else let
+      val () = !p1.1 := p2
+      prval slseg_v_nil () = pf1lst
+    in
+      (slseg_v_cons (pf1at, pf2lst) | ())
+    end (* end of [if] *)
+  end // end of [loop]
+in
+  if p1 > 0 then let
+    val (pflst | ()) = loop (pf1lst, pf2lst | p1, p2)
+  in
+    (pflst | p1)
+  end else let
+    prval slseg_v_nil () = pf1lst in (pf2lst | p2)
+  end (* end of [if] *)
+end // end of [slist_ptr_append]
+')
+
+')#comment("para")
+")
+
 #langeng("
 #para('\
 
@@ -1253,21 +1602,6 @@ changed code is typechecked. On the other hand, the same thing cannot be
 said about the code written in C. For instance, the following erroneous
 implementation of #dyncode("slist_ptr_reverse") in C is certainly
 type-correct:
-
-')
-")
-#langja("
-#para('\
-
-上記の例では、ATS のコードがC言語の該当するコードよりも冗長であることは明らかです。
-けれども、前者は後者よりも次の点でより堅牢です:
-もし ATS のコードに小さな変更 (例: 識別子の名前変更、関数の引数の並べ替え) を加えた場合、
-変更したコードは型検査されておそらく型エラーが発生します。
-他方、C言語で書かれたコードについては同じことは起きません。
-例えば、次のようなC言語における #dyncode("slist_ptr_reverse") の誤った実装はもちろん正しい型です:
-
-')
-")
 
 #atscode('\
 /*
@@ -1285,6 +1619,36 @@ slist_ptr_reverse
 } // end of [slist_ptr_reverse]
 ')
 
+')#comment("para")
+")
+#langja("
+#para('\
+
+上記の例では、ATS のコードがC言語の該当するコードよりも冗長であることは明らかです。
+けれども、前者は後者よりも次の点でより堅牢です:
+もし ATS のコードに小さな変更 (例: 識別子の名前変更、関数の引数の並べ替え) を加えた場合、
+変更したコードは型検査されておそらく型エラーが発生します。
+他方、C言語で書かれたコードについては同じことは起きません。
+例えば、次のようなC言語における #dyncode("slist_ptr_reverse") の誤った実装はもちろん正しい型です:
+
+#atscode('\
+/*
+** This implementation is *incorrect* but type-correct:
+*/
+slist_struct*
+slist_ptr_reverse
+  (slist_struct *p)
+{
+  slist_struct *tmp, *res = NULL ;
+  while (p != NULL) {
+    tmp = p->next ; res = p ; p->next = res ; p = tmp ;
+  }
+  return res ;
+} // end of [slist_ptr_reverse]
+')
+')
+")
+
 #langeng("
 #para('\
 
@@ -1299,7 +1663,7 @@ general and flexible than dataviewtypes, and there are many common data
 structures (e.g. doubly-linked lists) that can only be properly handled
 with dataviews in ATS.
 
-')
+')#comment("para")
 ")
 #langja("
 #para('\
@@ -1312,7 +1676,7 @@ with dataviews in ATS.
 けれども、データ観は根本的にデータ観型よりも一般的で柔軟です。
 多くの一般的なデータ構造 (例: 双方向リスト) は ATS においてデータ観を用いてのみ適切に取り扱うことができます。
 
-')
+')#comment("para")
 ")
 
 </sect1>#comment("sect1/id=singly-linked_lists")

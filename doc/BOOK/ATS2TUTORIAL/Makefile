@@ -272,6 +272,14 @@ clean:: ; make -C CHAP_CLOPTR -f ../Makefile_chap clean
 ######
 
 allchap:: \
+CHAP_STKCLO
+CHAP_STKCLO:: ; \
+  make -C CHAP_STKCLO -f ../Makefile_chap main.db
+clean:: ; make -C CHAP_STKCLO -f ../Makefile_chap clean
+
+######
+
+allchap:: \
 CHAP_CODEGEN2
 CHAP_CODEGEN2:: ; \
   make -C CHAP_CODEGEN2 -f ../Makefile_chap main.db
@@ -326,10 +334,12 @@ clean:: ; $(RMF) *~
 clean:: ; $(RMF) *_atxt.txt
 clean:: ; $(RMF) *_atxt.dats
 clean:: ; $(RMF) *_atxt_dats.c
+clean:: ; $(RMF) HTML/htmltoc_dats.c
 
 cleanall:: clean
 cleanall:: ; $(RMF) preface.db
 cleanall:: ; $(RMF) PDF/main.pdf
 cleanall:: ; $(RMF) TEMP/chap_*.dats
+cleanall:: ; $(RMF) HTML/htmltoc.exe
 
 ###### end of [Makefile] ######

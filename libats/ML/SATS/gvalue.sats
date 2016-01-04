@@ -179,10 +179,13 @@ fprint_gvlist : fprint_type(gvlist)
 fun
 fprint_gvarray : fprint_type(gvarray)
 fun
+fprint_gvdynarr : fprint_type(gvdynarr)
+fun
 fprint_gvhashtbl : fprint_type(gvhashtbl)
 //
 overload fprint with fprint_gvlist of 10
 overload fprint with fprint_gvarray of 10
+overload fprint with fprint_gvdynarr of 10
 overload fprint with fprint_gvhashtbl of 10
 //
 (* ****** ****** *)
@@ -201,6 +204,8 @@ fun gvalue_string(string): gvalue
 //
 (* ****** ****** *)
 //
+fun gvalue_ref(gvref): gvalue
+//
 fun gvalue_list(xs: gvlist): gvalue
 //
 fun gvalue_array(xs: gvarray): gvalue
@@ -210,8 +215,51 @@ fun gvalue_hashtbl(kxs: gvhashtbl): gvalue
 (* ****** ****** *)
 //
 fun
+gvref_make_elt
+  (x0: gvalue): gvref
+//
+(* ****** ****** *)
+//
+fun
 gvarray_make_nil
   (asz: intGte(0)): gvarray
+//
+(* ****** ****** *)
+//
+fun
+gvdynarr_make_nil
+  (cap: intGte(1)): gvdynarr
+//
+(* ****** ****** *)
+//
+fun
+gvdynarr_get_at
+  (gvdynarr, i: intGte(0)): gvalue
+fun
+gvdynarr_set_at
+  (gvdynarr, i: intGte(0), x: gvalue): void
+//
+overload [] with gvdynarr_get_at
+overload [] with gvdynarr_set_at
+//
+(* ****** ****** *)
+//
+fun
+gvdynarr_insert_atbeg
+  (gvdynarr, x: gvalue): void
+fun
+gvdynarr_insert_atend
+  (gvdynarr, x: gvalue): void
+//
+overload .insbeg with gvdynarr_insert_atbeg
+overload .insend with gvdynarr_insert_atend
+//
+(* ****** ****** *)
+//
+fun
+gvdynarr_listize0(gvdynarr): list0(gvalue)
+fun
+gvdynarr_listize1(gvdynarr): list0(gvalue)
 //
 (* ****** ****** *)
 //
@@ -241,6 +289,15 @@ overload [] with gvhashtbl_set_atkey
 overload .get with gvhashtbl_get_atkey
 overload .set with gvhashtbl_set_atkey
 *)
+//
+(* ****** ****** *)
+//
+fun
+gvhashtbl_pop_atkey
+  (gvhashtbl, k: string): gvalue
+fun
+gvhashtbl_push_atkey
+  (gvhashtbl, k: string, x: gvalue): void
 //
 (* ****** ****** *)
 //
