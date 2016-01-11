@@ -13,10 +13,16 @@ by [atsdoc] from [CHAP_STKCLO/main.atxt].\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="stkclo">
+#langeng("
 #title("Stack-Allocated Closure-Functions")
+")
+#langja("
+#title("スタックに確保されたクロージャ関数")
+")
 
 <!-- ****** ****** -->
 
+#langeng("
 #para("\
 
 Higher-order functions are a very convenient programming feature for
@@ -29,7 +35,19 @@ closure-function is non-linear, then its memory should be reclaimed through
 garbage-collection (GC) (or the memory is leaked).
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+高階関数は、コードの形を再利用するのにとても便利なプログラミングの機能です。
+高階関数呼び出しへの引数として渡された関数はしばしば実行時にヒープ上に生成されたクロージャ関数で、その呼び出しの後ではもはや使われないことを意図しています。
+もしそのクロージャ関数が線形なら、それはプログラマが明示的に解放する必要があります (そうでなければ型検査中に型エラーが発生します)。
+もしそのクロージャ関数が非線形なら、そのメモリはガベージコレクション (GC) によって回収されなければなりません (そうでなければメモリリークになります)。
+
+")#comment("para")
+")
+
+#langeng("
 #para("\
 
 Creating heap-allocated closure-functions implies the need for dynamic
@@ -40,7 +58,19 @@ store it in the stack-frame of the calling function, and there is special
 systax in ATS for doing so.
 
 ")#comment("para")
+")
+#langja("
+#para("\
 
+ヒープに確保されたクロージャ関数の生成は動的なメモリ確保 (DMA) を必要としています。
+制限された環境 (例: 組み込みプログラミング) では、DMA は (完全には) サポートされていないかもしれません。
+DMA のサポートのない環境でのクロージャ関数の生成の1つの選択肢は、呼び出し関数のスタックフレームにそれを保管することです。
+ATS にはこれを行なうための特殊な構文があります。
+
+")#comment("para")
+")
+
+#langeng("
 #para('\
 
 Let us see a concrete example of stack-allocated closure.
@@ -127,7 +157,89 @@ call to the (unsafe) cast turns the address of #dyncode("fopr") into a
 boxed closure so that it can be passed to #dyncode("ifold").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+スタックに確保されたクロージャの実例を見てみましょう。
+次のコードは高階関数テンプレートを実装しています:
+
+#atscode('\
+//
+fun
+{res:t@ype}
+ifold{n:nat}
+(
+  n: int(n)
+, fopr: (res, natLt(n)) -<cloref1> res, ini: res
+) : res = let
+//
+fun
+loop
+{i:nat | i <= n} .<n-i>.
+  (i: int(i), res: res): res =
+  if i < n then loop(i+1, fopr(res, i)) else res
+//
+in
+  loop(0, ini)
+end // end of [ifold]
+//
+')
+
+本質的に、#dyncode("ifold(n, fopr, ini)") は式 #dyncode("fopr(...fopr(fopr(ini, 0), 1)..., n-1)") を評価します。
+例えば、2つのベクトルのドット積 (もしくは内積) を計算する 関数 #dyncode("dotprod") は #dyncode("ifold") 呼び出しを使って実装できます:
+
+#atscode('\
+//
+typedef res = double
+//
+fun
+dotprod
+  {n:nat}
+(
+  n: int(n)
+, A: arrayref(res, n)
+, B: arrayref(res, n)
+) : res =
+(
+  ifold<res>(n, lam(res, i) => res + A[i]*B[i], 0.0)
+)
+//
+')
+
+#dyncode("ifold") 呼び出しへの第二引数は、実行時にヒープ上に生成されたクロージャで、この呼び出しが戻った後はもう使用できません。
+また、関数 #dyncode("dotprod") は次のようにも実装できます:
+
+#atscode('\
+//
+fun
+dotprod
+  {n:nat}
+(
+  n: int(n)
+, A: arrayref(res, n)
+, B: arrayref(res, n)
+) : res = let
+//
+var
+fopr =
+lam@(res: res, i: natLt(n)): res => res + A[i]*B[i]
+//
+in
+  ifold<res>(n, $UNSAFE.cast(addr@fopr), 0.0)
+end // end of [dotprod]
+//
+')
+
+(#keycode("lam") ではなく) キーワード #keycode("lam@") は与えられた位置にアンボックス化クロージャを生成します。
+上記の例では、変数 #dyncode("fopr") は #dyncode("dotprod") のスタックフレームに位置していて、生成されたクロージャは #dyncode("fopr") で予約されたメモリに保管されます。
+ATS コンパイラは、クロージャを保管するのにメモリが十分大きいことを保証します。
+(安全でない) キャスト呼び出しは、#dyncode("ifold") に渡せるようにするため、#dyncode("fopr") のアドレスをボックス化クロージャに変化させます。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 In order to remove the (unsafe) cast in the implementation of
@@ -189,13 +301,81 @@ the left value. The function #dyncode("dotprod") can be safely implemented
 as #dyncode("dotprod_") with a call to #dyncode("ifold_").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+#dyncode("dotprod") の実装における (安全でない) キャスト削除するために、次のような #dyncode("ifold") の変種を実装する必要があります:
+
+#atscode('\
+//
+fun
+{res:t@ype}
+ifold_{n:nat}
+(
+  n: int(n)
+, fopr: &(res, natLt(n)) -<clo1> res, ini: res
+) : res = let
+//
+fun
+loop
+{i:nat | i <= n} .<n-i>.
+(
+  i: int(i)
+, fopr: &(res, natLt(n)) -<clo1> res, res: res
+) : res =
+  if i < n
+    then loop(i+1, fopr, fopr(res, i)) else res
+  // end of [if]
+//
+in
+  loop(0, fopr, ini)
+end // end of [ifold_]
+//
+(* ****** ****** *)
+//
+fun
+dotprod_
+  {n:nat}
+(
+  n: int(n)
+, A: arrayref(res, n)
+, B: arrayref(res, n)
+) : res = let
+//
+var
+fopr =
+lam@(res: res, i: natLt(n)): res => res + A[i]*B[i]
+//
+in
+  ifold_<res>(n, fopr, 0.0)
+end // end of [dotprod_]
+//
+')
+
+#dyncode("ifold_") の第二引数は参照渡しであることに注意してください。
+注釈付きに矢印 #dyncode("-&lt;clo1&gt;") はアンボックス化されたクロージャを表わす関数の型を作るのに使われます。
+(アンボックス化されたクロージャを表わす) 左辺値は #dyncode("ifold_") 呼び出しの第二引数として渡され、このとき実行時に実際に渡されるのはこの左辺値のアドレスです。
+#dyncode("ifold_") 呼び出しを使うことで、関数 #dyncode("dotprod") は #dyncode("dotprod_") のような安全な実装ができるのです。
+
+')#comment("para")
+")
+
+#langeng("
 #para("\
 
 Please find #mycodelink("chap_stkclo.dats", "on-line") the entirety of the
 code used in this chapter plus some testing code.\
 
 ")#comment("para")
+")
+#langja("
+#para("\
+
+この章で用いたコード全体とテストコードは #mycodelink("chap_stkclo.dats", "オンライン") から入手できます。\
+
+")#comment("para")
+")
 
 <!-- ****** ****** -->
 
