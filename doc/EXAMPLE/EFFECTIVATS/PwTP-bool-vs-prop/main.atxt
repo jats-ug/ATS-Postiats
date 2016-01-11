@@ -9,17 +9,29 @@
 <meta
  http-equiv="content-type"
  content="text/html; charset=UTF-8" />
+#langeng("
 <title>EFFECTIVATS-PwTP-bool-vs-prop</title>
+")
+#langeng("
+<title>EFFECTIVATS: ATS における2つの定理証明のスタイル</title>
+")
 #patscode_style()
 </head>
 
 <body>
 
 <h1>
+#langeng("
 Effective ATS:<br>
 Two Styles of Theorem-Proving in ATS
+")
+#langja("
+Effective ATS:<br>
+ATS における2つの定理証明のスタイル
+")
 </h1>
 
+#langeng("
 #para('\
 
 In this article, I present two styles of theorem-proving in ATS,
@@ -29,7 +41,17 @@ two fundamentally different sorts #stacode("bool") and
 presentation, please see the file #filename("bool-vs-prop.dats").\
 
 ')
+")
+#langja("
+#para('\
 
+この記事では、2つの異なる基本的な種 #stacode("bool") と #stacode("prop") の関係の具体例を通じて、ATS の2つの定理証明のスタイルを示そうと思います。
+この記事で用いるコード全体は #filename("bool-vs-prop.dats") から入手できます。\
+
+')
+")
+
+#langeng("
 #para('\
 
 Let us start with an example.
@@ -91,7 +113,72 @@ end // end of [fibc]
 There is obviously a logic gap between the defintion of fib and its implementation as is embodied in fibc.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+例からはじめましょう。
+関数 #dyncode("fib") は次のようなフィボナッチ数を計算します:
+
+<pre
+class="patsyntax"
+style="color:#0000F0;"
+>
+fib(0)   = 0
+fib(1)   = 1
+fib(n+2) = fib(n) + fib(n+1) for n >= 0
+</pre>
+
+次のコードは上記に対する直接的な実装に ATS の関数を用いています:
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+fun
+fib (
+  n: int
+) : int =
+  if n >= 2 then fib (n-2) + fib (n-1) else n
+// end of [fib]
+')</pre>
+
+明確に、これは時間複雑性の点で恐しく非効率な実装です。
+C言語における fib の実装は線形の時間複雑性を持つ次のようなものです:
+
+<pre
+class="patsyntax"
+style="color:#000000;"
+>
+int
+fibc (int n) {
+  int tmp, f0 = 0, f1 = 1 ;
+  while (n-- > 0) { tmp = f1 ; f1 = f0 + f1 ; f0 = tmp ; } ; return f0 ;
+} // end of [fibc]
+</pre>
+
+もし ATS に翻訳するなら、関数 fibc は本質的に次のように実装できます:
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+fun
+fibc (
+  n: int
+) : int = let
+  fun loop (n: int, f0: int, f1: int) =
+    if n > 0 then loop (n-1, f1, f0+f1) else f0
+  // end of [loop]
+in
+  loop (n, 0, 1)
+end // end of [fibc]
+')</pre>
+
+fib の定義と fibc で具体化された実装の間には、明らかに論理的ギャップがあります。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 In ATS, an implementation of fib can be given that completely bridges
@@ -118,7 +205,33 @@ Note that #stacode("fib_p") is a prop constructor, where prop means
 equals #stacode("R").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+ATS では、fib の実装にこのギャップに対する橋をかけることができます。
+そのおために、次のデータ命題の宣言で満たされるような fib の仕様を ATS にエンコードする必要があります。
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+//
+dataprop
+fib_p(int, int) =
+| fib_p_bas0(0, 0) of ()
+| fib_p_bas1(1, 1) of ()
+| {n:nat}{r0,r1:int}
+  fib_p_ind2(n+2, r0+r1) of (fib_p(n, r0), fib_p(n+1, r1))
+//
+')</pre>
+
+#stacode("fib_p") は prop コンストラクタで、#emphasis("証明を表わす型") を意味することに注意してください。
+2つの静的な整数項 #stacode("N") と #stacode("R") が与えられたとき、#stacode("fib_p") は #stacode("fib(N)") が #stacode("R") に等しいことを意味する prop #stacode("fib_p(N, R)") を作ります。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 There is a predicate #stacode("fib_b") corresponding to #stacode("fib_p"):
@@ -164,7 +277,50 @@ implying #stacode("fib_b(n+2, r0+r1)") for any natural number #stacode("n")
 and integers #stacode("r0") and #stacode("r1").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+#stacode("fib_p") に相当する述語 #stacode("fib_b") があります:
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+//
+stacst fib_b : (int, int) -> bool
+//
+')</pre>
+
+2つの静的な整数項 #stacode("N") と #stacode("R") が与えられたとき、bool 項 #stacode("fib_b(N, R)") は prop #stacode("fib_p(N, R)") に相当します。
+また次の3つの証明関数は、#stacode("fib_p") に関連した3つの証明コンストラクタに相当します。
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+//
+// Note: unit_p is the unit prop
+//
+extern
+praxi
+fib_b_bas0() : [fib_b(0, 0)] unit_p
+extern
+praxi
+fib_b_bas1() : [fib_b(1, 1)] unit_p
+extern
+praxi
+fib_b_ind2
+{n:nat}{r0,r1:int}():
+  [fib_b(n, r0)&&fib_b(n+1, r1) ->> fib_b(n+2, r0+r1)] unit_p
+//
+')</pre>
+
+#dyncode("fib_b_ind2") に割り当てられたインターフェイスの構文には少し説明が必要でしょう:
+#dyncode("fib_b_ind2") は、あらゆる自然数 #stacode("n") と整数 #stacode("r0") と #stacode("r1") において、#stacode("fib_b(n, r0)") と #stacode("fib_b(n+1, r1)") を前提として #stacode("fib_b(n+2, r0+r1)") を主張する証明関数です。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 The following code gives a verified implementation of the fib function
@@ -221,7 +377,62 @@ on the natural number #dyncode("n") always equals the value of fib defined on
 the number.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+次のコードは、上記で示した fib 関数の検証された実装です:
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+//
+extern
+fun
+f_fib_p
+  {n:nat}
+  (n: int(n)): [r:int] (fib_p(n, r) | int(r))
+//
+implement
+f_fib_p{n}(n) = let
+//
+fun
+loop
+{ i:nat
+| i < n }
+{ r0,r1:int }
+(
+  pf0: fib_p(i, r0)
+, pf1: fib_p(i+1, r1)
+| i: int(i)
+, r0: int(r0), r1: int(r1)
+) : [r:int]
+  (fib_p(n,r) | int(r)) = let
+//
+in
+//
+if i+1 < n
+  then loop(pf1, fib_p_ind2(pf0, pf1) | i+1, r1, r0+r1)
+  else (pf1 | r1)
+//
+end // end of [loop]
+//
+prval pf0 = fib_p_bas0()
+prval pf1 = fib_p_bas1()
+//
+in
+  if n >= 1 then loop(pf0, pf1 | 0, 0, 1) else (pf0 | 0)
+end // end of [f_fib_p]
+//
+')</pre>
+
+#dyncode("f_fib_p") のインターフェイスは、#dyncode("f_fib_p") が自然数 #dyncode("n") を取り、整数 #dyncode("r") と prop #stacode("fib_p(n, r)") の証明のペアを返すことを示しています。
+別の言い方をすると、自然数 #dyncode("n") に対する #dyncode("f_fib_p") 呼び出しの返り値は、常に fib の値に等しい整数になります。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 The style of theorem-proving in the implementation of
@@ -300,7 +511,79 @@ every pair of integers #stacode("r0") and #stacode("r1"). Please note that
 #stacode("i") is a free variable and it is not quantified here.
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+#dyncode("f_fib_p") の実装における定理証明のスタイルは、しばしば明示的なとか、明示的な証明の使用と呼ばれます。
+ATS でサポートされる定理証明の別のスタイルは (明示的な証明を使わないので) 暗黙的と呼ばれることがあります。
+例えば、次のコードは定理証明が暗黙的に行なわれた fib 関数の検証された別の実装です:
+
+<pre
+class="patsyntax">
+#pats2xhtml_dats('\
+//
+extern
+fun
+f_fib_b
+  {n:nat}
+  (n: int(n))
+: [r:int] (fib_b(n, r) && int(r))
+//
+implement
+f_fib_b{n}(n) = let
+//
+prval() =
+  $solver_assert(fib_b_bas0)
+prval() =
+  $solver_assert(fib_b_bas1)
+//
+fun
+loop
+{ i:nat | i < n }
+{ r0,r1:int
+| fib_b(i,r0); fib_b(i+1,r1) }
+(
+  i: int(i)
+, r0: int(r0), r1: int(r1)
+) : [r:int | fib_b(n,r)] int(r) = let
+//
+prval() =
+  $solver_assert(fib_b_ind2{i})
+//
+in
+//
+if i+1 < n
+  then loop(i+1, r1, r0+r1) else r1
+//
+end // end of [loop]
+//
+in
+  if n >= 1 then loop(0, 0, 1) else 0
+end // end of [f_fib_b]
+//
+')</pre>
+
+キーワード #dyncode("$solver_assert") を証明に適用することで、その証明の prop を (同じ意味の) 静的な bool 項に変化させ、その項を前提に追加することを表わします。
+(この前提は同じスコープで生成された後続の制約を解決するのに制約ソルバよって使われます。)
+
+1つ目と2つ目の #dyncode("$solver_assert") 呼び出しは、それぞれ #stacode("fib_b(0, 0)") と #stacode("fib_b(1, 1)") を追加します。
+3つ目は次の前提を追加します:
+
+<pre
+class="patsyntax"
+style="color:#0000F0;"
+>
+{r0,r1:int} fib_b(i, r0)&&fib_b(i+1, r1) ->> fib_b(i+2, r0+r1)
+</pre>
+
+これは、あらゆる整数ペア #stacode("r0") と #stacode("r1") においても、#stacode("fib_b(i, r0)") と #stacode("fib_b(i+1, r1)") を前提として #stacode("fib_b(i+2, r0+r1)") を主張しています。
+#stacode("i") は自由変数で、ここでは量化されていないことに注意してください。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Currently, the constraints generated from typechecking the
@@ -308,12 +591,24 @@ implementation of #dyncode("f_fib_b") cannot be solved by the built-in
 constraint-solver of ATS/Postiats. One option is to first export these
 constraints and then invoke the command #command("patsolve_z3") to
 solve them, where patsolve_z3 is a utility for employing <a
-href="https://github.com/Z3Prover/z3">Z3</a> to solve constraints
+href=\"https://github.com/Z3Prover/z3\">Z3</a> to solve constraints
 generated from typechecking ATS source. Please find more details in
 the provided #filename("Makefile").
 
 ')#comment("para")
+")
+#langja("
+#para('\
 
+現時点では、#dyncode("f_fib_b") の実装の型検査で生成される制約は ATS/Postiats のビルトインの制約ソルバでは解決できません。
+1つの選択肢はそれらの制約をエクスポートして、それからコマンド #command("patsolve_z3") を呼び出してそれらを解かせることです。
+この patsolve_z3 は、ATS ソースコードを型検査して得られる制約を解決するために <a href=\"https://github.com/Z3Prover/z3\">Z3</a> を使うユーティリティです。
+より多くの例が #filename("Makefile") に見つかります。
+
+')#comment("para")
+")
+
+#langeng("
 #para('\
 
 Which style of theorem-proving is preferred: explicit or implicit?  It
@@ -323,10 +618,30 @@ stuff. I strongly encourage a non-expert to first try theorem-proving of
 explicit style.
 
 ')#comment("para")
+")
+#langja("
+#para('\
+
+定理証明のスタイルはどちらが望ましいのでしょうか: 明示的？暗黙的？
+これは何を証明すべきかに依存しています。
+個人的な意見では、後者は "簡単" に使うことでき、前者は "難解" であるということです。
+熟練してから明示的な定理証明にはじめに挑戦するのを強く推奨します。
+
+')#comment("para")
+")
 
 <hr size="2">
 
-This article is written by <a href="http://www.cs.bu.edu/~hwxi/">Hongwei Xi</a>.
+#langeng("
+This article is written by <a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>.
+")
+#langja("
+この記事は
+<a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a>
+によって書かれ、
+<a href=\"http://jats-ug.metasepi.org/\">Japan ATS User Group</a>
+によって翻訳されています。
+")
 
 </body>
 </html>
