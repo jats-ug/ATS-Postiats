@@ -2311,8 +2311,10 @@ case+ d1c0.d1ecl_node of
     d2ecl_none (loc0)
   end // end of [D0Ce0xpundef]
 //
+| D1Cpragma
+    (e1xps) => d2ecl_pragma(loc0, e1xps)
 | D1Ccodegen
-    (knd, e1xps) => d2ecl_codegen (loc0, knd, e1xps)
+    (knd, e1xps) => d2ecl_codegen(loc0, knd, e1xps)
 //
 | D1Cdatsrts (ds) => let
     val () =

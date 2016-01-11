@@ -1058,23 +1058,38 @@ case+ d0c0.d0ecl_node of
     val e1xp = e0xp_tr (e0xp)
 (*
     val () =
-      println! ("d0ecl_tr: D0Ce0xpact: e1xp = ", e1xp)
+    println!
+      ("d0ecl_tr: D0Ce0xpact: e1xp = ", e1xp)
     // end of [val]
 *)
     val v1al = e1xp_valize (e1xp)
-    val () = (case+ knd of
-      | E0XPACTassert () =>
+    val () =
+    ( case+ knd of
+      | E0XPACTerror() =>
+          do_e0xpact_error(e0xp.e0xp_loc, v1al)
+        // end of [E0XPACTerror]
+      | E0XPACTprerr() => do_e0xpact_prerr(v1al)
+      | E0XPACTprint() => do_e0xpact_print(v1al)
+      | E0XPACTassert() =>
           do_e0xpact_assert (e0xp.e0xp_loc, v1al)
-      | E0XPACTerror () => do_e0xpact_error (e0xp.e0xp_loc, v1al)
-      | E0XPACTprint () => do_e0xpact_prerr (v1al)
+        // end of [E0XPACTassert]
     ) : void // end of [val]
   in
     d1ecl_none (loc0)
   end // end of [D0Ce0xpact]
 //
+| D0Cpragma
+    (e0xps) => let
+    val
+    e1xps =
+    e0xplst_tr(e0xps)
+  in
+    d1ecl_pragma(loc0, e1xps)
+  end // end of [D0Cpragma]
 | D0Ccodegen
     (knd, e0xps) => let
-    val e1xps = e0xplst_tr (e0xps)
+    val
+    e1xps = e0xplst_tr(e0xps)
   in
     d1ecl_codegen(loc0, knd, e1xps)
   end // end of [D0Ccodegen]

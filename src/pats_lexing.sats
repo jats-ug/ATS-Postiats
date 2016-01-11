@@ -244,6 +244,7 @@ token_node =
   | T_SRPENDIF of () // #endif
 //
   | T_SRPERROR of () // #error
+  | T_SRPPRERR of () // #prerr
   | T_SRPPRINT of () // #print
 //
   | T_SRPASSERT of () // #assert
@@ -254,6 +255,7 @@ token_node =
   | T_SRPINCLUDE of () // #include
   | T_SRPREQUIRE of () // #require
 //
+  | T_SRPPRAGMA of () // #pragma
   | T_SRPCODEGEN2 of () // #codegen2
   | T_SRPCODEGEN3 of () // #codegen3
 //

@@ -337,14 +337,17 @@ datatype f0xty =
 fun fprint_f0xty : fprint_type (f0xty)
 
 (* ****** ****** *)
-
+//
 datatype
 e0xpactkind =
-  | E0XPACTprint | E0XPACTerror | E0XPACTassert
-// end of [e0xpactkind]
-
-fun fprint_e0xpactkind : fprint_type (e0xpactkind)
-
+ | E0XPACTerror of ()
+ | E0XPACTprerr of ()
+ | E0XPACTprint of ()
+ | E0XPACTassert of ()
+//
+fun
+fprint_e0xpactkind : fprint_type(e0xpactkind)
+//
 (* ****** ****** *)
 
 datatype
@@ -1374,18 +1377,26 @@ loopi0nv_make
 datatype
 d0ecl_node =
 //
-  | D0Cfixity of (f0xty, i0delst)
+  | D0Cfixity of
+      (f0xty, i0delst) // prefix, infix, postfix
+    // D0Cfixity
   | D0Cnonfix of (i0delst) // absolving fixity status
 //
   | D0Csymintr of (i0delst) // symbols for overloading
   | D0Csymelim of (i0delst) // eliminating overloading symbols
   | D0Coverload of (i0de, dqi0de, int(*pval*)) // overloading
 //
-  | D0Ce0xpdef of (symbol, e0xpopt)
-  | D0Ce0xpundef of (symbol) (* undefinition *)
-  | D0Ce0xpact of (e0xpactkind, e0xp) // HX: assert, error, print, ...
+  | D0Ce0xpdef of
+      (symbol, e0xpopt) // HX: #define
+    // D0Ce0xpdef
+  | D0Ce0xpundef of (symbol) // HX: #undef
 //
-  | D0Ccodegen of (int(*level*), e0xplst)
+  | D0Ce0xpact of
+      (e0xpactkind, e0xp) // HX: assert, error, prerr, print, ...
+    // D0Ce0xpact
+//
+  | D0Cpragma of (e0xplst) // #pragma(CATEGORY, ...)
+  | D0Ccodegen of (int(*level*), e0xplst) // #codegen2, #codegen3
 //
   | D0Cdatsrts of d0atsrtdeclst (* datasorts *)
   | D0Csrtdefs of s0rtdeflst (* sort definition *)
@@ -1402,7 +1413,9 @@ d0ecl_node =
   | D0Cexndecs of (e0xndeclst)
   | D0Cdatdecs of (int(*knd*), d0atdeclst, s0expdeflst)
 //
-  | D0Cclassdec of (i0de, s0expopt) // class declaration
+  | D0Cclassdec of
+      (i0de, s0expopt) // class declaration
+    // D0Cclassdec
 //
   | D0Cextype of (string, s0exp) // externally named types
   | D0Cextype of (int(*knd*), string, s0exp) // externally named structs
@@ -2135,7 +2148,7 @@ fun i0mpdec_make (
 ) : i0mpdec // end of [i0mpdec_make]
 
 (* ****** ****** *)
-
+//
 fun d0ecl_fixity
   (_1: token, _2: p0rec, _3: i0delst): d0ecl
 // end of [d0ecl_fixity]
@@ -2147,43 +2160,87 @@ fun d0ecl_include (knd: int, _1: token, _2: token): d0ecl
 fun d0ecl_symintr (_1: token, _2: i0delst): d0ecl
 fun d0ecl_symelim (_1: token, _2: i0delst): d0ecl
 //
+(* ****** ****** *)
+//
 fun
 d0ecl_e0xpdef
-  (_1: token, _2: i0de, _3: e0xpopt): d0ecl // #define
+(
+  _1: token, _2: i0de, _3: e0xpopt
+) : d0ecl // HX: #define
+//
 fun
-d0ecl_e0xpundef(_1: token, _2: i0de): d0ecl // HX: #undef
+d0ecl_e0xpundef
+  (_1: token, _2: i0de): d0ecl // HX: #undef
 //
-fun d0ecl_e0xpact_print (_1: token, _2: e0xp): d0ecl
+(* ****** ****** *)
+//
+fun
+d0ecl_e0xpact_assert
+  (_1: token, _2: e0xp): d0ecl // HX: #assert
+//
 fun d0ecl_e0xpact_error (_1: token, _2: e0xp): d0ecl
-fun d0ecl_e0xpact_assert (_1: token, _2: e0xp): d0ecl
+fun d0ecl_e0xpact_prerr (_1: token, _2: e0xp): d0ecl
+fun d0ecl_e0xpact_print (_1: token, _2: e0xp): d0ecl
 //
-fun d0ecl_codegen2
+(* ****** ****** *)
+//
+fun
+d0ecl_pragma
   (tok_beg: token, xs: e0xplst, tok_end: token): d0ecl
 //
-fun d0ecl_datsrts (_1: token, _2: d0atsrtdeclst): d0ecl
-fun d0ecl_srtdefs (_1: token, _2: s0rtdeflst): d0ecl
-fun d0ecl_stacons (knd: int, _1: token, _2: s0taconlst): d0ecl
-fun d0ecl_stacsts (_1: token, _2: s0tacstlst): d0ecl
+fun
+d0ecl_codegen2
+  (tok_beg: token, xs: e0xplst, tok_end: token): d0ecl
+fun
+d0ecl_codegen3
+  (tok_beg: token, xs: e0xplst, tok_end: token): d0ecl
+//
+(* ****** ****** *)
+//
+fun
+d0ecl_datsrts
+  (_1: token, _2: d0atsrtdeclst): d0ecl
+//
+fun
+d0ecl_srtdefs (_1: token, _2: s0rtdeflst): d0ecl
+//
+fun
+d0ecl_stacons
+  (knd: int, _1: token, _2: s0taconlst): d0ecl
+//
+fun
+d0ecl_stacsts (_1: token, _2: s0tacstlst): d0ecl
+//
 (*
-fun d0ecl_stavars (_1: token, _2: s0tavarlst): d0ecl
+fun
+d0ecl_stavars (_1: token, _2: s0tavarlst): d0ecl
 *)
 fun d0ecl_tkindef (_1: token, _2: t0kindef): d0ecl
-fun d0ecl_sexpdefs (knd: int, _1: token, _2: s0expdeflst): d0ecl
 fun d0ecl_saspdec (_1: token, _2: s0aspdec): d0ecl
 //
+fun
+d0ecl_sexpdefs
+  (knd: int, _1: token, _2: s0expdeflst): d0ecl
+//
 fun d0ecl_exndecs (_1: token, _2: e0xndeclst): d0ecl
+//
+(* ****** ****** *)
 //
 fun
 d0ecl_datdecs_none
 (
-  knd: int, tok: token, ds_dec: d0atdeclst
+  knd: int
+, tok: token, ds_dec: d0atdeclst
 ) : d0ecl // end-of-fun
 fun
 d0ecl_datdecs_some
 (
   knd: int
-, t1: token, ds_dec: d0atdeclst, t2: token, ds_def: s0expdeflst
+, t1: token, ds_dec: d0atdeclst
+, t2: token, ds_def: s0expdeflst
 ) : d0ecl // end of [d0ecl_datdecs_some]
+//
+(* ****** ****** *)
 //
 fun
 d0ecl_macdefs

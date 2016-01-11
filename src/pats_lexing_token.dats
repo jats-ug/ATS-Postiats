@@ -621,9 +621,10 @@ val () = ins ("#elifndef", T_SRPELIFNDEF)
 val () = ins ("#else", T_SRPELSE)
 val () = ins ("#endif", T_SRPENDIF)
 //
-val () = ins ("#print", T_SRPPRINT)
-//
 val () = ins ("#error", T_SRPERROR)
+//
+val () = ins ("#prerr", T_SRPPRERR) // outpui to stderr
+val () = ins ("#print", T_SRPPRINT) // output to stdout
 //
 val () = ins ("#assert", T_SRPASSERT)
 //
@@ -633,6 +634,7 @@ val () = ins ("#define", T_SRPDEFINE)
 val () = ins ("#include", T_SRPINCLUDE)
 val () = ins ("#require", T_SRPREQUIRE)
 //
+val () = ins ("#pragma", T_SRPPRAGMA) // HX: general pragma
 val () = ins ("#codegen2", T_SRPCODEGEN2) // for level-2 codegen
 val () = ins ("#codegen3", T_SRPCODEGEN3) // for level-3 codegen
 //
