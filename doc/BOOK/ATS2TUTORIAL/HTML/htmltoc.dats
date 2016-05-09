@@ -51,7 +51,8 @@ $extfcall(int
 , bufp, BUFSZ, "%s %s | %s %s > HTMLTOC/%s"
 , CAT, inp, SED, script, inp)
 //
-val ((*void*)) = fprintln! (stdout_ref, "fsed: command = ", $UN.cast{string}(bufp))
+val ((*void*)) =
+  fprintln! (stdout_ref, "fsed: command = ", $UN.cast{string}(bufp))
 //
 in
   ignoret($STDLIB.system($UN.cast{string}(bufp)))

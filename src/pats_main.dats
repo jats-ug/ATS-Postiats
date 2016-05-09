@@ -534,9 +534,9 @@ PATS_MAJOR_VERSION 0
 #define
 PATS_MINOR_VERSION 2
 #define
-PATS_MICRO_VERSION 6
+PATS_MICRO_VERSION 7
 //
-#define PATS_COPYRIGHT "Copyright (c) 2011-2015 Hongwei Xi"
+#define PATS_COPYRIGHT "Copyright (c) 2011-2016 Hongwei Xi"
 //
 (*
 //
@@ -609,6 +609,7 @@ fmode = [m:file_mode] file_mode (m)
 
 typedef
 cmdstate = @{
+//
   comarg0= comarg
 //
 , PATSHOME= string

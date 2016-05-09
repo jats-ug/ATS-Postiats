@@ -38,8 +38,10 @@ instructions.
 
 Note that the code in this github directory is primarily meant for people
 who would like to help develop ATS2. For someone who just wants to program
-in ATS2, please install the current release of ATS2 available at
+in ATS2, please install the current release of ATS2, which can be found at
+the following site:
 [https://sourceforge.net/projects/ats2-lang/](https://sourceforge.net/projects/ats2-lang/).
+There are also pre-compiled debian packages for ATS2 available on-line.
 
 ## Developing ATS2
 
@@ -53,9 +55,17 @@ ATS-users are encouraged to share what they have learned on the
 contains over 45 articles with content.  A list of article stubs is
 maintained at [TODO](https://github.com/githwxi/ATS-Postiats/wiki/TODO).
 
-## License
+## Licenses for ATS2
 
 * The Compiler (ATS/Postiats):
   [GPLv3](https://github.com/githwxi/ATS-Postiats/blob/master/COPYING-gpl-3.0.txt)
-* The Libraries (ATSLIB/{prelude,libc,libats}):
-  [GPLv3](https://github.com/githwxi/ATS-Postiats/blob/master/COPYING-gpl-3.0.txt)
+* The source for Libraries (ATSLIB/{prelude,libc,libats}):
+  [GPLv3](https://github.com/githwxi/ATS-Postiats/blob/master/COPYING-gpl-3.0.txt).
+* The object code for Libraries (ATSLIB/{prelude,libc,libats}):
+  [LGPLv2.1](https://github.com/githwxi/ATS-Postiats/blob/master/COPYING-lgpl-2.1.txt).
+* As a special exception, if you link the object code for Libraries with other files
+  to create an executable, then the linking does not by itself cause the executable to
+  be covered by LGPLv2.1. However, this exception does not invalidate any other reasons
+  that might result in the executable being covered by LGPLv2.1.
+* There is a separate release under the BSD license for the C header files of the
+  Libraries, which one can freely insert into the C code generated from ATS source code.

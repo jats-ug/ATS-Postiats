@@ -88,7 +88,7 @@ polymorphism in the presence of native unboxed data. However, function
 templates can do much more than just supporting parametric polymorphism.
 Let #dyncode("myprint") be a function template of the following interface:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype} myprint (x: a): void
 ')
 
@@ -96,7 +96,7 @@ Given a value, #dyncode("myprint") is supposed to print out some kind of
 representation for this value. For example, we can implement
 #dyncode("myprint") as follows:
 
-#atscode('\
+#dats2xhtml('\
 implement{a} myprint (x) = print_string "?"
 ')
 
@@ -105,7 +105,7 @@ This implementation of #dyncode("myprint") is often referred to as a
 on the template parameter. Following is another way to code the same
 implementation:
 
-#atscode('\
+#dats2xhtml('\
 implement(a) myprint<a> (x) = print_string "?"
 ')
 
@@ -114,7 +114,7 @@ unsatisfactory as it outputs no specific information on a given value.  We
 may want to implement #dyncode("myprint") as follows for only values of the
 type #stacode("int"):
 
-#atscode('\
+#dats2xhtml('\
 implement myprint<int> (x) = print_int (x)
 ')
 
@@ -125,7 +125,7 @@ specific type (that is, #stacode("int") in this case). The following code
 implements #dyncode("myprint") for list-values (that is, values of type
 #stacode("List(T)") for some type T):
 
-#atscode('\
+#dats2xhtml('\
 implement(a)
 myprint<List(a)> (xs) =
 case+ xs of
@@ -141,7 +141,7 @@ the instance must be of the form #stacode("List(T)") for some type T.
 As an example, the following code calls an instance of #dyncode("myprint")
 to print out a list of two integer lists:
 
-#atscode('\
+#dats2xhtml('\
 (*
 ** The output is "0123401234"
 *)
@@ -253,13 +253,13 @@ In practice, there is quite a bit of subtlety in locating a template
 implementation for a template instance. Let #dyncode("myprint2") be a
 function template of the following interface:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype} myprint2 (x: a): int
 ')
 
 Following is a partially generic implementation of #dyncode("myprint2"):
 
-#atscode('\
+#dats2xhtml('\
 //
 implement(a)
 myprint2<List(a)> (xs) =
@@ -281,7 +281,7 @@ implementation of #dyncode("myprint2"). This issue can be readily fixed by
 passing explicity the type #stacode("List(a)") (as a template parameter) to
 the called instance of #dyncode("myprint2"):
 
-#atscode('\
+#dats2xhtml('\
 //
 implement(a)
 myprint2<List(a)> (xs) =
@@ -298,7 +298,7 @@ practice to #emphasis("avoid") using recursive instances. For example, the
 following equivalent implementation of #dyncode("myprint2") makes no use of
 recursive instances:
 
-#atscode('\
+#dats2xhtml('\
 //
 implement(a)
 myprint2<List(a)>
@@ -429,7 +429,7 @@ greatly enhance code sharing in numerical computation. For example, we can
 give a generic implementation of matrix multiplication of the following
 interface:
 
-#atscode("\
+#sats2xhtml("\
 fun
 {a:t@ype}
 matrix_mul
@@ -486,7 +486,7 @@ Let us take a look at a concrete example involving generic operations on
 numbers. The following code gives a standard implementation of the
 factorial function:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun fact(n: int): int
@@ -506,11 +506,11 @@ replace this multiplication operation with the one on floating point
 numbers of double precision. This can be done by implementing a slight variant
 of #dyncode("fact") as follows
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun factd(n: int): double
-
+//
 implement
 factd(n) =
   if n > 0 then n * factd(n-1) else 1.0
@@ -524,7 +524,7 @@ implementations of #dyncode("fact") and #dyncode("factd"). We can readily
 eliminate this duplication by introducing a generic implementation of the
 factorial function as follows:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun{a:t@ype} gfact(n: int): a
@@ -544,7 +544,7 @@ else gnumber_int<a>(1)
 With a bit of help from the support for
 overloading in ATS, we can rewrite #dyncode("gfact") as follows:
 
-#atscode('\
+#dats2xhtml('\
 implement
 {a}(*tmp*)
 gfact(n) = let
@@ -562,7 +562,7 @@ end (* end of [gfact] *)
 We can now implement #dyncode("fact") and #dyncode("factd")
 as follows:
 
-#atscode('\
+#dats2xhtml('\
 //
 implement fact(n) = gfact<int>(n)
 implement factd(n) = gfact<double>(n)
@@ -573,7 +573,7 @@ There is support in ATS based on the GNU multiple precision arithmetic
 library (GMPLIB) for integers of unlimited precision. The following code
 presents a way to compute the true value of the factorial of 100:
 
-#atscode('\
+#dats2xhtml('\
 //
 staload _(*T*) =
 "{$LIBATSHWXI}/intinf/DATS/intinf_t.dats"
@@ -604,7 +604,7 @@ gfact<intinf>(100) = 933262154439441526816992388562667[...omitted...]
 数に対するジェネリックス演算の具体的な例を見てみましょう。
 次のコードは階乗関数の一般的な実装です:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun fact(n: int): int
@@ -622,7 +622,7 @@ fact(n) =
 この乗法を倍精度の浮動小数点数における乗法に置き換えたいとします。
 これは次のように #dyncode("fact") のわずかな偏見を実装するだけで済みます:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun factd(n: int): double
@@ -638,7 +638,7 @@ factd(n) =
 明らかに #dyncode("fact") と #dyncode("factd") の実装の間にはコードの重複があります。
 次のような階乗関数のジェネリックス実装を導入することで、この重複をたやすく取り除くことができます。
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun{a:t@ype} gfact(n: int): a
@@ -969,7 +969,7 @@ ATS では、特殊テンプレートインスタンスをコンパイルする�
 With #dyncode("list_map"), we can implement both #dyncode("list_map_fun")
 and #dyncode("list_map_cloref") as follows in a straightforward manner:
 
-#atscode('\
+#dats2xhtml('\
 implement
 {a}{b}
 list_map_fun(xs, f) = let
@@ -1107,7 +1107,7 @@ tally (int n) {
 This function #dyncode("tally") can be given the following
 equivalent implementation in ATS:
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally
 (
@@ -1164,12 +1164,13 @@ When someone claims that loop constructs can be replaced with higher-order
 functions, he or she probably means to construct loops with a function like
 the following one:
 
-#atscode('\
+#dats2xhtml('\
 fun
 for_loop
 (
   count: int, limit: int, fwork: (int) -<cloref1> void
 ) : void = (
+//
 if count < limit
   then (fwork(count); for_loop(count+1, limit, fwork)) else ()
 // end of [if]
@@ -1179,7 +1180,7 @@ if count < limit
 For example, the following function #dyncode("tally2") is directly based
 on #dyncode("for_loop"):
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally2
 (
@@ -1247,7 +1248,8 @@ To eliminate the need for reference creation in #dyncode("tally2"), we
 turn #dyncode("for_loop") into the following function template
 #dyncode("for_loop2"):
 
-#atscode('\
+#dats2xhtml('\
+//
 fun{
 env:t@ype
 } for_loop2
@@ -1255,19 +1257,21 @@ env:t@ype
   count: int, limit: int
 , env: &env >> _, fwork: (int, &env >> _) -<cloref1> void
 ) : void = (
+//
 if
 count < limit
 then (
   fwork(count, env); for_loop2<env> (count+1, limit, env, fwork)
 ) else ()
 // end of [if]
+//
 ) (* end of [for_loop2] *)
 ')
 
 We can further turn #dyncode("tally2") into the following #dyncode("tally3")
 based on #dyncode("for_loop2"):
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally3
 (
@@ -1289,25 +1293,27 @@ there is no guarantee. In order to have such a guarantee, we can evolve
 #dyncode("for_loop2") into the following function template
 #dyncode("for_loop3:")
 
-#atscode('\
+#dats2xhtml('\
 fun{
 env:t@ype
 } for_loop3
 (
   count: int, limit: int, env: &env >> _
 ) : void = (
+//
 if
 count < limit
 then (
   for_loop3$fwork<env>(count, env); for_loop3<env>(count+1, limit, env)
 ) else ()
 // end of [if]
+//
 ) (* end of [for_loop3] *)
 ')
 
 where #dyncode("for_loop3$fwork") is given the interface below:
 
-#atscode('\
+#sats2xhtml('\
 fun{
 env:t@ype
 } for_loop3$fwork(count: int, env: &env >> _): void
@@ -1316,7 +1322,7 @@ env:t@ype
 Finally, we can turn #dyncode("tally3") into #dyncode("tally4")
 as follows:
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally4
 (
@@ -1497,18 +1503,17 @@ code declares a datatype #stacode("intfloat") such that each value of this
 declared type represents either an integer or a floating point number (of
 double precision):
 
-#atscode('\
+#sats2xhtml('\
 //
 datatype
-intfloat =
-  INT of int | FLOAT of double
+intfloat = INT of int | FLOAT of double
 //
 ')
 
 In order to print values of the type #stacode("intfloat"), we can implement
 #dyncode("print_intfloat") as follows:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 print_intfloat
@@ -1530,7 +1535,7 @@ particular one for floating point numbers (via #dyncode("print_double")).
 One possibility of avoiding this form of extreme inflexibility is to define
 a higher-order function #dyncode("fprint_intfloat") as follows:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 fprint_intfloat
@@ -1634,7 +1639,7 @@ to support late-binding (of function calls). For example, the following
 code implements a template function #dyncode("tprint_intfloat") for
 printing values of the type #stacode("intfloat"):
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun{}
@@ -1669,7 +1674,7 @@ Please note that the default implementations for #dyncode("tprint_int") and
 #dyncode("tprint_double") are based on #dyncode("print_int") and #dyncode("print_double"),
 respectively. As can be expected, the following code outputs two lines:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () = (
   tprint_intfloat<> (INT(0)); print_newline()
@@ -1684,7 +1689,7 @@ val () = (
 where the first line consists of the string "0" and the second one
 the string "1.000000". The following code also outputs two lines:
 
-#atscode('\
+#dats2xhtml('\
 local
 //
 implement

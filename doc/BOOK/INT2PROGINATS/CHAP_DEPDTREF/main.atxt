@@ -90,10 +90,11 @@ The syntax for declaring dependent datatypes is mostly similar to the
 syntax for declaring non-dependent datatypes: For instance, the dependent
 datatype #stacode("list") in ATS is declared as follows:
 
-#atscode("\
-datatype list (t@ype+, int) =
-  | {a:t@ype} list_nil (a, 0) of () // [of ()] is optional
-  | {a:t@ype} {n:nat} list_cons (a, n+1) of (a, list (a, n))
+#sats2xhtml("\
+datatype
+list(t@ype+, int) =
+  | {a:t@ype} list_nil(a, 0) of () // [of ()] is optional
+  | {a:t@ype} {n:nat} list_cons(a, n+1) of (a, list(a, n))
 ")
 
 More precisely, #stacode("list") is declared as a type constructor of the
@@ -156,10 +157,11 @@ mean that #dyncode("list_nil") forms a list of length 0 and
 and a list of length n.  Note that it is also possible to declare
 #stacode("list") as follows in a more concise style:
 
-#atscode("\
-datatype list (a:t@ype+, int) =
-  | list_nil (a, 0) of () // [of ()] is optional
-  | {n:nat} list_cons (a, n+1) of (a, list (a, n))
+#sats2xhtml("\
+datatype
+list (a:t@ype+, int) =
+  | list_nil(a, 0) of () // [of ()] is optional
+  | {n:nat} list_cons(a, n+1) of (a, list(a, n))
 ")
 
 The use of #stacode("a:t@ype+") (instead of #keycode("t@ype+")) introduces
@@ -207,15 +209,15 @@ datatype list (a:t@ype+, int) =
 As an example of programming with dependent datatypes, the following code
 implements a function template for computing the length of a given list:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_length
   {n:nat} .<n>.
   // .<n>. is a termination metric
   (xs: list (a, n)): int (n) = case+ xs of
-  | list_nil () => 0
-  | list_cons (_, xs1) => 1 + list_length (xs1)
+  | list_nil((*void*)) => 0
+  | list_cons(_(*x*), xs1) => 1 + list_length<a>(xs1)
 // end of [list_length]
 ")
 
@@ -297,7 +299,7 @@ a:t@ype
 ")
 
 #atscode("\
-  | list_nil () => 0
+  | list_nil((*void*)) => 0
 ")
 
 #langeng("
@@ -339,7 +341,7 @@ given list:
 ')
 ")
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } list_length{n:nat} .<>.
@@ -395,9 +397,9 @@ ATS ではオプション値を成す依存データ型 #stacode("option") も�
 ')
 ")
 
-#atscode('\
+#sats2xhtml('\
 datatype
-option (a:t@ype+, bool) =
+option(a:t@ype+, bool) =
   | Some (a, true) of a | None (a, false) of ()
 // end of [option]
 ')
@@ -419,7 +421,7 @@ find the last element in a given list:
 ')
 ")
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } list_last
@@ -556,17 +558,19 @@ Given two lists xs and ys of the types #stacode("list(T, I1)") and
 #dyncode("list_append(xs, ys)") returns a list of the type
 #stacode("list(T,I1+I2)") that is the concatenation of xs and ys:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_append
   {m,n:nat} .<m>.
 (
-  xs: list (a, m), ys: list (a, n)
-) : list (a, m+n) = case+ xs of
-  | list_nil () => ys
-  | list_cons (x, xs) => list_cons (x, list_append (xs, ys))
-// end of [list_append]
+  xs: list (a, m), ys: list(a, n)
+) : list (a, m+n) =
+(
+  case+ xs of
+  | list_nil() => ys
+  | list_cons(x, xs) => list_cons(x, list_append<a>(xs, ys))
+) (* end of [list_append] *)
 ")
 
 Clearly, this implementation of #dyncode("list_append") is not
@@ -618,18 +622,21 @@ Given two lists xs and ys of the type #stacode("list(T, I1)") and
 #stacode("list(T, I1+I2)") that is the concatenation of the reverse of xs
 and ys:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_reverse_append
   {m,n:nat} .<m>.
 (
-  xs: list (a, m), ys: list (a, n)
-) : list (a, m+n) = case+ xs of
+  xs: list(a, m)
+, ys: list(a, n)
+) : list(a, m+n) =
+(
+  case+ xs of
   | list_nil () => ys
   | list_cons (x, xs) =>
-      list_reverse_append (xs, list_cons (x, ys))
-// end of [list_reverse_append]
+      list_reverse_append<a>(xs, list_cons(x, ys))
+) (* end of [list_reverse_append] *)
 ")
 
 Clearly, this implementation of #dyncode("list_reverse_append") is
@@ -679,10 +686,10 @@ a:t@ype
 Given a list xs, #dyncode("list_reverse(xs)") returns the reverse of xs,
 which is of the same length as xs:
 
-#atscode("\
+#dats2xhtml("\
 fun{a:t@ype}
 list_reverse{n:nat} .<>. // defined non-recursively
-  (xs: list (a, n)): list (a, n) = list_reverse_append (xs, list_nil)
+  (xs: list(a, n)): list(a, n) = list_reverse_append<a>(xs, list_nil())
 // end of [list_reverse]
 ")
 ")#comment("para")
@@ -717,9 +724,9 @@ list_reverse{n:nat} .<>. // defined non-recursively
 
 Given a list xs of the type #stacode("list(T1, I)") for some type T1 and
 integer I and a closure function f of the type #stacode("T1 -&lt;cloref1&gt; T2")
-for some T2, #dyncode("list_map(xs)") returns a list ys of the type #stacode("list(T2, I))":
+for some T2, #dyncode("list_map(xs)") returns a list ys of the type #stacode("list(T2, I)"):
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype}
 {b:t@ype
@@ -727,10 +734,12 @@ a:t@ype}
   {n:nat} .<n>.
 (
   xs: list (a, n), f: a -<cloref1> b
-) : list (b, n) = case+ xs of
-  | list_nil () => list_nil ()
-  | list_cons (x, xs) => list_cons (f x, list_map (xs, f))
-// end of [list_map]
+) : list (b, n) =
+(
+  case+ xs of
+  | list_nil() => list_nil()
+  | list_cons(x, xs) => list_cons(f x, list_map<a>(xs, f))
+) (* end of [list_map] *)
 ")
 
 Each element y in ys equals f(x), where x is the corresponding element in
@@ -783,7 +792,7 @@ Given two lists xs and ys of the types #stacode("list(T1, I)") and
 #stacode("list(T2, I)") for some types T1 and T2 and integer I, respectively,
 #dyncode("list_zip(xs, ys)") returns a list zs of the type #stacode("list((T1,T2), I)").
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a,b:t@ype
 } list_zip
@@ -793,10 +802,14 @@ a,b:t@ype
 ) : list ((a, b), n) =
 (
   case+ (xs, ys) of
-  | (list_cons (x, xs),
-     list_cons (y, ys)) =>
-      list_cons ((x, y), list_zip (xs, ys))
-  | (list_nil (), list_nil ()) => list_nil ()
+  | (
+      list_nil()
+    , list_nil()
+    ) => list_nil((*void*))
+  | (
+      list_cons (x, xs)
+    , list_cons (y, ys)
+    ) => list_cons((x, y), list_zip<a,b>(xs, ys))
 ) (* end of [list_zip] *)
 ")
 
@@ -855,7 +868,7 @@ respectively, and a closure function f of the type #stacode("(T1, T2)
 -&lt;cloref1&gt; T3") for some type T3, #dyncode("list_zipwith(xs, ys, f)")
 returns a list zs of the type #stacode("list(T3, I)"):
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a,b:t@ype
 }{c:t@ype
@@ -865,12 +878,20 @@ a,b:t@ype
   xs: list (a, n)
 , ys: list (b, n)
 , f: (a, b) -<cloref1> c
-) : list (c, n) = case+ (xs, ys) of
-  | (list_cons (x, xs),
-     list_cons (y, ys)) =>
-      list_cons (f (x, y), list_zipwith (xs, ys, f))
-  | (list_nil (), list_nil ()) => list_nil ()
-// end of [list_zipwith]
+) : list (c, n) =
+(
+  case+ (xs, ys) of
+  | (
+      list_nil()
+    , list_nil()
+    ) => list_nil((*void*))
+  | (
+      list_cons(x, xs)
+    , list_cons(y, ys)
+    ) =>
+      list_cons(f(x, y), list_zipwith<a,b><c>(xs, ys, f))
+     // end of (list_cons, list_cons)
+) (* end of [list_zipwith] *)
 ")
 
 Each element z in zs equals f(x, y), where x and y are the corresponding
@@ -955,7 +976,7 @@ function always returns a list of the same length as the list it sorts.
 The following defined function #dyncode("merge") combines two
 ordered list (according to a given ordering) into a single ordered list:
 
-#atscode("\
+#dats2xhtml("\
 //
 typedef lte (a:t@ype) = (a, a) -> bool
 //
@@ -967,13 +988,13 @@ a:t@ype
   xs0: list (a, m), ys0: list (a, n), lte: lte a
 ) : list (a, m+n) =
   case+ xs0 of
-  | list_nil () => ys0
-  | list_cons (x, xs1) =>
+  | list_nil() => ys0
+  | list_cons(x, xs1) =>
     (
     case+ ys0 of
-    | list_nil () => xs0
-    | list_cons (y, ys1) =>
-        if x \lte y
+    | list_nil() => xs0
+    | list_cons(y, ys1) =>
+        if x \\\\lte y
           then list_cons (x, merge (xs1, ys0, lte))
           else list_cons (y, merge (xs0, ys1, lte))
         // end of [if]
@@ -1031,13 +1052,14 @@ a:t@ype
 The following defined function #dyncode("mergesort") mergesorts a
 list according to a given ordering:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } mergesort{n:nat}
 (
   xs: list (a, n), lte: lte a
 ) : list (a, n) = let
+//
   fun msort
     {n:nat} .<n,n>.
   (
@@ -1066,9 +1088,9 @@ a:t@ype
       merge (xsf, xs, lte)
     end // end of [if]
   // end of [split]
-  val n = list_length<a> (xs)
+//
 in
-  msort (xs, n, lte)
+  msort(xs, list_length<a>(xs), lte)
 end // end of [mergesort]
 ")
 
@@ -1188,37 +1210,39 @@ guard associated with this clause but the value fails to match the pattern
 associated with any clause ahead of it. Naturally, one may expect that the
 following implementation of #dyncode("list_zipwith") also typechecks:
 
-#atscode("\
+#dats2xhtml("\
 fun{
-a1,
-a2:t@ype
-}{b:t@ype
+a,b:t@ype
+}{c:t@ype
 } list_zipwith
   {n:nat}
 (
-  xs1: list (a1, n)
-, xs2: list (a2, n)
-, f: (a1, a2) -<cloref1> b
-) : list (b, n) =
-  case+ (xs1, xs2) of
-  | (list_cons (x1, xs1),
-     list_cons (x2, xs2)) =>
-    (
-      list_cons{b}(f (x1, x2), list_zipwith<a1,a2><b> (xs1, xs2, f))
-    )
-  | (_, _) => list_nil (*void*)
-// end of [list_zipwith]
+  xs: list(a, n)
+, ys: list(b, n)
+, f: (a, b) -<cloref1> c
+) : list(c, n) = (
+//
+case+ (xs, ys) of
+| (
+    list_cons(x, xs)
+  , list_cons(y, ys)) =>
+  (
+    list_cons(f(x, y), list_zipwith<a,b><c>(xs, ys, f))
+  )
+| (_, _) => list_nil((*void*))
+//
+) (* end of [list_zipwith] *)
 ")
 
 This, however, is not the case. In ATS, typechecking clauses is done
 nondeterministically (rather than sequentially). In this example, the
 second clause fails to typecheck as it is done without the assumption of
-the given pair #dyncode("(xs1, xs2)") failing to match the pattern
+the given pair #dyncode("(xs, ys)") failing to match the pattern
 guard associated with the first clause.  The second clause can be modified
 slightly as follows to pass typechecking:
 
 #atscode("\
-  | (_, _) =>> list_nil ()
+  | (_, _) =>> list_nil((*void*))
 ")
 
 The use of the symbol #keycode("=>>") (in place of #keycode("=>"))
@@ -1226,20 +1250,20 @@ indicates to the typechecker that this clause needs to be typechecked under
 the sequentiality assumption that the given value matching it does not
 match the pattern guards associated with any previous clauses. Therefore,
 when the modified second clause is typechecked, it can be assumed that the
-pair #dyncode("(xs1, xs2)") matching the pattern #dyncode("(_, _)") must
+pair #dyncode("(xs, ys)") matching the pattern #dyncode("(_, _)") must
 match one of the following three patterns:
 
 <itemizedlist>
 
 <listitem>
 #para("
-#dyncode("(list_cons (_, _), list_nil ())")
+#dyncode("(list_cons _, list_nil ())")
 ")
 </listitem>
 
 <listitem>
 #para("
-#dyncode("(list_nil (), list_cons (_, _))")
+#dyncode("(list_nil (), list_cons _)")
 ")
 </listitem>
 
@@ -1251,13 +1275,13 @@ match one of the following three patterns:
 
 </itemizedlist>
 
-Given that #dyncode("xs1") and #dyncode("xs2") are of the same length,
-the typechecker can readily infer that #dyncode("(xs1, xs2)") cannot match
+Given that #dyncode("xs") and #dyncode("ys") are of the same length,
+the typechecker can readily infer that #dyncode("(xs, ys)") cannot match
 either of the first two patterns. After these two patterns are ruled out,
 typechecking is essentially done as if the second clause was written as follows:
 
 #atscode("\
-  | (list_nil (), list_nil ()) => list_nil ()
+  | (list_nil(), list_nil()) => list_nil((*void*))
 ")
 
 ")#comment("para")
@@ -1415,17 +1439,19 @@ as follows:
 ')
 ")
 
-#atscode('\
+#sats2xhtml('\
+//
 \#define BLK 0
 \#define RED 1
 sortdef clr = {c:nat | c <= 1}
-
+//
 datatype rbtree
   (a:t@ype+, int(*clr*), int(*bh*)) =
   | rbtree_nil (a, BLK, 0)
   | {c,cl,cr:clr | cl <= 1-c; cr <= 1-c} {bh:nat}
     rbtree_cons (a, c, bh+1-c) of (int c, rbtree (a, cl, bh), a, rbtree (a, cr, bh))
 // end of [rbtree]
+//
 ')
 
 #langeng("
@@ -1475,25 +1501,26 @@ we can declare #stacode("rbtree") as follows:
 ')
 ")
 
-#atscode('\
+#sats2xhtml('\
+//
 datatype rbtree
 (
   a:t@ype+
 , int // color
 , int // black height
 , int // violations
-) =
+) = // rbtree
   | rbtree_nil (a, BLK, 0, 0) of ()
   | {c,cl,cr:clr}{bh:nat}{v:int}
       {c==BLK && v==0 || c == RED && v==cl+cr}
     rbtree_cons (a, c, bh+1-c, v) of
     (
-      int c, rbtree0 (a, cl, bh), a, rbtree0 (a, cr, bh)
+      int c, rbtree0 (a, cl, bh), a, rbtree0(a, cr, bh)
     ) (* end of [rbtree_cons] *)
 // end of [rbtree]
-
-where rbtree0 (a:t@ype, c:int, bh:int) = rbtree (a, c, bh, 0)
-
+//
+where rbtree0(a:t@ype, c:int, bh:int) = rbtree(a, c, bh, 0)
+//
 ')
 
 #langeng("
@@ -1538,7 +1565,7 @@ red-black tree:
 ')
 ")
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } insfix_l // right rotation for fixing left insertion
@@ -1590,7 +1617,7 @@ The following operation #dyncode("insfix_r") is just the mirror image of
 ')
 ")
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } insfix_r // left rotation for fixing right insertion
@@ -1629,7 +1656,7 @@ captured in the following interface for insertion:
 ')
 ")
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun{
 a:t@ype
@@ -1647,7 +1674,7 @@ Interestingly, this interface also implies that the tree returned by a call
 to #dyncode("rbtree_insert") is always black. The code presented below
 gives an implementation of #dyncode("rbtree_insert"):
 
-')
+')#comment("para")
 ")
 #langja("
 #para('\
@@ -1656,10 +1683,10 @@ gives an implementation of #dyncode("rbtree_insert"):
 を呼び出して得られる木が常に黒であることも示しています。
 以下のコードは #dyncode("rbtree_insert") の実装です:
 
-')
+')#comment("para")
 ")
 
-#atscode('\
+#dats2xhtml('\
 implement{a}
 rbtree_insert
   (t, x0, cmp) = let

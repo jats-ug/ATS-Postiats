@@ -39,7 +39,7 @@ associated with it, and these constructors are needed for constructing
 values of the datatype.  As an example, the following syntax declares a
 datatype named #stacode("intopt"):
 
-#atscode("\
+#sats2xhtml("\
 datatype intopt =
   | intopt_none of () | intopt_some of (int)
 // end of [intopt]
@@ -536,7 +536,7 @@ The simplest form of datatypes is for enumerating a finite number of
 constants. For instance, the following concrete syntax introduces a
 datatype of the name #stacode("wday"):
 
-#atscode("\
+#sats2xhtml("\
 datatype wday =
   | Monday of ()
   | Tuesday of ()
@@ -594,7 +594,7 @@ datatype wday =
 The following code implements a function that tests whether a given value
 of the type #stacode("wday") is a weekday or not:
 
-#atscode("\
+#dats2xhtml("\
 fun isWeekday
   (x: wday): bool = case x of
   | Monday() => true // the first bar (|) is optional
@@ -616,7 +616,7 @@ first one are redundant. This is simply due to #dyncode("Monday") being
 treated as a variable pattern, which is matched by any value. A likely more
 sensible implementation of #dyncode("isWeekday") is given as follows:
 
-#atscode("\
+#dats2xhtml("\
 fun isWeekday
   (x: wday): bool = case x of
   | Saturday() => false | Sunday() => false | _ => true
@@ -694,7 +694,7 @@ such that its associated constructors may form values by applying to values
 of the datatype itself. For instance, the following declared datatype
 #stacode("charlst") is recursive:
 
-#atscode("\
+#sats2xhtml("\
 datatype charlst =
   | charlst_nil of () | charlst_cons of (char, charlst)
 // end of [charlst]
@@ -712,8 +712,9 @@ charlst_cons('a', charlst_cons('b', charlst_cons('c', charlst_nil())))
 We can define a function #dyncode("charlst_length") as follows to compute
 the length of a given character list:
 
-#atscode("\
-fun charlst_length
+#dats2xhtml("\
+fun
+charlst_length
   (cs: charlst): int = case cs of
   | charlst_cons (_, cs) => 1 + charlst_length (cs)
   | charlst_nil () => 0
@@ -725,8 +726,9 @@ relying on the commutativity and associativity of integer addition, we can
 give the following implementation of #dyncode("charlst_length") that is
 tail-recursive:
 
-#atscode("\
-fun charlst_length
+#dats2xhtml("\
+fun
+charlst_length
   (cs: charlst): int = let
 //
 fun loop
@@ -844,8 +846,9 @@ exp0 が型 T で、ケース式 (#dyncode("case") exp0 #dyncode("of") clseq) �
 The following code implements a function that finds the last character
 in a non-empty character list:
 
-#atscode("\
-fun charlst_last
+#dats2xhtml("\
+fun
+charlst_last
   (cs: charlst): char =
 (
   case cs of
@@ -900,8 +903,9 @@ fun charlst_last
 
 The function #dyncode("charlst_last") can also be implemented as follows:
 
-#atscode("\
-fun charlst_last
+#dats2xhtml("\
+fun
+charlst_last
   (cs: charlst): char =
 (
   case cs of
@@ -962,8 +966,9 @@ case-expression as a let-expression: (#dyncode("let") #dyncode("val") pat
 give another implementation of the function #dyncode("charlst_last") as
 follows:
 
-#atscode("\
-fun charlst_last
+#dats2xhtml("\
+fun
+charlst_last
   (cs: charlst): char = let
   val charlst_cons (c, cs1) = cs in case+ cs1 of
   | charlst_nil () => c | charlst_cons _ => charlst_last (cs1)
@@ -1086,7 +1091,7 @@ binary search trees in which the stored keys are strings:
 ")
 ")
 
-#atscode("\
+#sats2xhtml("\
 datatype bstree =
   | E of () | B of (bstree, string, bstree)
 // end of [bstree]
@@ -1126,8 +1131,9 @@ given binary tree:
 ")
 ")
 
-#atscode("\
-fun bstree_inord
+#dats2xhtml("\
+fun
+bstree_inord
 (
   t0: bstree, fwork: string -<cloref1> void
 ) : void =
@@ -1176,10 +1182,14 @@ Given a binary search tree and a key, the following function
 ")
 ")
 
-#atscode("\
-fun bstree_search
-  (t0: bstree, k0: string): bool =
+#dats2xhtml("\
+fun
+bstree_search
 (
+  t0: bstree, k0: string
+) : bool =
+(
+//
 case+ t0 of
 | E () => false
 | B (t1, k, t2) => let
@@ -1190,6 +1200,7 @@ case+ t0 of
     | _ when sgn > 0 => bstree_search (t2, k0)
     | _ (*k0 = k*) => true
   end // end of [B]
+//
 ) (* end of [bstree_search] *)
 ")
 
@@ -1225,10 +1236,14 @@ Given a binary search tree and a key, the following function
 ")
 ")
 
-#atscode("\
-fun bstree_insert
-  (t0: bstree, k0: string): bstree =
+#dats2xhtml("\
+fun
+bstree_insert
 (
+  t0: bstree, k0: string
+) : bstree =
+(
+//
 case+ t0 of
 | E () => B (E, k0, E)
 | B (t1, k, t2) => let
@@ -1239,6 +1254,7 @@ case+ t0 of
     | _ when sgn > 0 => B (t1, k, bstree_insert (t2, k0))
     | _ (*k0 = k*) => t0 // [k0] found and no actual insertion
   end // end of [B]
+//
 ) (* end of [bstree_insert] *)
 ")
 
@@ -1300,7 +1316,7 @@ id="example_evaluating_integer_expressions">
 For representing integer expressions, we declare a datatype
 #stacode("IEXP") as follows:
 
-#atscode("\
+#sats2xhtml("\
 datatype IEXP =
   | IEXPcst of int // constants
   | IEXPneg of (IEXP) // negative
@@ -1326,7 +1342,7 @@ following defined function #dyncode("eval_iexp") takes the abstract syntax
 tree of an integer expression and returns an integer that is the value of
 the expression:
 
-#atscode("\
+#dats2xhtml("\
 fun
 eval_iexp
   (e0: IEXP): int =
@@ -1393,7 +1409,7 @@ we also need to declare a datatype #stacode("BEXP") for representing
 boolean expressions. Furthermore, #stacode("IEXP") and #stacode("BEXP")
 should be defined mutually recursively as follows:
 
-#atscode("\
+#sats2xhtml("\
 datatype IEXP =
   | IEXPcst of int // integer constants
   | IEXPneg of (IEXP) // negative
@@ -1423,11 +1439,13 @@ integer expressions. The following two functions #dyncode("eval_iexp") and
 #dyncode("eval_bexp") for evaluating integer and boolean expressions,
 respectively, are defined mutually recursively as can be expected:
 
-#atscode("\
+#dats2xhtml("\
 fun
 eval_iexp
-  (e0: IEXP): int =
 (
+  e0: IEXP
+) : int = (
+//
 case+ e0 of
 | IEXPcst n => n
 | IEXPneg (e) => ~eval_iexp (e)
@@ -1442,12 +1460,15 @@ case+ e0 of
   (
     eval_iexp (if eval_bexp (e_test) then e_then else e_else)
   ) // end of [IEXPif]
+//
 ) (* end of [eval_iexp] *)
 
 and
 eval_bexp
-  (e0: BEXP): bool =
 (
+  e0: BEXP
+) : bool = (
+//
 case+ e0 of
 | BEXPcst b => b
 | BEXPneg (e) => ~eval_bexp (e)
@@ -1461,6 +1482,7 @@ case+ e0 of
 | BEXPlte (e1, e2) => eval_iexp (e1) <= eval_iexp (e2)
 | BEXPgt (e1, e2) => eval_iexp (e1) > eval_iexp (e2)
 | BEXPgte (e1, e2) => eval_iexp (e1) >= eval_iexp (e2)
+//
 ) (* end of [eval_bexp] *)
 ")
 ")#comment("para")

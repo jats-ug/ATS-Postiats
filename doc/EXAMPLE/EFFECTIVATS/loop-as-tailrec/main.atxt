@@ -15,6 +15,7 @@
 <title>EFFECTIVATS: 末尾再帰関数としてのループ</title>
 ")
 #patscode_style()
+#patspage_style()
 </head>
 
 <body>
@@ -651,6 +652,7 @@ This article is written by
 によって翻訳されています。
 ")
 
+#patspage_script()
 </body>
 </html>
 

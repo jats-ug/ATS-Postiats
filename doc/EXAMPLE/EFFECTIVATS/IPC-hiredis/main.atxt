@@ -15,6 +15,7 @@
 <title>EFFECTIVATS: Redis を用いたプロセス間通信</title>
 ")
 #patscode_style()
+#patspage_style()
 </head>
 
 <body>
@@ -328,6 +329,7 @@ This article is written by
 によって翻訳されています。
 ")
 
+#patspage_script()
 </body>
 </html>
 

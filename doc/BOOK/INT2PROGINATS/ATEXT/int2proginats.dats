@@ -11,16 +11,14 @@
 *)
 (* ****** ****** *)
 
-staload UN = "prelude/SATS/unsafe.sats"
-staload _(*anon*) = "prelude/DATS/unsafe.dats"
+staload
+UN = "prelude/SATS/unsafe.sats"
+staload
+_(*anon*) = "prelude/DATS/unsafe.dats"
 
 (* ****** ****** *)
 
 staload TIME = "libc/SATS/time.sats"
-
-(* ****** ****** *)
-
-dynload "utils/libatsynmark/dynloadall.dats"
 
 (* ****** ****** *)
 
@@ -171,16 +169,17 @@ informalexample (x) = xmltagging ("informalexample", ,(x))
 
 local
 //
+val _cls ="\
+]]></programlisting></informalexample>\n\
+" // end of [val]
 val _opn = "\
 <informalexample><programlisting><![CDATA[\
 " // end of [val]
-val _cls =
-  "]]></programlisting></informalexample>\n"
-// end of [val]
 in
 //
 fun atscode
-  (x: string): atext = atext_appstr3 (_opn, x, _cls)
+  (x: string): atext =
+  atext_appstr3 (_opn, x, _cls)
 //
 fun atscodefil
   (path: string): atext = let
@@ -190,6 +189,70 @@ fun atscodefil
 in
   atext_apptxt3 (_opn, _code, _cls)
 end // end of [atscodefil]
+//
+end // end of [local]
+
+(* ****** ****** *)
+
+local
+//
+val _cls = "\
+\"\"\")]]></programlisting></informalexample>\n\
+" // end of [val]
+val _opn = "\
+<informalexample><programlisting><![CDATA[##sats2xhtml_docbook(\"\"\"\
+" // end of [val]
+in
+//
+fun
+sats2xhtml
+(
+  x0: string
+) : atext =
+(
+  atext_appstr3 (_opn, x0, _cls)
+) (* end of [sats2xhtml] *)
+//
+fun sats2xhtml_fil
+  (path: string): atext = let
+  val _opn = atext_strcst(_opn)
+  val _code = atext_filepath (path)
+  val _cls = atext_strcst(_cls)
+in
+  atext_apptxt3 (_opn, _code, _cls)
+end // end of [sats2xhtml_fil]
+//
+end // end of [local]
+
+(* ****** ****** *)
+
+local
+//
+val _cls = "\
+\"\"\")]]></programlisting></informalexample>\n\
+" // end of [val]
+val _opn = "\
+<informalexample><programlisting><![CDATA[##dats2xhtml_docbook(\"\"\"\
+" // end of [val]
+in
+//
+fun
+dats2xhtml
+(
+  x0: string
+) : atext =
+(
+  atext_appstr3 (_opn, x0, _cls)
+) (* end of [dats2xhtml] *)
+//
+fun dats2xhtml_fil
+  (path: string): atext = let
+  val _opn = atext_strcst(_opn)
+  val _code = atext_filepath (path)
+  val _cls = atext_strcst(_cls)
+in
+  atext_apptxt3 (_opn, _code, _cls)
+end // end of [dats2xhtml_fil]
 //
 end // end of [local]
 
@@ -205,41 +268,6 @@ in
   atext_strptr (res)
 end // end of [ulink]
       
-(* ****** ****** *)
-
-local
-//
-staload
-"utils/libatsynmark/SATS/libatsynmark.sats"
-//
-in (* in of [local] *)
-
-fun
-pats2xhtml_sats
-  (x: string): atext = let
-  val [l:addr]
-  str = string_pats2xhtmlize_bground (0, x)
-  prval () = addr_is_gtez {l} ()
-in
-  if strptr_is_null (str) then let
-    prval () = strptr_free_null (str) in atext_nil ()
-  end else atext_strptr (str) // end of [if]
-end // end of [pats2xhtml_sats]
-
-fun
-pats2xhtml_dats
-  (x: string): atext = let
-  val [l:addr]
-  str = string_pats2xhtmlize_bground (1, x)
-  prval () = addr_is_gtez {l} ()
-in
-  if strptr_is_null (str) then let
-    prval () = strptr_free_null (str) in atext_nil ()
-  end else atext_strptr (str) // end of [if]
-end // end of [pats2xhtml_dats]
-
-end // end of [local]
-
 (* ****** ****** *)
 //
 #define

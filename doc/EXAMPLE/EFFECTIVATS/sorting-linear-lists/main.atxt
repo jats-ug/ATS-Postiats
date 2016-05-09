@@ -15,6 +15,7 @@
 <title>EFFECTIVATS: 線形リストのソート</title>
 ")
 #patscode_style()
+#patspage_style()
 </head>
 
 <body>
@@ -669,6 +670,7 @@ This article is written by
 によって翻訳されています。
 ")
 
+#patspage_script()
 </body>
 </html>
 

@@ -5,7 +5,8 @@
 (* ****** ****** *)
 (*
 **
-** Author: Hongwei Xi (gmhwxi AT gmail DOT com)
+** Author: Hongwei Xi
+** Authoremail: gmhwxi AT gmail DOT com
 ** Time: January, 2013
 **
 *)
@@ -16,18 +17,21 @@ staload _ = "prelude/DATS/list_vt.dats"
 staload _ = "prelude/DATS/reference.dats"
 
 (* ****** ****** *)
-
-staload UN = "prelude/SATS/unsafe.sats"
-staload _(*anon*) = "prelude/DATS/unsafe.dats"
-
+//
+staload
+UN = "prelude/SATS/unsafe.sats"
+staload
+_(*anon*) = "prelude/DATS/unsafe.dats"
+//
 (* ****** ****** *)
-
+//
 staload TIME = "libc/SATS/time.sats"
-
+//
 (* ****** ****** *)
-
-staload "libatsdoc/SATS/libatsdoc_atext.sats"
-
+//
+staload
+"libatsdoc/SATS/libatsdoc_atext.sats"
+//
 (* ****** ****** *)
 
 local
@@ -37,16 +41,23 @@ and COMMENTcls = atext_strcst("-->")
 //
 in
 
-fun comment (x: string): atext =
-  atext_apptxt3 (COMMENTopn, atext_strsub(x), COMMENTcls)
-// end of [comment]
+fun
+comment
+(
+  x0: string
+) : atext = (
+//
+atext_apptxt3
+  (COMMENTopn, atext_strsub(x0), COMMENTcls)
+//
+) // end of [comment]
 
 end // end of [local]
 
 (* ****** ****** *)
 
-fun ignoretxt (x: atext): atext = atext_nil ()
-fun ignorestr (x: string): atext = atext_nil ()
+fun ignoretxt (x: atext): atext = atext_nil()
+fun ignorestr (x: string): atext = atext_nil()
 
 (* ****** ****** *)
 
@@ -167,12 +178,13 @@ informalexample (x) = xmltagging ("informalexample", ,(x))
 
 local
 //
+val _cls ="\
+]]></programlisting></informalexample>\n\
+" // end of [val]
 val _opn = "\
 <informalexample><programlisting><![CDATA[\
 " // end of [val]
-val _cls =
-  "]]></programlisting></informalexample>\n"
-// end of [val]
+//
 in
 //
 fun atscode
@@ -186,6 +198,72 @@ fun atscodefil
 in
   atext_apptxt3 (_opn, _code, _cls)
 end // end of [atscodefil]
+//
+end // end of [local]
+
+(* ****** ****** *)
+
+local
+//
+val _cls = "\
+\"\"\")]]></programlisting></informalexample>\n\
+" // end of [val]
+val _opn = "\
+<informalexample><programlisting><![CDATA[##sats2xhtml_docbook(\"\"\"\
+" // end of [val]
+//
+in
+//
+fun
+sats2xhtml
+(
+  x0: string
+) : atext =
+(
+  atext_appstr3 (_opn, x0, _cls)
+) (* end of [sats2xhtml] *)
+//
+fun sats2xhtml_fil
+  (path: string): atext = let
+  val _opn = atext_strcst(_opn)
+  val _code = atext_filepath (path)
+  val _cls = atext_strcst(_cls)
+in
+  atext_apptxt3 (_opn, _code, _cls)
+end // end of [sats2xhtml_fil]
+//
+end // end of [local]
+
+(* ****** ****** *)
+
+local
+//
+val _cls = "\
+\"\"\")]]></programlisting></informalexample>\n\
+" // end of [val]
+val _opn = "\
+<informalexample><programlisting><![CDATA[##dats2xhtml_docbook(\"\"\"\
+" // end of [val]
+//
+in
+//
+fun
+dats2xhtml
+(
+  x0: string
+) : atext =
+(
+  atext_appstr3 (_opn, x0, _cls)
+) (* end of [dats2xhtml] *)
+//
+fun dats2xhtml_fil
+  (path: string): atext = let
+  val _opn = atext_strcst(_opn)
+  val _code = atext_filepath (path)
+  val _cls = atext_strcst(_cls)
+in
+  atext_apptxt3 (_opn, _code, _cls)
+end // end of [dats2xhtml_fil]
 //
 end // end of [local]
 

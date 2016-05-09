@@ -14,6 +14,7 @@
 <title>EFFECTIVATS: 生産者/消費者問題</title>
 ")
 #patscode_style()
+#patspage_style()
 </head>
 
 <body>
@@ -357,7 +358,8 @@ same shared buffer from which the linear buffer was previously acquired):
 <pre
 class="patsyntax">
 #pats2xhtml_sats('\
-fun sbuffer_release{a:vt0p} (sbuf: sbuffer(a), buf: buffer(a)): void
+fun
+sbuffer_release{a:vt0p} (sbuf: sbuffer(a), buf: buffer(a)): void
 ')</pre>
 
 #langeng("
@@ -450,13 +452,17 @@ class="patsyntax">
 //
 fun
 sbuffer_wait_isnil
-  {a:vt0p}{m:int} (sbuffer(a), !buffer(a, m, 0) >> buffer(a)): void
-fun sbuffer_signal_isnil{a:vt0p}{m,n:int} (sbuf: sbuffer(a)): void
+  {a:vt0p}{m:int}
+  (sbuffer(a), !buffer(a, m, 0) >> buffer(a)): void
+fun
+sbuffer_signal_isnil{a:vt0p}{m,n:int} (sbuf: sbuffer(a)): void
 //
 fun
 sbuffer_wait_isful
-  {a:vt0p}{m:int} (sbuffer(a), !buffer(a, m, m) >> buffer(a)): void
-fun sbuffer_signal_isful{a:vt0p}{m,n:int} (sbuf: sbuffer(a)): void
+  {a:vt0p}{m:int}
+  (sbuffer(a), !buffer(a, m, m) >> buffer(a)): void
+fun
+sbuffer_signal_isful{a:vt0p}{m,n:int} (sbuf: sbuffer(a)): void
 //
 ')</pre>
 
@@ -787,9 +793,16 @@ An implementation of [SharedResource_process] is sketched as follows:
 <pre
 class="patsyntax">
 #pats2xhtml_dats('\
+//
 extern
-fun SharedResource_process2 (SR: SharedResource, R: !Resource >> _): void
-
+fun
+SharedResource_wait
+  (SR: SharedResource, R: !Resource >> _): void
+extern
+fun
+SharedResource_process2
+  (SR: SharedResource, R: !Resource >> _): void
+//
 implement
 SharedResource_process
   (SR) = () where
@@ -798,10 +811,7 @@ SharedResource_process
   val () = SharedResource_process2 (SR, R)
   val () = SharedResource_release (SR, R)
 }
-
-extern
-fun SharedResource_wait (SR: SharedResource, R: !Resource >> _): void
-
+//
 implement
 SharedResource_process2
   (SR, R) = let
@@ -816,12 +826,15 @@ if ans
     // to some conditional variables
   )
   else let
-    val () = SharedResource_wait (SR, R)
+    val () =
+      SharedResource_wait (SR, R)
+    // end of [val]
   in
     SharedResource_process2 (SR, R)
   end // end of [else]
 //
 end // end of [SharedResource_process2]
+//
 ')</pre>
 
 #langeng("
@@ -860,6 +873,7 @@ This article is written by
 によって翻訳されています。
 ")
 
+#patspage_script()
 </body>
 </html>
 

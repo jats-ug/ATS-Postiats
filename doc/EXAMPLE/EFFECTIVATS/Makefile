@@ -7,12 +7,24 @@
 all::
 
 all:: \
+prop-logic
+prop-logic:: ; make -C prop-logic all
+
+all:: \
 file-copying
 file-copying:: ; make -C file-copying all
 
 all:: \
+list-folding
+list-folding:: ; make -C list-folding all
+
+all:: \
 loop-as-tailrec
 loop-as-tailrec:: ; make -C loop-as-tailrec all
+
+all:: \
+HanoiTowers
+HanoiTowers:: ; make -C HanoiTowers all
 
 all:: \
 word-counting
@@ -51,12 +63,12 @@ Readers-and-Writers
 Readers-and-Writers:: ; make -C Readers-and-Writers all
 
 all:: \
-IPC-redis
-IPC-redis:: ; make -C IPC-redis all
+IPC-hiredis
+IPC-hiredis:: ; make -C IPC-hiredis all
 
 all:: \
-HttpServer
-HttpServer:: ; make -C HttpServer all
+http-server
+http-server:: ; make -C http-server all
 
 all:: \
 Sierpinski-3angle
@@ -81,9 +93,11 @@ ssntyped-channels-2:: ; make -C ssntyped-channels-2 all
 ######
 
 cleanall::
-cleanall:: ; make -C file-copying cleanall
 cleanall:: ; make -C prop-logic cleanall
+cleanall:: ; make -C file-copying cleanall
+cleanall:: ; make -C list-folding cleanall
 cleanall:: ; make -C loop-as-tailrec cleanall
+cleanall:: ; make -C HanoiTowers cleanall
 cleanall:: ; make -C word-counting cleanall
 cleanall:: ; make -C stack-array cleanall
 cleanall:: ; make -C queue-sllist2 cleanall
@@ -93,8 +107,8 @@ cleanall:: ; make -C DiningPhil cleanall
 cleanall:: ; make -C DiningPhil2 cleanall
 cleanall:: ; make -C Producer-Consumer cleanall
 cleanall:: ; make -C Readers-and-Writers cleanall
-cleanall:: ; make -C IPC-redis cleanall
-cleanall:: ; make -C HttpServer cleanall
+cleanall:: ; make -C IPC-hiredis cleanall
+cleanall:: ; make -C http-server cleanall
 cleanall:: ; make -C Sierpinski-3angle cleanall
 cleanall:: ; make -C PwTP-bool-vs-prop cleanall
 cleanall:: ; make -C parsing-cmbntr-cps cleanall
@@ -105,7 +119,9 @@ cleanall:: ; make -C ssntyped-channels-2 cleanall
 
 uploadall::
 uploadall::upload_index
+uploadall::upload_prop-logic
 uploadall::upload_file-copying
+uploadall::upload_list-folding
 uploadall::upload_loop-as-tailrec
 uploadall::upload_word-counting
 uploadall::upload_stack-array
@@ -116,8 +132,8 @@ uploadall::upload_DiningPhil
 uploadall::upload_DiningPhil2
 uploadall::upload_Producer-Consumer
 uploadall::upload_Readers-and-Writers
-uploadall::upload_IPC-redis
-uploadall::upload_HttpServer
+uploadall::upload_IPC-hiredis
+uploadall::upload_http-server
 uploadall::upload_Sierpinski-3angle
 uploadall::upload_PwTP-bool-vs-prop
 uploadall::upload_parsing-cmbntr-cps
@@ -137,6 +153,14 @@ upload_index:: ; \
 
 ######
 
+upload_prop-logic:: ; \
+  $(SCP) \
+  prop-logic/index.html \
+  prop-logic/Makefile prop-logic/*.?ats \
+  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/prop-logic/
+
+######
+
 upload_file-copying:: ; \
   $(SCP) \
   file-copying/index.html \
@@ -145,11 +169,11 @@ upload_file-copying:: ; \
 
 ######
 
-upload_prop-logic:: ; \
+upload_list-folding:: ; \
   $(SCP) \
-  prop-logic/index.html \
-  prop-logic/Makefile prop-logic/*.?ats \
-  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/prop-logic/
+  list-folding/index.html \
+  list-folding/Makefile list-folding/*.?ats \
+  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/list-folding/
 
 ######
 
@@ -174,6 +198,18 @@ upload_queue-sllist2:: ; \
   queue-sllist2/index.html \
   queue-sllist2/Makefile queue-sllist2/*.?ats \
   ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/queue-sllist2/
+
+######
+
+upload_HanoiTowers:: ; \
+  $(SCP) \
+  HanoiTowers/index.html \
+  HanoiTowers/Makefile \
+  HanoiTowers/HanoiTowers-1.dats \
+  HanoiTowers/HanoiTowers-2.dats \
+  HanoiTowers/HanoiTowers-3.dats \
+  HanoiTowers/HanoiTowers_txt.html \
+  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/HanoiTowers/
 
 ######
 
@@ -254,28 +290,28 @@ upload_Readers-and-Writers:: ; \
 
 ######
 
-upload_IPC-redis:: ; \
+upload_IPC-hiredis:: ; \
   $(SCP) \
-  IPC-redis/index.html \
-  IPC-redis/Makefile \
-  IPC-redis/mylib.dats \
-  IPC-redis/msgchan.sats \
-  IPC-redis/msgchan.dats \
-  IPC-redis/params.hats \
-  IPC-redis/redisContextSetup.dats \
-  IPC-redis/test_up.dats \
-  IPC-redis/test_dn.dats \
-  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/IPC-redis/
+  IPC-hiredis/index.html \
+  IPC-hiredis/Makefile \
+  IPC-hiredis/mylib.dats \
+  IPC-hiredis/msgchan.sats \
+  IPC-hiredis/msgchan.dats \
+  IPC-hiredis/params.hats \
+  IPC-hiredis/redisContextSetup.dats \
+  IPC-hiredis/test_up.dats \
+  IPC-hiredis/test_dn.dats \
+  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/IPC-hiredis/
 
 ######
 
-upload_HttpServer:: ; \
+upload_http-server:: ; \
   $(SCP) \
-  HttpServer/index.html \
-  HttpServer/Makefile \
-  HttpServer/myserver.dats \
-  HttpServer/myserver2.dats \
-  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/HttpServer
+  http-server/index.html \
+  http-server/Makefile \
+  http-server/myserver.dats \
+  http-server/myserver2.dats \
+  ats-hwxi,ats-lang@web.sourceforge.net:htdocs/EXAMPLE/EFFECTIVATS/http-server
 
 ######
 

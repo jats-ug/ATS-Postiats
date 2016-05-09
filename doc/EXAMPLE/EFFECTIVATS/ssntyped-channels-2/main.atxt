@@ -16,6 +16,7 @@
 <title>EFFECTIVATS: セッションの合成</title>
 ")
 #patscode_style()
+#patspage_style()
 </head>
 
 <body>
@@ -723,7 +724,7 @@ ss_test_loop = ssrepeat_conj(ss_test_one)
 ')</pre>
 
 #langeng("
-Notice that the client decides wether a fresh round of test should
+Notice that the client decides whether a fresh round of test should
 take place.
 ")
 #langja("
@@ -983,6 +984,7 @@ This article is written by <a href=\"http://www.cs.bu.edu/~hwxi/\">Hongwei Xi</a
 によって翻訳されています。
 ")
 
+#patspage_script()
 </body>
 </html>
 
