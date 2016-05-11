@@ -47,7 +47,8 @@ ATEXT/bin/myatexting: ATEXT/myatexting.dats
 publish: HTML_JA/index.html
 	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
 	rm -rf $(HOME)/doc/jats-ug.github.io/doc/ATS2/ATS2TUTORIAL
-	cp -rf HTML_JA $(HOME)/doc/jats-ug.github.io/doc/ATS2/ATS2TUTORIAL
+	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2/ATS2TUTORIAL
+	cp -rf HTML_JA/*.html HTML_JA/assets $(HOME)/doc/jats-ug.github.io/doc/ATS2/ATS2TUTORIAL/
 
 clean:
 	rm -f preface.db $(CHAP_DB_FILES)
