@@ -100,7 +100,7 @@ element in the given list.\
 配列を生成する様々な関数があります。
 例えば、次の2つは一般的に使用されます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:t@ype}
 arrayref_make_elt
   {n:nat} (asz: size_t n, elt: a):<!wrt> arrayref (a, n)
@@ -152,7 +152,7 @@ and #dyncode("A[i] := v"), respectively.\
 と #dyncode("arrayref_set_at") を使うことができます。
 それぞれ次のようなインターフェイスが割り当てられています:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype}
 arrayref_get_at
   {n:int} (A: arrayref (a, n), i: sizeLt (n)):<!ref> a
@@ -210,7 +210,7 @@ end // end of [arrayref_reverse]
 
 例として、次の関数テンプレートは与えられた配列の内容を逆順にします:\
 
-#atscode_extract('\
+#dats2xhtml('\
 fun{a:t@ype}
 arrayref_reverse{n:nat}
 (
@@ -344,7 +344,7 @@ form of type-unsafe code is employed).\
 
 関数テンプレート #dyncode("arrayref_interchange") のインターフェイスは以下のようになります:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:vt@ype}
 arrayref_interchange{n:int}
   (A: arrayref (a, n), i: sizeLt n, j: sizeLt n):<!ref> void
@@ -408,7 +408,7 @@ A.
 配列を左から右に、もしくは右から左に走査するのに役に立つ様々な関数があります。
 また、次の2つの関数は配列を左から右に走査するために使うことができます:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun{a:t0p}
 arrayref_head{n:pos} (A: arrayref (a, n)): (a) // A[0]
@@ -417,11 +417,12 @@ arrayref_tail{n:pos} (A: arrayref (a, n)): arrayref (a, n-1)
 //
 overload .head with arrayref_head
 overload .tail with arrayref_tail
+//
 ')
 
 例として、配列に対する左 fold 関数は次のように実装できます:
 
-#atscode_extract('
+#dats2xhtml('
 fun{a,b:t@ype}
 arrayref_foldleft{n:int}
 (

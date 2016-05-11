@@ -164,7 +164,7 @@ boxed closure so that it can be passed to #dyncode("ifold").
 スタックに確保されたクロージャの実例を見てみましょう。
 次のコードは高階関数テンプレートを実装しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {res:t@ype}
@@ -189,7 +189,7 @@ end // end of [ifold]
 本質的に、#dyncode("ifold(n, fopr, ini)") は式 #dyncode("fopr(...fopr(fopr(ini, 0), 1)..., n-1)") を評価します。
 例えば、2つのベクトルのドット積 (もしくは内積) を計算する 関数 #dyncode("dotprod") は #dyncode("ifold") 呼び出しを使って実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 typedef res = double
 //
@@ -210,7 +210,7 @@ dotprod
 #dyncode("ifold") 呼び出しへの第二引数は、実行時にヒープ上に生成されたクロージャで、この呼び出しが戻った後はもう使用できません。
 また、関数 #dyncode("dotprod") は次のようにも実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 dotprod
@@ -307,7 +307,7 @@ as #dyncode("dotprod_") with a call to #dyncode("ifold_").
 
 #dyncode("dotprod") の実装における (安全でない) キャスト削除するために、次のような #dyncode("ifold") の変種を実装する必要があります:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {res:t@ype}

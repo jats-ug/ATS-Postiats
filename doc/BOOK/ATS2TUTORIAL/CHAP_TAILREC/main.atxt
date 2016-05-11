@@ -39,7 +39,7 @@ support in ATS for turning tail-recursive calls into local jumps.\
 
 末尾再帰の詳細な説明と、ATS が末尾再帰呼び出しをローカルジャンプに変換することについて
 <ulink
-url="http://www.ats-lang.org/EXAMPLE/EFFECTIVATS/loop-as-tailrec/main.html">この記事</ulink>
+url="http://ats-lang.sourceforge.net/EXAMPLE/EFFECTIVATS/loop-as-tailrec/main.html">この記事</ulink>
 を読んでください。\
 
 ')

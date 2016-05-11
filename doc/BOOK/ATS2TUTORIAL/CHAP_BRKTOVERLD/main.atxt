@@ -71,7 +71,7 @@ value to a given lock.\
 
 ここで、角括弧オーバーロードの単純な例を見てみましょう。次のコードでは、線形抽象型 #dyncode("lock") が2つの関数と共に導入されています:
 
-#atscode('\
+#dats2xhtml('\
 //
 absvtype lock(a:vt@ype)
 //
@@ -122,7 +122,7 @@ function #dyncode("lock_release") returns the void-value.\
 
 ここで、次のオーバーロード宣言を導入することを想像してみましょう:
 
-#atscode('\
+#sats2xhtml('\
 //
 overload [] with lock_acquire
 overload [] with lock_release
@@ -131,7 +131,7 @@ overload [] with lock_release
 
 この宣言の後で次のコードを型検査を通ります:
 
-#atscode('\
+#dats2xhtml('\
 //
 val
 mylock = $extval(lock(int), "mylock")

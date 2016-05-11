@@ -186,7 +186,7 @@ f(n) = 0.
 例として次のように、引数として整数から整数への関数 f を取り、f
 の根を探すような2階関数 #dyncode("find_root") を実装してみましょう:
 
-#atscode_extract("\
+#dats2xhtml("\
 fn find_root
 (
   f: int -<cloref1> int
@@ -264,7 +264,7 @@ fn cbrt (c: double): double =
 もう一つの例として、関数の根を見つけるために、次のように有名なニュートン・ラフソン法
 (Newton-Raphson's method) を実装してみましょう:
 
-#atscode_extract("\
+#dats2xhtml("\
 typedef
 fdouble = double -<cloref1> double
 //
@@ -293,7 +293,7 @@ end // end of [newton_raphson]
 
 #dyncode("newton_raphson") を使うと、平方根関数と立方根関数が次のようにたやすく実装できます:
 
-#atscode_extract("\
+#dats2xhtml("\
 // square root function
 fn sqrt (c: double): double =
   newton_raphson (lam x => x * x - c, lam x => 2.0 * x, 1.0)

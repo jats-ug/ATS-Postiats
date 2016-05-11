@@ -82,7 +82,7 @@ V に対する #dyncode("lazy_force") 呼び出しは V によって表現され
 もしその呼び出しあ返ったなら、その返値は型 T になります。
 関数テンプレート #dyncode("lazy_force") のインターフェイスは次のように与えられます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype} lazy_force (lazyval: lazy(a)):<!laz> a
 ')
 
@@ -120,7 +120,7 @@ implemented in #myatscodelink("prelude/DATS/stream.dats", "prelude/DATS/stream.d
 では、遅延ストリームを表現するために次の型
 #stacode("stream_con") と #stacode("stream") が相互再帰的に宣言されています:
 
-#atscode("\
+#sats2xhtml("\
 datatype
 stream_con (a:t@ype+) =
   | stream_nil of ((*void*)) | stream_cons of (a, stream(a))
@@ -176,7 +176,7 @@ ascendingly.
 
 次のコードはエラトステネスの篩 (Sieve of Eratosthenes) の一般的な実装です:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 from (n: int): stream (int) =
@@ -230,7 +230,7 @@ that satisfy the given predicate.\
 
 関数テンプレート #dyncode("stream_filter_cloref") は次のようなインターフェイスを持ちます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:t@ype}
 stream_filter_cloref
   (xs: stream(a), pred: a -<cloref> bool):<!laz> stream(a)
@@ -292,7 +292,7 @@ natural numbers.
 遅延評価の別の例を見てみましょう。
 次のコードは、フィボナッチ数列を計算する興味深いアプローチを示しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 val _0_ = $UNSAFE.cast{int64}(0)
 val _1_ = $UNSAFE.cast{int64}(1)
@@ -312,7 +312,7 @@ and theFibs_2
 
 関数テンプレート #dyncode("stream_map2_fun") には次のインターフェイスが割り当てられています:
 
-#atscode("\
+#sats2xhtml("\
 fun{
 a1,a2:t0p}{b:t0p
 } stream_map2_cloref
@@ -388,7 +388,7 @@ second stream that also occur in the first stream are dropped.
 ハミング数 (Hamming number) は素因数として 2, 3, 5 のみを持つ自然数です。
 次のコードは、全てのハミング数から成るストリームを生成する率直な方法を示しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 val
 compare_int_int =
@@ -416,7 +416,7 @@ and theHamming5
 
 関数テンプレート #dyncode("stream_mergeq_fun") は次のインターフェイスを持ちます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t0p}
 stream_mergeq_fun
 (

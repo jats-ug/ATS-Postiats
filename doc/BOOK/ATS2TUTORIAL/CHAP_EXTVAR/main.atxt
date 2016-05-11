@@ -79,7 +79,7 @@ where #dyncode("extvar") expands into #dyncode("extern var").
 
 C言語コード中に #dyncode("foo") という名前の (グローバルの) 整数変数を持ち、ATS コード中で #dyncode("foo") に保管された値を 1 増加させたいとします。これは次のように書けます:
 
-#atscode('\
+#dats2xhtml('\
 val x0 = $extval(int, "foo") // get the value of foo
 val p_foo = $extval(ptr, "&foo") // get the address of foo
 val () = $UNSAFE.ptr_set<int> (p_foo, x0 + 1) // update foo
@@ -87,13 +87,13 @@ val () = $UNSAFE.ptr_set<int> (p_foo, x0 + 1) // update foo
 
 このとき #dyncode("foo") のアドレスを得るためにC言語のアドレス演算子 (&amp;) が必要です。もしアドレス演算子をサポートしていない言語 (例: JavaScript や Python) と ATS を相互利用するのであれば、次のように書くことができます:
 
-#atscode('\
+#dats2xhtml('\
 extvar "foo" = x0 + 1
 ')
 
 このときキーワード #dyncode("extvar") は続く文字列が外部の変数 (もしくは左辺値) を参照していることを示しています。その変数は、その文字列に続く等式記号の右辺の式の値で更新されます。このいわゆる extvar 宣言は次のように書くこともできます:
 
-#atscode('\
+#dats2xhtml('\
 extern var "foo" = x0 + 1
 ')
 
@@ -125,7 +125,7 @@ unsafe, and it should only be used with caution.
 
 もう1つの例として、#dyncode("foo2") が #dyncode("first") と #dyncode("second") という名前で2つの整数フィールドを持つレコード変数であるとしてみましょう。すると次のコードは、整数 1 と 2 を #dyncode("foo2") の2つのフィールドに割り当てます:
 
-#atscode('\
+#dats2xhtml('\
 extvar "foo2.first" = 1
 extvar "foo2.second" = 2
 ')

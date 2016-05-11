@@ -75,7 +75,7 @@ val b: $FOO.aDatatype = $FOO.B(0, $FOO.aFunction($FOO.aValue))
 
 #filename('foo.sats') という名前のファイルが次のコードを含んでいると考えます:
 
-#atscode('\
+#sats2xhtml('\
 //
 datatype
 aDatatype =
@@ -89,14 +89,14 @@ fun aFunction: int -> int
 次の staload 宣言は、#filename('foo.sats') で宣言された名前のために、名前空間
 #dyncode("FOO") を導入します:
 
-#atscode('\
+#sats2xhtml('\
 staload FOO = "foo.sats"
 ')
 
 名前空間 #dyncode('FOO') 中の名前を参照するために、接頭辞 #dyncode("$FOO.") が必要です。
 例えば、名前空間 #dyncode("FOO") 中で有効な名前は、次のようなコードで参照できます:
 
-#atscode('\
+#dats2xhtml('\
 val a: $FOO.aDatatype = $FOO.A()
 val b: $FOO.aDatatype = $FOO.B(0, $FOO.aFunction($FOO.aValue))
 ')
@@ -124,7 +124,7 @@ then #filename('foo.sats') is not actually loaded by the compiler. Instead,
 
 もしファイル #filename('foo.sats') を次のように2度 staload した場合:
 
-#atscode('\
+#sats2xhtml('\
 staload FOO2 = "foo.sats"
 ')
 
@@ -159,14 +159,14 @@ val b: aDatatype = B(0, aFunction(aValue))
 
 #filename('foo.sats') は次のようにも staload できます:
 
-#atscode('\
+#sats2xhtml('\
 staload "foo.sats"
 ')
 
 この場合、#filename('foo.sats') で宣言した名前のための名前空間はオープンです。
 例えば、次のコードはこれらの名前を直接参照できることを示しています:
 
-#atscode('\
+#dats2xhtml('\
 val a: aDatatype = A()
 val b: aDatatype = B(0, aFunction(aValue))
 ')
@@ -199,7 +199,7 @@ available names delcared in the same file.
 
 次のような宣言を考えてみましょう:
 
-#atscode('\
+#dats2xhtml('\
 val aValue = 0
 staload "foo.sats"
 val anotheValue = aValue + 1

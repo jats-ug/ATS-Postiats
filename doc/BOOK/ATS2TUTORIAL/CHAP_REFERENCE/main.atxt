@@ -67,8 +67,9 @@ The interfaces for various functions on references can be found in
 利便性のために、ATS では型コンストラクタ #stacode("ref") は抽象として宣言されます。
 けれども、次のような定義は可能です:
 
-#atscode('\
-typedef ref (a:vt@ype) = [l:addr] (vbox (a @ l) | ptr l)
+#sats2xhtml('\
+typedef
+ref(a:vt@ype) = [l:addr] (vbox(a @ l) | ptr l)
 ')
 
 参照に対する様々な関数インターフェイスを
@@ -98,7 +99,7 @@ that the so-called #stacode("wrt")-effect may occur when
 #para("\
 参照を生成するために、次のインターフェイスを持つ関数テンプレート #dyncode("ref_make_elt") を呼び出すことができます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:vt@ype} ref_make_elt (x: a):<!wrt> ref a
 ')
 
@@ -141,7 +142,7 @@ respectively, in terms of bracket-notation.\
 を使うことができます。
 これらにはそれぞれ次のインターフェイスが割り当てられています:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype} ref_get_elt (r: ref a):<!ref> a
 fun{a:t@ype} ref_set_elt (r: ref a, x: a):<!refwrt> void
 ')
@@ -204,7 +205,7 @@ call to the function #dyncode("snprintf") in C.
 典型的に、参照は永続化状態を記録するのに使われます。
 例えば、次のコードはそのような例です:
 
-#atscode_extract('\
+#dats2xhtml('\
 local
 //
 \#define BUFSZ 128
@@ -304,12 +305,12 @@ which makes no use of references at all.
 参照は誤用されることが実際にあります。
 次のプログラムは、命令型プログラミングを既に学んだ関数型プログラミングの初学者がしばしば書いてしまうものです:
 
-#atscode_extract('\
+#dats2xhtml('\
 fun fact
   (n: int): int = let
   val res = ref<int> (1)
   fun loop (n: int):<cloref1> void =
-    if n > 0 then !res := n * !res else ()
+    if n > 0 then (!res := n * !res; loop(n-1)) else ()
   val () = loop (n)
 in
   !res
@@ -319,11 +320,14 @@ end // end of [fact]
 関数 #dyncode("fact") は次のC言語コードを少々直訳したスタイルで書かれています:
 
 #atscode('\
-int fact (int n) {
+//
+int
+fact (int n) {
   int res = 1 ;
-  while (n > 0) res = n * res ;
-  return res ;
+  while (n > 0) { res = n * res; n = n - 1; } ;
+  return (res) ;
 }
+//
 ')
 
 ATS における #dyncode("fact") の実装では、#dyncode("res")
@@ -334,7 +338,7 @@ ATS における #dyncode("fact") の実装では、#dyncode("res")
 され、#dyncode("fact") 呼び出しが返った後にゴミは生成されません。
 このC実装を ATS に適切に翻訳すると、次のような参照を使わない実装になるでしょう:
 
-#atscode_extract('\
+#dats2xhtml('\
 fun fact
   (n: int): int = let
   fun loop (n: int, res: int): int =
@@ -344,6 +348,8 @@ in
   loop (n, 1)
 end // end of [fact]
 ')
+
+この実装は参照を全く使いません。
 
 ")#comment("para")
 ")
@@ -400,7 +406,7 @@ non-linear reference.
 もしこれが望ましくなかたったり容認できなかったりするなら、
 次のように参照の生成に静的なメモリ確保を使うことができます:
 
-#atscode_extract('\
+#dats2xhtml('\
 var myvar: int = 0
 val myref = ref_make_viewptr (view@(myvar) | addr@(myvar))
 ')

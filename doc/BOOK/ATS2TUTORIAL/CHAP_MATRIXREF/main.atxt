@@ -91,7 +91,7 @@ in which each cell is initialized with the element x0.\
 
 次の関数は matrixref 値を生成するのに一般的に使用されます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t0p}
 matrixref_make_elt{m,n:int}
   (m: size_t m, n: size_t n, x0: a):<!wrt> matrixref (a, m, n)
@@ -124,7 +124,7 @@ arrayref2matrixref
 
 また、次のキャスト関数が呼び出されると、配列を行列に変化させます:
 
-#atscode('\
+#sats2xhtml('\
 castfn
 arrayref2matrixref
   {a:vt0p}{m,n:nat} (A: arrayref (a, m*n)):<> matrixref (a, m, n)
@@ -171,7 +171,7 @@ needs to be supplied as well.
 行列セルの内容物にアクセスしたり更新するために、次の2つの関数
 #dyncode("matrixref_get_at") と #dyncode("matrixref_set_at") を呼び出すことができます:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun{a:t0p}
 matrixref_get_at
@@ -255,7 +255,7 @@ end // end of [matrixref_transpose]
 
 次は、与えられた正方行列を転置行列にする関数の実装です:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun{a:t0p}

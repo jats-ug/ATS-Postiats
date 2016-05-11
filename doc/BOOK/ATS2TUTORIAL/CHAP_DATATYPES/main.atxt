@@ -71,7 +71,7 @@ form values (of the type #stacode("weekday")).\
 
 次のコードは、平日を示す値を表わす、名前 #stacode("weekday") のデータ型を宣言しています:
 
-#atscode('\
+#sats2xhtml('\
 datatype weekday =
   | Monday | Tuesday | Wednesday | Thursday | Friday
 ')
@@ -126,7 +126,7 @@ are 0, 1, 2, 3, and 4, respectively.
 それぞれの無引数コンストラクタは (例えば 1024 より小さいような) 小さな整数として表現されます。
 次の関数 #dyncode("weekday2int") を使うと、#stacode("weekday") に関連するコンストラクタを表わす整数を調べることができます:
 
-#atscode('\
+#dats2xhtml('\
 //
 staload UN = "prelude/SATS/unsafe.sats"
 //
@@ -186,7 +186,7 @@ val () = assertloc (isFriday(Friday()))
 けれどもこの値にマッチするパターンとして使えるのは #dyncode("foo()") のみです。
 例えば次の関数は、与えられた型 #stacode("weekday") の値がコンストラクタ #dyncode("Friday") で作られたかどうか確認しています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 isFriday(x: weekday): bool =
   case+ x of Friday() => true | _ => false
@@ -196,7 +196,7 @@ isFriday(x: weekday): bool =
 パターンとして使われると後者は値として使われます。
 一方で、次のアサートは実行時に扱われるので、#dyncode("Friday") と #dyncode("Friday()") は同じ値を指します:
 
-#atscode('\
+#dats2xhtml('\
 val () = assertloc (isFriday(Friday))
 val () = assertloc (isFriday(Friday()))
 ')
@@ -259,7 +259,7 @@ val () = assertloc (false = $UN.ptr0_get<bool>($UN.cast{ptr}(B(false))))
 データ型に関連する2つのデータコンストラクタとして一方は無引数 (nil-like) でもう一方が無引数でない (cons-like) があるなら、そのデータ型は list-like です。
 例えば、次のように宣言されたデータ型 #stacode("ab") はリスト的です:
 
-#atscode('\
+#sats2xhtml('\
 datatype ab = A of () | B of (bool)
 ')
 
@@ -272,7 +272,7 @@ list-like なデータ型の値は特別な方法で表現されます。
 は #dyncode("b") のみを含む (ヒープに確保された) シングルトンタプルとして表わされます。
 この説明は次のコードで簡単に確認できます:
 
-#atscode('\
+#dats2xhtml('\
 val () = assertloc (iseqz($UN.cast{ptr}(A())))
 val () = assertloc (true = $UN.ptr0_get<bool>($UN.cast{ptr}(B(true))))
 val () = assertloc (false = $UN.ptr0_get<bool>($UN.cast{ptr}(B(false))))
@@ -304,7 +304,7 @@ to form a value (of the type #stacode("abc")).
 
 次の宣言は名前 #stacode("abc") のデータ型を導入しています:
 
-#atscode('\
+#sats2xhtml('\
 datatype abc =
   | A of () | B of (bool) | C of (int, double)
 ')
@@ -354,7 +354,7 @@ In this case, the tags assigned to #dyncode("A"), #dyncode("B"), and
 このとき最初の1つはコンストラクタに割り当てられたタグで、残りはコンストラクタに渡された引数です。
 例えば、次の関数を使うと #stacode("abc") に関連するコンストラクタに割り当てられたタグを調べることができます:
 
-#atscode('\
+#dats2xhtml('\
 fun
 abc2tag
 (x: abc): int = let
@@ -477,7 +477,7 @@ elsewhere.
 データ型は再帰的に定義できます。
 例えば、次の宣言は再帰的な定義された (算術整数式を表わす) データ型 #stacode("intexp") を導入しています:
 
-#atscode('\
+#sats2xhtml('\
 datatype
 intexp =
 | Int of int
@@ -490,7 +490,7 @@ intexp =
 別の例として、次のコードは2つの相互再帰的に定義されたデータ型 #stacode("intexp") と #stacode("boolexp")
 (それぞれ整数式とブール式を表わします) を導入しています:
 
-#atscode('\
+#sats2xhtml('\
 datatype
 intexp =
 | Int of int
@@ -512,7 +512,7 @@ boolexp =
 以下コードは、整数式とブール式の評価を表わす2つの相互再帰関数
 #dyncode("eval_intexp") を #dyncode("eval_boolexp") それぞれ実装しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 symintr eval
 //

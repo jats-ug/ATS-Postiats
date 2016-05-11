@@ -48,7 +48,7 @@ a:t@ype}{b:t@ype
 実際には、高階関数の関数引数はしばしば (無環境関数の代わりに) クロージャ関数です。
 例えば、次の高階関数 #dyncode("list_map_cloref") はその第2引数としてクロージャ関数を取ります:
 
-#atscode('\
+#sats2xhtml('\
 fun{
 a:t@ype}{b:t@ype
 } list_map_cloref{n:int}
@@ -90,7 +90,7 @@ a call to #dyncode("list_map_cloptr") returns.
 #dyncode("list_map_cloref") の変形として、次の高階関数 #dyncode("list_map_cloptr")
 はその第2引数として線形クロージャ関数を取ります:
 
-#atscode('\
+#sats2xhtml('\
 fun{
 a:t@ype}{b:t@ype
 } list_map_cloptr{n:int}
@@ -143,7 +143,7 @@ something safer but it would make programming more curbersome.
 
 #dyncode("list_map_cloptr") の典型的な使用例は次のようになります:
 
-#atscode('\
+#dats2xhtml('\
 fun foo{n:int}
 (
   x0: int, xs: list (int, n)
@@ -161,7 +161,7 @@ val () = cloptr_free ($UNSAFE.cast{cloptr(void)}(f))
 の本体で生成されて、使用された後に明示的に解放されていることに注意してください。
 関数 #dyncode("cloptr_free") は次のようなインターフェイスです:
 
-#atscode('\
+#sats2xhtml('\
 fun cloptr_free {a:t0p} (pclo: cloptr (a)): void
 ')
 
@@ -216,7 +216,7 @@ through garbage collection (GC).
 例えば、次のコードの関数 #dyncode("acker2") は関数 #dyncode("acker") のカリー化されたバージョンです。
 この関数は有名な (原始再帰でない再帰である) アッカーマン関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 acker(m:int, n:int): int =
 (
@@ -263,7 +263,7 @@ that automatically frees the linear closure-function generated from evaluating
 
 また #dyncode("acker") のカリー化されたバージョンを次のように定義することもできます:
 
-#atscode('\
+#dats2xhtml('\
 fun acker3 (m:int) = lam (n:int): int =<cloptr1> acker (m, n)
 ')
 

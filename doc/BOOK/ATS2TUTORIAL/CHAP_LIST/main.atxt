@@ -51,7 +51,7 @@ is automatically loaded by #command("atsopt").\
 関数的なリストは、コンストラクトした後で不変な単純な片方向リストです。
 次のデータ型宣言は、関数的なリストを表わす型 #stacode("list") を導入しています:
 
-#atscode('\
+#sats2xhtml('\
 //
 datatype
 list(a:t@ype, int) =
@@ -175,7 +175,7 @@ ATSLIB にはリストを生成する様々な関数があります。
 実際には、コンストラクタ #dyncode('list_nil') と #dyncode('list_cons') を直接使ってリストは生成されます。
 例えば次の関数 #dyncode("fromto") は、与えられた2つの整数の範囲にある整数群を持つリストを生成します:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 fromto
@@ -190,7 +190,7 @@ fromto
 リストを辿るには一般にパターンマッチを使います。
 例えば次のコードは、与えられたリストの長さを算出する関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:t@ype}
@@ -222,7 +222,7 @@ end // end of [list_length]
 このとき、#dyncode(".head") と #dyncode(".tail") はオーバーロードされたドット表記です。
 例えば、与えられたリストを左から fold する関数 #dyncode("list_foldleft") は次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a,b:t@ype}
@@ -239,7 +239,7 @@ list_foldleft
 
 また、与えられたリストを右から fold する関数 #dyncode("list_foldright") は次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a,b:t@ype}
@@ -323,7 +323,7 @@ end // end of [list_reverse]
 
 #dyncode("list_foldleft") の適用例として、次のコードは与えられたリストを逆順にする関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 {a:t@ype}
 list_reverse
@@ -338,7 +338,7 @@ list_foldleft<List0(a),a>
 
 このとき、型コンストラクタ #stacode("List0") は長さの規定されていないリストを表わします:
 
-#atscode('\
+#sats2xhtml('\
 typedef List0(a:t@ype) = [n:nat] list (a, n)
 ')
 
@@ -348,7 +348,7 @@ typedef List0(a:t@ype) = [n:nat] list (a, n)
 比較のために、#dyncode("list_reverse") の別実装を次に示します。
 この実装は #dyncode("list_reverse") が長さを保存するという不変条件を捕捉しています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 {a:t@ype}
 list_reverse
@@ -425,7 +425,7 @@ another list of length m+n.
 
 #dyncode("list_foldright") の適用例として、次のコードは与えられた2つのリストを連結する関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:t@ype}
@@ -440,7 +440,7 @@ list_append
 #dyncode("list_append") に割り当てられた型は、この関数が2つのリストを引数として取り、長さが規定されていないリストを返すことを示しています。
 比較のために、#dyncode("list_append") の別実装を次に示します:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:t@ype}
@@ -499,7 +499,7 @@ lists, then it is almost always a sure sign of poor programming style.
 読者は関数的なリストを、リストの長さより小さい自然数 i からリストの i 番目の要素をマップする連想配列として考えるかもしれません。
 次の関数 #dyncode("list_get_at") は、与えられた位置のリスト要素へのアクセスを表わしています:
 
-#atscode("\
+#dats2xhtml("\
 //
 fun
 {a:t@ype}
@@ -555,7 +555,7 @@ be chosen in place of functional list.\
 不変であるため、関数的なリストに対する破壊的な更新はできません。
 次の関数 #dyncode("list_set_at") は呼び出されると、与えられた位置にある要素を与えられた要素で置き換えたリストを生成します:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:t@ype}

@@ -144,7 +144,7 @@ with #dyncode("lazy_vt_force").\
 
 関数テンプレート #dyncode("lazy_vt_force") は次のようなインターフェイスを持ちます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:vt@ype} lazy_vt_force (lazyval: lazy_vt(a)): (a)
 ')
 
@@ -174,7 +174,7 @@ with #dyncode("lazy_vt_free").\
 
 関数 #dyncode("lazy_vt_free") は次のようなインターフェイスを持ちます:
 
-#atscode('\
+#sats2xhtml('\
 fun lazy_vt_free {a:vt@ype} (lazyval: lazy_vt(a)): void
 ')
 
@@ -213,7 +213,7 @@ implemented in #myatscodelink("prelude/DATS/stream_vt.dats", "prelude/DATS/strea
 #stacode("stream_vt_con") と #stacode("stream_vt")
 が相互再帰的に宣言されています:
 
-#atscode("\
+#sats2xhtml("\
 datavtype
 stream_vt_con (a:vt@ype+) =
   | stream_vt_nil of ((*void*)) | stream_vt_cons of (a, stream_vt(a))
@@ -276,7 +276,7 @@ val thePrimes = sieve(from(2))
 次のコードは、全ての素数が線形ストリームとしてコンストラクトされるエラトステネスの篩
 (Sieve of Eratosthenes) を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 from (n: int): stream_vt (int) =
@@ -336,7 +336,7 @@ the call to #dyncode("stream_vt_filter_cloptr").
 
 関数テンプレート #dyncode("stream_vt_filter_cloptr") は次のインターフェイスを持ちます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t0p}
 stream_vt_filter_cloptr
   (xs: stream_vt (a), pred: (&a) -<cloptr> bool): stream_vt (a)

@@ -106,7 +106,7 @@ supposed to have been declared previously.
 キーワード #keycode("fun") は再帰関数定義の開始に使います。
 例えば、次のコードは再帰関数の定義です:
 
-#atscode('\
+#dats2xhtml('\
 fun
 fact(x: int): int =
   if x > 0 then x * fact(x-1) else 1
@@ -118,19 +118,19 @@ fact(x: int): int =
 けれども、非再帰として定義されていることを明示的に示す必要があるのであれば、キーワード #keycode("fn") を使うことができます。
 例えば、非再帰関数の定義は次のように与えられます:
 
-#atscode('\
+#dats2xhtml('\
 fn square(x: int): int = x * x
 ')
 
 上記の関数は次のような名前とラムダ式を繋ぐ束縛にコンパイラによって変換されます:
 
-#atscode('\
+#dats2xhtml('\
 val square = lam (x: int): int => x * x
 ')
 
 別の例として、次のコードでは #dyncode("fact") が二度現われて、2つの別個の関数を差していることに注意してください:
 
-#atscode('\
+#dats2xhtml('\
 fn
 fact(x: int): int =
   if x > 0 then x * fact(x-1) else 1
@@ -199,7 +199,7 @@ with a fixed-point expression (or simply fix-expression for short). For instance
 再帰関数は再帰的な値としても定義できます。
 例えば、上記で定義した再帰関数 #dyncode("fact") は次のように定義することもできます:
 
-#atscode('\
+#dats2xhtml('\
 val
 rec
 fact : int -> int =
@@ -213,7 +213,7 @@ lam (x) =>
 実際、#dyncode("fact") の前者の定義は後者にコンパイラによって変換されます。
 もちろん、再帰を実装するのに参照を使うこともできます:
 
-#atscode('\
+#dats2xhtml('\
 val
 fact = ref<int->int>($UNSAFE.cast(0))
 val () =
@@ -226,7 +226,7 @@ val () =
 しかし、これは私の推奨するスタイルではありません。
 不動点式として #dyncode("fact") を定義するまた別の方法を紹介します:
 
-#atscode('\
+#dats2xhtml('\
 val
 fact =
 fix f(x: int): int =>
@@ -282,7 +282,7 @@ curiosity (instead of a meaningful practice).\
 相互再帰関数を定義するためには、関数定義の連結にキーワード #keycode("and") を使います。
 例えば、次のコードは2つの関数 #dyncode("isevn") と #dyncode("isodd") を相互再帰的に定義しています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 isevn(x: int): bool =
   if x > 0 then isodd(x-1) else true
@@ -293,7 +293,7 @@ isodd(x: int): bool =
 
 読者の推測する通りですが、上記のコードは (2つの相互再帰値を定義するために) 次のような形にコンパイラによって変換されます:
 
-#atscode('\
+#dats2xhtml('\
 val
 rec
 isevn : int -> bool =
@@ -363,13 +363,13 @@ may replace #keycode("implement") with #keycode("implmnt").
 しばしば、ある場所で関数に対するインターフェイス (すなわち型) を宣言し、そしてその定義 (もしくは実装) を別の場所で与えることがあります。
 例えば、はじめに次のような宣言を導入します:
 
-#atscode('\
+#dats2xhtml('\
 extern fun fact (x: int): int
 ')
 
 その後、上記の宣言に一致する #dyncode("fact") を実装することができます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 fact (x) =
   if x > 0 then x * fact(x-1) else 1

@@ -96,16 +96,15 @@ needs to implement such a function.
 型  #stacode("elt_t") の値を収集したいとしましょう。
 次のコードは、ATSLIB/libats での平衡木を用いた集合に対する生成と操作を表わすインターフェイスを本質的に作っています:
 
-#atscode('\
-staload
-FS = "libats/ML/SATS/funset.sats"
-//
+#dats2xhtml('\
 local
 //
 typedef elt = elt_t
 //
+staload
+FS = "libats/ML/SATS/funset.sats"
 implement
-$FS.compare_elt_elt<elt_t>(x, y) = compare(x, y)
+$FS.compare_elt_elt<elt>(x, y) = compare(x, y)
 //
 in (* in-of-local *)
 
@@ -207,13 +206,13 @@ val-false = myset.remove(1) // not actually removed
 #stacode("elt_t") が #stacode("int") であると仮定します。
 コードの次の行では、要素を含まない (整数の) 関数的な集合を生成しています:
 
-#atscode('\
+#dats2xhtml('\
 val myset = myfunset_nil()
 ')
 
 与えられた集合に要素を挿入する関数には次の型が割り当てられます:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun myfunset_insert(xs: &myset >> _, x0: elt): bool
 //
@@ -226,7 +225,7 @@ fun myfunset_insert(xs: &myset >> _, x0: elt): bool
 そうでない場合、(失敗を表わす) #dyncode("true") が返ります。
 次の数行のコードは、関数的な集合に対する挿入操作を示しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 var myset = myset
 //
@@ -242,7 +241,7 @@ val-(true) = myset.insert(1) // not actually inserted
 
 デバッグのために、与えられた集合中の値を印字したいと思うかもしれません:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () = fprintln! (stdout_ref, "myset = ", myset)
 //
@@ -251,7 +250,7 @@ val () = fprintln! (stdout_ref, "myset = ", myset)
 このとき、シンボル #dyncode("fprint") は #dyncode("fprint_myset") でオーバーロードされています。
 与えられた集合から要素を削除する関数には次の型が割り当てられます:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun myfunset_remove(xs: &myset >> _, x0: elt): bool
 //
@@ -263,7 +262,7 @@ fun myfunset_remove(xs: &myset >> _, x0: elt): bool
 そうでない場合、#dyncode("false") が返ります。
 次の数行のコードは、関数的な集合に対する削除操作を示しています:
 
-#atscode('\
+#dats2xhtml('\
 val-true = myset.remove(0) // removed
 val-false = myset.remove(0) // not actually removed
 val-true = myset.remove(1) // removed
@@ -349,17 +348,16 @@ needs to implement such a function.
 型 #stacode("key_t") のキーから型 #stacode("itm_t") の要素へマップを表わすのに、写像が必要だと考えます。
 次のコードは本質的に、ATSLIB/libats にて平衡木で実装された写像に対する生成と操作のインターフェイスを作っています:
 
-#atscode('\
-staload
-FM = "libats/ML/SATS/funmap.sats"
-//
+#dats2xhtml('\
 local
 //
 typedef
 key = key_t and itm = itm_t
 //
+staload
+FM = "libats/ML/SATS/funmap.sats"
 implement
-$FM.compare_key_key<key_t>(x, y) = compare(x, y)
+$FM.compare_key_key<key>(x, y) = compare(x, y)
 //
 in (* in-of-local *)
 
@@ -470,13 +468,13 @@ excepting for returning the removed item.
 #stacode("key_t") が #stacode("string") で #stacode("itm_t") が #stacode("int") であると仮定します。
 コードの次の行では、要素を含まない (整数の) 関数的な写像を生成しています:
 
-#atscode('\
+#dats2xhtml('\
 val mymap = myfunmap_nil()
 ')
 
 次の数行では、キー/要素のペアを #dyncode("mymap") に挿入しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 var mymap = mymap
 //
@@ -499,7 +497,7 @@ val-~Some_vt(2) = mymap.insert("c", 3)
 そうでない場合、なにも要素は返りません。
 予想されることですが、この時点で #dyncode("mymap") のサイズは 3 になります:
 
-#atscode('\
+#dats2xhtml('\
 val () = assertloc (mymap.size() = 3)
 ')
 
@@ -507,7 +505,7 @@ val () = assertloc (mymap.size() = 3)
 この関数は与えられた写像に保管されたキー/要素のペアの数を返します。
 デバッグのために、与えられた写像中のキー/要素ペアを印字したいと思うかもしれません:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () = fprintln! (stdout_ref, "mymap = ", mymap)
 //
@@ -516,7 +514,7 @@ val () = fprintln! (stdout_ref, "mymap = ", mymap)
 このとき、シンボル #dyncode("fprint") は #dyncode("fprint_mymap") でオーバーロードされています。
 次の2行のコードは、与えられたキーで写像を検索する方法を示しています:
 
-#atscode('\
+#dats2xhtml('\
 val-~None_vt() = mymap.search("")
 val-~Some_vt(1) = mymap.search("a")
 ')
@@ -525,7 +523,7 @@ The dot-symbol #dyncode(".search") is overloaded with a function of the name #dy
 which returns the item associated with a given key if it is found.
 The next few lines of code remove some key/item pairs from #dyncode("mymap"):
 
-#atscode('\
+#dats2xhtml('\
 //
 val-true = mymap.remove("a")
 val-false = mymap.remove("a")

@@ -53,7 +53,7 @@ ATS interacts with languages that support object-oriented programming.\
 
 多くのプログラミング言語では、一般的にいわゆるドット表記は与えられたタプル値、レコード値、オブジェクト値のフィールドを選択するために使われます。ATS では、パターンマッチもしくはドット表記の使用によってフィールドを選択することができます。例えば、次のコードはフラットなタプルとボックス化タプルをコンストラクトしています。そして、それらの構成要素を選択するためにドット表記を使っています:
 
-#atscode('\
+#dats2xhtml('\
 //
 val tup_flat = @("a", "b")
 val tup_boxed = $tup("a", "b")
@@ -133,7 +133,7 @@ a function that returns the void-value. In the above example, both
 
 オーバーロードにおけるドット表記の例として、2次元空間の点を表わす非線形抽象型 #stacode("point") を導入し、さらに関連する関数群を宣言してみましょう:
 
-#atscode('\
+#dats2xhtml('\
 //
 abstype point = ptr // boxed
 //
@@ -154,7 +154,7 @@ and point_set_y (p: point, x: double): void
 
 関数 #dyncode("point_get_x") と #dyncode("point_get_y") を呼び出すことで、与えられた点の X 座標と Y 座標をそれぞれ得ることができます。関数 #dyncode("point_set_x") と #dyncode("point_set_y") を呼び出すことで、与えられた点の X 座標と Y 座標をそれぞれ設定できます。ドット記号 #dyncode(".x") と #dyncode(".y") を導入し、それらを次のような関数名でオーバーロードします:
 
-#atscode('\
+#dats2xhtml('\
 symintr .x .y
 overload .x with point_get_x
 overload .x with point_set_x
@@ -164,10 +164,10 @@ overload .y with point_set_y
 
 すると次のコードに示すように、対応する get 関数と set 関数の呼び出しにドット表記を使うことができます:
 
-#atscode('\
+#dats2xhtml('\
 val p0 = point_make (1.0, ~1.0)
-val x0 = p0.x // point_get_x (p0)
-and y0 = p0.y // point_get_y (p0)
+val x0 = p0.x() // point_get_x (p0)
+and y0 = p0.y() // point_get_y (p0)
 val () = p0.x := y0 // point_set_x (p0, y0)
 and () = p0.y := x0 // point_set_y (p0, x0)
 ')
@@ -212,7 +212,7 @@ increase that count by a given integer value.
 
 カウンタオブジェクトを表わす線形抽象型 #stacode("counter") と関連するいくつかの関数を導入しましょう:
 
-#atscode('\
+#dats2xhtml('\
 //
 absvtype counter = ptr
 //
@@ -280,34 +280,28 @@ dot-notation.
 
 次のようなオーバーロード宣言を導入したとしましょう:
 
-#atscode('\
+#dats2xhtml('\
 //
 overload .get with counter_get
 overload .incby with counter_incby
 //
 ')
 
-次のコードは型検査に成功すると期待するかもしれません:
+期待されたるように、これで次のように  #dyncode("counter_get") を呼び出すことができます:
 
-#atscode('\
-val n0 = c0.get
-')
-
-しかしこの場合、#dyncode("c0") が線形値であるために型検査に失敗します。その代わり、#dyncode("c0") に対して #dyncode("counter_get") を呼び出すために、関数呼び出しとして #dyncode("c0.get") を使わなければなりません:
-
-#atscode('\
+#dats2xhtml('\
 val n0 = c0.get() // = counter_get(c0)
 ')
 
 同様に、#dyncode("c0") に保管されているカウンタを 1 増やすために、次のように #dyncode("counter_incby") を呼び出すことができます:
 
-#atscode('\
+#dats2xhtml('\
 val () = c0.incby(1) // = counter_incby(c0, 1)
 ')
 
 もし (非線形の) point の例に戻るのであれば、次のコードもまた型検査に成功します:
 
-#atscode('\
+#dats2xhtml('\
 val p0 = point_make (1.0, ~1.0)
 val x0 = p0.x() // point_get_x (p0)
 and y0 = p0.y() // point_get_y (p0)

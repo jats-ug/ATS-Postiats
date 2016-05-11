@@ -79,7 +79,7 @@ made to simplify programming with hashtables.
 型 #stacode("key_t") のキーから型 #stacode("itm_t") の要素へマップする写像が必要だと考えます。
 次のコードは本質的に、ATSLIB/libats でのハッシュテーブル実装を用いて、写像の生成と操作を表わすインターフェイスを作っています:
 
-#atscode('\
+#dats2xhtml('\
 local
 
 typedef
@@ -250,7 +250,7 @@ myhashtbl_foreach_cloref
 #stacode("key_t") は #stacode("string")、 #stacode("itm_t") は #stacode("int") であると仮定します。
 次のコードの行は初期容量が 1000 のハッシュテーブルを生成しています:
 
-#atscode('\
+#dats2xhtml('\
 val mymap = myhashtbl_make_nil(1000)
 ')
 
@@ -260,7 +260,7 @@ val mymap = myhashtbl_make_nil(1000)
 実際にリサイズが必要な場合も、自動的に行なわれます。
 次の数行では、いくつかのキー/要素ペアを #dyncode("mymap") に挿入します:
 
-#atscode('\
+#dats2xhtml('\
 //
 val-~None_vt() = mymap.insert("a", 0)
 val-~Some_vt(0) = mymap.insert("a", 1)
@@ -279,7 +279,7 @@ val-~Some_vt(2) = mymap.insert("c", 3)
 そうでない場合、要素は何も返りません。
 予想されることですが、#dyncode("mymap") のサイズはこの時点で 3 になります:
 
-#atscode('\
+#dats2xhtml('\
 val () = assertloc (mymap.size = 3)
 ')
 
@@ -287,7 +287,7 @@ val () = assertloc (mymap.size = 3)
 この関数は与えれられたハッシュテーブル内に保管されているキー/要素ペアの個数をを返します。
 デバッグのために、与えられたハッシュテーブル中のキー/要素ペアを印字したいと思うかもしれません:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () =
   fprintln! (stdout_ref, "mymap = ", mymap)
@@ -297,7 +297,7 @@ val () =
 このとき、シンボル #dyncode("fprint") は #dyncode("fprint_myhashtbl") でオーバーロードされています。
 次の2行のコードは、ハッシュテーブルに対して与えられたキーを検索する方法を示しています:
 
-#atscode('\
+#dats2xhtml('\
 val-~None_vt() = mymap.search("")
 val-~Some_vt(1) = mymap.search("a")
 ')
@@ -305,7 +305,7 @@ val-~Some_vt(1) = mymap.search("a")
 ドット表記 #dyncode(".search") は関数 #dyncode("myhashtbl_search") でオーバーロードされていて、この関数はもし見つかれば与えられたキーに関連した要素を返します。
 次の数行のコードは #dyncode("mymap") からキー/要素を削除しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 val-true = mymap.remove("a")
 val-false = mymap.remove("a")
@@ -322,7 +322,7 @@ val-~Some_vt(3) = mymap.takeout("c")
 でオーバーロードされていて、この関数は削除した要素を返すことを除いて #dyncode("myhashtbl_remove") と同じです。
 次の数行のコードは、ハッシュテーブルに対するあまり一般的に使われない関数の使用例です:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () = mymap.insert_any("a", 0)
 val () = mymap.insert_any("b", 1)
@@ -345,7 +345,7 @@ val () = assertloc (mymap.size = 0)
 前者はハッシュテーブルを無変更で保持するのに対して、後者はハッシュテーブルを空にします。
 最後に、与えられたハッシュテーブル内の全てのキー/要素ペアに対するイテレータのインターフェイスを次に示します:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun
@@ -359,7 +359,7 @@ myhashtbl_foreach_cloref
 
 例として、次のコードは与えられたハッシュテーブル内のキー/要素ペア全てを印字します:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () =
 myhashtbl_foreach_cloref

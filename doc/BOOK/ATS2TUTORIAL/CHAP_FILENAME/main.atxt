@@ -107,7 +107,7 @@ file. It is entirely possible to replace a static file with a dynamic one.
 例えば、次の構文では静的なファイルにおいて #dyncode("pi") という名前の値と
 #dyncode("area_of_circle") という名前の関数のインターフェイスと型を宣言しています:
 
-#atscode("\
+#sats2xhtml("\
 val pi : double
 fun area_of_circle (radius: double): double
 ")
@@ -115,7 +115,7 @@ fun area_of_circle (radius: double): double
 #emphasis("動的な")
 ファイルにおいて同じインターフェイスを宣言する際には、次のような少し異なる構文が用いられます:
 
-#atscode("\
+#dats2xhtml("\
 extern val pi : double
 extern fun area_of_circle (radius: double): double
 ")

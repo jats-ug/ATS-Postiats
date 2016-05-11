@@ -45,7 +45,7 @@ C言語と同様に、#emphasis("\\\#include") を使うことで ATS コード�
 例えば、次の行は #emphasis("foobar") という名前のファイルをインクルードしています。
 すなわち、この行はファイル #emphasis("foobar") の中身で置き換えられます:
 
-#atscode('\
+#dats2xhtml('\
 \#include "foobar.hats"
 ')
 

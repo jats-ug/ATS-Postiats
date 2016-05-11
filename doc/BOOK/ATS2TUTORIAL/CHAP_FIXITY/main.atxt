@@ -75,7 +75,7 @@ ATS におけるそれぞれの識別子には次の結合性の内1つを割り
 しばしば、結合性が割り当てられた識別子を #emphasis("演算子") と呼びます。
 例えば、次の構文で宣言している #dyncode("+") と #dyncode("-") は優先順位 50 の中置演算子です:
 
-#atscode("\
+#sats2xhtml("\
 infixl 50 + -
 ")
 
@@ -140,7 +140,7 @@ value of #dyncode("opr2") is that of #dyncode("opr1") minus 10.\
 また、#dyncode("iadd"), #dyncode("fadd"), #dyncode("padd"), #dyncode("uadd")
 が #dyncode("+") 演算子と等しい優先順位を持つ左結合中置演算子であることを宣言するのに次の構文を使うことができます:
 
-#atscode("\
+#sats2xhtml("\
 infixl (+) iadd fadd padd uadd
 ")
 
@@ -149,7 +149,7 @@ infixl (+) iadd fadd padd uadd
 例えば、次の構文は #dyncode("opr2") が左結合中置演算子で、その優先順位は #dyncode("opr1")
 の優先順位に 10 加えたものであると宣言しています:
 
-#atscode("\
+#sats2xhtml("\
 infixl (opr1 + 10) opr2
 ")
 
@@ -214,14 +214,14 @@ implement !! (x) = if x >= 2 then x * (x - 2)!! else 1
 例えば、次の構文は #dyncode("~") と #dyncode("?") をそれぞれ優先順位
 61 の前置演算子と、優先順位 69 の後置演算子として宣言しています:
 
-#atscode("\
+#sats2xhtml("\
 prefix 61 ~
 postfix 69 ?
 ")
 
 例として、次の3行プログラムでは後置演算子を使っています:
 
-#atscode('\
+#dats2xhtml('\
 postfix (imul + 10) !!
 extern fun !! (x: int): int
 implement !! (x) = if x >= 2 then x * (x - 2)!! else 1
@@ -259,7 +259,7 @@ Note that #dyncode("nonfix") is a keyword in ATS.
 #dyncode("iadd"), #dyncode("fadd"), #dyncode("padd"), #dyncode("uadd")
 に対して結合性設定を無効化します:
 
-#atscode('nonfix iadd fadd padd uadd')
+#sats2xhtml('nonfix iadd fadd padd uadd')
 
 #dyncode("nonfix") は ATS のキーワードであることに注意してください。
 

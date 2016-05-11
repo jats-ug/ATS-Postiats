@@ -178,7 +178,7 @@ multiple call frames. If not, then the use of exception may be questionable.
 
 リストの中から与えられた述語を満たす一番右の要素を見つける関数を実装している次のコードを見てみましょう:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun{a:t@ype}
 list_find_rightmost
@@ -220,7 +220,7 @@ xs の最後の要素だけが述語 pred を満たすと仮定しましょう�
 呼び出しへ戻す前に、これらのフレームを#emphasis("一つずつ")ほどいてやらねばなりません。
 次の例外を使った実装 #dyncode("list_find_rightmost") ではこの非効率な形を取り除いています:
 
-#atscode('
+#dats2xhtml('
 implement{a}
 list_find_rightmost
   (xs, pred) = let

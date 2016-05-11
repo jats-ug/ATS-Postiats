@@ -53,7 +53,8 @@ which is automatically loaded by #command("atsopt").\
 
 ATS における線形型のリストは線形リストとも呼ばれ、本質的にはC言語における片方向リストに対応します。
 次の線形データ型宣言は、線形リストを表わす線形型 #stacode("list_vt") を導入しています:
-#atscode('\
+
+#sats2xhtml('\
 //
 datavtype
 list_vt(a:vt@ype, int) =
@@ -107,7 +108,7 @@ required to stay unchanged.
 
 次の関数 #dyncode("list_vt_length") は、読み込みのみ許された線形リストをあつかう典型的な方法を示しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:vt@ype}
@@ -216,7 +217,7 @@ stored in the field of the node reserved for the next node.
 
 次の関数 #dyncode("list_vt_foreach") は、線形リストに保管された要素を変更する典型的な方法を示しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:vt@ype}
@@ -245,7 +246,7 @@ case+ xs of
 #dyncode("xs") の型は、割り当てられていた元と fold が終わった後で異なる可能性があることに注意してください:
 次のコードはそのような例です:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:vt@ype}
@@ -326,7 +327,7 @@ referred to as #dyncode("xs").
 
 次の関数 #dyncode("list_vt_free") は、与えられた非線形の要素を含む線形リストを解放します:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 {a:vt@ype}
