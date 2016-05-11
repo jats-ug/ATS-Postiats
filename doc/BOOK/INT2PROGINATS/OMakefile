@@ -10,7 +10,7 @@ DSL=./mydocbook.dsl
 .PHONY: clean publish
 .DEFAULT: HTML_JA/index.html
 
-HTML_JA/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
+HTML_JA/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES) ATEXT/bin/myatexting
 	rm -rf build_ja
 	mkdir build_ja
 	iconv -f UTF8 -t EUCJP main_ja.db > build_ja/main_ja.db
@@ -22,8 +22,10 @@ HTML_JA/index.html: main_ja.db bookinfo_ja.db preface.db $(CHAP_DB_FILES)
 	jw -b html --parser $(JADE) --dsl $(DSL) --output HTML_EUC build_ja/main_ja.db
 	sh iconv_dir.sh EUCJP UTF8 HTML_EUC HTML_UTF8
 	sh addchaset_dir.sh UTF-8 HTML_UTF8 HTML_JA
+	cd HTML && cp -r Makefile synhilit.dats ../HTML_JA/
 	mkdir -p HTML_JA/assets
 	cp HTML/assets/INT2PROGINATS-BOOK.css HTML_JA/assets/
+	make -C HTML_JA synhilit
 	cd HTML_JA && ln -sf book1.html index.html
 
 preface.db: preface.atxt
@@ -32,6 +34,9 @@ preface.db: preface.atxt
 	  -o preface.exe preface_atxt.dats -L$(PATSHOME)/utils/libatsynmark -latsynmark -latsdoc
 	./preface.exe > $@
 	rm -f preface.exe preface_atxt.dats preface_atxt.txt
+
+ATEXT/bin/myatexting: ATEXT/myatexting.dats
+	make -C ATEXT myatexting
 
 .SUBDIRS: $(glob CHAP_*/) .
 	%.db: %.atxt
@@ -45,9 +50,10 @@ preface.db: preface.atxt
 publish: HTML_JA/index.html
 	mkdir -p $(HOME)/doc/jats-ug.github.io/doc/ATS2
 	rm -rf $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
-	cp -rf HTML_JA $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
+	mkdir $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS
+	cp -rf HTML_JA/*.html HTML_JA/assets $(HOME)/doc/jats-ug.github.io/doc/ATS2/INT2PROGINATS/
 
 clean:
 	rm -f preface.db $(CHAP_DB_FILES)
 	rm -rf HTML_JA HTML_EUC HTML_UTF8
-	make clean
+	make cleanall
