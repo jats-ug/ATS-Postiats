@@ -334,5 +334,6 @@ doc/BOOK/*/TEMP
 doc/EXAMPLE/*/*/main.html
 doc/EXAMPLE/*/*/main_atxt.dats
 doc/EXAMPLE/*/*/main_atxt.txt
+myatexting
 
 ###### end of [.gitignore] ######
