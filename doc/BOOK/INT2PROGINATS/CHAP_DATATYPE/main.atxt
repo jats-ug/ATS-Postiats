@@ -63,7 +63,7 @@ great convenience in programming but also clarity in code.\
 それらのコンストラクタはデータ型の値をコンストラクトしなければなりません。
 例として次の構文は #stacode("intopt") という名前のデータ型を宣言しています:
 
-#atscode("\
+#sats2xhtml("\
 datatype intopt =
   | intopt_none of () | intopt_some of (int)
 // end of [intopt]
@@ -565,7 +565,7 @@ that #dyncode("Tuesday") is something like #dyncode("Monday+1").\
 最も簡単なデータ型は有限個の定数を列挙したものです。
 例えば、次の具体的な構文は #stacode("wday") という名前のデータ型を導入します:
 
-#atscode("\
+#sats2xhtml("\
 datatype wday =
   | Monday of ()
   | Tuesday of ()
@@ -636,7 +636,7 @@ run-time: If a value of the type #stacode("wday") does not match either of
 
 次のコードでは、与えられた #stacode("wday") 型の値が平日かどうか検査する関数を実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun isWeekday
   (x: wday): bool = case x of
   | Monday() => true // the first bar (|) is optional
@@ -657,7 +657,7 @@ fun isWeekday
 このパターンはどのような値にもマッチするからです。
 #dyncode("isWeekday") のよりよい実装は次のようなものでしょう:
 
-#atscode("\
+#dats2xhtml("\
 fun isWeekday
   (x: wday): bool = case x of
   | Saturday() => false | Sunday() => false | _ => true
@@ -755,7 +755,7 @@ programming language like C.
 再帰的に定義されたデータ型 (もしくは再帰的データ型と略します) とは、そのコンストラクタがそのデータ型自身の値に適用するような値を作ることです。
 例えば次に宣言するデータ型 #stacode("charlst") は再帰的です:
 
-#atscode("\
+#sats2xhtml("\
 datatype charlst =
   | charlst_nil of () | charlst_cons of (char, charlst)
 // end of [charlst]
@@ -771,8 +771,9 @@ charlst_cons('a', charlst_cons('b', charlst_cons('c', charlst_nil())))
 
 与えられたリストの長さを算出する関数 #dyncode("charlst_length") を次のように定義できます:
 
-#atscode("\
-fun charlst_length
+#dats2xhtml("\
+fun
+charlst_length
   (cs: charlst): int = case cs of
   | charlst_cons (_, cs) => 1 + charlst_length (cs)
   | charlst_nil () => 0
@@ -783,8 +784,9 @@ fun charlst_length
 整数の加法の交換法則と結合法則を使って、
 #dyncode("charlst_length") を次のように末尾再帰で実装することができます:
 
-#atscode("\
-fun charlst_length
+#dats2xhtml("\
+fun
+charlst_length
   (cs: charlst): int = let
 //
 fun loop
@@ -876,8 +878,9 @@ ATS.\
 #para("\
 次のコードは空でない文字リストの最後の文字を見つけるような関数の実装です:
 
-#atscode("\
-fun charlst_last
+#dats2xhtml("\
+fun
+charlst_last
   (cs: charlst): char =
 (
   case cs of
@@ -933,8 +936,9 @@ written as #dyncode("charlst_nil _").\
 
 関数 #dyncode("charlst_last") はまた次のように実装することもできます:
 
-#atscode("\
-fun charlst_last
+#dats2xhtml("\
+fun
+charlst_last
   (cs: charlst): char =
 (
   case cs of
@@ -993,8 +997,9 @@ the keyword #dyncode("val") should be replaced with #dyncode("val-").\
 のように let 式で書くこともできます:
 例えば、関数 #dyncode("charlst_last") は次のような別の実装をすることができます:
 
-#atscode("\
-fun charlst_last
+#dats2xhtml("\
+fun
+charlst_last
   (cs: charlst): char = let
   val charlst_cons (c, cs1) = cs in case+ cs1 of
   | charlst_nil () => c | charlst_cons _ => charlst_last (cs1)
@@ -1363,7 +1368,7 @@ case+ e0 of
 
 整数式を表現するために、次のようなデータ型 #stacode("IEXP") を宣言しましょう:
 
-#atscode("\
+#sats2xhtml("\
 datatype IEXP =
   | IEXPcst of int // constants
   | IEXPneg of (IEXP) // negative
@@ -1385,15 +1390,19 @@ IEXPadd(IEXPneg(IEXPcst(1)), IEXPmul(IEXPsub(IEXPcst(2), IEXPcst(3)), IEXPcst(4)
 文字列で書かれた整数式を抽象構文木へ変換することを構文解析と呼びますが、ここでは取り扱いません。
 次に定義する関数 #dyncode("eval_iexp") は整数式の抽象構文木を取り、式の値である整数を返します:
 
-#atscode("\
-fun eval_iexp (e0: IEXP): int = case+ e0 of
-  | IEXPcst (n) => n
-  | IEXPneg (e) => ~eval_iexp (e)
-  | IEXPadd (e1, e2) => eval_iexp (e1) + eval_iexp (e2)
-  | IEXPsub (e1, e2) => eval_iexp (e1) - eval_iexp (e2)
-  | IEXPmul (e1, e2) => eval_iexp (e1) * eval_iexp (e2)
-  | IEXPdiv (e1, e2) => eval_iexp (e1) / eval_iexp (e1)
-// end of [eval_iexp]
+#dats2xhtml("\
+fun
+eval_iexp
+  (e0: IEXP): int =
+(
+case+ e0 of
+| IEXPcst (n) => n
+| IEXPneg (e) => ~eval_iexp (e)
+| IEXPadd (e1, e2) => eval_iexp (e1) + eval_iexp (e2)
+| IEXPsub (e1, e2) => eval_iexp (e1) - eval_iexp (e2)
+| IEXPmul (e1, e2) => eval_iexp (e1) * eval_iexp (e2)
+| IEXPdiv (e1, e2) => eval_iexp (e1) / eval_iexp (e1)
+) (* end of [eval_iexp] *)
 ")
 ")#comment("para")
 ")
@@ -1496,7 +1505,7 @@ case+ e0 of
 これは、ブール式を表現するデータ型 #stacode("BEXP") も宣言する必要があることを示しています。
 その上 #stacode("IEXP") と #stacode("BEXP") は次のように相互再帰的に宣言されるべきです:
 
-#atscode("\
+#sats2xhtml("\
 datatype IEXP =
   | IEXPcst of int // integer constants
   | IEXPneg of (IEXP) // negative
@@ -1524,10 +1533,13 @@ and BEXP = // [and] for combining datatype declarations
 明らかに、整数式を評価する時にはブール式も評価する必要があります。
 次の2つの関数 #dyncode("eval_iexp") と #dyncode("eval_bexp") はそれぞれ整数式とブール式の評価のための関数で、予想される通りですが相互再帰で定義されています:
 
-#atscode("\
-fun eval_iexp
-  (e0: IEXP): int =
+#dats2xhtml("\
+fun
+eval_iexp
 (
+  e0: IEXP
+) : int = (
+//
 case+ e0 of
 | IEXPcst n => n
 | IEXPneg (e) => ~eval_iexp (e)
@@ -1542,11 +1554,15 @@ case+ e0 of
   (
     eval_iexp (if eval_bexp (e_test) then e_then else e_else)
   ) // end of [IEXPif]
+//
 ) (* end of [eval_iexp] *)
 
-and eval_bexp
-  (e0: BEXP): bool =
+and
+eval_bexp
 (
+  e0: BEXP
+) : bool = (
+//
 case+ e0 of
 | BEXPcst b => b
 | BEXPneg (e) => ~eval_bexp (e)
@@ -1560,6 +1576,7 @@ case+ e0 of
 | BEXPlte (e1, e2) => eval_iexp (e1) <= eval_iexp (e2)
 | BEXPgt (e1, e2) => eval_iexp (e1) > eval_iexp (e2)
 | BEXPgte (e1, e2) => eval_iexp (e1) >= eval_iexp (e2)
+//
 ) (* end of [eval_bexp] *)
 ")
 ")#comment("para")

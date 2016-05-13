@@ -141,22 +141,28 @@ the parameters #stacode("a") and #stacode("b") are replaced with
 関数テンプレートは関数を実装するコードテンプレートです。
 次のコードは、値をスワップする2つの関数を定義しています:
 
-#atscode("\
+#dats2xhtml("\
+//
 typedef charint = (char, int)
 typedef intchar = (int, char)
+//
 fun swap_char_int (xy: charint): intchar = (xy.1, xy.0)
 fun swap_int_char (xy: intchar): charint = (xy.1, xy.0)
+//
 ")
 
 型を無視すると #dyncode("swap_char_int") と #dyncode("swap_int_char") の中身は同一です。
 この種類のコードの重複を防ぐために、まずはじめに関数テンプレート #dyncode("swap") を次のように実装し、それから #dyncode("swap_char_int") と #dyncode("swap_int_char") を #dyncode("swap") を元に実装します:
 
-#atscode("\
+#dats2xhtml("\
+//
 fun{
 a,b:t@ype
 } swap (xy: (a, b)): (b, a) = (xy.1, xy.0)
+//
 fun swap_char_int (xy: charint): intchar = swap<char,int> (xy)
 fun swap_int_char (xy: intchar): charint = swap<int,char> (xy)
+//
 ")
 
 関数テンプレートは ATS において第一級の値ではないことに注意すべきです:
@@ -203,14 +209,14 @@ no space is allowed between #dyncode("&gt;") and #dyncode("&lt;").\
 
 次のような #dyncode("swap") の異なるスタイルの実装を見てみましょう:
 
-#atscode("\
+#dats2xhtml("\
 fun{a:t@ype}{b:t@ype} swap2 (xy: (a, b)): (b, a) = (xy.1, xy.0)
 ")
 
 上記の実装ではテンプレートパラメータは同時にではなく連続して与えられています。
 次のコードは #dyncode("swap2") をインスタンス化する方法を示しています:
 
-#atscode("\
+#dats2xhtml("\
 fun swap_char_int (xy: charint): intchar = swap2<char><int> (xy)
 fun swap_int_char (xy: intchar): charint = swap2<int><char> (xy)
 ")
@@ -257,21 +263,23 @@ that adds 1 to its integer argument and then multiplies the result by 2.\
 
 別の例として、(クロージャ) 関数を作る高階関数テンプレートを次に示します:
 
-#atscode("\
+#dats2xhtml("\
+//
 typedef
 cfun (t1:t@ype, t2:t@ype) = t1 -<cloref1> t2
-
+//
 fun{
 a,b,c:t@ype
 } compose (
   f: cfun (a, b), g: cfun (b, c)
 ) :<cloref1> cfun (a, c) = lam x => g(f(x))
-
-val plus1 = lam (x:int): int =<cloref> x+1
-val times2 = lam (x:int): int =<cloref> x*2
-
-val f_2x_1 = compose<int,int,int> (times2, plus1)
-val f_2x_2 = compose<int,int,int> (plus1, times2)
+//
+val inc_by_1 = lam (x:int): int =<cloref> x+1
+val mul_by_2 = lam (x:int): int =<cloref> x*2
+//
+val f_2x_1 = compose<int,int,int> (mul_by_2, inc_by_1)
+val f_2x_2 = compose<int,int,int> (inc_by_1, mul_by_2)
+//
 ")
 
 値 #dyncode("f_2x_1") は、整数の引数に2を掛けた後に1を足す関数を表わしています。
@@ -380,14 +388,14 @@ there is no assumption made about the size of an integer value of the type
 けれども、前者は ATS における第一級の値ですが後者は違います。
 例として次に定義する関数 #dyncode("swap_boxed") は多相的です:
 
-#atscode("\
+#dats2xhtml("\
 fun swap_boxed{a,b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 ")
 
 型変数 #stacode("a") と #stacode("b") はしばしば静的引数と呼ばれ、 #dyncode("xy") は動的引数と呼ばれます。
 例えば、次のコードは多相関数 #dyncode("swap_boxed") を使っています:
 
-#atscode('\
+#dats2xhtml('\
 val AB = (box("A"), box("B"))
 val BA1 = swap_boxed{boxstr,boxstr} (AB)
 val BA2 = swap_boxed (AB) // omitting type arguments may be fine
@@ -460,9 +468,10 @@ rest of static arguments should all be synthesized.\
 
 次の多相関数の実装スタイルのように、静的引数を連続して渡すことも可能です:
 
-#atscode('\
+#dats2xhtml('\
+//
 fun swap2_boxed{a:type}{b:type} (xy: (a, b)): (b, a) = (xy.1, xy.0)
-
+//
 val AB = (box("A"), box("B"))
 val BA1 = swap2_boxed (AB) // both static arguments to be synthesized
 val BA2 = swap2_boxed{...} (AB) // both static arguments to be synthesized
@@ -470,6 +479,7 @@ val BA3 = swap2_boxed{..}{boxstr} (AB) // 1st static argument to be synthesized
 val BA4 = swap2_boxed{boxstr}{..} (AB) // 2nd static argument to be synthesized
 val BA5 = swap2_boxed{..}{..} (AB) // both static arguments to be synthesized
 val BA6 = swap2_boxed{boxstr}{boxstr} (AB) // both static arguments are provided
+//
 ')
 
 特殊構文 #stacode("{..}") はこの適用に含まれる静的引数が推論されるべきであることを型検査器に指示します。
@@ -540,8 +550,7 @@ polymorphic functions.\
 #langja("
 #para("\
 
-
-実際の場面で非常に一般的な多相関数に由来する2種類のエラーを見てます:
+実際の場面で非常に一般的な多相関数に由来する2種類のエラーを見たことがあります:
 
 <itemizedlist>
 
@@ -550,7 +559,7 @@ polymorphic functions.\
 #para("\
 1番目の種類は次のような例です:
 
-#atscode("\
+#dats2xhtml("\
 fun swap_boxed{a,b:t@ype} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 ")
 
@@ -569,7 +578,7 @@ fun swap_boxed{a,b:t@ype} (xy: (a, b)): (b, a) = (xy.1, xy.0)
 #para("\
 2番目の種類は次のような例です:
 
-#atscode("\
+#dats2xhtml("\
 fun{a,b:type} swap_boxed (xy: (a, b)): (b, a) = (xy.1, xy.0)
 ")
 
@@ -654,7 +663,7 @@ occur.
 コード共有はデータ型の宣言についても適用できます。
 例えば、なじみ深い多相データ型 #stacode("list0") は次のように宣言されます:
 
-#atscode("\
+#sats2xhtml("\
 datatype
 list0 (a:t@ype) =
   | list0_nil (a) of () | list0_cons (a) of (a, list0 a)
@@ -667,7 +676,7 @@ list0 (a:t@ype) =
 関数テンプレートや多相関数の主な必要性は多相データ型の可用性から大いに生じています。
 例として、関数テンプレート #dyncode("list0_length") は与えられたリストの長さを計算するよう、次のように実装されます:
 
-#atscode("\
+#dats2xhtml("\
 fun{a:t@ype}
 list0_length (xs: list0 a): int =
 (
@@ -750,7 +759,7 @@ the list is empty. Otherwise, the value is formed by applying
 
 もう一つの多相データ型の一般的な使い方 #stacode("option0") は次のような宣言です:
 
-#atscode("\
+#sats2xhtml("\
 datatype
 option0 (a:t@ype) =
   | option0_none (a) of () | option0_some (a) of a
@@ -761,7 +770,7 @@ option0 (a:t@ype) =
 整数の除算関数を実装しようとしていて、0 で除算してしまった時でも関数が返ってくることを保証したくなったとしましょう。
 これは次のようにすれば可能です:
 
-#atscode("\
+#dats2xhtml("\
 fun divopt
 (
   x: int, y: int
@@ -773,7 +782,7 @@ fun divopt
 #dyncode("divopt") の返値を検査することで、整数の除算が正常終了したのか、0除算が起きてエラー終了した見分けることができます。
 #stacode("option0") の実際の使用例は次の実装 #dyncode("list0_last") になります:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list0_last
@@ -904,7 +913,7 @@ tail-recursive.\
 型 T と型 #stacode("list0(T)") の2つのリスト xs と ys
 が与えられた時、#dyncode("list0_append(xs, ys)") は xs と ys を連結した1つのリストを返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list0_append
@@ -972,7 +981,7 @@ tail-recursive.\
 
 型 T と型 #stacode("list0(T)") の2つのリスト xs と ys が与えられた時、#dyncode("list0_reverse_append(xs, ys)") は xs と ys の逆順を連結したリストを返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list0_reverse_append
@@ -1026,7 +1035,7 @@ list0_reverse
 
 リスト xs が与えられた時、#dyncode("list0_reverse(xs)") は xs の逆順を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{a:t@ype}
 list0_reverse
   (xs: list0 a): list0 a = list0_reverse_append<a> (xs, list0_nil)
@@ -1084,7 +1093,7 @@ of #dyncode("list0_map") is not tail-recursive.\
 型 T1、型 T2、型 T1 -&lt;cloref1&gt; T2 のクロージャ関数 f、型 #stacode("list0(T1)") のリスト
 xs が与えられた時、#dyncode("list0_map(xs, f)") は #stacode("list0(T2)") 型のリスト ys を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun
 {a:t@ype}
 {b:t@ype}
@@ -1151,7 +1160,7 @@ xs, ini, f が与えられた時、#dyncode("list0_foldleft(ini, xs, f)") は式
 このとき n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
 次の #dyncode("list0_foldleft") の実装は末尾再帰です:
 
-#atscode('\
+#dats2xhtml('\
 fun
 {a:t@ype}
 {b:t@ype}
@@ -1215,7 +1224,7 @@ xs, res, f が与えられた時、#dyncode("list0_foldright(xs, res, f)") は�
 このとき n は xs の長さで、 xs[i] は i &lt; n のような xs の i 番目の要素です。
 次の #dyncode("list0_foldright") 実装は末尾再帰ではありません:
 
-#atscode('\
+#dats2xhtml('\
 fun
 {a:t@ype}
 {b:t@ype}
@@ -1290,7 +1299,7 @@ elements in xs and ys, respectively.  Clearly, this implementation of
 がそれぞれ与えられた時、#dyncode("list0_zip(xs, ys)") は型 #stacode("list0 @(T1, T2)")
 のリスト zs を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a,b:t@ype
 } list0_zip
@@ -1382,7 +1391,7 @@ reason.\
 がそれぞれ与えられた時、#dyncode("list0_zipwith(xs, ys, f)") は #stacode("list0(T3)")
 型のリスト zs を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun
 {a,b:t@ype}
 {c:t@ype}
@@ -1479,7 +1488,7 @@ with #dyncode("::").
 
 はじめに、リストコンストラクタ #dyncode("list0_nil") と #dyncode("list0_cons") の省略形を導入しましょう:
 
-#atscode("\
+#dats2xhtml("\
 \#define :: list0_cons // writing [::] for list0_cons
 \#define cons0 list0_cons // writing [cons0] for list0_cons
 \#define nil0 list0_nil // writing [nil0] for list0_nil
@@ -1547,10 +1556,11 @@ means the same as #dyncode("lte(x, y)").\
 次に、与えられた2つの整列されたリストを1つの整列されたリストにマージする関数テンプレート
 #dyncode("merge") を実装します:
 
-#atscode("\
+#dats2xhtml("\
+//
 typedef
 lte (a:t@ype) = (a, a) -> bool
-
+//
 fun{
 a:t@ype
 } merge (
@@ -1570,6 +1580,7 @@ a:t@ype
     ) // end of [cons0]
   | nil0 () => ys
 ) (* end of [merge] *)
+//
 ")
 
 例えば、与えられた2つのリストが (1, 3, 4, 8) と (2, 5, 6, 7, 9) だと考えてみましょう。
@@ -1638,7 +1649,7 @@ given list (8, 3, 4, 1, 2, 7, 6, 5, 9).\
 
 次の関数テンプレート #dyncode("mergesort") は標準のマージソートアルゴリズムを実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } mergesort
