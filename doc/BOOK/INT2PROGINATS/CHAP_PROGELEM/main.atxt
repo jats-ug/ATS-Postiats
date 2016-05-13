@@ -350,9 +350,9 @@ ATSにおいては未定義であることに注意してください。
 けれども3つ目の束縛は最初の2つが完了した後に決着されることは保証されています。
 この論点を別の角度から見るために、次のコードを型検査してみましょう。
 
-<informalexample><programlisting>
+#dats2xhtml('\
 val x = 0 and y = x + 1
-</programlisting></informalexample>
+')
 
 この場合、エラーメッセージは式 #dyncode("x + 1")
 の中にある名前(もしくは動的な識別子) #dyncode("x") が束縛されていないことを示しています。
@@ -490,17 +490,17 @@ introduce a sequence of declarations.\
 
 次の例はローカル束縛を作るまた別のアプローチを示しています。
 
-<informalexample><programlisting>
+#dats2xhtml('\
 local
 
 val PI = 3.14 and radius = 10.0
 
-in (* in of [local] *)
+in (* in-of-local *)
 
 val area = PI * radius * radius
 
 end // end of [local]
-</programlisting></informalexample>
+')
 
 キーワード #dyncode("local") と #dyncode("in") の間で作られた束縛は、
 キーワード #dyncode("end") に逹っするまで有効です。
@@ -556,11 +556,11 @@ finally to #dyncode("314.0"), which is the value of the let-expression.\
 この束縛の集合は単なる連想配列で、しばしば (評価のための) 環境と呼ばれます。
 例えば次の式を評価することを考えてみましょう。
 
-<informalexample><programlisting>
+#atscode('\
 let
   val PI = 3.14 and radius2 = 10.0 * 10.0 in PI * radius2
 end
-</programlisting></informalexample>
+')
 
 空の環境である ENV0 から開始します。
 まず環境 ENV0 において #dyncode("3.14") をそれ自身に、
@@ -1116,18 +1116,18 @@ exact 3 components. I will say more about pattern matching elsewhere.
 次に示す例では、はじめに長さが3のタプルを作り、
 そのタプルの3つの要素全てに3つの名前を束縛しています。
 
-<informalexample><programlisting>
+#dats2xhtml("\
 val xyz = ('A', 1, 2.0)
 val x = xyz.0 and y = xyz.1 and z = xyz.2
-</programlisting></informalexample>
+")
 
 作られたタプルには #stacode("(char, int, double)") というタプル型が割り振られることに注意してください。
 タプルの要素を選択する他の方法には、次の例に示すパターンマッチがあります。
 
-<informalexample><programlisting>
+#dats2xhtml("\
 val xyz = ('A', 1, 2.0)
 val (x, y, z) = xyz // x = 'A'; y = 1; z = 2.0
-</programlisting></informalexample>
+")
 
 #dyncode("(x, y, z)")
 は、ぴったり3要素のタプルにマッチするパターンであることに注意してください。
@@ -1188,10 +1188,10 @@ for otherwise the current parser (for ATS/Postiats) would be confused.\
 ボックス化タプルの使い方はアンボックス化タプルの使い方とよく似ています。
 例えば、次のコードの意味はすぐにわかります。
 
-<informalexample><programlisting>
+#dats2xhtml("\
 val xyz = '( 'A', 1, 2.0 )
 val x = xyz.0 and y = xyz.1 and z = xyz.2
-</programlisting></informalexample>
+")
 
 #dyncode("'(") と #dyncode("'A'") の間に空白を入れないと、ATS/Postiats
 の今のパーサが混乱してしまうことに注意してください。 \
@@ -1258,7 +1258,6 @@ type is for flat/native/unboxed records. A value of the type
 #dats2xhtml('\
 val theOrigin = @{ x= 0.0, y= 0.0 } : point2D
 ')
-
 ")
 ")
 #langja("
@@ -1268,9 +1267,10 @@ val theOrigin = @{ x= 0.0, y= 0.0 } : point2D
 同様にレコード型もタプル型と良く似ています。
 例えばレコード型 #stacode("point2D") は以下のように定義できます。
 
-<informalexample><programlisting>
-typedef point2D = @{ x= double, y= double }
-</programlisting></informalexample>
+#sats2xhtml('\
+typedef
+point2D = @{ x= double, y= double }
+')
 
 #dyncode("x") と #dyncode("y") はこの型のレコード値における2つのフィールドの名前です。
 またレコードのフィールドのことを要素と呼ぶことがあります。
@@ -1279,9 +1279,9 @@ typedef point2D = @{ x= double, y= double }
 フラット/ネイティブ/アンボックス化 レコードであることを表わします。
 型 #stacode("point2D") の値は次のように #dyncode("theOrigin") という名前で生成することができます。
 
-<informalexample><programlisting>
+#dats2xhtml('\
 val theOrigin = @{ x= 0.0, y= 0.0 } : point2D
-</programlisting></informalexample>
+')
 ")
 ")
 
@@ -1323,26 +1323,26 @@ matching on record values.
 レコードから要素を選択するために一般的なドット表記を使うことができます。
 次のようなコードになります。
 
-<informalexample><programlisting>
+#dats2xhtml('\
 val theOrigin_x = theOrigin.x and theOrigin_y = theOrigin.y
-</programlisting></informalexample>
+')
 
 あるいは要素の選択にパターンマッチを使うこともできます。
 これは次のようなコードになります。
 
-<informalexample><programlisting>
+#dats2xhtml('\
 val @{ x= theOrigin_x, y= theOrigin_y } = theOrigin
-</programlisting></informalexample>
+')
 
 この例では #dyncode("theOrigin_x") と #dyncode("theOrigin_y")
 の名前はそれぞれ、#dyncode("theOrigin") の中にある #dyncode("x") と #dyncode("y")
 という名前の要素に束縛されています。
 もし要素全てではなく一部を選択したい場合には、次のようなパターンマッチを使うことができます。
 
-<informalexample><programlisting>
-val @{ x= theOrigin_x, ... } = theOrigin // x要素のみ
-val @{ y= theOrigin_y, ... } = theOrigin // y要素のみ
-</programlisting></informalexample>
+#dats2xhtml('\
+val @{ x= theOrigin_x, ... } = theOrigin // the x-component only 
+val @{ y= theOrigin_y, ... } = theOrigin // the y-component only 
+')
 
 もしもこの文法に混乱するようであれば、ドット表記を使うことをおすすめします。
 レコード値のパターンマッチは私自身あまり使いません。

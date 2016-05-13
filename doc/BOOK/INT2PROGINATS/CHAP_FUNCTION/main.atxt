@@ -126,7 +126,7 @@ let val x = 3.14 * (10.0 - 1.0 / 1.4142) in x * x end
 この問題に対処するために、
 次のような関数を実装することで任意の浮動小数点数の二乗を計算できます:
 
-#atscode("\
+#dats2xhtml("\
 fn square (x: double): double = x * x
 ")
 
@@ -176,7 +176,7 @@ lambda-expression is said to be alpha-equivalent to the original one.\
 #dyncode("square") が名前だとすれば、それが参照する式とは何なのでしょうか？
 上の関数定義は次のように書くこともできることがわかります:
 
-#atscode("\
+#dats2xhtml("\
 val square = lam (x: double): double => x * x
 ")
 
@@ -185,7 +185,7 @@ val square = lam (x: double): double => x * x
 そして #dyncode("=>") 記号に続く式が関数の本体です。
 もし望むなら、関数の引数名を次のように変更することができます:
 
-#atscode("\
+#dats2xhtml("\
 val square = lam (y: double): double => y * y
 ")
 
@@ -282,7 +282,7 @@ double"). It is thus a simple routine to verify that the body of
 外側と内側の円の半径をそれぞれ R と r とすると、
 リングの面積は次の関数 #dyncode("area_of_ring") で計算できます:
 
-#atscode("\
+#dats2xhtml("\
 fn area_of_ring
   (R: double, r: double): double = 3.1416 * (square(R) - square(r))
 // end of [area_of_ring]
@@ -352,12 +352,12 @@ applied to two arguments (instead of one representing a pair).\
 しばしばアリティが 0, 1, 2, 3 の関数はそれぞれ、nullary, unary, binary, ternary 関数と呼ばれます。
 例えば、次の関数 #dyncode("sqrsum1") は binary 関数で、2つの引数の型は #dyncode("int") です:
 
-#atscode("\
+#dats2xhtml("\
 fn sqrsum1 (x: int, y: int): int = x * x + y * y
 ")
 
 unary関数 #dyncode("sqrsum2") を次のように定義することができます:
-#atscode("\
+#dats2xhtml("\
 //
 typedef int2 = (int, int)
 //
@@ -478,7 +478,7 @@ constructing (large) programs in a modular style.\
 関数のインターフェイスは、その関数に割り当てられる型を明確にします。
 binary 関数 foo が型 (T1, T2) -> T3 で与えられた時、そのインターフェイスは次のように書くことができます:
 
-#atscode("\
+#sats2xhtml("\
 fun foo (arg1: T1, arg2: T2): T3
 ")
 
@@ -486,7 +486,7 @@ fun foo (arg1: T1, arg2: T2): T3
 より多いもしくは少ない引数の関数でも、インターフェイスは同じように書くことができます。
 例えば、次のような様々な整数に対する関数のインターフェイスがあります:
 
-#atscode("\
+#sats2xhtml("\
 fun succ_int (x: int): int // successor
 fun pred_int (x: int): int // predecessor
 
@@ -562,7 +562,7 @@ function call #dyncode("abs(0.0 - 1.0)") returns #dyncode("1.0").\
 関数 #dyncode("abs") が次のように定義されていて、
 関数呼び出し #dyncode("abs(0.0 - 1.0)") を環境 ENV0 の下で評価することを考えてみましょう:
 
-#atscode("\
+#dats2xhtml("\
 fn abs (x: double): double = if x >= 0.0 then x else ~x
 ")
 
@@ -656,8 +656,11 @@ by solving a simpler problem, that is, finding the value of #dyncode("sum1
 与えられた整数を n とするとき、1 から n までの範囲の整数を全て足すことを考えましょう。
 これは次のような再帰関数 #dyncode("sum1") にたやすく実装することができます:
 
-#atscode("\
-fun sum1 (n: int): int = if n >= 1 then sum1 (n-1) + n else 0
+#dats2xhtml("\
+fun sum1
+  (n: int): int =
+  if n >= 1 then sum1 (n-1) + n else 0
+// end of [sum1]
 ")
 
 キーワード #dyncode("fun") は再帰関数の定義の開始です。
@@ -696,8 +699,11 @@ finding the value of #dyncode("sum2 (m+1, n)"). The reason for #dyncode("sum2
 #para("\
 与えられた範囲の整数の和を得るような次の再帰関数 #dyncode("sum2") を実装して問題解決することもできます:
 
-#atscode("\
-fun sum2 (m: int, n: int): int = if m <= n then m + sum2 (m+1, n) else 0
+#dats2xhtml("\
+fun sum2
+  (m: int, n: int): int =
+  if m <= n then m + sum2 (m+1, n) else 0
+// end of [sum2]
 ")
 
 #dyncode("1") から #dyncode("n") の範囲の全ての整数の和を取るために、ここで
@@ -745,12 +751,16 @@ truncation.\
 さらに (m+n)/2+1 から n までの全ての整数の和を取り、最後に左記2つの和と (m+n)/2 の和を取ることです。
 次の再帰関数 #dyncode("sum3") はこの戦略に忠実に実装されています:
 
-#atscode("\
+#dats2xhtml("\
 fun sum3
   (m: int, n: int): int =
-  if m <= n then let
-    val mn2 = (m+n)/2 in sum3 (m, mn2-1) + mn2 + sum3 (mn2+1, n)
-  end else 0 // end of [if]
+  if m <= n
+    then let
+      val mn2 = (m+n)/2
+    in
+      sum3 (m, mn2-1) + mn2 + sum3 (mn2+1, n)
+    end // end of [then]
+    else 0 // end of [else]
 // end of [sum3]
 ")
 
@@ -802,9 +812,11 @@ evaluation of #dyncode("fib(n-1) + fib(n-2)") eventually returns
 再帰関数呼び出しの評価は、再帰でない関数呼び出しの評価と比べてもそう難しくはありません。
 フィボナッチ数を計算する関数として #dyncode("fib") を次のように定義しましょう:
 
-#atscode("\
-fun fib (n: int): int =
+#dats2xhtml("\
+fun fib
+  (n: int): int =
   if n >= 2 then fib(n-1) + fib(n-2) else n
+// end of [fib]
 ")
 
 ENV0 環境の下で #dyncode("fib(2)") を評価することを考えてみましょう。
@@ -980,21 +992,25 @@ cc(S, x) = cc(S<subscript>1</subscript>, x) + cc(S, x-c)
 
 次の実装では、S を 1, 5, 10, 25 からなる集合に設定しています。
 
-#atscode("\
-typedef int4 = (int, int, int, int)
-
+#dats2xhtml("\
+//
+typedef
+int4 = (int, int, int, int)
+//
 val theCoins = (1, 5, 10, 25): int4
-
+//
 fun coin_get
   (n: int): int =
+(
   if n = 0 then theCoins.0
   else if n = 1 then theCoins.1
   else if n = 2 then theCoins.2
   else if n = 3 then theCoins.3
   else ~1 (* erroneous value *)
-// end of [coin_get]
-
-fun coin_change (sum: int) = let
+) (* end of [coin_get] *)
+//
+fun coin_change
+  (sum: int): int = let
   fun aux (sum: int, n: int): int =
     if sum > 0 then
      (if n >= 0 then aux (sum, n-1) + aux (sum-coin_get(n), n) else 0)
@@ -1003,6 +1019,7 @@ fun coin_change (sum: int) = let
 in
   aux (sum, 3)
 end // end of [coin_change]
+//
 ")
 
 関数 #dyncode("coin_change") の本体の中で定義されている補助関数 #dyncode("aux")
@@ -1068,7 +1085,7 @@ not.\
 もし foo と bar が同じ関数の場合、この呼び出しは(再帰)自己末尾呼出です。
 例えば、次のように定義された関数 #dyncode("f91") の本体で2つの再帰呼出があるとします:
 
-#atscode("\
+#dats2xhtml("\
 fun f91 (n: int): int =
   if n >= 101 then n - 10 else f91 (f91 (n+11))
 ")
@@ -1102,7 +1119,7 @@ A tail-recursive function is often referred to as an iterative function.\
 関数本体中のそれぞれの再帰呼出が末尾呼出なら、この関数は末尾再帰関数です。
 例えば、次の関数 #dyncode("sum_iter") は末尾再帰です:
 
-#atscode("\
+#dats2xhtml("\
 fun sum_iter
   (n: int, res: int): int =
   if n > 0 then sum_iter (n-1, n+res) else res
@@ -1206,14 +1223,14 @@ piece on the second row (row 1), and so on.
 #para("\
 まずはじめに、次のように整数の定数8に名前を付けます:
 
-#atscode("\
+#sats2xhtml("\
 \#define N 8
 ")
 
 この宣言の後では、名前 #dyncode("N") は8に置換されます。
 ボードの配置を表現するために、次のような #dyncode("int8") 型を定義します:
 
-#atscode("\
+#sats2xhtml("\
 typedef int8 =
 (
   int, int, int, int, int, int, int, int
@@ -1260,7 +1277,7 @@ aspect of #dyncode("print_newline").\
 #para("\
 ボードの配置を印字するために、次の関数群を定義します:
 
-#atscode('\
+#dats2xhtml('\
 fun print_dots (i: int): void =
   if i > 0 then (print ". "; print_dots (i-1)) else ()
 // end of [print_dots]
@@ -1352,7 +1369,7 @@ fun board_get
 ボードとボード上に行の数だけクイーンのコマが与えられた時、
 次の関数 #dyncode("board_get") は列のコマの数を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun board_get
   (bd: int8, i: int): int =
   if i = 0 then bd.0
@@ -1416,7 +1433,7 @@ simpler and cleaner. However, we have not yet covered arrays at this point.\
 次の関数 #dyncode("board_set") は、
 行 i のクイーンの列の数が j である点を除いて元のボードと同じ新しいボードを返します:
 
-#atscode("\
+#dats2xhtml("\
 fun board_set
   (bd: int8, i: int, j:int): int8 = let
   val (x0, x1, x2, x3, x4, x5, x6, x7) = bd
@@ -1508,7 +1525,7 @@ given board with a row number less than or equal to #dyncode("i").\
 
 2つのテスト関数 #dyncode("safety_test1") と #dyncode("safety_test2") を次のように実装しましょう:
 
-#atscode("\
+#dats2xhtml("\
 fun safety_test1
 (
   i0: int, j0: int, i1: int, j1: int
@@ -1626,34 +1643,43 @@ There are 92 distinct solutions in total.\
 
 これで、深さ優先探索 (DFS) アルゴリズムを使って、次のような関数 #dyncode("search") を実装する準備が整いました:
 
-#atscode('\
+#dats2xhtml('\
 fun search
 (
   bd: int8, i: int, j: int, nsol: int
-) : int =
-  if j < N then let
-    val test = safety_test2 (i, j, bd, i-1)
-  in
-    if test then let
+) : int = (
+//
+if
+(j < N)
+then let
+  val test = safety_test2 (i, j, bd, i-1)
+in
+  if test
+    then let
       val bd1 = board_set (bd, i, j)
     in
-      if i+1 = N then let
-        val () = print! ("Solution #", nsol+1, ":\\\n\\\n")
-        val () = print_board (bd1)
-      in
-        search (bd, i, j+1, nsol+1)
-      end else
-        search (bd1, i+1, 0(*j*), nsol) // positioning next piece
+      if i+1 = N
+        then let
+          val () = print! ("Solution #", nsol+1, ":\\\n\\\n")
+          val () = print_board (bd1)
+        in
+          search (bd, i, j+1, nsol+1)
+        end // end of [then]
+        else (
+          search (bd1, i+1, 0(*j*), nsol) // positioning next piece
+        ) (* end of [else] *)
       // end of [if]
-    end else
-      search (bd, i, j+1, nsol)
-  end else
-  (
-    if i > 0 then
-      search (bd, i-1, board_get (bd, i-1) + 1, nsol)
-    else nsol // end of [if]
-  )
-// end of [search]
+    end // end of [then]
+    else search (bd, i, j+1, nsol)
+  // end of [if]
+end // end of [then]
+else (
+  if i > 0
+    then search (bd, i-1, board_get (bd, i-1) + 1, nsol) else nsol
+  // end of [if]
+) (* end of [else] *)
+//
+) (* end of [search] *)
 ')
 
 #dyncode("search") の返値はエイト・クイーンパズルの解の総数です。
@@ -1813,7 +1839,7 @@ P(n+1) = 1 + (i の範囲が 1 から n までの時、i と P(i) の積の合�
 
 次の P と Q の実装はこれらの定義を直接 ATS に翻訳したものです:
 
-#atscode("\
+#dats2xhtml("\
 fun P (n:int): int = if n > 0 then 1 + Q(n-1) else 1
 and Q (n:int): int = if n > 0 then Q(n-1) + n * P(n) else 0
 ")
@@ -1885,9 +1911,14 @@ foo と bar が2つの相互再帰関数として定義されているとしま�
 foo もしくは bar の本体にある、foo もしくは bar への末尾呼出は相互末尾再帰呼出です。
 例えば、次の2つの関数 #dyncode("isevn") と #dyncode("isodd") は相互再帰です:
 
-#atscode("\
-fun isevn (n: int): bool = if n > 0 then isodd (n-1) else true
-and isodd (n: int): bool = if n > 0 then isevn (n-1) else false
+#dats2xhtml("\
+//
+fun
+isevn (n: int): bool = if n > 0 then isodd (n-1) else true
+//
+and
+isodd (n: int): bool = if n > 0 then isevn (n-1) else false
+//
 ")
 
 #dyncode("isevn") の本体内の #dyncode("isodd") への相互再帰呼出は末尾呼出です。
@@ -1895,9 +1926,14 @@ and isodd (n: int): bool = if n > 0 then isevn (n-1) else false
 もしこれら2つの末尾呼出をローカルジャンプにコンパイルしたい場合には、
 次のようにキーワード #dyncode("fun") をキーワード #dyncode("fnx") で置き換えるべきです:
 
-#atscode("\
-fnx isevn (n: int): bool = if n > 0 then isodd (n-1) else true
-and isodd (n: int): bool = if n > 0 then isevn (n-1) else false
+#dats2xhtml("\
+//
+fnx
+isevn (n: int): bool = if n > 0 then isodd (n-1) else true
+//
+and
+isodd (n: int): bool = if n > 0 then isevn (n-1) else false
+//
 ")
 
 この場合、ATS コンパイラはこれら2つの関数を1つの関数に結合します。
@@ -1963,23 +1999,32 @@ C言語や Java のような命令型プログラミング言語の組み込み�
 相互末尾再帰呼出がローカルジャンプにコンパイルされるかしばしば確認する必要があります。
 次の関数 #dyncode("print_multable") ではゼロではない桁の九九の表の印字を実装しています:
 
-#atscode('\
-fun print_multable () = let
+#dats2xhtml('\
+fun
+print_multable
+  ((*void*)) = let
 //
 \#define N 9
 //
-fnx loop1 (i: int): void =
+fnx
+loop1
+  (i: int): void =
   if i <= N then loop2 (i, 1) else ()
 //
-and loop2 (i: int, j: int): void =
-  if j <= i then let
-    val () = if j >= 2 then print " "
-    val () = printf ("%dx%d=%2.2d", @(j, i, j*i))
-  in
-    loop2 (i, j+1) 
-  end else let
-    val () = print_newline () in loop1 (i+1)
-  end // end of [if]
+and
+loop2
+  (i: int, j: int): void =
+  if j <= i
+    then let
+      val () = if j >= 2 then print " "
+      val () = $extfcall(void, "printf", "%dx%d=%2.2d", j, i, j*i)
+    in
+      loop2 (i, j+1) 
+    end // end of [then]
+    else let
+      val () = print_newline () in loop1 (i+1)
+    end // end of [else]
+  // end of [if]
 //
 in
   loop1 (1)
@@ -2132,7 +2177,7 @@ In the following example, the function #dyncode("sum"), which is assigned
 the type #dyncode("(int) -> int"), sums up all the integers between 1 and a
 given natural number:
 
-#atscode("\
+#dats2xhtml("\
 fun sum
   (n: int): int = let
   fun loop
@@ -2223,7 +2268,7 @@ actual creation of closures at run-time.\
 #dyncode("loop") の本体に含まれていることにあります。
 #dyncode("n") を元の関数への追加の引数として #dyncode("loop") を無環境関数にするのは簡単です:
 
-#atscode("\
+#dats2xhtml("\
 fun sum
   (n: int): int = let
   fun loop
@@ -2288,12 +2333,13 @@ the body of the envless function in #dyncode("plus1"), which is
 そしてこの返される関数はクロージャ関数で、
 常に自分の引数に整数 #dyncode("x") を加算します:
 
-
-#atscode("\
+#dats2xhtml("\
+//
 fun addx (x: int): int -<cloref1> int = lam y => x + y
-
+//
 val plus1 = addx (1) // [plus1] is of the type int -<cloref1> int
 val plus2 = addx (2) // [plus2] is of the type int -<cloref1> int
+//
 ")
 
 #dyncode("plus1(0)") と #dyncode("plus2(0)") がそれぞれ #dyncode("1") と #dyncode("2") を返すのは自明でしょう。
@@ -2372,7 +2418,7 @@ loops forever if it is applied to a function that does not have a root.
 高階関数とは別の関数を引数として取るような関数です。
 例えば、次に定義する関数 #dyncode("rtfind") は高階関数の例です:
 
-#atscode("\
+#dats2xhtml("\
 fun rtfind
   (f: int -> int): int = let
   fun loop (
@@ -2487,7 +2533,7 @@ this interesting programming feature elsewhere.\
 高階関数はコードの再利用を促進します。ここではその単純な例を示そうと思います。
 次に定義する関数 #dyncode("sum") と #dyncode("prod") は 1 から与えられた自然数までの和と積をそれぞれ計算します:
 
-#atscode("\
+#dats2xhtml("\
 fun sum (n: int): int = if n > 0 then sum (n-1) + n else 0
 fun prod (n: int): int = if n > 0 then prod (n-1) * n else 1
 ")
@@ -2496,29 +2542,31 @@ fun prod (n: int): int = if n > 0 then prod (n-1) * n else 1
 高階関数 #dyncode("ifold") を定義して、
 #dyncode("sum") と #dyncode("prod") を #dyncode("ifold") にもとづいて実装することができます:
 
-#atscode("\
+#dats2xhtml("\
+//
 fun ifold
   (n: int, f: (int, int) -> int, ini: int): int =
   if n > 0 then f (ifold (n-1, f, ini), n) else ini
-// end of [ifold]
-
+//
 fun sum (n: int): int = ifold (n, lam (res, x) => res + x, 0)
 fun prod (n: int): int = ifold (n, lam (res, x) => res * x, 1)
+//
 ")
 
 もし 1 から与えられた自然数 n までの範囲の整数の二乗の和を計算するのであれば、
 #dyncode("ifold") を使って次のようにたやすく定義できます:
 
-#atscode("\
+#dats2xhtml("\
 fun sqrsum (n: int): int = ifold (n, lam (res, x) => res + x * x, 0)
 ")
 
 1 から n までの整数の中で与えられた数 d の倍数を選んで二乗の和を計算するために、
 #dyncode("sqrsum") を一般化して次の関数 #dyncode("sqrmodsum") を作ることを考えましょう:
 
-#atscode("\
-fun sqrmodsum (n: int, d: int): int =
-  ifold (n, lam (res, x) => if x mod d then res + x * x else res, 0)
+#dats2xhtml("\
+fun sqrmodsum
+  (n: int, d: int): int =
+  ifold (n, lam (res, x) => if x mod d = 0 then res + x * x else res, 0)
 // end of [sqrmodsum]
 ")
 
@@ -2530,17 +2578,21 @@ fun sqrmodsum (n: int, d: int): int =
 この問題に対処するために、次のような #dyncode("ifold") の変形を実装し、
 それからその変形にもとづいて #dyncode("sqrmodsum") を実装することができます:
 
-#atscode("\
-fun ifold2
+#dats2xhtml("\
+//
+fun
+ifold2
 (
   n: int, f: (int, int) -<cloref1> int, ini: int
 ) : int =
   if n > 0 then f (ifold2 (n-1, f, ini), n) else ini
 // end of [ifold2]
-
-fun sqrmodsum (n: int, d: int): int =
+//
+fun
+sqrmodsum (n: int, d: int): int =
   ifold2 (n, lam (res, x) => if x mod d then res + x * x else res, 0)
 // end of [sqrmodsum]
+//
 ")
 
 #dyncode("ifold2") は確かに #dyncode("ifold") よりも一般的ですが、代償を伴います。
@@ -2651,7 +2703,7 @@ of its argument.\
 i が lb から i0 までの範囲では f(i) <= x0 を維持し、
 i が i0+1 から ub までの範囲では x0 < f(i) を維持するような整数 i0 を返します:
 
-#atscode("\
+#dats2xhtml("\
 //
 // The type [uint] is for unsigned integers
 //
@@ -2676,7 +2728,7 @@ fun bsearch_fun
 与えられた自然数の整数平方根、
 つまり二乗が与えられた自然数以下であるような最も大きい整数を返します:
 
-#atscode("\
+#dats2xhtml("\
 //
 // Assuming that [uint] is of 32 bits
 //
@@ -2774,7 +2826,7 @@ accessible.\
 
 はじめに次のような型定義を導入しましょう:
 
-#atscode("\
+#sats2xhtml("\
 typedef I (a:t@ype) = a -<cloref1> a
 ")
 
@@ -2784,7 +2836,7 @@ typedef I (a:t@ype) = a -<cloref1> a
 単に与えられた引数に f を2度適用するような別の関数を作ることができます。
 次の関数テンプレート #dyncode("twice") は左記に説明した関数を正確に構成しています:
 
-#atscode("\
+#dats2xhtml("\
 fn{a:t0p}
 twice (f: I(a)):<cloref> I(a) = lam (x) => f (f (x))
 ")
@@ -2792,7 +2844,7 @@ twice (f: I(a)):<cloref> I(a) = lam (x) => f (f (x))
 #dyncode("twice") を使った興味深いコードを見てみましょう。
 それはパズルのようにも見えます:
 
-#atscode("\
+#dats2xhtml("\
 //
 typedef I0 = int
 typedef I1 = I(I0)
@@ -2928,7 +2980,7 @@ reclaimed by garbage collection (GC) at run-time.\
 定義された関数 #dyncode("acker1") と #dyncode("acker2") はアッカーマン関数を実装しています。
 この関数は原始再帰関数でない再帰として有名です:
 
-#atscode('\
+#dats2xhtml('\
 fun acker1
   (m: int, n: int): int =
 (
