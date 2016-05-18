@@ -115,20 +115,20 @@ no such a restriction.\
 関数や値に対するインターフェイスは、その関数や値の実装が有するべき型を特定します。
 例えば、次のコードは与えられた整数の階乗を計算する関数 #dyncode("fact") を定義しています:
 
-#atscode('\
+#dats2xhtml('\
 fun fact (x: int): int = if x > 0 then x * fact (x-1) else 1
 ')
 
 最初に考えられる #dyncode("fact") のインターフェイス定義は次のようなものでしょう:
 
-#atscode('\
+#dats2xhtml('\
 extern fun fact (x: int): int
 ')
 
 #keycode("extern") は、インターフェイスの宣言を開始する ATS のキーワードです。
 #dyncode("fact") のインターフェイスを宣言する別の方法は次のようなものです:
 
-#atscode('\
+#dats2xhtml('\
 extern fun fact : (int) -> int
 extern val fact : (int) -> int
 ')
@@ -239,14 +239,14 @@ synthesized by the typechecker.\
 
 次に示す #dyncode("fact") の実装は #dyncode("fact") で宣言したインターフェイスを守っています:
 
-#atscode('\
+#dats2xhtml('\
 implement fact (x) = if x > 0 then x * fact (x-1) else 1
 ')
 
 #keycode("implement") キーワードは、既にインターフェイスを宣言された関数や値の実装の開始を表わします。
 ATS 初心者にとっては、次のコーディングスタイルがより一般的かもしれません:
 
-#atscode('\
+#dats2xhtml('\
 implement fact (x: int): int = if x > 0 then x * fact (x-1) else 1
 ')
 
@@ -282,13 +282,13 @@ implement fact10 = fact (10)
 値に対するインターフェイスの例として、
 型 #stacode("int") の値である #dyncode("fact10") を次に宣言してみます:
 
-#atscode('\
+#dats2xhtml('\
 extern val fact10 : int
 ')
 
 次に示す #dyncode("fact10") の実装は #dyncode("fact10") で宣言したインターフェイスを守っています:
 
-#atscode('\
+#dats2xhtml('\
 implement fact10 = fact (10)
 ')
 
@@ -326,7 +326,7 @@ case.\
 
 別の例として、次のコードでは #dyncode("swap_boxed") という名前で多相関数のインターフェイスを宣言しています:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun swap_boxed{a,b:type} (xy: (a, b)): (b, a)
 ')
@@ -334,7 +334,7 @@ fun swap_boxed{a,b:type} (xy: (a, b)): (b, a)
 型変数 #stacode("a") と #stacode("b") はボックス化されていることに注意してください。
 #dyncode("swap_boxed") の実装は次のようになるでしょう:
 
-#atscode('\
+#dats2xhtml('\
 implement swap_boxed{a,b} (xy) = (xy.1, xy.0)
 ')
 
@@ -374,7 +374,7 @@ implement{a,b} swap_tmplt (xy) = (xy.1, xy.0)
 また別の例として、
 次のコードは #dyncode("swap_tmplt") という名前で関数テンプレートのインターフェイスを宣言しています:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun{a,b:t@ype} swap_tmplt (xy: (a, b)): (b, a)
 ')
@@ -384,7 +384,7 @@ fun{a,b:t@ype} swap_tmplt (xy: (a, b)): (b, a)
 
 #dyncode("swap_tmplt") の実装は次のようなものでしょう:
 
-#atscode('\
+#dats2xhtml('\
 implement{a,b} swap_tmplt (xy) = (xy.1, xy.0)
 ')
 
@@ -511,7 +511,7 @@ will cover elsewhere.\
 この関数は原始再帰ではない再帰として有名です。
 #filename("acker.sats") という名前の静的ファイルに、次の関数インターフェイスを宣言します:
 
-#atscode('\
+#sats2xhtml('\
 fun acker (m: int, n: int): int
 ')
 
@@ -519,7 +519,7 @@ fun acker (m: int, n: int): int
 #keycode("extern") キーワード を使わないことに注意してください。
 #filename("acker.dats") という名前の動的ファイルに、次ような実装を書きます:
 
-#atscode('\
+#dats2xhtml('\
 staload "acker.sats"
 
 implement
@@ -576,7 +576,7 @@ declared entity can be readily tracked down.\
 
 #dyncode("acker") 関数宣言に対して次のような実装をすることもできます:
 
-#atscode('\
+#dats2xhtml('\
 staload ACKER = "acker.sats"
 
 implement $ACKER.acker
@@ -655,7 +655,7 @@ happens.\
 
 別のファイル #filename("test_acker.dats") に次のコードを書いてみましょう:
 
-#atscode('\
+#dats2xhtml('\
 //
 \#include
 "share/atspre_staload.hats"
@@ -679,7 +679,7 @@ main0 () = () where {
 この例では #filename("acker.dats") の中には関数の実装しかありません。
 もし次の行を #filename("acker.dats") の中のどこかに書けば:
 
-#atscode('\
+#dats2xhtml('\
 \#define ATS_DYNLOADFLAG 0 // no need for dynloading at run-time
 ')
 
@@ -808,7 +808,7 @@ acker (m, n) =
 #filename("acker3.dats") の名前で上記のファイルを作ったとしましょう。
 するとテストコードは次のように書けます:
 
-#atscode('\
+#dats2xhtml('\
 //
 \#include
 "share/atspre_staload.hats"
@@ -938,7 +938,7 @@ implement{a,b}{c} app2 (f, x, y) = f (x, y)
 やはりよく似ています。
 上記の #dyncode("list0_fold_left") のインターフェイスは次のようなコードで実装することができます:
 
-#atscode('\
+#dats2xhtml('\
 implement{a}{b}
 list0_fold_left
   (xs, f, init) = let
@@ -962,7 +962,7 @@ end // end of [list0_fold_left]
 この引数は省略できません。
 次の短かい例に示すように、テンプレート引数は連続して渡すこともできます:
 
-#atscode("\
+#dats2xhtml("\
 extern
 fun
 {a,b:t0p}{c:t0p}
@@ -1054,7 +1054,7 @@ functions).\
 そのテンプレートの固定のインスタンスに実装を与えることです。
 例えば、次のインターフェイスは #dyncode("eq_elt_elt") という名前の関数テンプレートです:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:t0p}
 eq_elt_elt (x: a, y: a): bool // a generic equality
 ")
@@ -1065,7 +1065,7 @@ eq_elt_elt (x: a, y: a): bool // a generic equality
 インスタンス #dyncode("eq_elt_elt&lt;int&gt;") と #dyncode("eq_elt_elt&lt;double&gt;")
 を次に示します:
 
-#atscode("\
+#dats2xhtml("\
 implement eq_elt_elt<int> (x, y) = g0int_eq (x, y)
 implement eq_elt_elt<double> (x, y) = g0float_eq (x, y)
 ")
@@ -1074,7 +1074,7 @@ implement eq_elt_elt<double> (x, y) = g0float_eq (x, y)
 #stacode("int") と #stacode("double") 型の値に対する等式関数です。
 この実装は次のように書くこともできます:
 
-#atscode("\
+#dats2xhtml("\
 implement eq_elt_elt<int> (x, y) = (x = y)
 implement eq_elt_elt<double> (x, y) = (x = y)
 ")
@@ -1132,7 +1132,7 @@ instance is called.\
 ここで、特殊テンプレート実装の典型的な使い方を見てみましょう。
 次に定義する関数テンプレート #dyncode("listeq") はリストの等式関数を実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t0p
 } listeq
@@ -1200,7 +1200,7 @@ makes pervasive use of specifically implemented templates.
 比較のために、与えられた2つのリストが等しいか判定する関数テンプレート
 #dyncode("listeqf") を次に実装します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t0p
 } listeqf
@@ -1350,7 +1350,7 @@ above interfaces are all stored in a file named #filename("intset.sats")
 整数の有限集合に対する様々な機能を提供するパッケージを実装しているとしましょう。
 まずはじめに、整数の有限集合を表現する値のために次のような抽象型 #stacode("intset") を宣言します:
 
-#atscode("\
+#sats2xhtml("\
 abstype intset // a boxed abstract type
 ")
 
@@ -1359,7 +1359,7 @@ abstype intset // a boxed abstract type
 関連したキーワード #stacode("abst@ype") はアンボックス化された抽象型の開始で、別の章で説明します。
 パッケージで実装したいそれぞれの関数と値のインターフェイスを次に示します:
 
-#atscode("\
+#sats2xhtml("\
 // empty set
 val intset_empty : intset
 
@@ -1476,7 +1476,7 @@ in a timely fashion.
 抽象型の値をコンストラクトするために、
 次のような宣言を使って一時的にそれを具体化させる必要があります:
 
-#atscode("\
+#dats2xhtml("\
 assume intset = list0 (int)
 ")
 
@@ -1494,7 +1494,7 @@ ATS には、それぞれの抽象型は最大でも1度までしか assume
 #stacode("intset") の残りの実装は全て一般的なものです。
 例えば、2つの整数の有限集合の合併は次のような実装になります:
 
-#atscode("\
+#dats2xhtml("\
 implement
 intset_union
   (xs1, xs2) = (
@@ -1589,7 +1589,7 @@ type-error will surely occur.  ")#comment("para")
 代わりに、 #stacode("rat") をアンボックス化された抽象型として宣言する別のアプローチを取ります。
 そこで、次のような宣言になります:
 
-#atscode("\
+#sats2xhtml("\
 abst@ype rat
 ")
 
@@ -1601,7 +1601,7 @@ ATSコンパイラは #stacode("rat") 型の値を保存するのに必要なメ
 このトピックは別の章で解説しようと思います。
 ここでは、アンボックス化された抽象型を次のように宣言してみましょう:
 
-#atscode("\
+#sats2xhtml("\
 abst@ype rat = (int, int)
 ")
 
@@ -1701,7 +1701,7 @@ use of some functions declared in #filename("ratmod.sats").
 から取得できる次のコードは
 #filename("ratmod.sats") という名前のファイルに保存されています。
 
-#atscode("\
+#sats2xhtml("\
 exception Denominator
 exception DivisionByZero
 
@@ -1720,7 +1720,7 @@ fun ratdiv: (rat, rat) -> rat // division
 #dyncode("rat_make_int_int") の次の実装は #filename("ratmod.dats") という名前のファイルにあり、
 #mycodelink("CHAP_MODULARITY/ratmod.dats", "オンライン") からも取得できます。
 
-#atscode("\
+#dats2xhtml("\
 implement
 rat_make_int_int (p, q) = let
   fun make (
@@ -1744,7 +1744,7 @@ p<subscript>1</subscript> と q<subscript>1</subscript> を返します。
 つまり、それらの最大公約数は1で、p<subscript>1</subscript>/q<subscript>1</subscript> は p/q に等しくなります。
 #dyncode("rat_make_int_int") を使うと、有理数の算術演算は次のように素直に実装できます:
 
-#atscode("\
+#dats2xhtml("\
 implement ratneg (x) = (~x.0, x.1)
 
 implement
@@ -1935,7 +1935,7 @@ is some related testing code available
 プログラミング言語 Standard ML (SML) のファンクタのアイデアにもとづいています。
 はじめに次のような型を定義しましょう:
 
-#atscode("\
+#sats2xhtml("\
 typedef
 intmod (a:t@ype) = '{
   ofint= int -> a
@@ -1955,7 +1955,7 @@ intmod (a:t@ype) = '{
 #stacode("intmod(T)") 型の値は、型 T の値で表現される整数に対する整数演算のモジュールを表現していると見なすことができます。
 同様に、次のような別の型を定義してみましょう:
 
-#atscode("\
+#sats2xhtml("\
 abst@ype rat (a:t@ype) = (a, a)
 
 typedef
@@ -1977,8 +1977,9 @@ ratmod (a:t@ype) = '{
 #stacode("rat(T)") 型の値で表現される有理数に対する有理数演算のモジュールを表現していると見なすことができます。
 ここで実装したいこの関数は次のインターフェイスを持ちます:
 
-#atscode("\
-fun{a:t@ype} ratmod_make_intmod (int: intmod a): ratmod a
+#sats2xhtml("\
+fun{a:t@ype}
+ratmod_make_intmod (int: intmod a): ratmod a
 ")
 
 与えられた整数演算のモジュールに適用すると、
@@ -1988,7 +1989,7 @@ fun{a:t@ype} ratmod_make_intmod (int: intmod a): ratmod a
 次のコードで、2つの有理数演算のモジュール #dyncode("ratmod_int") と #dyncode("ratmod_dbl") を実装しましょう。
 中身の整数として #stacode("int") 型の値と #stacode("double") 型の値をそれぞれ使用しています:
 
-#atscode('\
+#dats2xhtml('\
 staload M = "libc/SATS/math.sats"
 
 val ratmod_int = let

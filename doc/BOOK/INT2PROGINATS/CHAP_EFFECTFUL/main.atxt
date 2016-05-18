@@ -76,15 +76,13 @@ The expression #dyncode("loop") is said to contain non-termination effect.\
 もし式の評価が終了しない場合、その式もまた効果を持ちます。
 例えば、次のような #dyncode("loop") 関数を定義してみましょう:
 
-#atscode("\
+#dats2xhtml("\
 fun loop (): void = loop ()
 ")
 
 すると次のような文脈で、式 #dyncode("loop()") はいかなる値とも区別ができます:
 
-#atscode('\
-let val _ = [] in print ("Terminated") end
-')
+#atscode('let val _ = [] in print ("Terminated") end')
 
 この文脈の空欄 #dyncode("[]") を #dyncode("loop()") で置き換えると、式の評価は完了しません。
 空欄 #dyncode("[]") をなんらかの値に置き換えると、その評価は文字列 \"Terminated\" を印字するでしょう。
@@ -198,7 +196,7 @@ ATS では #stacode("exn") 型があらかじめ定義されています。
 #stacode("exn") は、新しいコンストラクタによって宣言された拡張データ型であると思うかもしれません。
 例えば次のように2つの例外コンストラクタを宣言します:
 
-#atscode("\
+#sats2xhtml("\
 exception FatalError0 of ()
 exception FatalError1 of (string)
 ")
@@ -210,10 +208,10 @@ exception FatalError1 of (string)
 は2つとも例外の値です (もしくは単に例外と呼ぶこともあります)。
 次のプログラムでは、整数の割り算を関数として実装しています:
 
-#atscode("\
+#dats2xhtml("\
 exception DivisionByZero of ()
 fun divexn (x: int, y: int): int =
-  if y != 0 then then x / y else $raise DivisionByZero()
+  if y != 0 then x / y else $raise DivisionByZero()
 // end of [divexn]
 ")
 
@@ -383,7 +381,7 @@ is freed).\
 例外の発生と捕捉をともなう例を見てみましょう。
 次のプログラムでは、与えられたリスト中の整数の積を計算する3つの関数が定義されています:
 
-#atscode("\
+#dats2xhtml("\
 fun listprod1
 (
   xs: list0 (int)
@@ -604,7 +602,7 @@ time-complexity of the function #dyncode("brauntest0") is O(n(log(n))).\
 
 次のような二分木を表わす多相データ型を宣言します:
 
-#atscode("\
+#sats2xhtml("\
 datatype tree (a:t@ype) =
   | tree_nil of ((*void*))
   | tree_cons of (a, tree(a)(*left*), tree(a)(*right*))
@@ -613,7 +611,7 @@ datatype tree (a:t@ype) =
 
 次に宣言する関数 #dyncode("brauntest0") は、与えられた二分木がブラウンツリーかどうか判定します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } size (t: tree a): int = case+ t of
@@ -700,7 +698,7 @@ as that of #dyncode("aux"), which is O(n).\
 次のプログラムで定義している #dyncode("brauntest1")
 関数もまた与えられた二分木がブラウンツリーか判定しています:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } brauntest1
@@ -775,15 +773,13 @@ Therefore, making use of exceptions in this style should be avoided.
 (例えばたった1つの関数しか呼び出さないなど)、おそらくプログラマは例外機構を使うべきか吟味すべきでしょう。
 例えば、次の例における例外の使い方は興味深いものですが、実際には役に立ちません：
 
-#atscode('\
-
+#dats2xhtml('\
 fun{
 a:t@ype
 } list0_length
   (xs: list0 (a)): int =
-  try 1 + list0_length (xs.tail) with ~ListSubscriptExn() => 0
+  try 1 + list0_length (xs.tail()) with ~ListSubscriptExn() => 0
 // end of [list0_length]
-
 ')
 
 そのため、このような例外の使い方は避けるべきでしょう。
@@ -854,7 +850,7 @@ evaluated.\
 ある型 T が与えられた時、型Tの値を保管する参照は型 ref(T) になります。
 次のプログラムは参照の本質的な機能をすべて利用しています:
 
-#atscode("\
+#dats2xhtml("\
 val intr = ref<int> (0) // create a ref and init. it with 0
 val () = !intr := !intr + 1 // increase the integer at [intr] by 1
 ")
@@ -898,7 +894,7 @@ fun{a:t@ype} ref_set_elt (r: ref a, x: a): void // !r := x
 特に、次のインターフェイスの関数テンプレート #dyncode("ref_get_elt") と #dyncode("ref_set_elt") を使うことで、
 参照の読み書きをすることもできます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:t@ype} ref_get_elt (r: ref a): a // !r
 fun{a:t@ype} ref_set_elt (r: ref a, x: a): void // !r := x
 ")
@@ -953,7 +949,7 @@ making heavy use of references is often difficult to reason about.\
 次で定義している #dyncode("sumup") はそのような例です。
 この関数1から与えられた整数までの整数値をすべて加算します:
 
-#atscode("\
+#dats2xhtml("\
 fun sumup
   (n: int): int = let
   val i = ref<int> (1)
@@ -1063,7 +1059,7 @@ in OOP.\
 次のようなオブジェクト指向プログラミング (OOP) スタイルのカウンタオブジェクトの実装を見てみましょう。
 カウンタのために型 #stacode("counter") を次のように定義します:
 
-#atscode("\
+#sats2xhtml("\
 typedef
 counter = '{
   get= () -<cloref1> int
@@ -1077,7 +1073,7 @@ counter = '{
 次にカウンタオブジェクトを生成するために、関数 #dyncode("newCounter") を定義します。
 このオブジェクトはクロージャ関数群を格納したボックス化レコードとして表わされます:
 
-#atscode("\
+#dats2xhtml("\
 fun newCounter
 (
 // argumentless
@@ -1255,20 +1251,23 @@ array0 値に関する様々な関数と関数テンプレートが
 このファイルは <command>atsopt</command> によって自動的に読み込まれます。
 例えば、配列に関する3つの関数テンプレートと1つの多相関数が次のインターフェイスで表現されます:
 
-#atscode("\
-fun{a:t@ype} // a template
+#sats2xhtml("\
+//
+fun{a:t@ype} // template
 arrszref_make_elt
   (asz: size_t, x: a): arrszref a // array creation
-
-// a polymorphic function
+//
+// polymorphic fun:
+//
 fun arrszref_get_size
   {a:t@ype} (A: arrszref a): size_t // size of an array
-
-fun{a:t@ype} // a template
+//
+fun{a:t@ype} // template
 arrszref_get_elt_at (A: arrszref a, i: size_t): a // A[i]
-
-fun{a:t@ype} // a template
+//
+fun{a:t@ype} // template
 arrszref_set_elt_at (A: arrszref a, i: size_t, x: a): void // A[i] := x
+//
 ")
 
 サイズ情報をともなわない配列を使ったプログラミングは、
@@ -1364,7 +1363,7 @@ respectively.
 次のプログラムでは、
 一般的な配列の挿入ソートを関数テンプレート #dyncode("insertion_sort") として実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } insertion_sort
@@ -1550,7 +1549,7 @@ end // end of [print_intarray]
 #para("\
 次のような整数の配列を印字する関数を定義しましょう:
 
-#atscode('
+#dats2xhtml('
 fun print_intarray
   (A: arrszref (int)): void = let
   val asz = g0uint2int_size_int (A.size)
@@ -1617,7 +1616,7 @@ direction.\
 次に、与えられた配列の要素を再配置するために、
 2つの関数 #dyncode("lrotate") と #dyncode("rrotate") を実装します:
 
-#atscode("\
+#dats2xhtml("\
 fun lrotate (
   A: arrszref int, i: int, j: int
 ) : void = let
@@ -1729,8 +1728,7 @@ integer sequences.\
 次に定義する関数 #dyncode("permute") は 1 から n までの整数からなるすべての置換を印字します。
 このとき出力は整数列の辞書順で並べられます。
 
-#atscode("\
-
+#dats2xhtml("\
 fun permute
   (n: int): void = let
 //
@@ -1742,25 +1740,24 @@ fun permute
 //
 // Initializing A with integers from 1 to n, inclusive
 //
-  val () = init (0) where
+  val () = init(0) where
   {
-    fun init (i: int):<cloref1> void =
+    fun init (i: int): void =
       if i < n then (A[i] := i+1; init (i+1))
   } // end of [where] // end of [val]
 //
   fun aux
-    (i: int):<cloref1> void =
+    (i: int): void =
   (
     if i <= n
-      then aux2 (i, i) else (
-      print_intarray (A); print_newline ()
-    ) // end of [if]
+      then aux2 (i, i)
+      else (
+        print_intarray (A); print_newline ()
+      ) (* end of [else] *)
   ) (* end of [aux] *)
 //
   and aux2
-    (
-      i: int, j: int
-    ) :<cloref1> void =
+    (i: int, j: int): void =
   (
     if j <= n then let
       val () = (
@@ -1916,21 +1913,23 @@ matrix0 値に関する様々な関数と関数テンプレートが
 このファイルは <command>atsopt</command> によて自動的に読み込まれます。
 例えば、行列に関する3つの関数テンプレートと2つの多相関数が次のようなインターフェイスで表現されています:
 
-#atscode("\
+#sats2xhtml("\
+//
 fun{a:t@ype}
 mtrxszref_make_elt // template
   (row: size_t, col: size_t, x: a): mtrxszref (a)
-
+//
 fun mtrxszref_get_nrow{a:t@ype} (M: mtrxszref a): size_t // polyfun
 fun mtrxszref_get_ncol{a:t@ype} (M: mtrxszref a): size_t // polyfun
-
+//
 fun{a:t@ype}
 mtrxszref_get_elt_at // template
   (M: mtrxszref a, i: size_t, j: size_t): a // M[i,j]
 fun{a:t@ype}
 mtrxszref_set_elt_at // template
   (M: mtrxszref a, i: size_t, j: size_t, x: a): void // M[i,j] := x
-")
+//
+")#comment("...")
 
 ")#comment("para")
 ")
@@ -2023,7 +2022,7 @@ in these function bodies can be compiled into direct local jumps.\
 例を見てみましょう。
 次に定義する関数 #dyncode("mtrxszref_transpose") は与えられた行列を転置行列にします:
 
-#atscode("\
+#dats2xhtml("\
 fun{a:t@ype}
 mtrxszref_transpose
   (M: mtrxszref a): void = let
@@ -2343,7 +2342,7 @@ fun fileref_open_opt
 例えば、
 ファイルハンドルのオープンとクローズを行なう関数は次のようなインターフェイスを持っています:\
 
-#atscode("\
+#sats2xhtml("\
 fun fileref_open_exn
 (
   path: string, fm: file_mode
@@ -2357,7 +2356,7 @@ fun fileref_close (fil: FILEref): void
 ファイルハンドルが実際に得られたかどうか、
 #dyncode("fileref_open_opt") の呼び出し元が返値を検査する必要があります。\
 
-#atscode("\
+#sats2xhtml("\
 fun fileref_open_opt
   (path: string, fm: file_mode) : Option_vt (FILEref)
 ")
@@ -2534,7 +2533,7 @@ for overloading in ATS.\
 文字列 \"Hello, world!\" と改行をファイルハンドルに関連するストリームに出力し、
 最後にファイルハンドルを閉じます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 main0 () =
 {
@@ -2608,7 +2607,7 @@ character can terminate the above program for echoing each line of input.\
 
 別の一般的な I/O 関数として次のようなインターフェイスがあります:
 
-#atscode("\
+#sats2xhtml("\
 fun fileref_get_line_string (fil: FILEref): Strptr1
 ")
 
@@ -2618,7 +2617,7 @@ fun fileref_get_line_string (fil: FILEref): Strptr1
 単純に説明することにとどめます。
 例として、次の短かいプログラムは、標準入力から一行読み込み標準出力にエコー書き出します:
 
-#atscode('\
+#dats2xhtml('\
 implement
 main0 (
 // argumentless
