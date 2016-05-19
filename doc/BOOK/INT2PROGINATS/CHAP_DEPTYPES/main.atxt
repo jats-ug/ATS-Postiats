@@ -447,7 +447,7 @@ ATS の静的な部分は単純型付き言語で、(動的な項の型 (type) �
 例えば、次のサブセット種が #myatscodelink("prelude/basics_pre.sats", "basics_pre.sats")
 ファイルで定義されていて、ATSコンパイラが自動的にロードします:
 
-#atscode("\
+#sats2xhtml("\
 sortdef nat = {a: int | a >= 0} // for natural numbers
 sortdef pos = {a: int | a >= 1}  // for positive numbers
 sortdef neg = {a: int | a <= ~1}  // for negative numbers
@@ -460,7 +460,7 @@ sortdef nat4 = {a: nat | a < 4} // for 0, 1, 2, 3
 
 セミコロン記号 (;) を使って述語群を結合することで、それらの並べることができることに注意してください:
 
-#atscode("\
+#sats2xhtml("\
 sortdef nat2 = {a: int | 0 <= a; a < 2} // for 0, 1
 sortdef nat3 = {a: int | 0 <= a; a < 3} // for 0, 1, 2
 sortdef sgn = { i:int | ~1 <= i; i <= 1 } // for ~1, 0, 1
@@ -468,7 +468,7 @@ sortdef sgn = { i:int | ~1 <= i; i <= 1 } // for ~1, 0, 1
 
 次のようにサブセット種 #emphasis("nat2") と #emphasis("nat3") を定義することも可能です:
 
-#atscode("\
+#sats2xhtml("\
 sortdef nat2 = {a: int | a == 0 || a == 1} // for 0, 1
 sortdef nat3 = {a: int | 0 <= a && a <= 2} // for 0, 1, 2
 ")
@@ -529,7 +529,7 @@ automatically expands into #stacode("[a:int | a >= 0]").\
 と存在量化 (existential quantification) を採用しましょう。
 例えば、ATSの型 #stacode("Int") は次のように定義されています:
 
-#atscode("\
+#sats2xhtml("\
 typedef Int = [a:int] int (a) // for unspecified integers
 ")
 
@@ -541,7 +541,7 @@ typedef Int = [a:int] int (a) // for unspecified integers
 #stacode("Int") のような型はしばしば存在量化型 (existentially quantified type) と呼ばれます。
 別の例として、ATSの型 #stacode("Nat") は次のように定義されます:
 
-#atscode("\
+#sats2xhtml("\
 typedef Nat = [a:int | a >= 0] int (a) // for natural numbers
 ")
 
@@ -553,7 +553,7 @@ I >= 0 を満たす整数 I を使った型 #stacode("int(I)") を割り当て�
 つまり型 #stacode("Nat") は自然数を意味することになります。
 #stacode("Nat") はまた次のようにも定義できます:
 
-#atscode("\
+#sats2xhtml("\
 typedef Nat = [a:nat] int (a) // for natural numbers
 ")
 
@@ -674,7 +674,7 @@ standard names:
 構文 #stacode("{i:nat}") は自動的に #stacode("{i:int | i >= 0}") に展開されます。
 整数に一般的に使われるいくつかのインターフェイスを次に挙げます:
 
-#atscode("\
+#sats2xhtml("\
 fun g1int_neg {i:int} (int i): int (~i) // negation
 fun g1int_add {i,j:int} (int i, int j): int (i+j) // addition
 fun g1int_sub {i,j:int} (int i, int j): int (i-j) // subtraction
@@ -747,7 +747,7 @@ cover later.\
 階乗関数の依存型インターフェイスはどのようになるでしょうか？
 上記の例を見た後では、次の行のように考えるのが自然でしょう:
 
-#atscode("\
+#sats2xhtml("\
 fun g1int_fact {i:nat} (i: int i): int (fact (i))
 ")
 
@@ -852,10 +852,13 @@ elaborated manner elsewhere.\
 ATS における型検査は制約の生成と解決を引き起こします。
 例えば、次のコードはよく知られた階乗関数を実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun
 fact{n:nat}
-  (x: int n): [r:nat] int r = if x > 0 then x * fact (x-1) else 1
+(
+  x: int(n)
+) : [r:nat] int r =
+  if x > 0 then x * fact (x-1) else 1
 // end of [fact]
 ")
 
@@ -1023,28 +1026,30 @@ ATS では、 #stacode("string") は種 #emphasis("(int) -&gt; type") の型コ�
 #stacode("string") は長さが指定されていない文字列の非依存型をも参照していることに注意してください。
 この非依存型は次に定義する型 #stacode("String") と基本的に同等です:
 
-#atscode("\
+#sats2xhtml("\
 typedef String = [n:nat] string (n)
 ")
 
 次の2つの関数は与えられた文字列を走査する用途に一般に使われます:
 
-#atscode("\
+#sats2xhtml("\
+//
 fun string_is_atend
   {n:int}{i:nat | i <= n}
   (str: string (n), i: size_t (i)): bool (i==n)
 // end of [string_is_atend]
-
+//
 fun string_isnot_atend
   {n:int}{i:nat | i <= n}
   (str: string (n), i: size_t (i)): bool (i < n)
 // end of [string_isnot_atend]
+//
 ")
 
 明らかに、これら内のどちらかはもう一方を元にして実装することができます。
 例として、次のコードは与えられた文字列の長さを算出する関数を実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun
 string_length
   {n:nat} (
@@ -1135,18 +1140,20 @@ right). Otherwise, the value #dyncode("None()") is returned.\
 
 次の2つの関数は文字列に保存されている文字へのアクセスと変更を表わします:
 
-#atscode("\
-typedef charNZ = [c:char | c <> '\\\\000'] char (c)
-
+#sats2xhtml("\
+//
+typedef charNZ = [c:int | c != 0] char(c)
+//
 fun
-string_get_at{n:int}
-  {i:nat | i < n} (str: string n, i: size_t i): charNZ
+string_get_at
+  {n:int}{i:nat | i < n}(str: string n, i: size_t i): charNZ
 overload [] with string_get_at
-
+//
 fun
-string_set_char_at{n:int}
-  {i:nat | i < n} (str: string n, i: size_t i, c: charNZ): void
+string_set_char_at
+  {n:int}{i:nat | i < n}(str: string n, i: size_t i, c: charNZ): void
 overload [] with string_set_char_at
+//
 ")
 
 型コンストラクタ #stacode("char") には種 #emphasis("(char) -&gt; t@ype") が割り当てられています。
@@ -1155,7 +1162,7 @@ overload [] with string_set_char_at
 したがって型 #stacode("charNZ") は全ての非NULL文字を表わします。
 次に定義される関数 #dyncode("string_find") は文字列を左から右に走査して、与えられた文字が文字列の中に見つかるか判定します:
 
-#atscode("\
+#dats2xhtml("\
 //
 typedef
 sizeLt (n:int) = [i:nat | i < n] size_t (i)
@@ -1260,7 +1267,7 @@ the string #dyncode("str").\
 文字列の当該位置に保存されている文字を取り出します。
 これら2つの関数呼び出しを次の実装のように1つにまとめましょう:
 
-#atscode("\
+#dats2xhtml("\
 //
 // This implementation does the same as [string_find]
 // but should be more efficient.
@@ -1280,10 +1287,12 @@ loop{i:nat | i <= n}
   typedef res = sizeLt (n)
   val c = string_test_at (str, i)
 in
-  if c != '\\\\000' then
+  if c != '\\\\\\\\000' then
   (
-    if (c0 = c) then Some{res}(i) else loop (str, c0, succ(i))
-  ) else None ((*void*)) // end of [if]
+    if (c0 = c)
+      then Some{res}(i) else loop(str, c0, succ(i))
+    // end of [if]
+  ) else None((*void*)) // end of [if]
 end // end of [loop]
 //
 in
@@ -1293,7 +1302,7 @@ end // end of [string_find2]
 
 関数 #dyncode("string_test_at") のインターフェイスは次のようになります:
 
-#atscode("\
+#sats2xhtml("\
 fun
 string_test_at
   {n:int}{i:nat | i <= n}
@@ -1395,7 +1404,7 @@ the array being subscripted.\
 次のインターフェイスは配列を生成するための関数テンプレート #dyncode("array_make_elt") です。
 このテンプレートが生成する配列もまたサイズ情報を持っていません:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:t@ype}
 array_make_elt{n:int} (asz: size_t n, elt: a): arrayref (a, n)
 ")
@@ -1403,16 +1412,18 @@ array_make_elt{n:int} (asz: size_t n, elt: a): arrayref (a, n)
 静的な整数 I が与えられた時、型 #stacode("size_t(I)") はシングルトン型で、I と等しい整数を表わすC言語の型 size_t の値を表わします。
 配列要素の読み書きのための関数テンプレートは次のようなインターフェイスを持ちます:
 
-#atscode("\
+#sats2xhtml("\
+//
 fun{a:t@ype}
 arrayref_get_at
-  {n:int}{i:nat | i < n} (A: arrayref (a, n), i: size_t i): a
+  {n:int}{i:nat | i < n} (A: arrayref (a, n), i: size_t i): (a)
 overload [] with arrayref_get_at
-
+//
 fun{a:t@ype}
 arrayref_set_at
   {n:int}{i:nat | i < n} (A: arrayref (a, n), i: size_t i, x: a): void
 overload [] with arrayref_set_at
+//
 ")
 
 これら2つの関数テンプレートはどのような実行時の配列境界チェックもしないことに注意してください:
@@ -1476,7 +1487,7 @@ effectively the enhanced precision in specification.\
 
 依存型を使った実際のプログラミングの説得力のある例として、次のコードでは整列された配列に対する標準の二分探索アルゴリズムを実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } bsearch_arr{n:nat}
@@ -1603,7 +1614,7 @@ strictly less that the initial metric attached to the function.
 (singleton metric) #stacode("n") を与えています。
 このとき #stacode("n") は #dyncode("fact") の整数引数の値です:
 
-#atscode("\
+#dats2xhtml("\
 fun fact {n:nat} .<n>.
   (x: int n): int = if x > 0 then x * fact (x-1) else 1
 // end of [fact]
@@ -1640,7 +1651,7 @@ this metric suffices for verifying the termination of #dyncode("f91").\
 
 より難しくまた興味深い例は、次のマッカーシーの91関数 (MacCarthy's 91-function) の実装です:
 
-#atscode("\
+#dats2xhtml("\
 fun f91 {i:int} .<max(101-i,0)>. (x: int i)
   : [j:int | (i < 101 && j==91) || (i >= 101 && j==i-10)] int (j) =
   if x >= 101 then x-10 else f91 (f91 (x+11))
@@ -1688,7 +1699,7 @@ pairs of natural numbers.\
 別の例として、次のコードはアッカーマン関数を実装しています。
 この関数は原始再帰関数でない再帰として有名です:
 
-#atscode("\
+#dats2xhtml("\
 fun acker
   {m,n:nat} .<m,n>.
   (x: int m, y: int n): Nat =
@@ -1744,7 +1755,7 @@ recursively defined functions be tuples of the same length.\
 相互再帰関数の停止性検査も同様です。
 次の例では、#dyncode("isevn") と #dyncode("isodd") が相互再帰的に定義されています:
 
-#atscode("\
+#dats2xhtml("\
 fun isevn
   {n:nat} .<2*n>.
   (n: int n) : bool =
@@ -1913,11 +1924,15 @@ aforementioned dependent function type.\
 x >= 0 の整数が割り当てられた時、x の平方根は i * i <= x を満たすような最大の整数 i になります。
 次のように平方根関数を二分探索法をもとに実装します:
 
-#atscode("\
-fun isqrt
-  (x: int): int = let
+#dats2xhtml("\
+fun
+isqrt
+(
+  x: int
+) : int = let
 //
-fun search
+fun
+search
 (
   x: int, l: int, r: int
 ) : int = let
@@ -1927,10 +1942,12 @@ in
   | _ when diff > 0 => let
       val m = l + (diff / 2)
     in
-      // x < m * m is more efficient but can overflow easily
-      if x / m < m then search (x, l, m) else search (x, m, r)
+      // x < m * m can overflow easily
+      if x / m < m
+        then search (x, l, m) else search (x, m, r)
+      // end of [if]
     end // end of [if]
-  | _ => l (* the result is found *)
+  | _ (* diff <= 0 *) => l (* the result is found *)
 end // end of [search]
 //
 in
@@ -1980,13 +1997,17 @@ end // end of [isqrt]
 #dyncode("search") に依存型の関数型を割り当てると、型検査で見つかるエラーに対して関数本体を修正する必要があります。
 次のコードは型検査を通るように適切な修正を施したものです:
 
-#atscode("\
+#dats2xhtml("\
 fun
-isqrt{x:nat}
-  (x: int x): int = let
+isqrt
+{x:nat}
+(
+  x: int x
+) : int = let
 //
-fun search
-  {x,l,r:nat | l < r} .<r-l>.
+fun
+search
+{x,l,r:nat | l < r} .<r-l>.
 (
   x: int x, l: int l, r: int r
 ) : int = let
@@ -1994,11 +2015,13 @@ fun search
 in
   case+ 0 of
   | _ when diff > 1 => let
-      val m = l + (diff / 2)
+      val m = l + half(diff)
     in
-      if x / m < m then search (x, l, m) else search (x, m, r)
+      if x / m < m
+        then search (x, l, m) else search (x, m, r)
+      // end of [if]
     end // end of [if]
-  | _ => l (* the result is found *)
+  | _ (* diff <= 1 *) => l (* the result is found *)
 end // end of [search]
 //
 in
@@ -2006,7 +2029,7 @@ in
 end // end of [isqrt]
 ")
 
-r-l が 1 等しい時に #dyncode("search(x, l, r)") が呼び出されると、以前の
+#stacode("r-l") が 1 等しい時に #dyncode("search(x, l, r)") が呼び出されると、以前の
 #dyncode("search") 実装における無限ループが発生するのではないか、ということが明らかになりました。
 この呼び出しは同じ引数で別の #dyncode("search") 呼び出しを引き起こしてしまう可能性があります。
 けれども、#dyncode("search") に前述の依存型の関数型が割り当てた後では、そのような呼び出しは型エラーになります。\

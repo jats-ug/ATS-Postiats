@@ -155,7 +155,7 @@ above declaration is equivalent to writing #keycode("ext\#fact2").
 
 次のコードでは2つの関数を宣言しています:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun fact (n: int): int
 extern
@@ -217,7 +217,7 @@ through the name #dyncode("fact2_in_c").\
 
 次のように #dyncode("fact") の実装が与えられたとしましょう:
 
-#atscode('\
+#dats2xhtml('\
 implement fact (n) = fact2 (n, 1)
 ')
 
@@ -237,7 +237,7 @@ fact2_in_c (int n, int res)
 
 そして次のような #dyncode("fact2") をATSで直接実装することもできます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 fact2 (n, res) = if n > 0 then fact2 (n-1, n*res) else res
 ')
@@ -289,7 +289,7 @@ may not even have a prototype. This style of declaration naturally expects
 
 また #dyncode("fact2") を次のように宣言することもできます:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun fact2 (n: int, res: int): int = "mac\#fact2_in_c"
 ')
@@ -322,7 +322,7 @@ then #dyncode("fact2_in_c") is treated like a static function in C.\
 
 また #keycode("mac\#") のかわりに #keycode("sta\#") を使うこともできます:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun fact2 (n: int, res: int): int = "sta\#fact2_in_c"
 ')
@@ -359,13 +359,13 @@ in C is simply #dyncode("fact2").\
 
 完全を期すために、static 関数を宣言する他の方法を紹介します:
 
-#atscode('\
+#dats2xhtml('\
 static fun fact2 (n: int, res: int): int
 ')
 
 このスタイルの宣言は自動的に次のように変換されます:
 
-#atscode('\
+#dats2xhtml('\
 extern fun fact2 (n: int, res: int): int = "sta\#"
 ')
 
@@ -455,7 +455,7 @@ directly referred to in ATS code.
 この型は #stacode('$extype"some_type_in_c"') のように ATS 言語から参照することができます。
 例えば次のコードのように、C言語でのいくつかの型を ATS 言語に取り込んで型定義できます:
 
-#atscode('\
+#sats2xhtml('\
 typedef Cint = $extype"int"
 typedef Clint = $extype"long int"
 typedef Cllint = $extype"long long int"
@@ -467,18 +467,18 @@ typedef Cint2 = $extype"struct{ int x; int y; }"
 この T はこの値に割り当てる ATS の型です。
 例えば次のコードのように、C言語でのいくつかの外部定義の値を ATS 言語に取り込んでマクロ定義できます:
 
-#atscode('\
-macdef NULL = $extype(ptr, "0")
-macdef stdin_ref = $extype(FILEref, "stdin")
-macdef stdout_ref = $extype(FILEref, "stdout")
+#sats2xhtml('\
+macdef NULL = $extval(ptr, "0")
+macdef stdin_ref = $extval(FILEref, "stdin")
+macdef stdout_ref = $extval(FILEref, "stdout")
 ')
 
 また次のコードのように、C言語の関数を参照する外部定義の値を作ることができます:
 
-#atscode('\
-macdef atoi = $extype(string -> int, "atoi")
-macdef atol = $extype(string -> lint, "atol")
-macdef atof = $extype(string -> double, "atof")
+#sats2xhtml('\
+macdef atoi = $extval(string -> int, "atoi")
+macdef atol = $extval(string -> lint, "atol")
+macdef atof = $extval(string -> double, "atof")
 ')
 
 C言語の関数を直接参照するために、より適切な方法が ATS にはあることに注意してください。
@@ -544,21 +544,23 @@ C言語コード中にアセンブラコードを埋め込むのと同様に、A
 コード中にC言語コードを埋め込むことも簡単です。
 例えば、この章の最初で示した例は、次のような一つのファイルに書くことができます:
 
-#atscode('\
+#dats2xhtml('\
+//
 extern
 fun fact (n: int): int
 extern
 fun fact2 (n: int, res: int): int = "ext\#fact2_in_c"
-
+//
 implement fact (n) = fact2 (n, 1)
-
-%{
+//
+\%{
 int
 fact2_in_c (int n, int res)
 {
   while (n > 0) { res *= n ; n -= 1 ; } ; return res ;
 }
-%}
+\%}
+//
 ')#comment("atscode")
 
 ATS コード中にC言語コードを書くためには、#keycode("%{") と #keycode("%}")
@@ -641,7 +643,7 @@ for the call to be made.
 ATS から外部関数を呼び出すことは簡単です。
 例えば、次のコードはその典型的な例です:
 
-#atscode('\
+#dats2xhtml('\
 local
 extern
 fun __fprintf
@@ -686,7 +688,7 @@ of arguments are the arguments of the called function.
 また ATS から外部関数を直接呼び出すビルトインのしくみもあります。
 例えば、次のコードは上記で示したコードと本質的に同じです:
 
-#atscode('\
+#dats2xhtml('\
 val N = 12
 val _ = $extfcall(int, "fprintf", stdout_ref, "fact(%i) = %i\\\\n", N, fact(N))
 ')
@@ -839,7 +841,7 @@ pointer that is n bytes after p, where n equals the size of T.
 2つの文字列を標準辞書式順序によって比較する関数を実装したくなったとします。
 その関数に #dyncode("strcmp") という名前を付けて、次のようなインターフェイスを与えましょう:
 
-#atscode('\
+#sats2xhtml('\
 fun strcmp (str1: string, str2: string): int
 ')
 
@@ -849,8 +851,7 @@ fun strcmp (str1: string, str2: string): int
 より大きいか、より小さいか、等しいことを表わしています。
 #dyncode("strcmp") の実装は次のようになるでしょう:
 
-#atscode('\
-
+#dats2xhtml('\
 staload
 UN = "prelude/SATS/unsafe.sats"
 
@@ -1008,7 +1009,7 @@ elements of the type T.
 その関数に #dyncode("array_copy_from_list") という名前を付けて、
 次のようなインターフェイスを与えます:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype}
 array_copy_from_list (A: array0(a), xs: list0(a)): void
 ')
@@ -1127,10 +1128,9 @@ ATS では、ATS の型をエクスポートしてC言語から直接使うこ�
 生成されたC言語コード中で #stacode("int_and_string")
 の名前の typedef が宣言されることを期待しています:
 
-#atscode('\
+#dats2xhtml('\
 extern
-typedef
-"int_and_string" = (int, string)
+typedef "int_and_string" = (int, string)
 ')
 
 本質的に #stacode("int_and_string") はC言語の中で次のように定義されます:
@@ -1177,7 +1177,7 @@ constructed with the data constructors #dyncode("cons1") and #dyncode("cons2").
 #dyncode("cons2(i, d)") の値をC言語でコンストラクトしてみましょう。
 #dyncode("cons2") は次で宣言されたデータ型 #stacode("abc") に関連したデータコンストラクタです:
 
-#atscode('\
+#sats2xhtml('\
 datatype abc =
   | cons1 of int | cons2 of (int, double)
 ')
@@ -1248,7 +1248,7 @@ second constructors associated with the datatype #stacode("abc").
 次の宣言で ATS の #stacode("cons2_pstruct(int, double)") 型が
 #stacode("cons2_node") の名前でC言語にエクスポートされます:
 
-#atscode('\
+#dats2xhtml('\
 extern
 vtypedef "cons2_node" = cons2_pstruct(int, double)
 ')
@@ -1310,7 +1310,7 @@ val-cons2 (1, 2.34) = cons2_make (1, 2.34)
 ATS 側で #dyncode("cons2_make") にインターフェイスを割り当てることで、#dyncode("cons2_make")
 の挙動が意図したものかどうかチェックできます:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun cons2_make (int, double): abc = "mac#"
 val-cons2 (1, 2.34) = cons2_make (1, 2.34)
@@ -1416,12 +1416,14 @@ list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
 次のコードでは、ATS における #stacode("list_node")
 型がボックス化リスト要素であり、この型はC言語へ同じ名前でエクスポートされています:
 
-#atscode('\
+#dats2xhtml('\
 //
 vtypedef
-list_node = list_cons_pstruct(int,ptr) // [list_node] for boxed nodes
+list_node =
+list_cons_pstruct(int,ptr) // [list_node] for boxed nodes
 //
-extern vtypedef "list_node" = list_node // exporting [list_node] to C
+extern
+vtypedef "list_node" = list_node // exporting [list_node] to C
 //
 ')
 
@@ -1429,8 +1431,11 @@ extern vtypedef "list_node" = list_node // exporting [list_node] to C
 typedef #stacode("list_node_") が暗黙的にC言語へ導入されます。
 そのため、ATS における次の型 #stacode("list_node_") は、アンボックス化リスト要素のために私達が望んだものでしょう:
 
-#atscode('\
-typedef list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
+#dats2xhtml('\
+//
+typedef
+list_node_ = $extype"list_node_" // [list_node_] for unboxed nodes
+//
 ')#comment("atscode")
 
 ')
@@ -1498,7 +1503,7 @@ this implementation directly.\
 次のコードはリスト要素の配列を静的に確保した後、
 それらの要素を初期化して、その配列をリストに変換します:
 
-#atscode('\
+#dats2xhtml('\
 local
 
 \#define N 10

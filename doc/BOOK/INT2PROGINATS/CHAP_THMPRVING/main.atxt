@@ -166,12 +166,13 @@ ATS の静的な部分には、証明の型を表わす静的な項のための�
 データ命題はデータ型の宣言とよく似た作法で宣言できます。
 例えば、#stacode("FIB") をコンストラクトする証明は次のデータ命題宣言で導入できます:
 
-#atscode("\
-dataprop FIB (int, int) =
-  | FIB0 (0, 0) of () // [of ()] can be dropped
-  | FIB1 (1, 1) of () // [of ()] can be dropped
-  | {n:nat}{r0,r1:nat}
-    FIB2 (n+2, r0+r1) of (FIB (n, r0), FIB (n+1, r1))
+#sats2xhtml("\
+dataprop
+FIB(int, int) =
+  | FIB0(0, 0) of () // [of ()] can be dropped
+  | FIB1(1, 1) of () // [of ()] can be dropped
+  | {n:nat}{r0,r1:int}
+    FIB2(n+2, r0+r1) of (FIB(n, r0), FIB(n+1, r1))
 // end of [FIB]
 ")
 
@@ -291,13 +292,14 @@ relation that represents the standard multiplication function on integers.\
 
 データ命題の別の例として、次の宣言は命題コンストラクタ #stacode("MUL") と関連する3つの証明コンストラクタを導入しています:
 
-#atscode("\
-dataprop MUL (int, int, int) =
-  | {n:int} MULbas (0, n, 0) of ()
+#sats2xhtml("\
+dataprop
+MUL(int, int, int) =
+  | {n:int} MULbas(0, n, 0) of ()
   | {m:nat}{n:int}{p:int}
-    MULind (m+1, n, p+n) of MUL (m, n, p)
+    MULind(m+1, n, p+n) of MUL(m, n, p)
   | {m:pos}{n:int}{p:int}
-    MULneg (~m, n, ~p) of MUL (m, n, p)
+    MULneg(~(m), n, ~(p)) of MUL(m, n, p)
 // end of [MUL]
 ")
 
@@ -456,23 +458,21 @@ to the rule encoded by #dyncode("MULneg").\
 #para("\
 はじめに単純で初歩的な例として、次のインターフェイスで与えられる ATS/LF の証明関数をコンストラクトしてみましょう:
 
-#atscode("\
-prfun mut_istot {m,n:int} (): [p:int] MUL (m, n, p)
+#sats2xhtml("\
+prfun mul_istot {m,n:int} (): [p:int] MUL(m, n, p)
 ")
 
 キーワード #keycode("prfun") は (非証明関数ではなく) 証明関数のインターフェイスを示しています。
 #dyncode("mul_istot") は次の型 (より正確には命題) で宣言されていることに注意してください:
 
-#atscode("\
-{m,n:int} () -<prf> [p:int] MUL (m, n, p)
-")
+#atscode("{m,n:int} () -<prf> [p:int] MUL(m, n, p)")
 
 これは本質的に整数の乗法が全域関数であると言っています。
 2つのどのような整数 m と n が与えられても、構造的帰納的に定義 #stacode("MUL") に従った m, n, p
 の関係にあるような整数 p が存在します。
 次のコードは #dyncode("mul_istot") の実装です:
 
-#atscode("\
+#dats2xhtml("\
 primplement
 mul_istot{m,n}() = let
 //
@@ -551,7 +551,7 @@ as failures of pattern matching).\
 ATS/LF における定理証明の別の例として、
 次のような #dyncode("mul_isfun") という名前の証明関数を見てみましょう:
 
-#atscode("\
+#dats2xhtml("\
 prfn mul_isfun
   {m,n:int}{p1,p2:int}
 (
@@ -724,14 +724,12 @@ based on #dyncode("auxnat").\
 #para("\
 加法に対する乗法の分配法則は次の等式を意味しています:
 
-#atscode("\
-m * (n1 + n2) = m * n1 + m * n2
-")
+#atscode("m * (n1 + n2) = m * n1 + m * n2")
 
 m, n1, n2 は整数の範囲を持ちます。
 この等式を直接エンコードすると次のような (証明の) 関数インターフェイスが得られます:
 
-#atscode("\
+#sats2xhtml("\
 //
 prfun
 mul_distribute
@@ -744,7 +742,7 @@ mul_distribute
 m と n1 の積が p1 でありかつ m と n2 の積が p2 であったなら m と (n1+n2) の積は p1+p2 になる、と言っています。
 #dyncode("mul_distribute") の実装は次のようになります:
 
-#atscode("\
+#dats2xhtml("\
 primplement
 mul_distribute
 {m,n1,n2}{p1,p2}
@@ -891,7 +889,7 @@ based on #dyncode("auxnat").\
 
 このとき m と n は整数の範囲を持ちます。この等式を直接エンコードすると次のような (証明の) 関数インターフェイスが得られます:
 
-#atscode("\
+#sats2xhtml("\
 //
 prfun
 mul_commute{m,n:int}{p:int}(MUL(m, n, p)): MUL(n, m, p)
@@ -900,7 +898,7 @@ mul_commute{m,n:int}{p:int}(MUL(m, n, p)): MUL(n, m, p)
 
 #dyncode("mul_commute") の実装は次のようになります:
 
-#atscode("\
+#dats2xhtml("\
 primplmnt
 mul_commute
   {m,n}{p}(pf0) = let
@@ -934,7 +932,7 @@ end // end of [mul_commute]
 
 このとき、次の証明関数が使われています:
 
-#atscode("\
+#sats2xhtml("\
 //
 prfun
 mul_nx0_0{n:int}(): MUL(n, 0, 0) // n * 0 = 0
@@ -1001,7 +999,7 @@ s と h がそれぞれ与えられた二分木のサイズと高さであるな
 より小さくなることを示す定理を ATS でエンコードしてみましょう。
 二分木を静的に表わすために、まず次のデータ種を宣言しましょう:
 
-#atscode("\
+#sats2xhtml("\
 datasort tree = E of () | B of (tree, tree)
 ")
 
@@ -1046,20 +1044,22 @@ encodes the relation that the height of t equals h.
 #para("\
 次のように木のサイズと高さの概念を捕捉するために2つのデータ命題を宣言しましょう:
 
-#atscode("\
+#sats2xhtml("\
+//
 dataprop
 SZ (tree, int) =
   | SZE (E (), 0) of ()
   | {tl,tr:tree}{sl,sr:nat}
     SZB (B (tl, tr), 1+sl+sr) of (SZ (tl, sl), SZ (tr, sr))
 // end of [SZ]
-
+//
 dataprop
 HT (tree, int) =
   | HTE (E (), 0) of ()
   | {tl,tr:tree}{hl,hr:nat}
     HTB (B (tl, tr), 1+max(hl,hr)) of (HT (tl, hl), HT (tr, hr))
 // end of [HT]
+//
 ")
 
 木 t と整数 s が与えられた時、SZ(t, s) は t のサイズが s に等しいという関係をエンコードします。
@@ -1088,8 +1088,9 @@ Given two integers h and p, POW2 (h, p) encodes the relation that
 #para("\
 2を底にした累乗関数は ATS の静的な部分にはないので、それを捕捉する次のデータ命題を宣言します:
 
-#atscode("\
-dataprop POW2 (int, int) =
+#sats2xhtml("\
+dataprop
+POW2 (int, int) =
   | POW2bas (0, 1)
   | {n:nat}{p:int} POW2ind (n+1, p+p) of POW2 (n, p)
 // end of [POW2]
@@ -1125,8 +1126,7 @@ s と h が与えられた二分木のサイズと高さである時、
 s がきっちり 2<superscript>h</superscript> より小さくなることを表わす定理を、
 次の証明関数のインターフェイスがエンコードしていることは明確でしょう:
 
-#atscode("\
-extern
+#sats2xhtml("\
 prfun
 lemma_tree_size_height
   {t:tree}{s,h:nat}{p:int}
@@ -1184,27 +1184,32 @@ establishes that the power function is increasing.\
 #para("\
 はじめに、2を底にした累乗関数のいくつかの基本的な性質を作ります:
 
-#atscode("\
-prfun pow2_istot
+#dats2xhtml("\
+prfun
+pow2_istot
   {h:nat} .<h>. (): [p:int] POW2 (h, p) =
-  sif h > 0 then POW2ind (pow2_istot {h-1} ()) else POW2bas ()
+  sif h==0
+    then POW2bas () else POW2ind (pow2_istot {h-1} ())
+  // end of [sif]
 // end of [pow2_istot]
 
-prfun pow2_pos
+prfun
+pow2_pos
   {h:nat}{p:int} .<h>.
   (pf: POW2 (h, p)): [p > 0] void =
   case+ pf of
-  | POW2ind (pf1) => pow2_pos (pf1) | POW2bas () => ()
+  | POW2bas () => () | POW2ind (pf1) => pow2_pos (pf1)
 // end of [pow2_pos]
 
-prfun pow2_inc
+prfun
+pow2_inc
   {h1,h2:nat | h1 <= h2}{p1,p2:int} .<h2>.
   (pf1: POW2 (h1, p1), pf2: POW2 (h2, p2)): [p1 <= p2] void =
   case+ pf1 of
+  | POW2bas () => pow2_pos (pf2)
   | POW2ind (pf11) => let
       prval POW2ind (pf21) = pf2 in pow2_inc (pf11, pf21)
-    end
-  | POW2bas () => pow2_pos (pf2)
+    end // end of [POW2ind]
 // end of [pow2_inc]
 ")
 
@@ -1284,7 +1289,7 @@ and #keycode("case").  Please find the entirety of the above code
 
 関数 #dyncode("lemma_tree_size_height") は次のように実装できます:
 
-#atscode("\
+#dats2xhtml("\
 primplement
 lemma_tree_size_height
   (pf1, pf2, pf3) = let
@@ -1299,6 +1304,13 @@ lemma{t:tree}
 ) : [p > s] void =
 (
   scase t of
+  | E () => let
+      prval SZE () = pf1
+      prval HTE () = pf2
+      prval POW2bas () = pf3
+   in
+     // nothing
+   end // end of [E]
   | B (tl, tr) => let
       prval SZB (pf1l, pf1r) = pf1
       prval HTB {tl,tr}{hl,hr} (pf2l, pf2r) = pf2
@@ -1312,13 +1324,6 @@ lemma{t:tree}
     in
       // nothing
     end // end of [B]
-  | E () => let
-      prval SZE () = pf1
-      prval HTE () = pf2
-      prval POW2bas () = pf3
-   in
-     // nothing
-   end // end of [E]
 ) (* end of [lemma] *)
 //
 in
@@ -1380,8 +1385,9 @@ isBraun (tree) =
 この本で以前示したように、空であるか、もしくは左と右の子がブラウンツリーでなおかつ左の子のサイズから右の子のサイズを引くと0もしくは1なら、そのような二分木はブラウンツリーです。
 形式的には、ブラウンツリーの概念を捕捉するために、次のデータ命題 #dyncode("isBraun") を宣言できます:
 
-#atscode("\
-dataprop isBraun (tree) =
+#sats2xhtml("\
+dataprop
+isBraun (tree) =
   | isBraunE (E) of ()
   | {tl,tr:tree}
     {sl,sr:nat | sr <= sl; sl <= sr + 1}
@@ -1447,32 +1453,39 @@ introducing a name and a static term of the sort #keycode("t@ype")).
 与えられたどんなサイズのブラウンツリーも存在することをはじめに証明しましょう。
 この性質は ATS では次のようにエンコードできます:
 
-#atscode("\
-extern
-prfun lemma_existence {n:nat} (): [t:tree] (isBraun (t), SZ (t, n))
+#sats2xhtml("\
+prfun
+lemma_existence{n:nat}(): [t:tree] (isBraun (t), SZ (t, n))
 ")
 
 事実上、#dyncode("lemma_existence") に割り当てられた型は
 t がブラウンツリーで t のサイズが n であるような自然数 n が与えられた時、木 t が存在することを意味しています。
 次のコードは #dyncode("lemma_existence") の実装です:
 
-#atscode("\
+#dats2xhtml("\
 primplement
-lemma_existence {n} () = let
-  prfun lemma {n:nat} .<n>.
-    (): [t:tree] (isBraun (t), SZ (t, n)) =
-    sif n > 0 then let
-      stadef nl = n / 2 // size for the left subtree
-      stadef nr = n - 1 - nl // size for the right subtree
-      val (pfl1, pfl2) = lemma {nl} ()
-      and (pfr1, pfr2) = lemma {nr} ()
+lemma_existence
+  {n}((*void*)) = let
+//
+prfun
+lemma{n:nat} .<n>.
+(
+  // argless
+) : [t:tree] (isBraun (t), SZ (t, n)) =
+  sif n==0
+    then (isBraunE (), SZE ())
+    else let
+      stadef nl = n / 2
+      stadef nr = n - 1 - nl
+      val (pfl1, pfl2) = lemma{nl}((*void*))
+      and (pfr1, pfr2) = lemma{nr}((*void*))
     in
       (isBraunB (pfl1, pfr1, pfl2, pfr2), SZB (pfl2, pfr2))
-    end else
-      (isBraunE (), SZE ())
-    // end of [sif]
+    end // end of [else]
+  // end of [sif]
+//
 in
-  lemma {n} ()
+  lemma{n}((*void*))
 end // end of [lemma_existence]
 ")
 
@@ -1578,8 +1591,7 @@ and t2 are the same; by the definition of tree equality (encoded by
 次に、同じサイズの2つのブラウンツリーが同一であることを示します。
 この性質は次のようにエンコードできます:
 
-#atscode("\
-extern
+#sats2xhtml("\
 prfun
 lemma_unicity
   {n:nat}{t1,t2:tree}
@@ -1590,7 +1602,7 @@ lemma_unicity
 
 #stacode("EQ") は次のデータ命題宣言で導入されている命題コンストラクタです:
 
-#atscode("\
+#sats2xhtml("\
 dataprop EQ (tree, tree) =
   | EQE (E, E) of ()
   | {t1l,t1r:tree}{t2l,t2r:tree}
@@ -1601,7 +1613,7 @@ dataprop EQ (tree, tree) =
 #stacode("EQ") が木の等式を帰納的に定義していることは明確です。
 証明関数 #dyncode("lemma_unicity") の実装は次のようになります:
 
-#atscode("\
+#dats2xhtml("\
 primplement
 lemma_unicity
   (pf1, pf2, pf3, pf4) = let
@@ -1609,23 +1621,26 @@ lemma_unicity
   (
     pf1: isBraun t1, pf2: isBraun t2, pf3: SZ (t1, n), pf4: SZ (t2, n)
   ) : EQ (t1, t2) =
-    sif n > 0 then let
-      prval SZB (pf3l, pf3r) = pf3
-      prval SZB (pf4l, pf4r) = pf4
-      prval isBraunB (pf1l, pf1r, pf1lsz, pf1rsz) = pf1
-      prval isBraunB (pf2l, pf2r, pf2lsz, pf2rsz) = pf2
-      prval () = SZ_istot (pf1lsz, pf3l) and () = SZ_istot (pf1rsz, pf3r)
-      prval () = SZ_istot (pf2lsz, pf4l) and () = SZ_istot (pf2rsz, pf4r)
-      prval pfeql = lemma (pf1l, pf2l, pf3l, pf4l)
-      prval pfeqr = lemma (pf1r, pf2r, pf3r, pf4r)
-    in
-      EQB (pfeql, pfeqr)
-    end else let
-      prval SZE () = pf3 and SZE () = pf4
-      prval isBraunE () = pf1 and isBraunE () = pf2
-    in
-      EQE ()
-    end // end of [sif]
+    sif n==0
+      then let
+        prval SZE () = pf3 and SZE () = pf4
+        prval isBraunE () = pf1 and isBraunE () = pf2
+      in
+        EQE ()
+      end // end of [then]
+      else let
+        prval SZB (pf3l, pf3r) = pf3
+        prval SZB (pf4l, pf4r) = pf4
+        prval isBraunB (pf1l, pf1r, pf1lsz, pf1rsz) = pf1
+        prval isBraunB (pf2l, pf2r, pf2lsz, pf2rsz) = pf2
+        prval () = SZ_istot (pf1lsz, pf3l) and () = SZ_istot (pf1rsz, pf3r)
+        prval () = SZ_istot (pf2lsz, pf4l) and () = SZ_istot (pf2rsz, pf4r)
+        prval pfeql = lemma (pf1l, pf2l, pf3l, pf4l)
+        prval pfeqr = lemma (pf1r, pf2r, pf3r, pf4r)
+      in
+        EQB (pfeql, pfeqr)
+      end // end of [else]
+    // end of [sif]
 in
   lemma (pf1, pf2, pf3, pf4)
 end // end of [lemma_unicity]
@@ -1634,9 +1649,9 @@ end // end of [lemma_unicity]
 #dyncode("lemma_unicity") のこの実装内の証明関数 #dyncode("SZ_istot")
 は次のインターフェイスを持つことに注意してください:
 
-#atscode("\
-extern
-prfun SZ_istot{t:tree}{n1,n2:int}
+#sats2xhtml("\
+prfun
+SZ_istot{t:tree}{n1,n2:int}
   (pf1: SZ (t, n1), pf2: SZ (t, n2)): [n1==n2] void
 ")
 
@@ -1718,39 +1733,43 @@ right-hand side of the clause. Please find the entirety of the above code
 
 比較として、次のコードは #dyncode("lemma_unicity") の別の実装ですが、少し独特のスタイルです:
 
-#atscode("\
+#dats2xhtml("\
 primplement
 lemma_unicity
   (pf1, pf2, pf3, pf4) = let
-  prfun lemma{n:nat}{t1,t2:tree} .<t1>.
-  (
-    pf1: isBraun t1, pf2: isBraun t2, pf3: SZ (t1, n), pf4: SZ (t2, n)
-  ) : EQ (t1, t2) =
-    case+ (pf1, pf2) of
-    | (isBraunE (), isBraunE ()) => EQE ()
-    | (isBraunB (pf11, pf12, pf13, pf14),
-       isBraunB (pf21, pf22, pf23, pf24)) => let
 //
-        prval SZB (pf31, pf32) = pf3
-        prval SZB (pf41, pf42) = pf4
+prfun
+lemma{n:nat}{t1,t2:tree} .<t1>.
+(
+  pf1: isBraun t1, pf2: isBraun t2, pf3: SZ (t1, n), pf4: SZ (t2, n)
+) : EQ (t1, t2) =
+  case+ (pf1, pf2) of
 //
-        prval () = SZ_istot (pf13, pf31)
-        prval () = SZ_istot (pf23, pf41)
+  | (isBraunE (), isBraunE ()) => EQE ()
 //
-        prval () = SZ_istot (pf14, pf32)
-        prval () = SZ_istot (pf24, pf42)
+  | (isBraunB (pf11, pf12, pf13, pf14),
+     isBraunB (pf21, pf22, pf23, pf24)) => let
 //
-        prval pfeq1 = lemma (pf11, pf21, pf31, pf41)
-        prval pfeq2 = lemma (pf12, pf22, pf32, pf42)
-      in
-        EQB (pfeq1, pfeq2)
-      end
-    | (isBraunE _, isBraunB _) =/=> let
-        prval SZE _ = pf3 and SZB _ = pf4 in (*none*)
-      end
-    | (isBraunB _, isBraunE _) =/=> let
-        prval SZB _ = pf3 and SZE _ = pf4 in (*none*)
-      end
+      prval SZB (pf31, pf32) = pf3
+      prval SZB (pf41, pf42) = pf4
+//
+      prval () = SZ_istot (pf13, pf31)
+      prval () = SZ_istot (pf23, pf41)
+//
+      prval () = SZ_istot (pf14, pf32)
+      prval () = SZ_istot (pf24, pf42)
+//
+      prval pfeq1 = lemma (pf11, pf21, pf31, pf41)
+      prval pfeq2 = lemma (pf12, pf22, pf32, pf42)
+    in
+      EQB (pfeq1, pfeq2)
+    end
+//
+  | (isBraunE _, isBraunB _) =/=>
+    let prval SZE _ = pf3 and SZB _ = pf4 in (*none*) end
+  | (isBraunB _, isBraunE _) =/=>
+    let prval SZB _ = pf3 and SZE _ = pf4 in (*none*) end
+//
 in
   lemma (pf1, pf2, pf3, pf4)
 end // end of [lemma_unicity]
@@ -1903,7 +1922,7 @@ some natural number m#sub("2").
 
 上記の非形式的な証明における主な論拠は、ATS では次のようにエンコードできます:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 prfun
@@ -2000,7 +2019,7 @@ judgment. \
 
 2つの整数 m と p が与えられたとき、#dyncode("MOD0(m,p)") はなんらかの自然数 q について、m が p と q の積に等しいことを意味するとします。この意味は次の2つの証明関数にエンコードできます:
 
-#atscode("\
+#sats2xhtml("\
 //
 prfun
 lemma_MOD0_intr{m,p,q:nat | m==p*q}(): MOD0(m, p)
@@ -2012,19 +2031,19 @@ lemma_MOD0_elim{m,p:int}(MOD0(m, p)): [q:nat] EQINT(m, p*q)
 
 このとき #dyncode("EQINT") は次のようなデータ命題です:
 
-#atscode('\
+#sats2xhtml('\
 dataprop EQINT(int, int) = {x:int} EQINT(x, x)
 ')
 
 2つの整数 x と y が与えられたとき、#dyncode("EQINT(x, y)") は x と y が等しいことを意味するとします。また、関数 #dyncode("eqint_make") には以下のインターフェイスが割り当てられます:
 
-#atscode('\
+#sats2xhtml('\
 prfun eqint_make{x,y:int | x == y}((*void*)): EQINT (x, y)
 ')
 
 整数 p が与えられたとき、#dyncode("PRIME(p)") は p が素数であることを意味するとします。次の2つの証明関数が、上記 #dyncode("mylemma_main") の実装では使われています:
 
-#atscode('\
+#sats2xhtml('\
 //
 prfun lemma_PRIME_param{p:int}(PRIME(p)): [p >= 2] void
 //

@@ -116,10 +116,11 @@ parameter, but it is rarely used in practice. Also, keywords like
 依存データ型を宣言する構文は非依存データ型を宣言する構文とほとんど同じです。
 例えば、ATS の依存データ型 #stacode("list") は次のように宣言されています:
 
-#atscode("\
-datatype list (t@ype+, int) =
-  | {a:t@ype} list_nil (a, 0) of () // [of ()] is optional
-  | {a:t@ype} {n:nat} list_cons (a, n+1) of (a, list (a, n))
+#sats2xhtml("\
+datatype
+list(t@ype+, int) =
+  | {a:t@ype} list_nil(a, 0) of () // [of ()] is optional
+  | {a:t@ype} {n:nat} list_cons(a, n+1) of (a, list(a, n))
 ")
 
 より正確には、#stacode("list") は種 #emphasis("(t@ype, int) -> type")
@@ -189,10 +190,11 @@ list_cons : {a:t@ype}{n:nat} (a, list(a, n)) -> list(a, n+1)
 型 #dyncode("list_cons") は要素と長さ n のリストに適用すると長さ n+1 のリストを作ることを意味しています。
 次のようなより簡潔なスタイルで #stacode("list") を宣言することもできることに注意してください:
 
-#atscode("\
-datatype list (a:t@ype+, int) =
-  | list_nil (a, 0) of () // [of ()] is optional
-  | {n:nat} list_cons (a, n+1) of (a, list (a, n))
+#sats2xhtml("\
+datatype
+list (a:t@ype+, int) =
+  | list_nil(a, 0) of () // [of ()] is optional
+  | {n:nat} list_cons(a, n+1) of (a, list(a, n))
 ")
 
 #keycode("t@ype+") の代わりに #stacode("a:t@ype+") を使うことで #stacode("a")
@@ -257,7 +259,7 @@ assumption #stacode("n=0"), which implies that #stacode("0") is of the type
 
 依存データ型を用いたプログラミングの例として、次のコードは与えられたリストの長さを算出する関数テンプレートを実装しています:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_length
@@ -585,17 +587,19 @@ tail-recursive.\
 で与えられた時、#dyncode("list_append(xs, ys)") は xs と ys を連結した型 #stacode("list(T,I1+I2)")
 のリストを返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_append
   {m,n:nat} .<m>.
 (
-  xs: list (a, m), ys: list (a, n)
-) : list (a, m+n) = case+ xs of
-  | list_nil () => ys
-  | list_cons (x, xs) => list_cons (x, list_append (xs, ys))
-// end of [list_append]
+  xs: list (a, m), ys: list(a, n)
+) : list (a, m+n) =
+(
+  case+ xs of
+  | list_nil() => ys
+  | list_cons(x, xs) => list_cons(x, list_append<a>(xs, ys))
+) (* end of [list_append] *)
 ")
 
 #dyncode("list_append") のこの実装が末尾再帰でないことは明確です。\
@@ -651,18 +655,21 @@ tail-recursive.\
 で与えられた時、#dyncode("list_reverse_append(xs, ys)") は xs と ys を逆順にして連結した型
 #stacode("list(T, I1+I2)") のリストを返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_reverse_append
   {m,n:nat} .<m>.
 (
-  xs: list (a, m), ys: list (a, n)
-) : list (a, m+n) = case+ xs of
+  xs: list(a, m)
+, ys: list(a, n)
+) : list(a, m+n) =
+(
+  case+ xs of
   | list_nil () => ys
   | list_cons (x, xs) =>
-      list_reverse_append (xs, list_cons (x, ys))
-// end of [list_reverse_append]
+      list_reverse_append<a>(xs, list_cons(x, ys))
+) (* end of [list_reverse_append] *)
 ")
 
 #dyncode("list_reverse_append") のこの実装が末尾再帰であることは明確です。\
@@ -700,7 +707,7 @@ list_reverse{n:nat} .<>. // defined non-recursively
 リスト xs が与えられた時、#dyncode("list_reverse(xs)") は xs の逆順を返します。
 この返値は xs と同じ長さになります:
 
-#atscode("\
+#dats2xhtml("\
 fun{a:t@ype}
 list_reverse{n:nat} .<>. // defined non-recursively
   (xs: list (a, n)): list (a, n) = list_reverse_append (xs, list_nil)
@@ -755,7 +762,7 @@ tail-recursive.\
 と型 #stacode("T1 -&lt;cloref1&gt; T2") のクロージャ関数 f が与えられた時、#dyncode("list_map(xs)")
 は型 #stacode("list(T2, I)") のリスト ys を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype}
 {b:t@ype
@@ -763,10 +770,12 @@ a:t@ype}
   {n:nat} .<n>.
 (
   xs: list (a, n), f: a -<cloref1> b
-) : list (b, n) = case+ xs of
-  | list_nil () => list_nil ()
-  | list_cons (x, xs) => list_cons (f x, list_map (xs, f))
-// end of [list_map]
+) : list (b, n) =
+(
+  case+ xs of
+  | list_nil() => list_nil()
+  | list_cons(x, xs) => list_cons(f x, list_map<a>(xs, f))
+) (* end of [list_map] *)
 ")
 
 ys のそれぞれの要素 y は、xs の対応する要素を x とすれば f(x) に等しいことになります。
@@ -826,7 +835,7 @@ implementation of #dyncode("list_zip") is not tail-recursive.\
 がそれぞれ与えられた時、#dyncode("list_zip(xs, ys)") は型 #stacode("list((T1,T2), I)")
 のリスト zs を返します。
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a,b:t@ype
 } list_zip
@@ -836,10 +845,14 @@ a,b:t@ype
 ) : list ((a, b), n) =
 (
   case+ (xs, ys) of
-  | (list_cons (x, xs),
-     list_cons (y, ys)) =>
-      list_cons ((x, y), list_zip (xs, ys))
-  | (list_nil (), list_nil ()) => list_nil ()
+  | (
+      list_nil()
+    , list_nil()
+    ) => list_nil((*void*))
+  | (
+      list_cons (x, xs)
+    , list_cons (y, ys)
+    ) => list_cons((x, y), list_zip<a,b>(xs, ys))
 ) (* end of [list_zip] *)
 ")
 
@@ -906,7 +919,7 @@ elements in xs and ys, respectively.  Clearly, this implementation of
 #stacode("list(T2, I)") で、クロージャ関数 f が型 #stacode("(T1, T2) -&lt;cloref1&gt; T3")
 で与えられた時、#dyncode("list_zipwith(xs, ys, f)") は型 #stacode("list(T3, I)") のリスト zs を返します:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a,b:t@ype
 }{c:t@ype
@@ -916,12 +929,20 @@ a,b:t@ype
   xs: list (a, n)
 , ys: list (b, n)
 , f: (a, b) -<cloref1> c
-) : list (c, n) = case+ (xs, ys) of
-  | (list_cons (x, xs),
-     list_cons (y, ys)) =>
-      list_cons (f (x, y), list_zipwith (xs, ys, f))
-  | (list_nil (), list_nil ()) => list_nil ()
-// end of [list_zipwith]
+) : list (c, n) =
+(
+  case+ (xs, ys) of
+  | (
+      list_nil()
+    , list_nil()
+    ) => list_nil((*void*))
+  | (
+      list_cons(x, xs)
+    , list_cons(y, ys)
+    ) =>
+      list_cons(f(x, y), list_zipwith<a,b><c>(xs, ys, f))
+     // end of (list_cons, list_cons)
+) (* end of [list_zipwith] *)
 ")
 
 zs のそれぞれの要素 z は、xs と ys の対応する要素をそれぞれ x と y とすれば、f(x, y) に等しいことになります。
@@ -1014,30 +1035,31 @@ lists. Note that a termination metric is present for verifying that
 #para("\
 次に定義する関数 #dyncode("merge") は2つの整列済みリストを連結して1つの整列済みリストにします:
 
-#atscode("\
+#dats2xhtml("\
+//
 typedef lte (a:t@ype) = (a, a) -> bool
-
+//
 fun{
 a:t@ype
 } merge
   {m,n:nat} .<m+n>.
 (
-  xs: list (a, m), ys: list (a, n), lte: lte a
+  xs0: list (a, m), ys0: list (a, n), lte: lte a
 ) : list (a, m+n) =
-  case+ xs of
-  | list_nil () => ys
-  | list_cons (x, xs1) =>
+  case+ xs0 of
+  | list_nil() => ys0
+  | list_cons(x, xs1) =>
     (
-    case+ ys of
-    | list_nil () => xs
-    | list_cons (y, ys1) =>
-        if x \lte y then
-          list_cons (x, merge (xs1, ys, lte))
-        else
-          list_cons (y, merge (xs, ys1, lte))
+    case+ ys0 of
+    | list_nil() => xs0
+    | list_cons(y, ys1) =>
+        if x \\\\lte y
+          then list_cons (x, merge (xs1, ys0, lte))
+          else list_cons (y, merge (xs0, ys1, lte))
         // end of [if]
     ) // end of [list_cons]
 // end of [merge]
+//
 ")
 
 #dyncode("merge") に割り当てられている型は、入力された2つのリストの長さの和と等しい長さのリストをこの関数が返すことを明確に示しています。
@@ -1118,19 +1140,22 @@ are elsewhere.\
 
 次に定義する関数 #dyncode("mergesort") は与えられた順序付けでリストをマージソートします:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } mergesort{n:nat}
 (
   xs: list (a, n), lte: lte a
 ) : list (a, n) = let
+//
   fun msort
     {n:nat} .<n,n>.
   (
     xs: list (a, n), n: int n, lte: lte a
   ) : list (a, n) =
-    if n >= 2 then split (xs, n, lte, n/2, list_nil) else xs
+    if n >= 2
+      then split (xs, n, lte, half(n), list_nil) else xs
+    // end of [if]
   // end of [msort]
   and split
     {n:int | n >= 2}{i:nat | i <= n/2} .<n,i>.
@@ -1143,16 +1168,17 @@ a:t@ype
     in
       split (xs, n, lte, i-1, list_cons (x, xsf))
     end else let
+      val n2 = half(n)
       val xsf = list_reverse<a> (xsf) // make sorting stable!
       val xsf = list_of_list_vt (xsf) // linear list -> nonlinear list
-      val xsf = msort (xsf, n/2, lte) and xs = msort (xs, n-n/2, lte)
+      val xsf = msort (xsf, n2, lte) and xs = msort (xs, n-n2, lte)
     in
       merge (xsf, xs, lte)
     end // end of [if]
   // end of [split]
-  val n = list_length<a> (xs)
+//
 in
-  msort (xs, n, lte)
+  msort(xs, list_length<a>(xs), lte)
 end // end of [mergesort]
 ")
 
@@ -1293,26 +1319,28 @@ ATS では、パターンマッチは実行時において連続して評価さ�
 別の言い方をすると、節が選択されるのは与えられた値がその節に関連するパターンガードにマッチし、しかも値がその前にあるどの節のパターンにもマッチしない場合にだけです。
 当然、#dyncode("list_zipwith") 次の実装も型検査できると期待するでしょう:
 
-#atscode("\
+#dats2xhtml("\
 fun{
-a1,
-a2:t@ype
-}{b:t@ype
+a,b:t@ype
+}{c:t@ype
 } list_zipwith
   {n:nat}
 (
-  xs1: list (a1, n)
-, xs2: list (a2, n)
-, f: (a1, a2) -<cloref1> b
-) : list (b, n) =
-  case+ (xs1, xs2) of
-  | (list_cons (x1, xs1),
-     list_cons (x2, xs2)) =>
-    (
-      list_cons{b}(f (x1, x2), list_zipwith<a1,a2><b> (xs1, xs2, f))
-    )
-  | (_, _) => list_nil (*void*)
-// end of [list_zipwith]
+  xs: list(a, n)
+, ys: list(b, n)
+, f: (a, b) -<cloref1> c
+) : list(c, n) = (
+//
+case+ (xs, ys) of
+| (
+    list_cons(x, xs)
+  , list_cons(y, ys)) =>
+  (
+    list_cons(f(x, y), list_zipwith<a,b><c>(xs, ys, f))
+  )
+| (_, _) => list_nil((*void*))
+//
+) (* end of [list_zipwith] *)
 ")
 
 けれども、この場合は型検査に失敗します。
