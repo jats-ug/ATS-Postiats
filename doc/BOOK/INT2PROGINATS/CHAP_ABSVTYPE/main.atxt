@@ -152,10 +152,11 @@ assume timer_vtype = timer
 単純な線形オブジェクトの具体的な例を見てみましょう。
 次のコードは、タイマー (つまりストップウォッチです) のインターフェイスを表わしています:
 
-#atscode('\
+#sats2xhtml('\
+//
 absvtype timer_vtype
 vtypedef timer = timer_vtype
-
+//
 fun timer_new (): timer
 fun timer_free (x: timer): void
 fun timer_start (x: !timer): void
@@ -164,11 +165,13 @@ fun timer_pause (x: !timer): void
 fun timer_resume (x: !timer): void
 fun timer_get_ntick (x: !timer): uint
 fun timer_reset (x: !timer): void
+//
 ')
 
 次に定義されるレコード型 #stacode("timer_struct") によってタイマーの状態が与えられます:
 
-#atscode('\
+#sats2xhtml('\
+//
 typedef
 timer_struct = @{
   started= bool // the timer has started
@@ -177,12 +180,13 @@ timer_struct = @{
 , ntick_beg= uint // was turned on last time
 , ntick_acc= uint // the number of accumulated ticks
 } (* end of [timer_struct] *)
+//
 ')
 
 次の線形データ型 #stacode("timer") はタイマーのために宣言され、また抽象型 #stacode("timer_vtype") は
 #stacode("timer") に等しいと見なされています:
 
-#atscode('\
+#dats2xhtml('\
 //
 datavtype timer =
   TIMER of (timer_struct)
@@ -232,8 +236,7 @@ timer_free (timer) =
 タイマーに関する各種の関数をこれですぐに実装できます。
 はじめにタイマーの生成と解放をするコードを見てみましょう:
 
-#atscode('\
-
+#dats2xhtml('\
 implement
 timer_new () = let
 //
@@ -255,7 +258,6 @@ implement
 timer_free (timer) =
   let val ~TIMER _ = timer in (*nothing*) end
 // end of [timer_free]
-
 ')
 
 ')
@@ -295,7 +297,7 @@ extern fun the_current_tick_get (): uint
 
 タイマーを開始する関数は次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 timer_start
   (timer) = let
@@ -312,7 +314,7 @@ end // end of [timer_start]
 
 このとき #dyncode("the_current_tick_get") は (ティックの数で表わされた) 現在時間を読む関数です:
 
-#atscode('\
+#dats2xhtml('\
 extern fun the_current_tick_get (): uint
 ')
 
@@ -352,7 +354,7 @@ end // end of [timer_finish]
 タイマーは停止したり休止したりすることができます。
 タイマーを停止させる関数は次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 timer_finish
   (timer) = let
@@ -425,8 +427,7 @@ is not counted.
 タイマーは休止した後に再開することができます。
 次のコードはタイマーの休止と再開の関数を実装しています:
 
-#atscode('\
-
+#dats2xhtml('\
 implement
 timer_pause
   (timer) = let
@@ -492,7 +493,7 @@ end // end of [timer_reset]
 
 関数 #dyncode("timer_reset") を呼び出すことでタイマーをリセットすることもまた可能です:
 
-#atscode('\
+#dats2xhtml('\
 implement
 timer_reset
   (timer) = let
@@ -540,7 +541,7 @@ end // end of [timer_get_ntick]
 関数 #dyncode("timer_get_ntick") を呼び出すことで、
 タイマーにたまった時間を読み出すことができます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 timer_get_ntick
   (timer) = let
@@ -598,7 +599,7 @@ have link-time access to #dyncode("clock_gettime") as the function is in
 #dyncode("the_current_tick_get") を実装するわかりやすいアプローチは、関数
 #dyncode("clock_gettime") を直接用いることでしょう:
 
-#atscode('\
+#dats2xhtml('\
 local
 
 staload "libc/SATS/time.sats"
@@ -724,7 +725,7 @@ have encountered that is not built on top of any at-views.
 
 次の関数 #dyncode("malloc_gc") がメモリ確保のために ATS では用意されています:
 
-#atscode("\
+#sats2xhtml("\
 fun malloc_gc
   {n:nat}(n: size_t n)
   : [l:agz] (b0ytes n @ l, mfree_gc_v (l) | ptr l)
@@ -733,7 +734,7 @@ fun malloc_gc
 
 種 #stacode("agz") は NULL でないアドレスとして定義されたサブセット種です:
 
-#atscode("\
+#sats2xhtml("\
 sortdef agz = {a:addr | a > null} // [gz] for great-than-zero
 ")
 
@@ -744,7 +745,7 @@ sortdef agz = {a:addr | a > null} // [gz] for great-than-zero
 観コンストラクタ #stacode("mfree_gc_v") は抽象的です。
 与えられた位置 L について、観 #stacode("mfree_gc_v(L)") は次の関数 #dyncode("mfree_gc") によって解放されるべき位置 L に確保したメモリを許可する能力を表わします:
 
-#atscode("\
+#sats2xhtml("\
 fun mfree_gc
   {l:addr}{n:nat}
   (pfat: b0ytes(n) @ l, pfgc: mfree_gc_v (l) | p: ptr l): void
@@ -808,7 +809,7 @@ array_ptr_free
 (ある型の) 単一の値を保管するメモリを確保する関数 #dyncode("ptr_alloc") と、そのようなメモリを解放する関数
 #dyncode("ptr_free") が用意されています:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:vt0p}
 ptr_alloc ()
   :<> [l:agz] (a? @ l, mfree_gc_v (l) | ptr l)
@@ -823,7 +824,7 @@ fun ptr_free
 さらに、(ある型の) 値の配列を格納するメモリを確保する関数 #dyncode("array_ptr_alloc")
 と、そのようなメモリを解放する関数 #dyncode("array_ptr_free") があります:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:vt0p}
 array_ptr_alloc
   {n:int}
@@ -913,7 +914,7 @@ then deallocated after it is no longer needed.
 ここで配列の確保と解放の両方を必要とする現実的で興味深い例を紹介します。
 次の2つの関数テンプレート #dyncode("msort1") と #dyncode("msort2") は与えられた配列をマージソートします:
 
-#atscode('\
+#dats2xhtml('\
 typedef cmp (a:t@ype) = (&a, &a) -> int
 
 extern
@@ -941,7 +942,7 @@ B に保管されます。
 の相互再帰的な実装をしてみることをおすすめします。
 #dyncode("msort1") を用いたマージソートの実装は次のようにたやすく与えることができます:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun{
 a:t@ype
@@ -995,7 +996,7 @@ function has returned.
 
 また、特殊な関数 #dyncode("alloca") を呼び出すことでコールスタックにメモリを確保する関数も作ることができます。それには ATS では次のような型が与えられます:
 
-#atscode('\
+#sats2xhtml('\
 (*
 staload "libc/SATS/alloa.sats"
 *)
@@ -1063,7 +1064,7 @@ should be scrutinized.
 
 次の関数 #dyncode("array_ptr_alloca_tsz") は動的には #dyncode("alloca") と同じです。しかしより便利な型が付けられています:
 
-#atscode('\
+#sats2xhtml('\
 fun
 array_ptr_alloca_tsz
   {a:vt0p}{dummy:addr}{n:int}
@@ -1074,7 +1075,7 @@ array_ptr_alloca_tsz
 
 例として、上記で実装された関数テンプレート #dyncode("mergeSort") 次のように実装することもできます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 {a}(*tmp*)
 mergeSort (A, n, cmp) = let
@@ -1180,7 +1181,7 @@ VT.
 
 リングバッファを表現する値のために、次のような線形抽象型 (つまり抽象観型) を宣言してみましょう:
 
-#atscode('\
+#sats2xhtml('\
 absvtype
 cbufObj (a:vt@ype+, m:int, n: int) = ptr
 ')
@@ -1229,23 +1230,27 @@ cbufObj_get_size
 
 #stacode("cbufObj") のパラメータの性質のいくつかは、次の証明関数を導入することで捕捉できます:
 
-#atscode('\
+#sats2xhtml('\
+//
 prfun
 lemma_cbufObj_param
   {a:vt0p}{m,n:int}
-  (buf: !cbufObj (a, m, n)): [m>=n; n>=0] void
+  (buf: !cbufObj(a, m, n)): [m>=n; n>=0] void
+//
 ')
 
 次の2つの関数テンプレートのインターフェイスは、それらが容量とバッファの現在のサイズを算出するために呼び出されることを示しています:
 
-#atscode('\
+#sats2xhtml('\
+//
 fun{a:vt0p}
 cbufObj_get_cap
-  {m,n:int} (buf: !cbufObj (a, m, n)): size_t (m)
-
+  {m,n:int} (buf: !cbufObj(a, m, n)): size_t(m)
+//
 fun{a:vt0p}
 cbufObj_get_size
-  {m,n:int} (buf: !cbufObj (a, m, n)): size_t (n)
+  {m,n:int}(buf: !cbufObj(a, m, n)): size_t(n)
+//
 ')
 
 ")
@@ -1281,7 +1286,7 @@ cbufObj_is_full
 を単純に使うこともできますが、直接的なアプローチがより効率的です。
 次の2つの関数テンプレートは、与えられたリングバッファが空であるか満杯であるかを判定します:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun{a:vt0p}
 cbufObj_is_empty
@@ -1334,7 +1339,7 @@ cbufObj_clear
 リングバッファの生成と解放を行なう関数はそれぞれ #dyncode("cbufObj_new") と #dyncode("cbufObj_free")
 という名前です:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun{a:vt0p}
 cbufObj_new
@@ -1349,7 +1354,7 @@ fun cbufObj_free
 要素を含まない時に限って、そのバッファを解放できることに注意してください。
 バッファ中の要素がなんらかの線形でない型である場合、次の関数を呼び出してバッファ中に保管されている全ての要素を捨てることができます:
 
-#atscode('\
+#sats2xhtml('\
 fun
 cbufObj_clear
   {a:t@ype}{m,n:int}
@@ -1391,7 +1396,7 @@ cbufObj_remove
 次の2つの関数は、与えられたバッファに対する要素の挿入と削除を行ないます。
 おそらくこれらはバッファに対して最も頻繁に使われる操作でしょう:
 
-#atscode('\
+#sats2xhtml('\
 //
 fun{a:vt0p}
 cbufObj_insert
@@ -1570,14 +1575,14 @@ its representation and then returns the resource stored inside it.
 
 はじめに、次のような線形抽象型 #stacode("shared") を導入しましょう:
 
-#atscode('\
+#sats2xhtml('\
 absvtype shared(a:vtype) = ptr
 ')
 
 (なんらかのリソースに対する) 観型 VT が与えられたとき、型 #stacode("shared(VT)") の値は、本質的に、型 VT のリソースとなんらかのロックを含んだボックス化レコードです。
 リソースを共有リソースにするために、次のような関数 #dyncode("shared_make") が呼ばれます。
 
-#atscode('\
+#sats2xhtml('\
 fun shared_make{a:vtype}(x: a): shared(a)  
 ')
 
@@ -1585,7 +1590,7 @@ fun shared_make{a:vtype}(x: a): shared(a)
 実装では、スピンロックで保護された線形共有リソースにはリファレンスカウントが内在しています。
 関数 #dyncode("shared_ref") と #dyncode("shared_unref") は共有リソース内のリファレンスカウントを増減させます:
 
-#atscode('\
+#sats2xhtml('\
 fun shared_ref{a:vtype}(!shared(a)): shared(a)
 fun shared_unref{a:vtype}(shared(a)): Option_vt(a)
 ')
@@ -1622,7 +1627,7 @@ to be released after it is acquired.
 
 関数 #dyncode("shared_lock") は与えられた共有リソースからリソースを獲得し、関数 #dyncode("shared_unlock") はその反対です:
 
-#atscode('\
+#sats2xhtml('\
 //
 absview locked_v
 //
@@ -1734,7 +1739,7 @@ is destroyed, and the resource in it is returned.
 
 予想できることですが共有リソースは、スピンロック、リファレンスカウントと (保管されたリソースを差す) ポインタから成る、ボックス化タプルとして実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 datavtype
 shared_ (a:vtype) =
@@ -1746,7 +1751,7 @@ assume shared = shared_
 
 型 #stacode("spin1_vt") は線形スピンロックを表わすことに注意してください。関数 #dyncode("shared_ref") は次のように実装されます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 shared_ref
   {a}(sh) = let
@@ -1775,7 +1780,7 @@ end // end of [shared_ref]
 そうでなければレースコーンディションの原因になります。
 関数 #dyncode("shared_unref") は次のように実装されます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 shared_unref
   {a}(sh) = let
@@ -1885,7 +1890,7 @@ released.\
 
 関数 #dyncode("shared_lock") と #dyncode("shared_unlock") は次のように実装されます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 shared_lock
   {a}(sh) = let
@@ -1908,7 +1913,7 @@ in
 end // end of [shared_lock]
 ')
 
-#atscode('\
+#dats2xhtml('\
 implement
 shared_unlock
   {a}(pf | sh, x0) = let
@@ -2044,7 +2049,7 @@ program verification that is less rigorous but far more flexible.
 もしそのキューが空なら、そのキューからの要素の削除は失敗します。
 満杯のキューへの挿入や空のキューからの削除を防ぐために、まず次のようなキューに対する線形抽象型を導入しましょう:
 
-#atscode("\
+#sats2xhtml("\
 absvtype
 queue_vtype(a:vt@ype+, int(*m*), int(*n*))
 vtypedef queue(a:vt@ype,m:int,n:int) = queue_vtype(a,m,n)
@@ -2053,7 +2058,7 @@ vtypedef queue(a:vt@ype,m:int,n:int) = queue_vtype(a,m,n)
 このとき、型 #stacode("queue(VT,M,N)") は、型 VT の N 個の要素を含んでいる容量 M のキューを表わします。
 それから、挿入と削除を表わす関数には次のようなインターフェイスが割り当てられるでしょう:
 
-#atscode("\
+#sats2xhtml("\
 //
 fun{a:vt0p}
 queue_insert
@@ -2131,7 +2136,7 @@ ID is (not) full.
 
 次のコードは抽象型 #stacode("queue") の別バージョンです:
 
-#atscode("\
+#sats2xhtml("\
 //
 absvtype
 queue_vtype(a:vt@ype+, int(*id*)) = ptr
@@ -2146,8 +2151,7 @@ vtypedef queue(a:vt0p) = [id:int] queue(a, id)
 そのため ID はスタンプの一種と考えることができます。
 次に表わされた関数 #dyncode("queue_isnil") は与えられたキューが空であるかどうか調べます:
 
-
-#atscode("\
+#sats2xhtml("\
 //
 absprop ISNIL(id:int, b:bool)
 //
@@ -2160,7 +2164,7 @@ queue_isnil{id:int}(!queue(a, id)): [b:bool] (ISNIL(id, b) | bool(b))
 整数 ID が与えられたとき、命題 #stacode("ISNIL(ID,true)") (もしくは #stacode("ISNIL(ID,false)")) の証明は、ID で同定されたキューが空である (もしくは空でない) ことを意味しています。
 同様に、次に表わされた関数 #dyncode("queue_isful") は与えられたキューが満杯であるかどうか調べます:
 
-#atscode("\
+#sats2xhtml("\
 //
 absprop ISFUL(id:int, b:bool)
 //
@@ -2217,7 +2221,7 @@ above.
 
 これで、与えられたキューへの挿入と削除を表わす関数 #dyncode("queue_insert") と #dyncode("queue_remove") には次のインターフェイスを割り当てることができます:
 
-#atscode("\
+#dats2xhtml("\
 //
 extern
 fun
@@ -2342,21 +2346,21 @@ The caller of #dyncode("channel_remove") is blocked if the channel is empty.
 はじめに、次のような線形抽象型 #stacode("channel") を宣言しましょう:
 
 
-#atscode("\
+#sats2xhtml("\
 absvtype channel_vtype(a:vt@ype+) = ptr
 vtypedef channel(a:vt0p) = channel_vtype(a)
 ")
 
 チャネルに要素を挿入する関数には次のインターフェイスが与えられます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:vt0p} channel_insert (!channel(a), a): void
 ")
 
 もしそのチャネルが満杯であったら、#dyncode("channel_insert") の呼び出し元はブロックします。
 同様に、チャネルから要素を削除する関数には次のインターフェイスが与えられます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:vt0p} channel_remove (chan: !channel(a)): (a)
 ")
 
@@ -2410,7 +2414,7 @@ queue becomes not full.
 
 チャネルを次のように表現してみましょう:
 
-#atscode("\
+#dats2xhtml("\
 //
 datavtype
 channel_ =
@@ -2545,7 +2549,7 @@ appearing in C code for handling the wait on a conditional variable.\
 
 関数 #dyncode("channel_insert") には次の実装が与えられます:
 
-#atscode("\
+#dats2xhtml("\
 implement
 {a}(*tmp*)
 channel_insert
@@ -2568,7 +2572,7 @@ end // end of [channel_insert]
 
 このとき、補助関数 #dyncode("channel_insert2") には次のインターフェイスが与えらえます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:vt0p}
 channel_insert2
   (!channel(a), !queue(a) >> _, a): void
@@ -2577,7 +2581,7 @@ channel_insert2
 呼び出し元がチャネル中の mutex を保持した状態で #dyncode("channel_insert2") は呼び出されることに注意してください。
 次のコードは #dyncode("channel_insert2") の実装です:
 
-#atscode("\
+#dats2xhtml("\
 implement
 {a}(*tmp*)
 channel_insert2

@@ -119,13 +119,15 @@ freeing memory allocated for constructors associated with dataviewtypes.
 そのような値に線形型が割り当てられているなら、値を保管するために確保されたメモリを効率よく回収することができます。
 線形オプショナル値を表わすデータ観型 #stacode("option_vt") は次のように宣言されます:
 
-#atscode('\
+#sats2xhtml('\
+//
 datavtype
 option_vt (a:t@ype+, bool) =
   | Some_vt (a, true) of a | None_vt (a, false) of ()
 // end of [option_vt]
-
-vtypedef Option_vt (a:t@ype) = [b:bool] option_vt (a, b)
+//
+vtypedef Option_vt (a:t@ype) = [b:bool] option_vt(a, b)
+//
 ')
 
 #keycode("datavtype") は単に #keycode("dataviewtype") の短縮バージョンであることに注意してください。
@@ -134,9 +136,10 @@ vtypedef Option_vt (a:t@ype) = [b:bool] option_vt (a, b)
 次の例では、#dyncode("find_rightmost") 
 与えられた述語を満たすようなリスト中の最右辺の要素を見つけようとします:
 
-#atscode('\
+#dats2xhtml('\
 fun{a:t@ype}
-find_rightmost{n:nat} .<n>.
+find_rightmost
+  {n:nat} .<n>.
 (
   xs: list (a, n), P: (a) -<cloref1> bool
 ) : Option_vt (a) =
@@ -193,7 +196,7 @@ respectively. What is special here is that the first argument of
 
 別の例として、次の関数テンプレート #dyncode("list_optcons") は与えられたオプショナル値を展開した要素を先頭にした新しいリストをコンストラクトします:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 list_optcons
   {b:bool}{n:nat}
@@ -258,7 +261,7 @@ for linear lists of length I in which each element is of the type T.
 次の宣言は線形データ型 #stacode("list_vt") を導入しています。
 これは型と整数に適用されると、(#stacode("viewtype") である) ボックス型を作ります:
 
-#atscode('\
+#sats2xhtml('\
 datavtype
 list_vt (a:t@ype+, int) =
   | list_vt_nil (a, 0) of ()
@@ -348,7 +351,7 @@ that #dyncode("xs1") be modified into another value (of a different type).
 
 次の関数テンプレート #dyncode("length") は与えられた線形のリストの長さを計算します:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } length{n:nat}
@@ -429,7 +432,7 @@ into a linear list.
 例えば、線形の整数リストに保管されているそれぞれの整数の値を2倍したいかもしれません。
 次のコードは、このようなことを行なう #dyncode("list_vt_2x") という名前の関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 list_vt_2x{n:nat}
   (xs: !list_vt (int, n) >> _): void =
@@ -685,7 +688,7 @@ types assigned to functions #dyncode("reverse") and #dyncode("revapp").
 
 次のコードは、与えられた線形リストを逆順にする関数 #dyncode("reverse") を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } reverse{n:nat}
@@ -783,7 +786,7 @@ length #stacode("m+n") while its second argument is consumed.
 
 次のコードは、与えられた2つの線形リストを1つに連結する関数 #dyncode("append") を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } append{m,n:nat}
@@ -931,7 +934,7 @@ N)@L2"), where T and N are a type and an integer, respectively.
 これはまた、関数的なリスト連結と末尾再帰に関連する問題について言及する良い機会です。
 次は関数的なリスト連結の典型的な実装です:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } append1{m,n:nat}
@@ -952,7 +955,7 @@ a:t@ype
 例えば、
 次のような #dyncode("append2") の実装は与えられた関数的な2つのリストを、末尾再帰的に連結して返します:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } append2{m,n:nat}
@@ -1124,7 +1127,7 @@ follows does not involve any memory allocation or deallocation.
 
 はじめに、ソートするリストの要素を比較する関数テンプレートの型定義とインターフェイスを導入しましょう:
 
-#atscode('\
+#sats2xhtml('\
 //
 typedef cmp (a:t@ype) = (&a, &a) -> int
 //
@@ -1134,7 +1137,7 @@ fun{a:t@ype} compare (x: &a, y: &a, cmp: cmp (a)): int
 
 マージソートのインターフェイスは次のように与えられます:
 
-#atscode('\
+#sats2xhtml('\
 fun{
 a:t@ype
 } mergeSort{n:nat}
@@ -1208,7 +1211,7 @@ eliminated.
 
 2つのソート済みリストを1つにマージする関数テンプレートは次のように与えられます:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } merge{m,n:nat} .<m+n>.
@@ -1285,7 +1288,7 @@ Note that the implementation of #dyncode("split") is also tail-recursive.
 
 次の関数テンプレートは与えられた線形リストを2つに分割します:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } split{n,k:nat | k <= n} .<n-k>.
@@ -1349,7 +1352,7 @@ the list when each recursive call to #dyncode("msort") is made.
 次の関数テンプレート #dyncode("msort")
 は線形リストとその長さ、比較関数を取り、そして与えられた線形リストをソートしたものを返します:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } msort{n:nat} .<n>.
@@ -1399,7 +1402,7 @@ sorting.
 
 最後に、#dyncode("mergeSort") は #dyncode("msort") 呼び出しを使って実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement{a}
 mergeSort (xs, cmp) = msort<a> (xs, length (xs), cmp)
 ')
@@ -1470,7 +1473,7 @@ the list to form a sorted list.
 この章では線形リストの挿入ソートの一般的な実装を紹介します。
 挿入ソートのインターフェイスは次のように与えられます:
 
-#atscode('\
+#sats2xhtml('\
 fun{
 a:t@ype
 } insertionSort{n:nat}
@@ -1552,7 +1555,7 @@ bound to p1 and p2 can be accessed and updated.
 次のコードは関数 #dyncode("insord") を実装しています。
 この関数は与えられたリストノードをソート済みの線形リストに挿入して、別のソート済み線形リストを作ります:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } insord
@@ -1687,7 +1690,7 @@ Note that the stableness of #dyncode("mergeSort") is maintained as
 
 関数テンプレート #dyncode("insertionSort") は #dyncode("insord") を用いてすぐに実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement{a}
 insertionSort
   (xs, cmp) = let
@@ -1724,7 +1727,7 @@ end // end of [insertionSort]
 例えば、短かいリストについて #dyncode("insertionSort") の効率が有利になるような
 (#dyncode("mergeSort") が呼び出す) #dyncode("msort") を次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } msort{n:nat} .<n>.
@@ -1816,9 +1819,12 @@ given as follows makes no use of memory allocation and deallocation.
 リストを用いたクイックソートは実際には望ましいソート方法ではありませんが、にもかかわらずその実装は興味深いものです。
 クイックソートのインターフェイスは次のように与えられます:
 
-#atscode('\
+#sats2xhtml('\
+//
 fun{a:t@ype}
-quickSort{n:nat} (xs: list_vt (a, n), cmp: cmp a): list_vt (a, n)
+quickSort{n:nat}
+  (xs: list_vt (a, n), cmp: cmp a): list_vt (a, n)
+//
 ')
 
 #dyncode("mergeSort") と #dyncode("insertionSort") の実装のように、
@@ -1879,7 +1885,7 @@ L2 plus two views #stacode("T1@L1") and #stacode("T2@L2").
 次のコードは関数 #dyncode("takeout_node_at") を実装しています。
 この関数は線形リストから与えられた位置のノードを取り出します:
 
-#atscode('\
+#dats2xhtml('\
 fun{a:t@ype}
 takeout_node_at
   {n:int}{k:nat | k < n}
@@ -1974,7 +1980,7 @@ res1 and res2 is quite an interesting aspect of this implementation.
 クイックソートの鍵となるステップは、与えられたピボットを元に線形リストを分割することです。
 このステップは、#dyncode("partition") という名前の関数テンプレートを実装している次のコードで実行されます:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } partition{n,r1,r2:nat}
@@ -2067,7 +2073,7 @@ often lead to degenerated O(n^2)-time performance of quick-sort in practice.
 
 #dyncode("takeout_node_at") と #dyncode("partition") を使って、次のような #dyncode("quickSort") をすぐに実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 {a}(*tmp*)
 quickSort
@@ -2215,12 +2221,15 @@ bstree_vt
 さらにその後、データ観型を使った実装を紹介します。
 はじめに、線形2分探索木のために次のデータ観型 #stacode("bstree_vt") を宣言しましょう:
 
-#atscode('\
+#sats2xhtml('\
 datavtype
-bstree_vt (a:t@ype+, int) =
+bstree_vt
+(
+  a:t@ype+, int
+) = // bstree_vt
   | bstree_vt_nil (a, 0) of ()
   | {n1,n2:nat}
-    bstree_vt_cons (a, n1+n2+1) of (bstree_vt (a, n1), a, bstree_vt (a, n2))
+    bstree_vt_cons (a, n1+n2+1) of (bstree_vt(a, n1), a, bstree_vt(a, n2))
 // end of [bstree_vt]
 ')
 
@@ -2264,7 +2273,7 @@ a:t@ype
 #dyncode("bstree_vt_nil") によって生成された木は空で葉を持たず、他方ではノードは左と右の子が両方とも空であることは指摘すべきでしょう。
 簡単な例として、次の関数テンプレート #dyncode("size") は与えられた木のサイズを計算します:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } size{n:nat} .<n>.
@@ -2331,7 +2340,7 @@ O(log(n)) (assuming that #dyncode("P") is O(1)).
 を含むような性質を持つ述語 P があるとすると、次の #dyncode("search")
 の実装によって示されるような2分探索によって呼び出される述語 P を満たす木の最小の要素の場所を見つけることができます:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } search
@@ -2404,7 +2413,7 @@ a:t@ype
 
 次に、与えられた要素を2分探索木に挿入する操作を実装してみましょう:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } insert{n:nat} .<n>.
@@ -2502,7 +2511,7 @@ T(T(tl, x, tlr), xr, trr).
 としばしば呼ばれる方法があり、これは挿入された要素を含む新しいノードをルートに置きます。
 次の関数テンプレート #dyncode("insertRT") は一般的な root-insertion 操作を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype
 } insertRT{n:nat} .<n>.
@@ -2614,7 +2623,7 @@ L1, L2 and L3 are put in the store for currently available proofs.
 さらに木の操作を説明するために、次の2つの関数テンプレート #dyncode("lrotate") と #dyncode("rrotate") を示します。
 これらはそれぞれ木の左回転と右回転を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } lrotate
@@ -2867,7 +2876,7 @@ where rbtree0 (a:t@ype, c:int, bh:int) = rbtree (a, c, bh, 0)
 次のデータ観型 #stacode("rbtree") 宣言は以前のデータ型 #stacode("rbtree") 宣言とほぼ一致しています。
 違うのはキーワード #keycode("datatype") の代わりに、キーワード #keycode("datavtype") を使っている点です:
 
-#atscode('\
+#sats2xhtml('\
 \#define BLK 0; \#define RED 1
 sortdef clr = {c:int | 0 <= c; c <= 1}
 
@@ -3017,7 +3026,7 @@ end // end of [insfix_r]
 ひと目見たところ、次の関数テンプレート #dyncode("insfix_l") は (関数的な赤黒木の)
 同じ名前の関数よりもはるかに複雑です:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } insfix_l // right rotation
@@ -3079,7 +3088,7 @@ end // end of [insfix_l]
 次の関数テンプレート #dyncode("insfix_r") のようによく似た文を作ることができます。
 これは #dyncode("insfix_l") の正確な鏡像になっています:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } insfix_r // left rotation
@@ -3222,7 +3231,7 @@ end // end of [rbtree_insert]
 予想されることですが、本質的に次の関数テンプレート #dyncode("rbtree_insert")
 は、関数的な赤黒木に要素を挿入する同じ名前の実装の直接的な翻訳です:
 
-#atscode('\
+#dats2xhtml('\
 extern
 fun{a:t@ype}
 rbtree_insert

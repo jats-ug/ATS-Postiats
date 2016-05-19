@@ -160,14 +160,14 @@ val ((*void*)) = print_newline((*void*))
 けれども、関数テンプレートはパラメータ多相の単なるサポートより多くのことが可能です。
 #dyncode("myprint") が次のインターフェイスの関数テンプレートだとしましょう:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype} myprint (x: a): void
 ')
 
 値が与えられたとき、#dyncode("myprint") はこの値に対するなんらかの表現を印字するものとしましょう。
 例えば、#dyncode("myprint") を次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement{a} myprint (x) = print_string "?"
 ')
 
@@ -175,14 +175,14 @@ implement{a} myprint (x) = print_string "?"
 そのテンプレートパラメータに何の制限も課されていないからです。
 次のように同じ実装を書く別の方法もあります:
 
-#atscode('\
+#dats2xhtml('\
 implement(a) myprint<a> (x) = print_string "?"
 ')
 
 明らかに、上記 #dyncode("myprint") のジェネリックス実装は、与えられた値について特別な情報を何も印字できないという点において十分ではありません。
 型 #stacode("int") の値のみをサポートする #dyncode("myprint") を実装したくなるかもしれません:
 
-#atscode('\
+#dats2xhtml('\
 implement myprint<int> (x) = print_int (x)
 ')
 
@@ -191,7 +191,7 @@ implement myprint<int> (x) = print_int (x)
 テンプレートパラメータに特別な型 (つまりこの例では #stacode("int")) を割り当てているからです。
 次のコードは、リスト値 (つまりなんらかの型 T に対する型 #stacode("List(T)") の値) のための #dyncode("myprint") を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 implement(a)
 myprint<List(a)> (xs) =
 case+ xs of
@@ -205,7 +205,7 @@ case+ xs of
 T において #stacode("List(T)") でなければなりません。
 例えば、次のコードは2つの整数のリストのリストを印字するのに #dyncode("myprint") のインスタンスを呼び出しています:
 
-#atscode('\
+#dats2xhtml('\
 (*
 ** The output is "0123401234"
 *)
@@ -326,13 +326,13 @@ end // end of [myprint2<List(a)>]
 実際には、テンプレートインスタンスに対するテンプレート実装の配置にはほんの少し巧妙な点があります。
 #dyncode("myprint2") を次のようなインターフェイスを持つ関数テンプレートとしましょう:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype} myprint2 (x: a): int
 ')
 
 次のコードは #dyncode("myprint2") の部分的な総称テンプレート実装です:
 
-#atscode('\
+#dats2xhtml('\
 //
 implement(a)
 myprint2<List(a)> (xs) =
@@ -350,7 +350,7 @@ case+ xs of
 の呼び出されたインスタンスは与えられた #dyncode("myprint2") のテンプレート実装に従ってコンパイルできません。
 この問題は、呼び出される #dyncode("myprint2") のインスタンスに、明示的に型 #stacode("List(a)") をテンプレートパラメータとして渡せば簡単に修正できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 implement(a)
 myprint2<List(a)> (xs) =
@@ -365,7 +365,7 @@ case+ xs of
 一般に、再帰的なインスタンスの使用を #emphasis("避ける") ことは良いプログラミング習慣です。
 例えば、次のような #dyncode("myprint2") に相当する実装は再帰的なインスタンスを使っていません:
 
-#atscode('\
+#dats2xhtml('\
 //
 implement(a)
 myprint2<List(a)>
@@ -458,7 +458,7 @@ ATS には数多くの数値型があります。
 関数テンプレートを用いると、数値演算においてコードの共有を向上させることができます。
 例えば、持つ行列の乗法のジェネリックス実装に次のインターフェイスを与えることができます:
 
-#atscode("\
+#sats2xhtml("\
 fun
 {a:t@ype}
 matrix_mul
@@ -658,7 +658,7 @@ else gnumber_int<a>(1)
 ATS でオーバーロードをサポートによって少しきれいにできます。
 #dyncode("gfact") を次のように書き直せます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 {a}(*tmp*)
 gfact(n) = let
@@ -675,7 +675,7 @@ end (* end of [gfact] *)
 
 これで #dyncode("fact") と #dyncode("factd") は次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 implement fact(n) = gfact<int>(n)
 implement factd(n) = gfact<double>(n)
@@ -685,7 +685,7 @@ implement factd(n) = gfact<double>(n)
 GNU multiple precision arithmetic library (GMPLIB) に基づいて多倍長整数を ATS はサポートしています。
 次のコードは 100 の階乗の正しい値を算出する方法を示しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 staload _(*T*) =
 "{$LIBATSHWXI}/intinf/DATS/intinf_t.dats"
@@ -816,7 +816,7 @@ ATS では、高階関数の使用の多くは関数テンプレートによっ�
 実際の例を最初に見てみましょう。
 次のコードは、高階関数テンプレートとしてのリストのマップの一般的な実装です:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun
@@ -850,7 +850,7 @@ end // end of [list_map_fun]
 もちろん、#dyncode("list_map_fun") の実装を複製することで、次のインターフェイスを持つ
 #dyncode("list_map_fun") の変種を実装することはできます:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun
@@ -922,7 +922,7 @@ procedure (that follows the standard principle of lexical scoping).
 
 リストのマップを実装する正当な方法は (私の知るかぎり) 次のようなものです:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun
@@ -1005,7 +1005,7 @@ remind them of functor application.
 #dyncode("list_map") を用いて、#dyncode("list_map_fun") と #dyncode("list_map_cloref")
 の両方を次のようにそのまま実装できます:
 
-#atscode('\
+#dats2xhtml('\
 implement
 {a}{b}
 list_map_fun(xs, f) = let
@@ -1140,7 +1140,7 @@ tally (int n) {
 
 この関数 #dyncode("tally") と等価な ATS の関数は次のように与えられます:
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally
 (
@@ -1206,7 +1206,7 @@ garbage immediately after the call returns. Compared to #dyncode("tally"),
 
 ループ生成を高階関数で置換できると誰かが指摘するとき、彼等はおそらく次のような関数でループを生成しようとするでしょう:
 
-#atscode('\
+#dats2xhtml('\
 fun
 for_loop
 (
@@ -1220,7 +1220,7 @@ if count < limit
 
 例えば、次の関数 #dyncode("tally2") は #dyncode("for_loop") を直接使っています:
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally2
 (
@@ -1352,7 +1352,8 @@ this section).
 #dyncode("tally2") における参照の必要性を除去するために、#dyncode("for_loop")
 を次のような関数テンレプレート #dyncode("for_loop2") に変換しましょう:
 
-#atscode('\
+#dats2xhtml('\
+//
 fun{
 env:t@ype
 } for_loop2
@@ -1360,18 +1361,20 @@ env:t@ype
   count: int, limit: int
 , env: &env >> _, fwork: (int, &env >> _) -<cloref1> void
 ) : void = (
+//
 if
 count < limit
 then (
   fwork(count, env); for_loop2<env> (count+1, limit, env, fwork)
 ) else ()
 // end of [if]
+//
 ) (* end of [for_loop2] *)
 ')
 
 さらに #dyncode("tally2") を、#dyncode("for_loop2") を用いて次の #dyncode("tally3") に変換できます:
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally3
 (
@@ -1389,7 +1392,7 @@ ATS ソースコードから生成されたC言語コードで呼び出される
 の最適化が実際のクロージャ関数を不要にしてくれることを期待することもできますが、その保証はありません。
 そのような保証を得るために、#dyncode("for_loop2") を次のような関数テンプレート #dyncode("for_loop3") に発展させることができます:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 env:t@ype
 } for_loop3
@@ -1407,7 +1410,7 @@ then (
 
 このとき #dyncode("for_loop3$fwork") には次のようなインターフェイスが割り当てられます:
 
-#atscode('\
+#sats2xhtml('\
 fun{
 env:t@ype
 } for_loop3$fwork(count: int, env: &env >> _): void
@@ -1415,7 +1418,7 @@ env:t@ype
 
 最終的に #dyncode("tally3") を次のような #dyncode("tally4") に変換できます:
 
-#atscode('\
+#dats2xhtml('\
 fun
 tally4
 (
@@ -1574,17 +1577,16 @@ ATS では、関数テンプレートは (関数呼び出しの) 遅延束縛に
 
 次のコードは、整数もしくは (倍精度の) 浮動小数点数を表わすような型である、データ型 #stacode("intfloat") を宣言しています:
 
-#atscode('\
+#sats2xhtml('\
 //
 datatype
-intfloat =
-  INT of int | FLOAT of double
+intfloat = INT of int | FLOAT of double
 //
 ')
 
 型 #stacode("intfloat") の値を印字するために、次のような #dyncode("print_intfloat") を実装できます:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 print_intfloat
@@ -1603,7 +1605,7 @@ case+ x of
 すなわち #dyncode("print_int") を通じて整数を表わし、#dyncode("print_double") を通じて浮動小数点数を表わすしかありません。
 このような柔軟性の欠如を回避する方法の1つは、次のような高階関数 #dyncode("fprint_intfloat") を定義することです:
 
-#atscode('\
+#dats2xhtml('\
 //
 fun
 fprint_intfloat
@@ -1724,7 +1726,7 @@ given between the keywords #keycode("local") and #keycode("in").\
 高階関数を使用する代わりに、テンプレート関数を使って (関数呼び出しの) 遅延束縛をサポートできます。
 例えば、次のコードは型 #stacode("intfloat") の値を印字するテンプレート関数 #dyncode("tprint_intfloat") を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 //
 extern
 fun{}
@@ -1759,7 +1761,7 @@ case+ x of
 #dyncode("print_int") と #dyncode("print_double") であることに注意してください。
 予想されることですが、次のコードは2行印字します:
 
-#atscode('\
+#dats2xhtml('\
 //
 val () = (
   tprint_intfloat<> (INT(0)); print_newline()
@@ -1774,7 +1776,7 @@ val () = (
 このとき、出力される最初の行は文字列 "0" で、次の行は文字列 "1.000000" になります。
 次のコードもまた2行印字します:
 
-#atscode('\
+#dats2xhtml('\
 local
 //
 implement
