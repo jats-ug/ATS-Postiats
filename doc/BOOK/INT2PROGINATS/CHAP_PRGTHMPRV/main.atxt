@@ -209,23 +209,26 @@ there is no need for proof construction at run-time.\
 
 関数テンプレート #dyncode("list_concat") は次のような実装です:
 
-#atscode("\
+#dats2xhtml("\
 //
-// [list_concat] does not typecheck!!!
+// [list_concat] does typecheck in ATS2
+// [list_concat] does not typecheck in ATS1
 //
 fun{
 a:t@ype
 } list_concat{m,n:nat}
-  (xss: list (list (a, n), m)): list (a, m * n) =
+(
+  xss: list (list (a, n), m)
+) : list (a, m * n) =
   case+ xss of
-  | list_cons (xs, xss) => list_append<a> (xs, list_concat xss)
   | list_nil () => list_nil ()
+  | list_cons (xs, xss) => list_append<a> (xs, list_concat xss)
 // end of [list_concat]
 ")
 
 #dyncode("list_append") のインターフェイスは次のようになります:
 
-#atscode("\
+#sats2xhtml("\
 fun{
 a:t@ype
 } list_append {n1,n2:nat}
@@ -245,21 +248,25 @@ a:t@ype
 この制限を克服 (もしくは回避) すれば、定理証明を使えるようになるはずです。
 #dyncode("list_concat") の別の実装は次のようになります:
 
-#atscode("\
+#dats2xhtml("\
 fun{
 a:t@ype
 } list_concat{m,n:nat}
 (
-  xss: list (list (a, n), m)
-) : [p:nat] (MUL (m, n, p) | list (a, p)) =
-  case+ xss of
-  | list_cons (xs, xss) => let
-      val (pf | res) = list_concat (xss)
-    in
-      (MULind pf | list_append<a> (xs, res))
-    end
-  | list_nil () => (MULbas () | list_nil ())
-// end of [list_concat]
+  xss: list(list(a, n), m)
+) : [p:nat] (MUL(m, n, p) | list(a, p)) =
+(
+//
+case+ xss of
+| list_nil () =>
+    (MULbas() | list_nil())
+| list_cons (xs, xss) => let
+    val (pf | res) = list_concat (xss)
+  in
+    (MULind pf | list_append<a> (xs, res))
+  end // end of [list_cons]
+//
+) (* end of [list_concat] *)
 ")
 
 型 #stacode("list(list(T,n),m)") のリスト #dyncode("xss") が与えられた時、
@@ -375,13 +382,12 @@ implementation of #dyncode("matrix_get") to show i*n+j &lt; m*n proves
 内部では、次元 m x n の行列はサイズ m*n の配列として表現されます。
 行列の添字演算のために、次のインターフェイスの関数テンプレートを実装する必要があります:
 
-#atscode("\
-extern
+#sats2xhtml("\
 fun{
 a:t@ype
 } matrix_get
   {m,n:int}{i,j:nat | i < m; j < n}
-  (A: arrayref (a, m*n), col: int n, i: int i, j: int j): a
+  (A: arrayref (a, m*n), col: int n, i: int i, j: int j): (a)
 // end of [matrix_get]
 ")
 
@@ -390,46 +396,54 @@ a:t@ype
 ここで、i と j はそれぞれ m と n より小さい自然数です。
 けれども、次の実装の型検査には失敗します:
 
-#atscode("\
-implement{a}
+#dats2xhtml("\
+implement
+{a}(*tmp*)
 matrix_get (A, n, i, j) = A[i*n+j] // it fails to typecheck!!!
-")#comment("para")
+")
 
 この推論失敗の簡単な理由は、i*n+j が m*n より正確に小さい自然数であることを、
 ATS の制約ソルバが自動的に検査できないためです。
 型検査を通る #dyncode("matrix_get") の実装は次のようになります:
 
-#atscode("\
+#dats2xhtml("\
 implement
 {a}(*tmp*)
 matrix_get
   {m,n}{i,j}
   (A, n, i, j) = let
 //
-  val (pf_i_n | _i_n) = imul2 (i, n)
-  prval () = mul_nat_nat_nat (pf_i_n)
-  prval () = mul_gte_gte_gte{m-1-i,n} ()
-  prval () = mul_elim (pf_i_n)
+  val (pf | _in_) = imul2 (i, n)
+//
+  prval ((*void*)) = mul_elim(pf)
+  prval ((*void*)) = mul_nat_nat_nat(pf)
+  prval ((*void*)) = mul_gte_gte_gte{m-1-i,n}()
 //
 in
-  A[_i_n+j]
+  A[_in_+j]
 end // end of [matrix_get]
 ")
 
 #dyncode("matrix_get") の本体から呼び出される関数には次のインターフェイスが割り当てられています:
 
-#atscode("\
-fun imul2{i,j:int}
-  (i: int i, j: int j): [ij:int] (MUL (i, j, ij) | int ij)
-
-prfun mul_nat_nat_nat
-  {i,j:nat}{ij:int} (pf: MUL (i, j, ij)): [ij >= 0] void
-
-prfun mul_gte_gte_gte
+#sats2xhtml("\
+//
+fun
+imul2{i,j:int}
+  (int i, int j):<> [ij:int] (MUL(i, j, ij) | int ij)
+//
+prfun
+mul_elim
+  {i,j:int}{ij:int} (pf: MUL(i, j, ij)): [i*j==ij] void
+//
+prfun
+mul_nat_nat_nat
+  {i,j:nat}{ij:int} (pf: MUL(i, j, ij)): [ij >= 0] void
+//
+prfun
+mul_gte_gte_gte
   {m,n:int | m >= 0; n >= 0} ((*void*)): [m*n >= 0] void
-
-prfun mul_elim
-  {i,j:int}{ij:int} (pf: MUL (i, j, ij)): [i*j==ij] void
+//
 ")
 
 m と n が自然数で、i と j がそれぞれ m と n より小さい自然数であると仮定します。
@@ -623,11 +637,12 @@ fact(n) = n * fact(n-1) (n > 0 のような全ての n について)
 当然これらの等式は、次のように宣言される dataprop #stacode("FACT")
 に関連したコンストラクタでエンコードできます:
 
-#atscode("\
-dataprop FACT (int, int) =
-  | FACTbas (0, 1)
+#sats2xhtml("\
+dataprop
+FACT(int, int) =
+  | FACTbas(0, 1)
   | {n:nat}{r1,r:int}
-    FACTind (n, r) of (FACT (n-1, r1), MUL (n, r1, r))
+    FACTind(n, r) of (FACT(n-1, r1), MUL(n, r1, r))
 // end of [FACT]
 ")
 
@@ -644,20 +659,28 @@ dataprop FACT (int, int) =
 この証明はその整数が #dyncode("fact(n)") に等しいことを立証しています。
 例えば、次に定義された関数 #dyncode("ifact") にはこの型が割り当てられています:
 
-#atscode("\
-fun ifact
-  {n:nat} .<n>.
-  (n: int (n)):<> [r:int] (FACT (n, r) | int r) =
+#dats2xhtml("\
+//
+fun
+ifact
+{n:nat} .<n>.
 (
-  if n > 0 then let
-    val (pf1 | r1) = ifact (n-1) // pf1: FACT (n-1, r1)
-    val (pfmul | r) = imul2 (n, r1) // pfmul: FACT (n, r1, r)
-  in (
-    FACTind (pf1, pfmul) | r
-  ) end else (
-    FACTbas () | 1 // the base case
-  ) // end of [if]
+  n: int(n)
+) :<> [r:int] (FACT(n, r) | int r) =
+(
+//
+if
+n = 0
+then (FACTbas() | 1)
+else let
+  val (pf1 | r1) = ifact (n-1) // pf1: FACT(n-1, r1)
+  val (pfmul | r) = imul2 (n, r1) // pfmul: FACT(n, r1, r)
+in
+  (FACTind(pf1, pfmul) | r)
+end // end of [else]
+//
 ) (* end of [ifact] *)
+//
 ")
 
 証明が削除されると、#dyncode("ifact") は階乗関数の正確な実装になります。
@@ -774,7 +797,7 @@ the implementation of #dyncode("ifact2").
 例えば、階乗の検証された実装を末尾再帰として得たいかもしれません。
 これは次のようになるでしょう:
 
-#atscode("\
+#dats2xhtml("\
 fun
 ifact2
 {n:nat} .<>.
@@ -801,7 +824,7 @@ end // end of [ifact2]
 はこの関数を呼び出すことで定義されています。
 もし型と証明を削除したら、関数 #dyncode("ifact2") は本質的に次のような定義になります:
 
-#atscode("\
+#dats2xhtml("\
 fun ifact2 (n) = let
   fun loop (n, i, r) =
     if n - i > 0 then let
@@ -906,7 +929,7 @@ pow (x, n) = x * pow (x, n-1) (for all n > 0)
 
 この定義の直接的な実装は次のようになります:
 
-#atscode("\
+#dats2xhtml("\
 fun ipow {n:nat} .<n>.
   (x: int, n: int n): int = if n > 0 then x * ipow (x, n-1) else 1
 // end of [ipow]
@@ -915,14 +938,19 @@ fun ipow {n:nat} .<n>.
 この実装の時間的計算量は (乗法を O(1) と仮定すると) O(n) になります。
 より効率的な実装は次のようになるでしょう:
 
-#atscode("\
-fun ifastpow {n:nat} .<n>.
-  (x: int, n: int n): int =
+#dats2xhtml("\
+fun
+ifastpow
+{n:nat} .<n>.
+(
+  x: int, n: int n
+) : int =
   if n > 0 then let
-    val n2 = n/2; i = n-(2*n2)
+    val n2 = half(n)
+    val i2 = n-(2*n2)
   in
-    if i > 0 then ifastpow (x*x, n2) else x * ifastpow (x*x, n2)
-  end else 1
+    if i2 > 0 then ifastpow (x*x, n2) else x * ifastpow (x*x, n2)
+  end else 1 // end of [if]
 // end of [ifastpow]
 ")
 
@@ -1009,9 +1037,9 @@ a form of axiom, which is not expected to be implemented.
 の型システムにおいて技巧的なテクニックが必要です。
 はじめに、次のような抽象型コンストラクタ #stacode("E") を導入してみましょう:
 
-#atscode("\
+#sats2xhtml("\
 sortdef elt = int // [elt] is just an alias for [int]
-abst@ype E (a:t@ype, x:elt) = a // [x] is an imaginary stamp
+abst@ype ELT(a:t@ype, x:elt) = a // [x] is an imaginary stamp
 ")
 
 これはしばしば #emphasis("スタンプ化 (stamping)") と呼ばれます。
@@ -1019,26 +1047,29 @@ abst@ype E (a:t@ype, x:elt) = a // [x] is an imaginary stamp
 このスタンプは架空の存在で、仕様の目的にだけ使われます。
 次に抽象命題型 #stacode("MUL") と関数テンプレート #dyncode("mul_elt_elt") を導入します:
 
-#atscode("\
-absprop MUL (elt, elt, elt) // abstract mul relation
-
-fun{a:t@ype}
-mul_elt_elt {x,y:elt}
-  (x: E (a, x), y: E (a, y)): [xy:elt] (MUL (x, y, xy) | E (a, xy))
+#sats2xhtml("\
+//
+absprop MUL(elt, elt, elt) // abstract mul relation
+//
+fun
+{a:t@ype}
+mul_elt_elt{x,y:elt}
+  (x: ELT(a, x), y: ELT(a, y)): [xy:elt] (MUL(x, y, xy) | ELT(a, xy))
 // end of [mul_elt_elt]
+//
 ")
 
 #stacode("MUL") と
 #myatscodelink("prelude/SATS/arith_prf.sats", "arith_prf.sats") で宣言されている同じ名前の型に混乱しないでください。
 エンコードされた乗法が結合的であることを示すために、次の証明関数を導入することができます:
 
-#atscode("\
-praxi mul_assoc
-  {x,y,z:elt}{xy,yz:elt}{xy_z,x_yz:elt}
+#sats2xhtml("\
+praxi
+mul_assoc
+{x,y,z:elt}{xy,yz:elt}{xy_z,x_yz:elt}
 (
-  pf1: MUL (x, y, xy), pf2: MUL (xy, z, xy_z)
-, pf3: MUL (y, z, yz), pf4: MUL (x, yz, x_yz)
-) : [xy_z==x_yz] void
+  MUL(x, y, xy), MUL(xy, z, xy_z), MUL(y, z, yz), MUL(x, yz, x_yz)
+) : [xy_z==x_yz] void // end of [mul_assoc]
 ")
 
 キーワード #keycode("praxi") は #dyncode("mul_assoc")
@@ -1080,22 +1111,24 @@ fastpow_elt_int{x:elt}{n:nat}
 #para("
 抽象的な累乗関数は、抽象命題型 #stacode("MUL") の項ですぐに指定できます:
 
-#atscode("\
-dataprop POW (
+#sats2xhtml("\
+dataprop
+POW (
   elt(*base*), int(*exp*), elt(*res*)
 ) = // res = base^exp
-  | {x:elt} POWbas (x, 0, 1(*unit*))
+  | {x:elt}
+    POWbas(x, 0, 1(*unit*))
   | {x:elt}{n:nat}{p,p1:elt}
-    POWind (x, n+1, p1) of (POW (x, n, p), MUL (x, p, p1))
+    POWind(x, n+1, p1) of (POW(x, n, p), MUL(x, p, p1))
 // end of [POW]
 ")
 
 予想される通り、一般化された高速な累乗は次のインターフェイスで与えられます:
 
-#atscode("\
+#sats2xhtml("\
 fun{a:t@ype}
 fastpow_elt_int{x:elt}{n:nat}
-  (x: E (a, x), n: int n): [p:elt] (POW (x, n, p) | E (a, p))
+  (x: ELT(a, x), n: int n): [p:elt] (POW(x, n, p) | ELT(a, p))
 // end of [fastpow_elt_int]
 ")
 
@@ -1184,32 +1217,43 @@ implement #dyncode("fastpow_elt_int") in a tail-recursive fashion.
 #para("
 上までで準備が整ったので、#dyncode("fastpow_elt_int") の率直な実装は次のようになります:
 
-#atscode("\
-implement{a}
-fastpow_elt_int (x, n) = let
+#dats2xhtml("\
+implement
+{a}(*tmp*)
+fastpow_elt_int
+  (x, n) = let
 //
-// lemma: (x*x)^n = x^(2n)
-//
+(*
+lemma: (x*x)^n = x^(2n)
+*)
 extern
 prfun
-lemma{x:elt}{xx:elt}{n:nat}{y:elt}
-  (pfxx: MUL (x, x, xx), pfpow: POW (xx, n, y)): POW (x, 2*n, y)
+lemma
+{x:elt}{xx:elt}{n:nat}{y:elt}
+  (pfxx: MUL(x, x, xx), pfpow: POW(xx, n, y)): POW(x, 2*n, y)
+//
+overload * with mul_elt_elt // [*] loaded with mul_elt_elt
 //
 in
-  if n > 0 then let
-    val n2 = n / 2; val i = n - (n2+n2) // i = 0 or 1
-    val (pfxx | xx) = mul_elt_elt (x, x) // xx = x*x
-    val (pfpow2 | res) = fastpow_elt_int<a> (xx, n2) // xx^n2 = res
-    prval pfpow = lemma (pfxx, pfpow2) // pfpow: x^(2*n2) = res
-  in
-    if i > 0 then let
-      val (pfmul | xres) = mul_elt_elt<a> (x, res) // xres = x*res
-    in
-      (POWind (pfpow, pfmul) | xres)
-    end else (pfpow | res)
-  end else let
-    val res = mulunit<a> () in (POWbas () | res) // res = 1
-  end (* end of [if] *)
+//
+if
+n = 0
+then let
+  val res = mulunit<a> () in (POWbas () | res) // res = 1
+end // end of [then]
+else let
+  val n2 = half n
+  val (pfxx | xx) = x * x
+  val (pfpow2 | res) = fastpow_elt_int<a> (xx, n2) // xx^n2 = res
+  prval pfpow = lemma (pfxx, pfpow2) // pfpow: x^(2*n2) = res
+in
+  if n=2*n2
+    then (pfpow | res)
+    else let
+      val (pfmul | xres) = x * res in (POWind(pfpow, pfmul) | xres)
+    end // end of [else]
+end // end of [else]
+//
 end // end of [fastpow_elt_int]
 ")
 
@@ -1217,8 +1261,8 @@ end // end of [fastpow_elt_int]
 用いる乗法の単位元を作るために呼び出す関数テンプレート #dyncode("mulunit")
 には次のインターフェイスが割り当てられます:
 
-#atscode("\
-fun{a:t@ype} mulunit (): E (a, 1(*stamp*))
+#sats2xhtml("\
+fun{a:t@ype} mulunit (): ELT(a, 1(*stamp*))
 ")
 
 証明関数 #dyncode("lemma") は、それぞれの自然数 n について pow(x, 2*n)=pow(x*x, n) を立証しています。
@@ -1226,13 +1270,16 @@ fun{a:t@ype} mulunit (): E (a, 1(*stamp*))
 けれども興味のある読者には、私の実装を見る前に実装してみることを提案します。
 #dyncode("lemma") の実装には次の公理が必要になることに注意してください:
 
-#atscode("\
+#sats2xhtml("\
+//
 praxi
-mul_istot // [MUL] is total
-  {x,y:elt} ((*void*)): [xy:elt] MUL (x, y, xy)
+mul_istot // MUL is total
+  {x,y:elt} ((*void*)): [xy:elt] MUL(x, y, xy)
+//
 praxi
-mul_isfun{x,y:elt}{z1,z2:elt} // MUL is functional
-  (pf1: MUL (x, y, z1), pf2: MUL (x, y, z2)): [z1==z2] void
+mul_isfun // MUL is functional
+  {x,y:elt}{z1,z2:elt}(MUL(x, y, z1), MUL(x, y, z2)): [z1==z2] void
+//
 ")
 
 別の興味深い (そしてておそらく少しやりがいのある) 課題は
