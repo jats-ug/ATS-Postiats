@@ -93,7 +93,7 @@ false)") contains nothing.
 
 データ観 #stacode("option_v") は次のように宣言されます:
 
-#atscode('\
+#dats2xhtml('\
 dataview option_v (v:view+, bool) =
   | Some_v (v, true) of (v) | None_v (v, false) of ()
 ')
@@ -131,7 +131,7 @@ otherwise, there is no at-view associated with the returned pointer.
 
 例として、次の関数インターフェイスはオプショナル観の典型的な使用例です:
 
-#atscode('\
+#sats2xhtml('\
 fun{a:t@ype}
 ptr_alloc_opt (): [l:addr] (option_v (a? @ l, l > null) | ptr l)
 ')
@@ -181,7 +181,7 @@ V#sub("1").
 
 データ観 #stacode("VOR") は次のように宣言されています:
 
-#atscode('\
+#sats2xhtml('\
 dataview VOR (v0:view+, v1:view+, int) =
   | VORleft (v0, v1, 0) of (v0) | VORright (v0, v1, 1) of (v1)
 ')
@@ -235,14 +235,14 @@ end // end of [foo]
 なんらかの型 T を考えます。次の関数インターフェイスは #dyncode("getopt")
 が未初期化のポインタを取り、ポインタが初期化されたかどうかを示す整数を返すことを表わしています:
 
-#atscode('\
+#sats2xhtml('\
 fun getopt{l:addr}
   (pf: T? @ l | ptr (l)): [i:int] (VOR (T? @ l, T @ l, i) | int (i))
 ')
 
 次のコードは #dyncode("getopt") の典型的な使用例を示しています:
 
-#atscode('\
+#dats2xhtml('\
 fun foo (): void = let
   var x: T?
   val (pfor | i) = getopt (view@(x) | addr@(x))
@@ -317,13 +317,13 @@ ATS には、型 T とブール B を取り、opt 型 #dyncode("opt(T, B)") を�
 このとき B が true ならば #dyncode("opt(T, B)") は T に等しく、B が false ならそれは T? に等しくなります。
 関数 #dyncode("getopt") には次のような opt 型を使ったインターフェイスを与えることができます:
 
-#atscode('\
+#sats2xhtml('\
 fun getopt (x: &T? >> opt (T, b)): #[b:bool] bool(b)
 ')
 
 これで #dyncode("getopt") 呼び出しコードは次のように実装できます:
 
-#atscode('\
+#dats2xhtml('\
 fun foo (): void = let
   var x: T?
   val ans = getopt (x)
@@ -343,7 +343,7 @@ end // end of [foo]
 
 このとき、証明関数 #dyncode("opt_unsome") と #dyncode("opt_unnone") には次の型が割り当てられています:
 
-#atscode('\
+#sats2xhtml('\
 prfun opt_unsome{a:t@ype} (x: !opt (a, true) >> a): void
 prfun opt_unnone{a:t@ype} (x: !opt (a, false) >> a?): void
 ')
@@ -766,14 +766,16 @@ explicitly where the array argument is located.
 参照渡しの機能を使えば、以前示した関数 #dyncode("arrget") と #dyncode("arrset")
 に次のインターフェイスを割り当てることができます:
 
-#atscode('\
+#sats2xhtml('\
+//
 fun{
 a:t@ype
-} arrget {n,i:nat | i < n} (A: &(@[a][n]), i: int i): a
-
+} arrget {n,i:nat | i < n} (A: &(@[a][n]), i: int i): (a)
+//
 fun{
 a:t@ype
 } arrset {n,i:nat | i < n} (A: &(@[a][n]), i: int i, x: a): void
+//
 ')
 
 配列引数が配置された場所を明示的に示す必要がないので、これらのインターフェイスはより簡潔です。
@@ -844,7 +846,7 @@ the type #stacode("strptr(L, N)").
 
 次のデータ観 #stacode("strbuf_v") はC言語文字列の概念を補足しています。C言語文字列は NULL 文字で終端する非 NULL 文字の列から成り立っています:
 
-#atscode('\
+#sats2xhtml('\
 dataview
 strbuf_v(addr, int) =
   | {l:addr}
@@ -855,7 +857,7 @@ strbuf_v(addr, int) =
 
 線形型 #stacode("strptr") を次のように定義してみましょう:
 
-#atscode('\
+#sats2xhtml('\
 vtypedef strptr(l:addr, n:int) = (strbuf_v(l, n) | ptr(l))
 ')
 
@@ -953,7 +955,7 @@ end // end of [strptr_is_nil]
 
 このとき、証明関数 #dyncode("strbuf_v_getfst") は次のように宣言され実装されます:
 
-#atscode('\
+#dats2xhtml('\
 extern
 prfun
 strbuf_v_getfst
@@ -1164,14 +1166,14 @@ slseg_v_cons :
 
 次のデータ観 #stacode("slseg_v") は片方向リストの部分の概念を捕捉しています:
 
-#atscode('\
+#sats2xhtml('\
 dataview
 slseg_v (
   a:t@ype+ // covariant argument
 , addr(*beg*)
 , addr(*end*)
-, int(*len*)
-) =
+, int(*length*)
+) = // slseg_v
   | {l:addr}
     slseg_v_nil (a, l, l, 0) of ()
   | {l_fst:agz}{l_nxt,l_end:addr}{n:nat}
@@ -1184,11 +1186,14 @@ slseg_v (
 があり、それらに割り当てられた型は次のようになります:
 
 #atscode('\
+//
 slseg_v_nil :
   {a:t@ype}{l:addr} () -> slseg_v (a, l, l, 0)
+//
 slseg_v_cons :
   {a:t@ype}{l_fst:agz}{l_nxt,l_end:addr}{n:nat}
   ((a, ptr l_nxt) @ l_fst, slseg_v (a, l_nxt, l_end, n)) -> slseg_v (a, l_fst, l_end, n+1)
+//
 ')
 
 ')#comment("para")
@@ -1219,7 +1224,7 @@ viewdef slist_v
 個の要素を含む片方向リストの部分を表わします。
 L2 が NULL ポインタである場合、このリスト部分は次に形式的に定義されるリストと考えられます:
 
-#atscode('\
+#dats2xhtml('\
 viewdef slist_v
   (a:t@ype, l:addr, n:int) = slseg_v (a, l, null, n)
 // end of [slist_v]
@@ -1318,7 +1323,7 @@ slist_ptr_length
 
 ここで片方向リストを使った単純な例を見てみましょう:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 slist_ptr_length
   {l:addr}{n:nat}
@@ -1350,7 +1355,11 @@ end // end of [slist_ptr_length]
 #dyncode("slist_ptr_length") の上記の実装はC言語における次の実装と本質的に一致します:
 
 #atscode('\
-int slist_ptr_length (slist_struct *p) {
+int
+slist_ptr_length
+(
+  slist_struct *p
+) {
   int res = 0 ;
   while (p != NULL) { res = res + 1 ; p = p->next ; }
   return res ;
@@ -1420,7 +1429,7 @@ slist_ptr_reverse
 
 もう一つの例として、次の関数テンプレート #dyncode("slist_ptr_reverse") は与えられた連結リストを逆順にします:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 slist_ptr_reverse
   {l:addr}{n:nat}
@@ -1453,8 +1462,10 @@ end // end of [slist_ptr_reverse]
 
 #atscode('\
 slist_struct*
-slist_ptr_reverse (slist_struct *p)
-{
+slist_ptr_reverse
+(
+  slist_struct *p
+) {
   slist_struct *tmp, *res = NULL ;
   while (p != NULL) {
     tmp = p->next ; p->next = res ; res = p ; p = tmp ;
@@ -1558,7 +1569,7 @@ slist_ptr_append
 そのノードの #dyncode("next") フィールドは #dyncode("q") に置換されます。
 C言語における #dyncode("slist_ptr_append") のこの実装は、次のような ATS の実装に直接変換できます:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 slist_ptr_append
   {l1,l2:addr}{n1,n2:nat}
@@ -1864,8 +1875,8 @@ mathematical induction.
 明確に、証明関数 #dyncode("split") は数学的帰納法を使って証明を直接エンコードしています。
 #dyncode("array_v_unsplit") の実装を次に示します:
 
-#atscode('\
-primplement
+#dats2xhtml('\
+primplmnt
 array_v_unsplit
   {a}{l}{n1,n2}
   (pf1arr, pf2arr) = let
@@ -1967,15 +1978,16 @@ a @ l+i*sizeof(a) -<lin,prf> array_v (a, l, n)
 #dyncode("array_v_takeout") は配列の観を (1つの要素に対する) 駐観と配列の残りを表わす観に変更すると、表現することができます。
 #dyncode("array_v_takeout") を使うことで、#dyncode("arrget") に別の実装を与えることができます:
 
-#atscode('\
-implement{a}
+#dats2xhtml('\
+implement
+{a}(*tmp*)
 arrget{l}{n,i}
   (pf | p, i) = x where {
   prval (pf1, fpf2) =
   array_v_takeout{a}{l}{n,i} (pf)
   val x = ptr_get1<a> (pf1 | ptr_add<a> (p, i))
   prval () = pf := fpf2 (pf1) // putting the cell and the rest together
-} // end of [arrget]
+} (* end of [arrget] *)
 ')
 
 ')
@@ -2098,21 +2110,24 @@ end // end of [slseg_v_unsplit]
 これまで示してきた観変化のための証明関数は全て配列観の操作でした。
 次のコードはこれらとは異なり、片方向リストを表わす2つの観を1つに結合するものと考えることができます:
 
-#atscode('\
-prfun slseg_v_unsplit
+#sats2xhtml('\
+//
+prfun
+slseg_v_unsplit
   {a:t@ype}
   {l1,l2,l3:addr}{n1,n2:nat}
 (
   pf1lst: slseg_v (a, l1, l2, n1), pf2lst: slseg_v (a, l2, l3, n2)
 ) : slseg_v (a, l1, l3, n1+n2)
+//
 ')
 
 #dyncode("slseg_v_unsplit") の型は、長さ N1 の L1 から L2 へのリスト片と長さ N2 の L2 から L3
 への別のリスト片は、長さ N1+N2 の L1 から L3 へのリスト片であると考えることができることを本質的に表わしています。
 次の #dyncode("slseg_v_unsplit") の実装は #dyncode("array_v_unsplit") の実装とおおまかに類似しています:
 
-#atscode('\
-primplement
+#dats2xhtml('\
+primplmnt
 slseg_v_unsplit
   {a}(pf1lst, pf2lst) = let
   prfun unsplit

@@ -133,12 +133,14 @@ ptr_set0 {l:addr} (pf: a? @ l | p: ptr l, x: a): (a @ l | void)
 例として、次の関数テンプレート #dyncode("ptr_get0") と #dyncode("ptr_set0")
 は、与えられたポインタを通して読み書きをし、駐観を含む型が割り当てられています:
 
-#atscode('\
+#sats2xhtml('\
+//
 fun{a:t@ype}
 ptr_get0 {l:addr} (pf: a @ l | p: ptr l): (a @ l | a)
-
+//
 fun{a:t@ype}
 ptr_set0 {l:addr} (pf: a? @ l | p: ptr l, x: a): (a @ l | void)
+//
 ')
 
 ')
@@ -283,7 +285,7 @@ end // end of [swap0]
 例として、与えられた2つの位置にあるメモリコンテンツをスワップする関数テンプレート #dyncode("swap0")
 は次のように実装されます:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 swap0 {l1,l2:addr}
 (
@@ -399,12 +401,14 @@ above implementation of #dyncode("swap0").
 
 関数テンプレート #dyncode("ptr_get1") と #dyncode("ptr_set1") は次のようなインターフェイスを持ちます:
 
-#atscode('\
+#sats2xhtml('\
+//
 fun{a:t@ype}
 ptr_get1 {l:addr} (pf: !a @ l >> a @ l | p: ptr l): a
-
+//
 fun{a:t@ype}
 ptr_set1 {l:addr} (pf: !a? @ l >> a @ l | p: ptr l, x: a): void
+//
 ')
 
 明確に、それぞれの型 T について、関数 #dyncode("ptr_get1&lt;T&gt;") には次の型が割り当てられます:
@@ -437,7 +441,7 @@ V1 と V2 が同じ場合には、!V1 >> V2 は単に !V1 と書くこともで�
 例として、与えられた2つのメモリ位置のコンテンツをスワップする関数テンプレート
 #dyncode("swap1") は次のように実装されます:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 swap1 {l1,l2:addr} (
   pf1: !a@l1, pf2: !a@l2 | p1: ptr l1, p2: ptr l2
@@ -492,7 +496,7 @@ administrative code for handling linear proofs explicitly.
 
 #dyncode("swap1") のさらに簡単な実装は次のようになります:
 
-#atscode('\
+#dats2xhtml('\
 fn{a:t@ype}
 swap1{l1,l2:addr}
 (
@@ -607,8 +611,8 @@ fn getinc
 例えば、型と、種 #stacode("viewtype") の観型を作るアドレスを取るような、#stacode("tptr")
 は次のように定義されます:
 
-#atscode('\
-viewtypedef tptr (a:t@ype, l:addr) = (a @ l | ptr l)
+#sats2xhtml('\
+vtypedef tptr (a:t@ype, l:addr) = (a @ l | ptr l)
 ')
 
 型 T とアドレス L が与えられた時、観型 #stacode("tptr(T, L)") は
@@ -616,8 +620,7 @@ L に格納された型 T の値を示す線形の証明とペアになった L 
 カウントを表わす整数を指すポインタを示す証明とペアになったポインタとしてのカウンタのことを考えるなら、
 次に定義する関数 #dyncode("getinc") は与えられたカウンタを1増やした後、現時点でのカウントを返します:\
 
-#atscode('\
-
+#dats2xhtml('\
 fn getinc
   {l:addr}{n:nat}
 (
@@ -627,7 +630,6 @@ fn getinc
   val () = ptr_set1<int(n+1)> (cnt.0 | cnt.1, n+1)
 } (* end of [getinc] *)
 ')
-
 ')
 ")
 
@@ -694,8 +696,8 @@ can be automatically performed by the typechecker of ATS.
 
 次は観型の特に興味深い例です:
 
-#atscode('\
-viewtypedef cloptr
+#sats2xhtml('\
+vtypedef cloptr
   (a:t@ype, b:t@ype, l:addr) =
   [env:t@ype] (((&env, a) -> b, env) @ l | ptr l)
 // end of [cloptr_app]
@@ -710,7 +712,7 @@ viewtypedef cloptr
 参照渡し (call-by-reference) については別の章でより詳細に解説します。
 次のコードは与えられた引数で呼び出されるクロージャ関数へのポインタを説明しています:\
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype}{b:t@ype
 } cloptr_app {l:addr}
@@ -734,7 +736,7 @@ in
 end // end of [cloptr]
 ')
 
-p のデリファレンスが型検査を通すために、#dyncode("pclo")
+(構文 #dyncode("!p") で表わされた) p のデリファレンスが型検査を通すために、#dyncode("pclo")
 内の線形の証明がはじめに取り出されることに注意してください。
 そして #dyncode("pclo") の型が元の位置に復帰されて返ります。
 このレコードからの線形証明の取り出しとレコードへの復帰は ATS の型検査器によって自動的に行なわれます。
@@ -878,7 +880,7 @@ ATS における関数へ引数を渡す既定の戦略は値渡し (call-by-val
 そして実際には (アドレスに格納された値の代わりに) 左辺値のアドレスが渡されることになります。
 例えば、次に定義した関数 #dyncode("swap2") は参照渡しを使っています:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } swap2 (
@@ -892,7 +894,7 @@ end // end of [swap2]
 は、その引数が参照渡し戦略に従って渡される必要があることを示すことに注意してください。
 次のコードは #dyncode("swap2") を元にして #dyncode("swap1") を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fn{
 a:t@ype
 } swap1{l1,l2:addr}
@@ -943,7 +945,7 @@ Note that both array arguments of #dyncode("dotprod") are call-by-reference.
 もし関数が配列を表わすパラメータを持つなら、このパラメータは参照渡しの方が好ましいでしょう。
 例えば、次のコードは double の2つの配列を取り、ドット積 (またはスカラー積) を計算する関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun dotprod 
 (
   A: &(@[double][3])
@@ -1183,7 +1185,7 @@ ATS の配列もまたスタックに確保できます。
 例えば、次のコードは関数 #dyncode("main0") のスタックフレームに double の2つの配列を確保します。
 それからそれらを #dyncode("dotprod") に渡してドット積を計算します:
 
-#atscode('\
+#dats2xhtml('\
 implement
 main0 () =
 {
@@ -1275,7 +1277,7 @@ ATS では、関数の呼び出しフレーム内にクロージャを確保す�
 例えば、次のコードは #dyncode("bar") という名前でスタックに確保された変数にフラットなクロージャ関数を置く
 #dyncode("foo") という名前の関数を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun foo
 (
   x: int, y: int
@@ -1291,7 +1293,7 @@ end // end of [foo]
 特殊キーワード #keycode("lam@") はフラットなクロージャ関数を作るのに使われることに注意してください。
 完全を期すために、再帰クロージャ関数もまたスタックに確保された変数に格納できることを示す次のような別の例を紹介します:
 
-#atscode('\
+#dats2xhtml('\
 fun foo2
 (
   x: int, y: int
@@ -1391,7 +1393,7 @@ after #dyncode("list_map_cloptr") returns.\
 
 次のコードは、第二引数に線形クロージャ関数を取る高階関数 #dyncode("list_map_cloptr") を実装しています:
 
-#atscode('\
+#dats2xhtml('\
 fun{
 a:t@ype}{b:vt@ype
 } list_map_cloptr{n:int}
@@ -1462,7 +1464,7 @@ Also, the cast involved in
 
 線形クロージャ関数が生成され、呼び出され、最後に解放されるような具体的なコードをいくつか見てみましょう:
 
-#atscode('\
+#dats2xhtml('\
 implement
 main0 () =
 {
@@ -1490,7 +1492,7 @@ val ((*freed*)) = list_vt_free (ys)
 
 関数 #dyncode("cloptr_free") には次のインターフェイスが与えられます:
 
-#atscode('\
+#sats2xhtml('\
 fun cloptr_free{a:t0p}(pclo: cloptr (a)):<!wrt> void
 ')
 
