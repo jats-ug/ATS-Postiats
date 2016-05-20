@@ -13,8 +13,14 @@ by [atsdoc] from CHAP_CODEGEN2/main.atxt.\n\
 Time of Generation: #timestamp()\
 ")
 <chapter id="codegen2">
+#langeng("
 #title("Automatic Code Generation")
+")
+#langja("
+#title("コード自動生成")
+")
 
+#langeng("
 #para("\
 
 In practice, one often encounters a need to write boilerplate code or code
@@ -25,7 +31,18 @@ also potentially eliminating bugs that would otherwise be introduced due to
 manual code construction.
 
 ")
+")
+#langja("
+#para("\
 
+実際に、ボイラープレートコードやパターン傾向にあるコードを書く必要性にしばしば出会います。
+一般には (ある種の) メタプログラミングを使ってそのようなコードを生成します。
+そのため、プログラミングの生産性を向上させるだけでなく、手動によるコード作成によって生れるバグを防止できます。
+
+")
+")
+
+#langeng("
 #para("\
 
 In the following presentation, I am to show that the ATS compiler can be
@@ -50,11 +67,42 @@ which is for some kind of abstract syntax trees representing arithmetic
 expressions.
 
 ")
+")
+#langja("
+#para("\
+
+ATS コンパイラが宣言したデータ型の値に対する関数のコードを生成できることを次に示します。
+次は説明に使うデータ型です:
+
+#sats2xhtml('\
+//
+datatype expr =
+  | Int of int
+  | Var of string
+  | Add of (expr, expr)
+  | Sub of (expr, expr)
+  | Mul of (expr, expr)
+  | Div of (expr, expr)
+  | Ifgtz of (expr, expr, expr) // if expr > 0 then ... else ...
+  | Ifgtez of (expr, expr, expr) // if expr >= 0 then ... else ...
+//
+')
+
+これは演算式を表わす抽象構文木です。
+
+")
+")
 
 <sect1
  id="codegen2_datcon">
+#langeng("
 #title("Generating a datcon-function")
+")
+#langja("
+#title("datcon 関数の生成")
+")
 
+#langeng("
 #para("\
 
 Given a datatype, its datcon-function is the one that takes a value of the
@@ -131,7 +179,78 @@ fun{} datcon_expr : (expr) -> string // a function template
 ')
 
 ")
+")
+#langja("
+#para("\
 
+あるデータ型が与えられたとき、datcon 関数はそのデータ型の値を取り、その値をコンストラクトした (最外の) コンストラクタの名前を表わす文字列を返します。
+データ型 #stacode("expr") の datcon 関数の生成を (ATS コンパイラに) 指示するのに次の命令を使えます:
+
+#sats2xhtml('\
+\#codegen2("datcon", expr)
+')
+
+デフォルトでは、生成された関数の名前は #dyncode('datcon_expr') になります。
+もし異なる名前にしたければ、#dyncode("\#codegen2") 命令の第三引数にその名前を渡します。
+例えば、次の命令は #dyncode("my_datcon_expr") の名前で関数を生成することを示しています:
+
+#sats2xhtml('\
+\#codegen2("datcon", expr, my_datcon_expr)
+')
+
+名前 #filename("expr.dats") のファイルが (トップレベルの宣言として) 次の命令を含むと仮定しましょう:
+
+#sats2xhtml('\
+\#codegen2("datcon", expr)
+')
+
+また #stacode('expr') の定義が #dyncode("codegen2") 命令が宣言された位置でアクセス可能でなければなりません。
+次のコマンドラインを実行すると:
+
+<informalexample><programlisting>
+<command>patscc</command> --codegen-2 -d expr.dats
+</programlisting></informalexample>
+
+#dyncode("datcon_expr") を実装した ATS コードの出力が得られます:
+
+#dats2xhtml('\
+(* ****** ****** *)
+//
+implement
+{}(*tmp*)
+datcon_expr
+  (arg0) =
+(
+case+ arg0 of
+| Int _ => "Int"
+| Var _ => "Var"
+| Add _ => "Add"
+| Sub _ => "Sub"
+| Mul _ => "Mul"
+| Div _ => "Div"
+| Ifgtz _ => "Ifgtz"
+| Ifgtez _ => "Ifgtez"
+)
+//
+(* ****** ****** *)
+')
+
+この出力を #dyncode("fprint_expr.hats") ファイルに保存したければ、次のコマンドラインを使えます:
+
+<informalexample><programlisting>
+<command>patscc</command> -o fprint_expr.hats --codegen-2 -d expr.dats
+</programlisting></informalexample>
+
+生成されたコードを正しくコンパイルするために、関数テンプレート #dyncode("datcon_expr") がどこかで宣言される必要があることに注意してください:
+
+#sats2xhtml('\
+fun{} datcon_expr : (expr) -> string // a function template
+')
+
+")
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("chap_codegen2", "on-line") the entirety of this
@@ -139,12 +258,27 @@ presented example plus a Makefile (for illustrating the code generation
 process).\
 
 ')
+")
+#langja("
+#para('\
+
+この章で示した例の全体と (コード生成のプロセスを説明する) Makefile は
+#mycodelink("chap_codegen2", "on-line")
+から入手できます。\
+
+')
+")
 
 </sect1><!--"codegen2_datcon"-->
 
 <sect1
  id="codegen2_datcontag">
+#langeng("
 #title("Generating a datcontag-function")
+")
+#langja("
+#title("datcontag 関数の生成")
+")
 
 #para("\
 
