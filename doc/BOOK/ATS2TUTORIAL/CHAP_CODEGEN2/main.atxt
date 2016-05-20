@@ -263,7 +263,7 @@ process).\
 #para('\
 
 この章で示した例の全体と (コード生成のプロセスを説明する) Makefile は
-#mycodelink("chap_codegen2", "on-line")
+#mycodelink("chap_codegen2", "オンライン")
 から入手できます。\
 
 ')
@@ -280,6 +280,7 @@ process).\
 #title("datcontag 関数の生成")
 ")
 
+#langeng("
 #para("\
 
 A datcontag-function is very similar to a datcon-function.  Given a
@@ -336,7 +337,60 @@ fun{} datcontag_expr : (expr) -> intGte(0) // a function template
 ')
 
 ")
+")
+#langja("
+#para("\
 
+datcontag 関数は datcon 関数とよく似ています。
+あるデータ型が与えられたとき、その datcontag 関数はそのデータ型の値を取り、その値をコンストラクトした (最外の) コンストラクタに割り当てられた (小さな整数である) タグを返します。
+データ型 #stacode("expr") の datcontag 関数の生成を (ATS コンパイラに) 指示するのに次の命令が使えます:
+
+#sats2xhtml('\
+\#codegen2("datcontag", expr)
+')
+
+デフォルトでは、生成された関数の名前は #dyncode('datcontag_expr') になります。
+もし異なる名前にしたければ、#dyncode("\#codegen2") 命令の第三引数にその名前を渡します。
+例えば、次の命令は #dyncode("my_datcontag_expr") の名前で関数を生成することを示しています: 
+
+#sats2xhtml('\
+\#codegen2("datcontag", expr, my_datcontag_expr)
+')
+
+#dyncode("datcontag_expr") を実装する次の ATS コードが生成されます:
+
+#dats2xhtml('\
+(* ****** ****** *)
+//
+implement
+{}(*tmp*)
+datcontag_expr
+  (arg0) =
+(
+case+ arg0 of
+| Int _ => 0
+| Var _ => 1
+| Add _ => 2
+| Sub _ => 3
+| Mul _ => 4
+| Div _ => 5
+| Ifgtz _ => 6
+| Ifgtez _ => 7
+)
+//
+(* ****** ****** *)
+')
+
+生成されたコードを正しくコンパイルするために、関数テンプレート #dyncode("datcontag_expr") がどこかで宣言される必要があることに注意してください:
+
+#sats2xhtml('\
+fun{} datcontag_expr : (expr) -> intGte(0) // a function template
+')
+
+")
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("chap_codegen2", "on-line")
@@ -344,13 +398,29 @@ the entirety of this presented example plus a Makefile (for illustrating
 the code generation process).\
 
 ')
+")
+#langja("
+#para('\
+
+この章で示した例の全体と (コード生成のプロセスを説明する) Makefile は
+#mycodelink("chap_codegen2", "オンライン")
+から入手できます。\
+
+')
+")
 
 </sect1><!--"codegen2_datcontag"-->
 
 <sect1
  id="codegen2_fprint">
+#langeng("
 #title("Generating a fprint-function")
+")
+#langja("
+#title("fprint 関数の自動生成")
+")
 
+#langeng("
 #para("\
 
 A fprint-function takes a file-handle (of the type #stacode("FILEref")) and
@@ -360,7 +430,18 @@ output certain kind of text representation for values of this datatype. For
 instance, such a function can be of great use in debugging.
 
 ")
+")
+#langja("
+#para("\
 
+fprint 関数は (型 #stacode("FILEref") の) ファイルハンドルと値を取り、そのファイルハンドルにその値のテキスト表現を出力します。
+あるデータ型が与えられたとき、そのデータ型の値を表わすテキスト表現を出力する関数がしばしば必要になります。
+例えば、そのような関数はデバッグに威力を発揮します。
+
+")
+")
+
+#langeng("
 #para("\
 
 Let us first declare a function template #dyncode("fprint_expr") as
@@ -853,7 +934,494 @@ When #dyncode("fprint_expr") is applied to the expression
 expected to read #dyncode("(Int(10)+Mul(Int(1),Int(2)))").
 
 ")
+")
+#langja("
+#para("\
 
+はじめに次のような関数テンプレート #dyncode("fprint_expr") を宣言しましょう:
+
+#sats2xhtml('\
+fun{} fprint_expr : (FILEref, expr) -> void // a function template
+')
+
+データ型 #stacode("expr") に対する fprint 関数の自動生成を (ATS コンパイラに) 指示する以下の命令を使うことができます:
+
+#sats2xhtml('\
+\#codegen2("fprint", expr, fprint_expr)
+')
+
+この場合、デフォルトと一致するので、#dyncode("codegen2") 命令の第三引数は省略できます。
+#dyncode("fprint_expr") を実装する生成されたコードは次のようになります:
+
+#dats2xhtml('\
+(* ****** ****** *)
+//
+extern
+fun{}
+fprint_expr$Int: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Var: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Add: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Sub: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Mul: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Div: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez: $d2ctype(fprint_expr<>)
+//
+(* ****** ****** *)
+//
+implement{}
+fprint_expr
+  (out, arg0) =
+(
+case+ arg0 of
+| Int _ => fprint_expr$Int<>(out, arg0)
+| Var _ => fprint_expr$Var<>(out, arg0)
+| Add _ => fprint_expr$Add<>(out, arg0)
+| Sub _ => fprint_expr$Sub<>(out, arg0)
+| Mul _ => fprint_expr$Mul<>(out, arg0)
+| Div _ => fprint_expr$Div<>(out, arg0)
+| Ifgtz _ => fprint_expr$Ifgtz<>(out, arg0)
+| Ifgtez _ => fprint_expr$Ifgtez<>(out, arg0)
+)
+//
+(* ****** ****** *)
+//
+extern
+fun{}
+fprint_expr$sep: (FILEref) -> void
+implement{}
+fprint_expr$sep(out) = fprint(out, ",")
+//
+extern
+fun{}
+fprint_expr$lpar: (FILEref) -> void
+implement{}
+fprint_expr$lpar(out) = fprint(out, "(")
+//
+extern
+fun{}
+fprint_expr$rpar: (FILEref) -> void
+implement{}
+fprint_expr$rpar(out) = fprint(out, ")")
+//
+extern
+fun{a:t0p}
+fprint_expr$carg: (FILEref, INV(a)) -> void
+implement{a}
+fprint_expr$carg(out, arg) = fprint_val<a>(out, arg)
+//
+(* ****** ****** *)
+//
+extern
+fun{}
+fprint_expr$Int$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Int$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Int$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Int$arg1: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Int(out, arg0) = 
+{
+//
+val () = fprint_expr$Int$con<>(out, arg0)
+val () = fprint_expr$Int$lpar<>(out, arg0)
+val () = fprint_expr$Int$arg1<>(out, arg0)
+val () = fprint_expr$Int$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Int$con(out, _) = fprint(out, "Int")
+implement{}
+fprint_expr$Int$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Int$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Int$arg1(out, arg0) =
+  let val-Int(arg1) = arg0 in fprint_expr$carg(out, arg1) end
+//
+extern
+fun{}
+fprint_expr$Var$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Var$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Var$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Var$arg1: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Var(out, arg0) = 
+{
+//
+val () = fprint_expr$Var$con<>(out, arg0)
+val () = fprint_expr$Var$lpar<>(out, arg0)
+val () = fprint_expr$Var$arg1<>(out, arg0)
+val () = fprint_expr$Var$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Var$con(out, _) = fprint(out, "Var")
+implement{}
+fprint_expr$Var$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Var$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Var$arg1(out, arg0) =
+  let val-Var(arg1) = arg0 in fprint_expr$carg(out, arg1) end
+//
+extern
+fun{}
+fprint_expr$Add$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Add$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Add$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Add$sep1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Add$arg1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Add$arg2: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Add(out, arg0) = 
+{
+//
+val () = fprint_expr$Add$con<>(out, arg0)
+val () = fprint_expr$Add$lpar<>(out, arg0)
+val () = fprint_expr$Add$arg1<>(out, arg0)
+val () = fprint_expr$Add$sep1<>(out, arg0)
+val () = fprint_expr$Add$arg2<>(out, arg0)
+val () = fprint_expr$Add$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Add$con(out, _) = fprint(out, "Add")
+implement{}
+fprint_expr$Add$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Add$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Add$sep1(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Add$arg1(out, arg0) =
+  let val-Add(arg1, _) = arg0 in fprint_expr$carg(out, arg1) end
+implement{}
+fprint_expr$Add$arg2(out, arg0) =
+  let val-Add(_, arg2) = arg0 in fprint_expr$carg(out, arg2) end
+//
+extern
+fun{}
+fprint_expr$Sub$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Sub$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Sub$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Sub$sep1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Sub$arg1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Sub$arg2: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Sub(out, arg0) = 
+{
+//
+val () = fprint_expr$Sub$con<>(out, arg0)
+val () = fprint_expr$Sub$lpar<>(out, arg0)
+val () = fprint_expr$Sub$arg1<>(out, arg0)
+val () = fprint_expr$Sub$sep1<>(out, arg0)
+val () = fprint_expr$Sub$arg2<>(out, arg0)
+val () = fprint_expr$Sub$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Sub$con(out, _) = fprint(out, "Sub")
+implement{}
+fprint_expr$Sub$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Sub$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Sub$sep1(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Sub$arg1(out, arg0) =
+  let val-Sub(arg1, _) = arg0 in fprint_expr$carg(out, arg1) end
+implement{}
+fprint_expr$Sub$arg2(out, arg0) =
+  let val-Sub(_, arg2) = arg0 in fprint_expr$carg(out, arg2) end
+//
+extern
+fun{}
+fprint_expr$Mul$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Mul$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Mul$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Mul$sep1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Mul$arg1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Mul$arg2: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Mul(out, arg0) = 
+{
+//
+val () = fprint_expr$Mul$con<>(out, arg0)
+val () = fprint_expr$Mul$lpar<>(out, arg0)
+val () = fprint_expr$Mul$arg1<>(out, arg0)
+val () = fprint_expr$Mul$sep1<>(out, arg0)
+val () = fprint_expr$Mul$arg2<>(out, arg0)
+val () = fprint_expr$Mul$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Mul$con(out, _) = fprint(out, "Mul")
+implement{}
+fprint_expr$Mul$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Mul$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Mul$sep1(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Mul$arg1(out, arg0) =
+  let val-Mul(arg1, _) = arg0 in fprint_expr$carg(out, arg1) end
+implement{}
+fprint_expr$Mul$arg2(out, arg0) =
+  let val-Mul(_, arg2) = arg0 in fprint_expr$carg(out, arg2) end
+//
+extern
+fun{}
+fprint_expr$Div$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Div$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Div$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Div$sep1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Div$arg1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Div$arg2: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Div(out, arg0) = 
+{
+//
+val () = fprint_expr$Div$con<>(out, arg0)
+val () = fprint_expr$Div$lpar<>(out, arg0)
+val () = fprint_expr$Div$arg1<>(out, arg0)
+val () = fprint_expr$Div$sep1<>(out, arg0)
+val () = fprint_expr$Div$arg2<>(out, arg0)
+val () = fprint_expr$Div$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Div$con(out, _) = fprint(out, "Div")
+implement{}
+fprint_expr$Div$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Div$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Div$sep1(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Div$arg1(out, arg0) =
+  let val-Div(arg1, _) = arg0 in fprint_expr$carg(out, arg1) end
+implement{}
+fprint_expr$Div$arg2(out, arg0) =
+  let val-Div(_, arg2) = arg0 in fprint_expr$carg(out, arg2) end
+//
+extern
+fun{}
+fprint_expr$Ifgtz$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$sep1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$sep2: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$arg1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$arg2: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtz$arg3: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Ifgtz(out, arg0) = 
+{
+//
+val () = fprint_expr$Ifgtz$con<>(out, arg0)
+val () = fprint_expr$Ifgtz$lpar<>(out, arg0)
+val () = fprint_expr$Ifgtz$arg1<>(out, arg0)
+val () = fprint_expr$Ifgtz$sep1<>(out, arg0)
+val () = fprint_expr$Ifgtz$arg2<>(out, arg0)
+val () = fprint_expr$Ifgtz$sep2<>(out, arg0)
+val () = fprint_expr$Ifgtz$arg3<>(out, arg0)
+val () = fprint_expr$Ifgtz$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Ifgtz$con(out, _) = fprint(out, "Ifgtz")
+implement{}
+fprint_expr$Ifgtz$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Ifgtz$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Ifgtz$sep1(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Ifgtz$sep2(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Ifgtz$arg1(out, arg0) =
+  let val-Ifgtz(arg1, _, _) = arg0 in fprint_expr$carg(out, arg1) end
+implement{}
+fprint_expr$Ifgtz$arg2(out, arg0) =
+  let val-Ifgtz(_, arg2, _) = arg0 in fprint_expr$carg(out, arg2) end
+implement{}
+fprint_expr$Ifgtz$arg3(out, arg0) =
+  let val-Ifgtz(_, _, arg3) = arg0 in fprint_expr$carg(out, arg3) end
+//
+extern
+fun{}
+fprint_expr$Ifgtez$con: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$lpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$rpar: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$sep1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$sep2: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$arg1: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$arg2: $d2ctype(fprint_expr<>)
+extern
+fun{}
+fprint_expr$Ifgtez$arg3: $d2ctype(fprint_expr<>)
+//
+implement{}
+fprint_expr$Ifgtez(out, arg0) = 
+{
+//
+val () = fprint_expr$Ifgtez$con<>(out, arg0)
+val () = fprint_expr$Ifgtez$lpar<>(out, arg0)
+val () = fprint_expr$Ifgtez$arg1<>(out, arg0)
+val () = fprint_expr$Ifgtez$sep1<>(out, arg0)
+val () = fprint_expr$Ifgtez$arg2<>(out, arg0)
+val () = fprint_expr$Ifgtez$sep2<>(out, arg0)
+val () = fprint_expr$Ifgtez$arg3<>(out, arg0)
+val () = fprint_expr$Ifgtez$rpar<>(out, arg0)
+//
+}
+implement{}
+fprint_expr$Ifgtez$con(out, _) = fprint(out, "Ifgtez")
+implement{}
+fprint_expr$Ifgtez$lpar(out, _) = fprint_expr$lpar(out)
+implement{}
+fprint_expr$Ifgtez$rpar(out, _) = fprint_expr$rpar(out)
+implement{}
+fprint_expr$Ifgtez$sep1(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Ifgtez$sep2(out, _) = fprint_expr$sep<>(out)
+implement{}
+fprint_expr$Ifgtez$arg1(out, arg0) =
+  let val-Ifgtez(arg1, _, _) = arg0 in fprint_expr$carg(out, arg1) end
+implement{}
+fprint_expr$Ifgtez$arg2(out, arg0) =
+  let val-Ifgtez(_, arg2, _) = arg0 in fprint_expr$carg(out, arg2) end
+implement{}
+fprint_expr$Ifgtez$arg3(out, arg0) =
+  let val-Ifgtez(_, _, arg3) = arg0 in fprint_expr$carg(out, arg3) end
+//
+(* ****** ****** *)
+')
+
+#dyncode("fprint_expr") に対するコードは全般的にテンプレートに基づいています。
+このスタイルはテンプレートの再実装によってコードを柔軟にします。
+データ型 #stacode('expr') は再帰的に定義されているので、#dyncode("fprint_expr") を動作させるために次のテンプレート実装を追加する必要があります:
+
+#dats2xhtml('\
+implement fprint_expr$card<expr> = fprint_expr
+')
+
+例えば、式 #dyncode("Add(Int(10),Mul(Int(1),Int(2)))") に #dyncode("fprint_expr") を適用すると、同じテキスト表現が出力されます。
+
+適応例として、次のテンプレート実装を追加してみましょう:
+
+#dats2xhtml('\
+implement
+fprint_expr$Add$con<> (_, _) = ()
+implement
+fprint_expr$Add$sep1<> (out, _) = fprint! (out, "+")
+')
+
+このとき式 #dyncode("Add(Int(10),Mul(Int(1),Int(2)))") に #dyncode("fprint_expr") を適用すると、その出力は #dyncode("(Int(10)+Mul(Int(1),Int(2)))") になるはずです。
+
+")
+")
+
+#langeng("
 #para('\
 
 After proper adaptation is done, one can introduce a (non-template)
@@ -873,7 +1441,28 @@ In this way, only one instance of #dyncode("fprint_expr") is compiled even
 if repeated calls to #dyncode("my_fprint_expr") are made.
 
 ')
+")
+#langja("
+#para('\
 
+適切な適応が行なわれたら、次のような (テンプレートではない) 関数を導入できます:
+
+#dats2xhtml('\
+//
+extern
+fun
+my_fprint_expr(FILEref, expr): void
+implement
+my_fprint_expr (out, x) = fprint_expr<> (out, x)
+//
+')
+
+この方法で、#dyncode("my_fprint_expr") を繰り返し呼び出したとしても、#dyncode("fprint_expr") の唯一のインスタンスがコンパイルされます。
+
+')
+")
+
+#langeng("
 #para('\
 
 Please find #mycodelink("chap_codegen2", "on-line")
@@ -881,6 +1470,16 @@ the entirety of this presented example plus a Makefile (for illustrating
 the code generation process).\
 
 ')
+")
+#langja("
+#para('\
+
+この章で示した例の全体と (コード生成のプロセスを説明する) Makefile は
+#mycodelink("chap_codegen2", "オンライン")
+から入手できます。\
+
+')
+")
 
 </sect1><!--"codegen2_fprint"-->
 
