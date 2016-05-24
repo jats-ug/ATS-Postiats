@@ -1,15 +1,14 @@
 PUBLISH_PATH    = $(HOME)/doc/jats-ug.github.io/doc/ATS2/EXAMPLE/EFFECTIVATS
 CHAP_ATXT_FILES = $(glob */*.atxt)
-CHAP_ATXT_DIRS  = $(dirname $(CHAP_ATXT_FILES))
+CHAP_ATXT_DIRS  = $(filter-out parallel-sorting, $(dirname $(CHAP_ATXT_FILES)))
 CHAP_PHP_FILES  = $(glob */*.php)
 CHAP_PHP_DIRS   = $(dirname $(CHAP_PHP_FILES))
-#CHAP_HTML_FILES = $(replacesuffixes .atxt, .html, $(CHAP_ATXT_FILES))
 CHAP_HTML_FILES = $(addsuffix /main.html, $(CHAP_ATXT_DIRS)) \
 		  $(addsuffixes .html, $(filter-out html.php, $(split _, $(CHAP_PHP_FILES))))
 
 .PHONY: all clean publish
 .DEFAULT: all
-all: $(CHAP_HTML_FILES)
+all: ATEXT/bin/myatexting $(CHAP_HTML_FILES)
 
 .SUBDIRS: $(CHAP_ATXT_DIRS)
 	main.html: main.atxt
@@ -18,6 +17,9 @@ all: $(CHAP_HTML_FILES)
 .SUBDIRS: $(CHAP_PHP_DIRS)
 	main.html: main_html.php
 		make $@
+
+ATEXT/bin/myatexting: ATEXT/myatexting.dats
+	make -C ATEXT myatexting
 
 publish: all
 	rm -rf $(PUBLISH_PATH)
