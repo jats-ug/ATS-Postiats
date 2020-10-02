@@ -779,7 +779,7 @@ fun divopt
 // end of [divopt]
 ")
 
-#dyncode("divopt") の返値を検査することで、整数の除算が正常終了したのか、0除算が起きてエラー終了した見分けることができます。
+#dyncode("divopt") の返値を検査することで、整数の除算が正常終了したのか、0除算が起きてエラーが発生したのか見分けることができます。
 #stacode("option0") の実際の使用例は次の実装 #dyncode("list0_last") になります:
 
 #dats2xhtml("\
