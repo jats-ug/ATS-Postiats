@@ -1059,7 +1059,7 @@ fun{a:t0p}
 eq_elt_elt (x: a, y: a): bool // a generic equality
 ")
 
-型 T の値同士が等しいは検査するような #dyncode("eq_elt_elt") の意味のある総称的な実装は存在しません。
+型 T の等値性検査は型 T に依存するので、#dyncode("eq_elt_elt") の意味のある総称的な実装は存在しません。
 
 2つの特殊テンプレート実装である
 インスタンス #dyncode("eq_elt_elt&lt;int&gt;") と #dyncode("eq_elt_elt&lt;double&gt;")
